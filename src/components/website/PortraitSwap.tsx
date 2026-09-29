@@ -43,16 +43,20 @@ export function PortraitSwap({
 }) {
   const humanVideo = useRef<HTMLVideoElement>(null);
   const aiVideo = useRef<HTMLVideoElement>(null);
+  const humanLayer = useRef<HTMLDivElement>(null);
   const aiLayer = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const first = useRef(true);
 
   useEffect(() => {
-    const layer = aiLayer.current,
+    const humanEl = humanLayer.current,
+      aiEl = aiLayer.current,
       cv = canvas.current;
-    if (!layer || !cv) return;
+    if (!humanEl || !aiEl || !cv) return;
+    // only the chosen copy shows once settled, so the other never shows through the soft edges and fades
     const settle = () => {
-      layer.style.clipPath = mode === "ai" ? "none" : HIDDEN;
+      aiEl.style.clipPath = mode === "ai" ? "none" : HIDDEN;
+      humanEl.style.clipPath = mode === "ai" ? HIDDEN : "none";
       cv.style.opacity = "0";
     };
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -156,11 +160,11 @@ export function PortraitSwap({
       // the dome's top, from the whole band just below the portrait to the whole band just above it
       const mid = H + band / 2 - e * (H + band + rise);
       const pts = line(mid);
-      // the AI copy shows below the dome's line on the way to AI, above it on the way back
-      layer.style.clipPath =
-        mode === "ai"
-          ? `polygon(${pts.join(", ")}, 100% 100%, 0% 100%)`
-          : `polygon(0% 0%, 100% 0%, ${pts.reverse().join(", ")})`;
+      // the new copy shows below the dome's line and the old one above it, never both in one place
+      const below = `polygon(${pts.join(", ")}, 100% 100%, 0% 100%)`,
+        above = `polygon(0% 0%, 100% 0%, ${[...pts].reverse().join(", ")})`;
+      aiEl.style.clipPath = mode === "ai" ? below : above;
+      humanEl.style.clipPath = mode === "ai" ? above : below;
       draw(mid);
       if (k < 1) raf = requestAnimationFrame(frame);
       else settle();
@@ -172,13 +176,15 @@ export function PortraitSwap({
 
   return (
     <div className="relative">
-      <PlayerPortrait
-        src={human.src}
-        straight={human.straight}
-        label={label}
-        className={className}
-        videoRef={humanVideo}
-      />
+      <div ref={humanLayer}>
+        <PlayerPortrait
+          src={human.src}
+          straight={human.straight}
+          label={label}
+          className={"block " + (className ?? "")}
+          videoRef={humanVideo}
+        />
+      </div>
       <div
         ref={aiLayer}
         className="absolute inset-0"
@@ -188,7 +194,7 @@ export function PortraitSwap({
           src={ai.src}
           straight={ai.straight}
           label={`${label}, AI copy`}
-          className="h-full w-full"
+          className="block h-full w-full"
           videoRef={aiVideo}
         />
       </div>
