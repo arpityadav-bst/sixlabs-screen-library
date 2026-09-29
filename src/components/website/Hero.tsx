@@ -115,7 +115,7 @@ export function Hero() {
                 Try now
               </motion.button>
             </div>
-            <p className="mt-auto font-sans text-[13px] leading-relaxed text-slate-400">
+            <p className="mt-8 font-sans text-[13px] leading-relaxed text-slate-400">
               One million players have a copy.
               <br />
               <span className="text-slate-600">Yours next.</span>
