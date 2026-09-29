@@ -10,32 +10,3 @@
 body {
   background: #f9fafb;
 }
-
-/* The logo's 6 (Logo.tsx): its letter shape shows a potion of layered solutions that drift and swirl
-   slowly, with a few bubbles rising. Still for anyone who prefers reduced motion. */
-.potion {
-  color: transparent;
-  background-color: #1d3fd0;
-  background-image:
-    radial-gradient(circle at 30% 80%, rgba(255, 255, 255, 0.85) 0 2.5%, transparent 3.5%),
-    radial-gradient(circle at 68% 60%, rgba(255, 255, 255, 0.7) 0 1.8%, transparent 2.8%),
-    radial-gradient(circle at 45% 30%, rgba(255, 255, 255, 0.6) 0 1.4%, transparent 2.4%),
-    radial-gradient(ellipse 60% 45% at 25% 75%, #d946ef 0%, transparent 70%),
-    radial-gradient(ellipse 55% 50% at 75% 35%, #22d3ee 0%, transparent 70%),
-    radial-gradient(ellipse 70% 55% at 55% 90%, #7c3aed 0%, transparent 70%),
-    radial-gradient(ellipse 60% 60% at 20% 20%, #2563eb 0%, transparent 70%);
-  background-size: 100% 1.4em, 100% 1.4em, 100% 1.4em, 200% 200%, 220% 220%, 200% 200%, 180% 180%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  animation: potion 8s linear infinite;
-}
-/* bubbles rise one tile height per loop; the solutions circle back to where they started */
-@keyframes potion {
-  0% { background-position: 0 0, 0 0, 0 0, 0% 0%, 100% 0%, 30% 100%, 0% 50%; }
-  33% { background-position: 0 -0.467em, 0 -0.467em, 0 -0.467em, 90% 60%, 20% 80%, 80% 20%, 60% 0%; }
-  66% { background-position: 0 -0.933em, 0 -0.933em, 0 -0.933em, 40% 100%, 60% 20%, 0% 60%, 100% 100%; }
-  100% { background-position: 0 -1.4em, 0 -1.4em, 0 -1.4em, 0% 0%, 100% 0%, 30% 100%, 0% 50%; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .potion { animation: none; }
-}
