@@ -16,19 +16,21 @@ export function Hero() {
         <TileFloor className="w-full h-full" onReady={() => setFloorReady(true)} />
       </div>
 
-      {/* While the floor loads, the logo lies on the floor in the tiles' white glass, on the right where
-          the tiles will be, and turns very slowly about the floor's vertical axis; it fades away as the
+      {/* While the floor loads, the logo lies on the floor in the tiles' white glass, toward the bottom right
+          where the tiles will be, and turns very slowly about the floor's vertical axis; it fades away as the
           tiles fade in. One still (27 KB, tools/tiles/floor_logo.py): the render at the tile camera angle,
           contrast-boosted and straightened, which a CSS tilt lays back on the floor (40 degrees up, a
           long lens) and the compositor spins (.floor-spin in globals.css), so it costs almost nothing to
-          load and turns smoothly. Its square is feathered into the floor. It may run past the container's edge. */}
+          load and turns smoothly. Its square is feathered into the floor. Sized and placed so about a fifth of the
+          mark runs past the container's bottom and right edges (the mark spans two thirds of its square,
+          and the tilt shortens it to about half its width in height), at 60% opacity. */}
       <AnimatePresence>
         {!floorReady && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition: { duration: 0.4, ease } }}
             exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.6, ease } }}
-            className="absolute top-1/2 left-3/4 -translate-x-1/2 -translate-y-1/2 z-10 w-[45%] aspect-square pointer-events-none"
+            className="absolute top-[77%] left-[86%] -translate-x-1/2 -translate-y-1/2 z-10 w-[70%] aspect-square pointer-events-none"
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- one small still, served as is */}
             <img
@@ -36,7 +38,7 @@ export function Hero() {
               alt=""
               width={1200}
               height={1200}
-              className="floor-spin w-full h-full [mask-image:radial-gradient(closest-side,#000_72%,transparent_98%)]"
+              className="floor-spin w-full h-full opacity-60 [mask-image:radial-gradient(closest-side,#000_72%,transparent_98%)]"
             />
           </motion.div>
         )}
