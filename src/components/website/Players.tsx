@@ -9,9 +9,9 @@ import { PLAYERS } from "./players-data";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 // White cards: the page has darkened to its shade here (BackdropShade.tsx), so plain white now lifts off
-// it, with a hairline border and a soft, low shadow.
+// it, with a very faint dark hairline border and a soft, low shadow.
 const card =
-  "bg-white border border-white shadow-[0_1px_2px_rgba(10,27,51,0.04),0_18px_40px_-24px_rgba(10,27,51,0.16)]";
+  "bg-white border border-[#0a1b33]/[0.08] shadow-[0_1px_2px_rgba(10,27,51,0.04),0_18px_40px_-24px_rgba(10,27,51,0.16)]";
 
 export function Players() {
   const [active, setActive] = useState(0);
@@ -87,7 +87,7 @@ export function Players() {
 
         {/* Selector cards, each read as a model on file: the player type and a one-line read of them on top,
             its number and a status along the bottom under a hairline (the selected one is the model running,
-            marked by a fine darker stroke). */}
+            marked by a fine accent stroke; the others carry a very faint dark one). */}
         <div className="relative mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           {PLAYERS.map((p, k) => {
             const on = k === active;
@@ -101,7 +101,7 @@ export function Players() {
                   "flex min-h-[176px] flex-col justify-between rounded-[28px] p-6 text-left transition-all duration-300 " +
                   card +
                   (on
-                    ? " ring-1 ring-[#0a1b33]/20 shadow-[0_1px_2px_rgba(10,27,51,0.06),0_24px_48px_-24px_rgba(10,27,51,0.24)]"
+                    ? " border-accent/70 ring-1 ring-accent/70 shadow-[0_1px_2px_rgba(10,27,51,0.06),0_24px_48px_-24px_rgba(10,27,51,0.24)]"
                     : " hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(10,27,51,0.05),0_24px_48px_-24px_rgba(10,27,51,0.22)]")
                 }
               >
