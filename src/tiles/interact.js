@@ -41,7 +41,9 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
       const st = s.rig.state;
       if (!st.cell) continue;
       if (s.leaving && done(s)) { s.leaving = false; s.tA = 0; s.tL = 0; } // finished: now go back down
-      if (s.locked && done(s)) { s.locked = false; s.tA = 0; s.tL = 0; spent.add(st.cell.join(',')); }
+      if (s.locked && done(s)) { // finished: tint now, so the glass tile rides back down already charcoal
+        s.locked = false; s.tA = 0; s.tL = 0; spent.add(st.cell.join(',')); tint(st.cell.join(','), true);
+      }
       // order: rise before activating, and fade back to focused before sinking
       const activating = st.L > 0.9 && s.tA === 1;
       if (activating) {
@@ -61,7 +63,6 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
         ch.setScan(ch.converted ? 1 : s.rig.values().convert * st.F);
       }
       if (st.L === 0 && s.tL === 0) {
-        if (spent.has(st.cell.join(','))) tint(st.cell.join(','), true); // back in the floor: now charcoal
         s.rig.clear(); s.fl = 0; continue;
       }
       s.rig.apply();
@@ -88,7 +89,7 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
       target = T.find((s) => !s.rig.state.cell) ?? T.filter((s) => !s.locked).sort((a, b) => a.rig.state.L - b.rig.state.L)[0];
       if (!target) return; // both rigs busy with clicked tiles
       const was = target.rig.state.cell?.join(',');
-      if (was) { chars.get(was)?.setLift(0); if (spent.has(was)) tint(was, true); target.rig.clear(); }
+      if (was) { chars.get(was)?.setLift(0); target.rig.clear(); }
       Object.assign(target, { fl: 0, tA: 0, leaving: false });
       target.rig.setCell(...cell);
     }
