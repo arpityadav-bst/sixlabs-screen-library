@@ -46,6 +46,3 @@ export const PLAYERS: Player[] = [
   },
 ];
 
-export const PLAYERS_SUBTITLE =
-  "Left is a real player. Right is their model, playing a second and a half behind. Same habits. Same shortcuts. Same mistakes.";
-

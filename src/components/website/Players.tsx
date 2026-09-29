@@ -1,11 +1,11 @@
 "use client";
 
-// Second section, "Real player. Their model.": a soft panel like the hero's. The selected player's title,
+// Third section, the players: straight on the page, no heading or panel. The selected player's title,
 // description and trait bars sit in a frosted glass card on the left; their character fills the rest,
 // over a soft blue glow. Four glass cards along the bottom pick the player (the first is selected).
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { PLAYERS, PLAYERS_SUBTITLE } from "./players-data";
+import { PLAYERS } from "./players-data";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const glass =
@@ -17,16 +17,7 @@ export function Players() {
 
   return (
     <section id="players" className="w-full max-w-[1400px] mx-auto mt-8">
-      <div className="px-8 md:px-16">
-        <h2 className="font-display text-[40px] md:text-[52px] font-medium tracking-tight leading-[1.05] text-[#0a1b33]">
-          Real player. <span className="text-accent">Their model.</span>
-        </h2>
-        <p className="mt-5 max-w-[640px] font-sans text-[15px] md:text-[17px] leading-relaxed text-[#64748b]">
-          {PLAYERS_SUBTITLE}
-        </p>
-      </div>
-
-      <div className="relative mt-12 overflow-hidden rounded-[48px] bg-[#e3e5e8] border border-slate-200/50 p-6 md:p-10">
+      <div className="relative px-8 md:px-16">
         {/* soft glow behind the character, so the glass has colour to frost */}
         <div
           aria-hidden
