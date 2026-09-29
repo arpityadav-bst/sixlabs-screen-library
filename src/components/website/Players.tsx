@@ -1,7 +1,7 @@
 "use client";
 
 // Third section, the players: straight on the page, no heading or panel. The selected player's title,
-// description and trait bars sit in a card on the left; their character fills the rest,
+// description and trait bars sit straight on the blue on the left, in white; their character fills the rest,
 // over a soft blue glow. Four cards along the bottom pick the player (the first is selected).
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
