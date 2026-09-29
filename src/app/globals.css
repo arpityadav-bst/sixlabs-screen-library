@@ -5,8 +5,8 @@
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
-  /* Accent: the bright blue of an activated tile (floor-params.json states.shine actLightCol). */
-  --color-accent: #3f8eec;
+  /* Accent: the vivid royal blue of the blue-sweatshirt character's hoodie (sampled from its lit folds). */
+  --color-accent: #0654d4;
 }
 
 body {
