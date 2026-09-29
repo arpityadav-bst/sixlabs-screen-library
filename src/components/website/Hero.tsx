@@ -18,7 +18,7 @@ export function Hero() {
   const stats = [
     {
       value: "2B",
-      label: ["human players the 6labs model"],
+      label: ["human players"],
       tone: "text-[#0a1b33]",
       live: false,
     },
