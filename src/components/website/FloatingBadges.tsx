@@ -31,7 +31,7 @@ const BADGES: Badge[] = [
     name: "03-braids",
     x: "15%",
     y: "27%",
-    size: 164,
+    size: 220,
     depth: 1.4,
     tilt: -6,
     delay: 0,
@@ -40,7 +40,7 @@ const BADGES: Badge[] = [
     name: "18-afro-esports",
     x: "82%",
     y: "25%",
-    size: 144,
+    size: 196,
     depth: 0.8,
     tilt: 5,
     delay: 1.2,
@@ -49,7 +49,7 @@ const BADGES: Badge[] = [
     name: "19-ginger-streamer",
     x: "10%",
     y: "56%",
-    size: 134,
+    size: 180,
     depth: 0.6,
     tilt: 4,
     delay: 2.1,
@@ -58,7 +58,7 @@ const BADGES: Badge[] = [
     name: "24-pink-hair-rhythm",
     x: "88%",
     y: "53%",
-    size: 172,
+    size: 232,
     depth: 1.6,
     tilt: -4,
     delay: 0.6,
@@ -67,7 +67,7 @@ const BADGES: Badge[] = [
     name: "14-silver-bob-cat-ears",
     x: "20%",
     y: "77%",
-    size: 140,
+    size: 188,
     depth: 1,
     tilt: 6,
     delay: 1.7,
@@ -76,7 +76,7 @@ const BADGES: Badge[] = [
     name: "10-cap-cheer",
     x: "77%",
     y: "79%",
-    size: 152,
+    size: 204,
     depth: 1.2,
     tilt: -5,
     delay: 0.3,
@@ -161,7 +161,7 @@ function FloatingBadge({
           onHoverEnd={leave}
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 300, damping: 22 }}
-          className="pointer-events-auto relative drop-shadow-[0_18px_22px_rgba(10,27,51,0.18)]"
+          className="pointer-events-auto relative drop-shadow-[0_8px_10px_rgba(10,27,51,0.10)]"
           style={{ width: b.size, rotate: b.tilt }}
         >
           <Tile src={`/tiles/float/${b.name}.webp`} />
