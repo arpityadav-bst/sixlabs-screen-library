@@ -54,12 +54,18 @@ export function Hero() {
             human players.
           </h1>
           <p className="font-sans text-[14px] md:text-[15px] text-[#64748b] mt-5 max-w-[440px] leading-relaxed">
-            Our model watched millions of hours of gameplay. Now it understands the game player.
+            Our model watched millions of hours of gameplay. Now it understands the game player.{" "}
+            <a
+              href="#"
+              className="pointer-events-auto font-medium text-[#0a1b33] underline underline-offset-4 decoration-slate-300 hover:decoration-[#0a1b33] transition-colors duration-200"
+            >
+              See What It Does
+            </a>
           </p>
-          {/* The primary CTA, wide, with the secondary action as an underlined link centred under it. The
-              quiet line of social proof sits at the bottom of the container. Only the controls take the
-              pointer, so the tiles under the rest of this column stay interactive. */}
-          <div className="mt-8 flex flex-col items-center pointer-events-auto">
+          {/* The primary CTA, wide; the secondary action is the link that ends the subtitle. The quiet line
+              of social proof sits at the bottom of the container. Only the controls take the pointer, so
+              the tiles under the rest of this column stay interactive. */}
+          <div className="mt-8 pointer-events-auto">
             <motion.button
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.97 }}
@@ -68,12 +74,6 @@ export function Hero() {
             >
               Try now
             </motion.button>
-            <a
-              href="#"
-              className="mt-4 text-[14px] font-medium text-[#0a1b33] underline underline-offset-4 decoration-slate-300 hover:decoration-[#0a1b33] transition-colors duration-200"
-            >
-              See What It Does
-            </a>
           </div>
           <p className="mt-auto font-sans text-[13px] leading-relaxed text-slate-400">
             One million players have a copy.
