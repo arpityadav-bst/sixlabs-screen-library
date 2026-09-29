@@ -148,13 +148,9 @@ const cluster = (
   });
 };
 
-// Each of the three below also has a dotted trail down each side, from the upper drawing to the lower one,
-// so the drawings around the head read as one route (as the explorer's pin runs down to her peak).
 // The grinder, at it every night: a clock at 2 a.m., a dotted run over the hood to a crescent moon and
 // its stars, a mug of coffee still steaming, and a game controller.
 const GRINDER: Stroke[] = [
-  { d: "M 50 178 C 0 240 -10 310 25 368", at: 2.9, dur: 0.6, dotted: true },
-  { d: "M 740 165 C 800 230 822 330 800 412", at: 4.3, dur: 0.6, dotted: true },
   ...cluster([60, 132], 0, [
     [circle(0, 0, 46), 0.6],
     ["M 0 -46 V -38 M 46 0 H 38 M 0 46 V 38 M -46 0 H -38", 0.3],
@@ -192,8 +188,6 @@ const GRINDER: Stroke[] = [
 // The spender: a credit card, a dotted arc high over the ponytail to a cut diamond, a coin with a dollar
 // sign, a shopping cart, and sparkles.
 const SPENDER: Stroke[] = [
-  { d: "M 60 170 C 10 240 0 320 40 386", at: 2.9, dur: 0.6, dotted: true },
-  { d: "M 728 170 C 790 240 815 330 795 410", at: 4.2, dur: 0.6, dotted: true },
   ...cluster([70, 135], 0, [
     [
       "M -58 -36 H 58 A 8 8 0 0 1 66 -28 V 28 A 8 8 0 0 1 58 36 H -58 A 8 8 0 0 1 -66 28 V -28 A 8 8 0 0 1 -58 -36 Z",
@@ -229,8 +223,6 @@ const SPENDER: Stroke[] = [
 // The one you lose: a skull for the boss that stopped him, a dotted run over the head that sags and drops,
 // a broken heart, a battery nearly empty, and a chart arrow falling away.
 const LOST: Stroke[] = [
-  { d: "M 95 168 C 50 230 45 300 85 355", at: 2.9, dur: 0.6, dotted: true },
-  { d: "M 722 165 C 780 230 805 310 790 385", at: 3.9, dur: 0.6, dotted: true },
   ...cluster([100, 130], 0, [
     [
       "M -38 10 C -48 -30 -24 -48 0 -48 C 24 -48 48 -30 38 10 C 34 18 26 20 24 28 V 40 H -24 V 28 C -26 20 -34 18 -38 10 Z",
