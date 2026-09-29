@@ -8,7 +8,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { PLAYERS } from "./players-data";
 import { PlayerPortrait } from "./PlayerPortrait";
 import { PortraitSwap } from "./PortraitSwap";
-import { ModeToggle, type Mode } from "./ModeToggle";
+import { ModeToggle } from "./ModeToggle";
+import { usePlayerMode } from "./usePlayerMode";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 // On the accent blue (AccentWave.tsx): white cards.
@@ -25,7 +26,6 @@ const fit = {
 
 export function Players() {
   const [active, setActive] = useState(0);
-  const [mode, setMode] = useState<Mode>("human"); // the real player or their AI copy
   // The section is pulled up over the scroll line's last screen (-mt-[100vh]), so it sits in view the
   // moment the water has filled it, and is centred in that screen.
   // The section comes in once the accent water has filled the view (AccentWave.tsx) and the section is
@@ -55,6 +55,8 @@ export function Players() {
     transition: shown ? { duration: 0.6, ease, delay } : { duration: 0.25 },
   });
   const player = PLAYERS[active];
+  // the real player or their AI copy, per player, switching by itself until the visitor picks one
+  const [mode, setMode] = usePlayerMode(player.id, shown && !!player.aiVideo);
 
   return (
     <section

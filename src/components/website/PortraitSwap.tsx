@@ -46,7 +46,7 @@ export function PortraitSwap({
   const humanLayer = useRef<HTMLDivElement>(null);
   const aiLayer = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
-  const first = useRef(true);
+  const onScreen = useRef<Mode | null>(null); // the copy actually showing, null before the first
 
   useEffect(() => {
     const humanEl = humanLayer.current,
@@ -62,8 +62,11 @@ export function PortraitSwap({
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const incoming = (mode === "ai" ? aiVideo : humanVideo).current;
     const ctx = cv.getContext("2d");
-    if (first.current || still || !incoming || !ctx) {
-      first.current = false;
+    // Only a change from the copy on screen sweeps; the first showing (and React running an effect twice
+    // in development) just settles.
+    const from = onScreen.current;
+    onScreen.current = mode;
+    if (from === null || from === mode || still || !incoming || !ctx) {
       return settle();
     }
     const W = incoming.videoWidth || 810,
