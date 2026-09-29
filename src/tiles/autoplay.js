@@ -8,22 +8,42 @@
 // at once over every character tile on screen, activated or not, and restarts the cycle from the middle.
 import * as THREE from 'three';
 
-const RESUME_MS = 3000, FOCUS_MS = 380, GAP_MS = 220;
+const RESUME_MS = 3000, FOCUS_MS = 380, GAP_MS = 220, MIN_SHOWN = 0.4;
+
+// Polygon area (shoelace) and clipping to the screen square [-1, 1] (Sutherland-Hodgman).
+const area = (p) => Math.abs(p.reduce((s, [x, y], k) => { const [u, w] = p[(k + 1) % p.length]; return s + x * w - u * y; }, 0)) / 2;
+function clip(poly) {
+  const edges = [[0, -1, 1], [0, 1, -1], [1, -1, 1], [1, 1, -1]]; // axis, bound, side: keep side * (c - bound) >= 0
+  for (const [ax, bound, side] of edges) {
+    const inside = (p) => side * (p[ax] - bound) >= 0, out = [];
+    poly.forEach((p, k) => {
+      const q = poly[(k + 1) % poly.length], pi = inside(p), qi = inside(q);
+      if (pi) out.push(p);
+      if (pi !== qi) { const t = (bound - p[ax]) / (q[ax] - p[ax]); out.push([p[0] + t * (q[0] - p[0]), p[1] + t * (q[1] - p[1])]); }
+    });
+    poly = out;
+    if (!poly.length) break;
+  }
+  return poly;
+}
 const WAVE_SPREAD = 1.3, FLIP_SECONDS = 0.75; // stagger across the screen, one tile's flip
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, cast }) {
+export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, cast, half }) {
   let stopped = false, paused = false, resumeTimer = 0, first = true, resetReq = false, waving = false;
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const until = async (ok) => { while (!stopped && !ok()) await wait(60); };
   const cellOf = (key) => key.split(',').map(Number);
 
-  // Screen position (normalised device coordinates) of each character tile's centre.
+  // The character tiles that count as on screen: at least MIN_SHOWN of the tile's top face inside the view
+  // (its projected outline clipped to the screen, by area). x, y: the centre, in normalised device coords.
   const v = new THREE.Vector3();
+  const project = (x, y, z) => { v.set(x, y, z).project(camera); return [v.x, v.y]; };
   const onScreen = () => [...chars.entries()].map(([key, ch]) => {
-    v.set(...ch.at).project(camera);
-    return { key, x: v.x, y: v.y };
-  }).filter((t) => Math.abs(t.x) < 0.96 && Math.abs(t.y) < 0.96);
+    const [x, y, z] = ch.at, quad = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([a, b]) => project(x + a * half, y, z + b * half));
+    const [sx, sy] = project(x, y, z);
+    return { key, x: sx, y: sy, shown: area(clip(quad)) / Math.max(1e-9, area(quad)) };
+  }).filter((t) => t.shown >= MIN_SHOWN);
 
   ctl.onUser = (active) => {
     clearTimeout(resumeTimer);

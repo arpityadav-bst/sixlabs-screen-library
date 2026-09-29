@@ -247,7 +247,7 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
     if (disposed) return;
     const ctl = startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU: U, nearU, P, expose });
     const cast = createCasts({ P, renderer, chars, bustTiles, pictures, gone: () => disposed });
-    const auto = startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, cast });
+    const auto = startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, cast, half });
     stop = () => { auto.stop(); ctl.stop(); };
     reset = auto.reset;
   });
