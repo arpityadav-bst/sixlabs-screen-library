@@ -1,6 +1,9 @@
 // Top header: layout and styling from the Halo prompt's navbar, recoloured to this site's light palette;
 // content from the 6labs.ai header. Sticky: fixed to the top, on a frosted strip of the page colour so
-// the sections read through it as they scroll under. The mark is the SixLabs logo rendered in the tile glass (tools/tiles).
+// the sections read through it as they scroll under, with a faint bottom stroke once the page has scrolled. The mark is the SixLabs logo rendered in the tile glass (tools/tiles).
+"use client";
+
+import { useEffect, useState } from "react";
 import { LanguageMenu } from "./LanguageMenu";
 
 const LINKS = [
@@ -10,8 +13,20 @@ const LINKS = [
 ];
 
 export function Header() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 4);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-40 px-6 py-5 bg-[#f9fafb]/75 backdrop-blur-md">
+    <nav
+      className={
+        "fixed top-0 left-0 right-0 z-40 px-6 py-5 bg-[#f9fafb]/75 backdrop-blur-md border-b transition-colors duration-300 " +
+        (scrolled ? "border-slate-200/70" : "border-transparent")
+      }
+    >
       <div className="max-w-[1400px] mx-auto flex items-center justify-between">
         <a href="/website" className="flex items-center gap-2.5">
           {/* eslint-disable-next-line @next/next/no-img-element -- a fixed 32px mark, no optimisation needed */}
