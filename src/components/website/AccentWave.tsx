@@ -31,7 +31,8 @@ export function AccentWave() {
     let lastY = window.scrollY,
       lastT = performance.now(),
       speed = 0,
-      glided = false;
+      glided = false,
+      glidedUp = true; // disarmed until the view has been full once
     let p = 0,
       raf = 0,
       filled = false,
@@ -183,7 +184,11 @@ export function AccentWave() {
           t0 = now;
           from = window.scrollY;
           // capped so the curve only ever moves forward (a cubic like this overshoots past 3x the distance)
-          v = Math.min(v0, (1.5 * Math.max(0, to - from)) / T);
+          const reach = (1.5 * (to - from)) / T;
+          v =
+            reach >= 0
+              ? Math.min(Math.max(v0, 0), reach)
+              : Math.max(Math.min(v0, 0), reach);
         }
         const k = Math.min(1, (now - t0) / T);
         const pos =
@@ -215,20 +220,25 @@ export function AccentWave() {
         Math.max(0, (window.scrollY - (end - WAVE_VH * h)) / (WAVE_VH * h)),
       );
       // Past AUTO_AT on the way down, the page glides the rest of the way by itself, to where the water
-      // has filled the view and the players are in place. Once per pass: it re-arms when the water is
-      // mostly drained again.
+      // has filled the view and the players are in place; it re-arms when the water is mostly drained.
+      // The same the other way: scrolling back up out of the players glides all the way back to the
+      // scroll line (the water fully drained); it re-arms once the view is full again.
       const y = window.scrollY,
         down = y > lastY,
         now = performance.now();
       // the visitor's scroll speed, px per ms, for the glide to carry on from
-      if (!glideRaf)
-        speed = Math.max(0, (y - lastY) / Math.max(8, now - lastT));
+      if (!glideRaf) speed = (y - lastY) / Math.max(8, now - lastT);
+      const lastYBefore = lastY;
       lastY = y;
       lastT = now;
       if (p < 0.3) glided = false;
+      if (p >= 0.995) glidedUp = false;
       if (down && !glided && p >= AUTO_AT && p < 1) {
         glided = true;
-        glide(end + 4, Math.min(speed, 2.5)); // a few px past the end, so it lands full
+        glide(end + 4, Math.min(Math.max(speed, 0), 2.5)); // a few px past the end, so it lands full
+      } else if (!down && y < lastYBefore && !glidedUp && p < 0.97 && p > 0) {
+        glidedUp = true;
+        glide(end - WAVE_VH * h - 4, Math.max(Math.min(speed, 0), -2.5)); // back to the scroll line, drained
       }
       if (!raf) raf = requestAnimationFrame(draw);
     };
