@@ -16,7 +16,7 @@ import {
 
 const NAVY = "#0a152d";
 const NAVY_LIFT = "#162138"; // NAVY mixed 5% toward white
-const SWEEP_S = 1;
+const SWEEP_S = 0.65;
 // A prism's spread: the spectrum in order across the band (red leads, violet trails), stripes a few px
 // apart and only lightly blurred, so the colours stay separate the way refracted light does.
 const SPECTRUM = [
@@ -59,7 +59,7 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
     useTransform(t, (p) => path(p, STRANDS[5].dx)),
     useTransform(t, (p) => path(p, STRANDS[6].dx)),
   ];
-  const opacity = useTransform(t, [-1, 0, 0.12, 0.88, 1], [0, 0, 1, 1, 0]);
+  const opacity = useTransform(t, [-1, 0, 0.12, 0.88, 1], [0, 0, 0.5, 0.5, 0]);
 
   const sweep = () => {
     const el = ref.current;
