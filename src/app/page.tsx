@@ -17,7 +17,18 @@ const GROUPS: { title: string; rows: Row[] }[] = [
       {
         href: "/website",
         name: "SixLabs Website",
-        desc: "The landing page: the hero in its rounded container, its floating bottom navbar, and the logo marquee below it.",
+        desc: "The landing page: the hero in its rounded container over the live glass tile floor, its floating bottom navbar, and the logo marquee below it.",
+      },
+    ],
+  },
+  {
+    title: "Design libraries",
+    rows: [
+      {
+        href: "/tiles",
+        name: "SixLabs Tiles",
+        desc: "The glass tile floor behind the hero, full screen and live: hover a tile to focus it, click to activate it and turn its gamer into their AI copy. Built in three.js from one exact grid, with the characters, glow and film grain.",
+        library: true,
       },
     ],
   },

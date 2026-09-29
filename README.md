@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SixLabs Screen Library
 
-## Getting Started
+Design handoff for SixLabs, set up like the BlueAI screen library: the index at `/` lists every
+surface and the design libraries they are built from.
 
-First, run the development server:
+| Route | What it is |
+|---|---|
+| `/` | The index |
+| `/website` | The landing page: hero over the live tile floor, floating navbar, logo marquee |
+| `/tiles` | SixLabs Tiles, the glass tile floor full screen (hover to focus, click to activate, R to reset) |
+
+## Run
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Where things live
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `src/components/website/` the landing page sections (Hero, LogoMarquee)
+- `src/components/tiles/TileFloor.tsx` mounts the floor into any box and tears it down on unmount
+- `src/tiles/` the three.js floor engine (plain ES modules). `floor.js` builds the scene; the rest are
+  its materials, characters, the raised-tile rig, the activation sweep and glow, and the interaction
+- `public/tiles/floor-params.json` every look and timing setting; `states.default` is the focused tile,
+  `states.shine` the activated one
+- `public/tiles/chars/` and `chars-ai/` the 17 human gamers and their charcoal AI copies
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Static renders
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`node tools/tiles/render.cjs out.png [params.json]` renders a still of the floor headlessly (needs
+Playwright). Params may set `actState` (`default` or `shine`), `staticS` (seconds into the activation),
+`vw`/`vh` (viewport) and `dpr`.

@@ -2,32 +2,25 @@
 
 import { motion } from "motion/react";
 import { ChevronRight } from "lucide-react";
-
-const HERO_VIDEO =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260505_101331_74f9b798-3f00-4e86-8a01-377aa16ffeaa.mp4";
+import { TileFloor } from "@/components/tiles/TileFloor";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function Hero() {
   return (
     <section className="relative w-full max-w-[1400px] mx-auto rounded-[48px] bg-white border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)] overflow-hidden h-[600px] flex flex-col">
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden select-none">
-        <video
-          src={HERO_VIDEO}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover scale-105 transition-transform duration-1000"
-        />
+      {/* The glass tile floor replaces the prompt's background video. It takes pointer events so the
+          tiles stay interactive; the text layer above lets them through except on its own block. */}
+      <div className="absolute inset-0 z-0 overflow-hidden select-none">
+        <TileFloor className="w-full h-full" />
       </div>
 
-      <div className="relative z-20 flex-1 px-8 md:px-16 pt-12 md:pt-16 flex flex-col items-start">
+      <div className="relative z-20 flex-1 px-8 md:px-16 pt-12 md:pt-16 flex flex-col items-start pointer-events-none">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease }}
-          className="flex flex-col items-start"
+          className="flex flex-col items-start pointer-events-auto"
         >
           <h1 className="font-display text-[42px] md:text-[56px] font-medium tracking-tight leading-[1.05] text-[#0a1b33]">
             Foundation of the
