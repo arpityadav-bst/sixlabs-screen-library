@@ -8,9 +8,10 @@ import { AnimatePresence, motion } from "motion/react";
 import { PLAYERS } from "./players-data";
 
 const ease = [0.22, 1, 0.36, 1] as const;
-// Cards in the hero container's style: its light grey, hairline border and faint shadow.
+// White cards: the page has darkened to its shade here (BackdropShade.tsx), so plain white now lifts off
+// it, with a hairline border and a soft, low shadow.
 const card =
-  "bg-[#e3e5e8] border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)]";
+  "bg-white border border-white shadow-[0_1px_2px_rgba(10,27,51,0.04),0_18px_40px_-24px_rgba(10,27,51,0.16)]";
 
 export function Players() {
   const [active, setActive] = useState(0);
@@ -84,8 +85,8 @@ export function Players() {
           </div>
         </div>
 
-        {/* Selector cards, each read as a model on file: its number, a status (the selected one is the
-            model running), the player type and a one-line read of them. */}
+        {/* Selector cards, each read as a model on file: the player type and a one-line read of them on top,
+            its number and a status along the bottom (the selected one is the model running). */}
         <div className="relative mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           {PLAYERS.map((p, k) => {
             const on = k === active;
@@ -98,9 +99,19 @@ export function Players() {
                 className={
                   "flex min-h-[176px] flex-col justify-between rounded-[28px] p-6 text-left transition-all duration-300 " +
                   card +
-                  (on ? " ring-2 ring-accent/60" : " hover:bg-[#e9ebee]")
+                  (on
+                    ? " ring-2 ring-accent/60"
+                    : " hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(10,27,51,0.05),0_24px_48px_-24px_rgba(10,27,51,0.22)]")
                 }
               >
+                <span>
+                  <span className="block font-display text-[22px] font-medium leading-tight tracking-tight text-[#0a1b33]">
+                    {p.title}
+                  </span>
+                  <span className="mt-2 block font-sans text-[14px] leading-snug text-[#64748b]">
+                    {p.tagline}
+                  </span>
+                </span>
                 <span className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
                   Model {String(k + 1).padStart(2, "0")}
                   <span
@@ -115,14 +126,6 @@ export function Players() {
                       }
                     />
                     {on ? "Running" : "Ready"}
-                  </span>
-                </span>
-                <span>
-                  <span className="block font-display text-[22px] font-medium leading-tight tracking-tight text-[#0a1b33]">
-                    {p.title}
-                  </span>
-                  <span className="mt-2 block font-sans text-[14px] leading-snug text-[#64748b]">
-                    {p.tagline}
                   </span>
                 </span>
               </button>
