@@ -70,8 +70,8 @@ body {
   .badge-bob { animation: none; }
 }
 
-/* The dot-matrix wave on the floating badges (FloatingBadges.tsx): a dense grid of accent dots, dots
-   largest down the middle of the band and thinning to nothing at both edges. */
+/* The dot-matrix wave on the floating badges (FloatingBadges.tsx): a dense grid of accent dots, solid
+   down the middle of the band and fading to nothing at both edges. */
 .dot-wave {
   background-image: radial-gradient(circle, rgba(26, 109, 255, 0.95) 0 0.95px, transparent 1.25px);
   background-size: 3.5px 3.5px;
