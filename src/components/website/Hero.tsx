@@ -131,7 +131,14 @@ export function Hero() {
           <ScrollCue />
         </div>
         {/* The humans in navy, their digital copies in the accent blue (the headline's "models" colour). */}
-        <dl className="flex items-start gap-14">
+        <motion.dl
+          // Comes in once the tiles are in: the floor is ready, the placeholder logo leaves (0.5s), then the
+          // tiles fade in (0.9s).
+          initial={{ opacity: 0, y: 6 }}
+          animate={floorReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+          transition={{ duration: 0.6, ease, delay: floorReady ? 1.2 : 0 }}
+          className="flex items-start gap-14"
+        >
           {stats.map((s) => (
             <div
               key={s.label[0]}
@@ -163,7 +170,7 @@ export function Hero() {
               </dd>
             </div>
           ))}
-        </dl>
+        </motion.dl>
         <div className="flex justify-end">
           {/* Sends the flip wave now: every tile back to default, activated or not. Just the icon; its label
             fades in to its left on hover. */}
