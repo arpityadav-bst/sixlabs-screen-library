@@ -10,7 +10,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 const STATS = [
   {
     value: "2B",
-    label: ["human players", "the 6labs model"],
+    label: ["human players the 6labs model"],
     tone: "text-[#0a1b33]",
   },
   { value: "1,009,271", label: ["digital copies made"], tone: "text-accent" },
