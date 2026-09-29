@@ -42,7 +42,7 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
   const d0 = useTransform(t, (p) => path(p, STRANDS[0].dx));
   const d1 = useTransform(t, (p) => path(p, STRANDS[1].dx));
   const d2 = useTransform(t, (p) => path(p, STRANDS[2].dx));
-  const opacity = useTransform(t, [-1, 0, 0.12, 0.88, 1], [0, 0, 0.85, 0.85, 0]);
+  const opacity = useTransform(t, [-1, 0, 0.12, 0.88, 1], [0, 0, 1, 1, 0]);
 
   const sweep = () => {
     const el = ref.current;
@@ -80,7 +80,7 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
             width="200%"
             height="120%"
           >
-            <feGaussianBlur stdDeviation="4.5" />
+            <feGaussianBlur stdDeviation="7" />
           </filter>
         </defs>
         <motion.g
