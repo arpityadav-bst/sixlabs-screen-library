@@ -27,7 +27,8 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
   let stopped = false;
   function frame(now) {
     if (stopped) return;
-    const dt = Math.min(0.05, (now - (last || now)) / 1000);
+    // P.animSpeed plays every stage faster (rise, sweep, fade, sink) with the same easing and timeline.
+    const dt = Math.min(0.05, (now - (last || now)) / 1000) * (P.animSpeed ?? 1);
     last = now;
     let moving = false;
     for (const s of T) {
