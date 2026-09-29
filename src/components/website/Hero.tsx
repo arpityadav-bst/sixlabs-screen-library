@@ -7,7 +7,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 export function Hero() {
   return (
-    <section className="relative w-full max-w-[1400px] mx-auto rounded-[48px] bg-white border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)] overflow-hidden h-[600px] flex flex-col">
+    <section className="relative w-full max-w-[1400px] mx-auto rounded-[48px] bg-[#d5d8db] border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)] overflow-hidden h-[600px] flex flex-col">
       {/* The glass tile floor replaces the prompt's background video. It takes pointer events so the
           tiles stay interactive; the text layer above lets them through except on its own block. */}
       <div className="absolute inset-0 z-0 overflow-hidden select-none">
@@ -34,7 +34,7 @@ export function Hero() {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            className="mt-8 bg-[#0a152d] text-white rounded-full px-6 py-3 text-[13px] font-semibold"
+            className="mt-8 bg-[#0a152d] text-white rounded-full px-6 py-3 text-[15px] font-medium"
           >
             Contact Us
           </motion.button>

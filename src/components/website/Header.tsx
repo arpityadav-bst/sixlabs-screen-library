@@ -26,7 +26,7 @@ export function Header() {
           ))}
         </div>
 
-        <button className="bg-[#0a152d] text-white text-base font-medium px-7 py-2.5 rounded-full hover:bg-[#1e2b47] transition-colors duration-200">
+        <button className="bg-[#0a152d] text-white text-[15px] font-medium px-6 py-3 rounded-full hover:bg-[#1e2b47] transition-colors duration-200">
           Open Wallet
         </button>
       </div>
