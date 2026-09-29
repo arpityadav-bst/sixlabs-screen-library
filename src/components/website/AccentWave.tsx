@@ -175,12 +175,15 @@ export function AccentWave() {
     const glide = (to: number, v0: number) => {
       stopGlide();
       let from = 0,
-        t0 = 0;
+        t0 = 0,
+        v = 0;
       const T = GLIDE_S * 1000;
       const step = (now: number) => {
         if (!t0) {
           t0 = now;
           from = window.scrollY;
+          // capped so the curve only ever moves forward (a cubic like this overshoots past 3x the distance)
+          v = Math.min(v0, (1.5 * Math.max(0, to - from)) / T);
         }
         const k = Math.min(1, (now - t0) / T);
         const pos =
