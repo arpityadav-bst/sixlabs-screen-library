@@ -8,10 +8,9 @@ import { AnimatePresence, motion } from "motion/react";
 import { PLAYERS } from "./players-data";
 
 const ease = [0.22, 1, 0.36, 1] as const;
-// White cards: the page has darkened to its shade here (BackdropShade.tsx), so plain white now lifts off
-// it, with a very faint dark hairline border and a soft, low shadow.
+// On the accent blue (AccentWave.tsx): the cards are white less 4%, the selected one pure white.
 const card =
-  "bg-white border border-[#0a1b33]/[0.08] shadow-[0_1px_2px_rgba(10,27,51,0.04),0_18px_40px_-24px_rgba(10,27,51,0.16)]";
+  "bg-[#f5f5f6] border-transparent shadow-[0_24px_48px_-28px_rgba(10,27,51,0.35)]";
 
 export function Players() {
   const [active, setActive] = useState(0);
@@ -87,7 +86,7 @@ export function Players() {
 
         {/* Selector cards, each read as a model on file: the player type and a one-line read of them on top,
             its number and a status along the bottom under a hairline. The selected one, the model running,
-            is filled in the accent blue; the others are white with a very faint dark stroke. */}
+            is pure white; the others are white less 4%, all on the page's accent blue. */}
         <div className="relative mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           {PLAYERS.map((p, k) => {
             const on = k === active;
@@ -100,7 +99,7 @@ export function Players() {
                 className={
                   "flex min-h-[176px] flex-col justify-between rounded-[28px] border p-6 text-left transition-all duration-300 " +
                   (on
-                    ? "bg-accent border-accent shadow-[0_1px_2px_rgba(10,27,51,0.08),0_24px_48px_-20px_rgba(26,109,255,0.45)]"
+                    ? "bg-white border-transparent shadow-[0_28px_56px_-26px_rgba(10,27,51,0.45)]"
                     : card +
                       " hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(10,27,51,0.05),0_24px_48px_-24px_rgba(10,27,51,0.22)]")
                 }
@@ -109,7 +108,7 @@ export function Players() {
                   <span
                     className={
                       "block font-display text-[22px] font-medium leading-tight tracking-tight " +
-                      (on ? "text-white" : "text-[#0a1b33]")
+                      "text-[#0a1b33]"
                     }
                   >
                     {p.title}
@@ -117,7 +116,7 @@ export function Players() {
                   <span
                     className={
                       "mt-2 block font-sans text-[14px] leading-snug " +
-                      (on ? "text-white/80" : "text-[#64748b]")
+                      "text-[#64748b]"
                     }
                   >
                     {p.tagline}
@@ -126,21 +125,19 @@ export function Players() {
                 <span
                   className={
                     "mt-6 flex items-center justify-between border-t pt-4 font-mono text-[11px] uppercase tracking-[0.14em] " +
-                    (on
-                      ? "border-white/20 text-white/70"
-                      : "border-slate-100 text-slate-400")
+                    "border-slate-200/70 text-slate-400"
                   }
                 >
                   Model {String(k + 1).padStart(2, "0")}
                   <span
                     className={
-                      "flex items-center gap-1.5 " + (on ? "text-white" : "")
+                      "flex items-center gap-1.5 " + (on ? "text-accent" : "")
                     }
                   >
                     <span
                       className={
                         "h-1.5 w-1.5 rounded-full " +
-                        (on ? "bg-white animate-pulse" : "bg-slate-300")
+                        (on ? "bg-accent animate-pulse" : "bg-slate-300")
                       }
                     />
                     {on ? "Running" : "Ready"}
