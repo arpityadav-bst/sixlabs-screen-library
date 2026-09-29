@@ -1,15 +1,16 @@
 "use client";
 
 // Third section, the players: straight on the page, no heading or panel. The selected player's title,
-// description and trait bars sit in a frosted glass card on the left; their character fills the rest,
-// over a soft blue glow. Four glass cards along the bottom pick the player (the first is selected).
+// description and trait bars sit in a card on the left; their character fills the rest,
+// over a soft blue glow. Four cards along the bottom pick the player (the first is selected).
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { PLAYERS } from "./players-data";
 
 const ease = [0.22, 1, 0.36, 1] as const;
+// Cards in the hero container's style: its light grey, hairline border and faint shadow.
 const glass =
-  "bg-white/55 backdrop-blur-xl border border-white/70 shadow-[0_20px_60px_-24px_rgba(10,27,51,0.22)]";
+  "bg-[#e3e5e8] border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)]";
 
 export function Players() {
   const [active, setActive] = useState(0);
@@ -94,8 +95,8 @@ export function Players() {
                 "flex items-center gap-3 rounded-[24px] p-3 pr-5 text-left transition-all duration-300 " +
                 glass +
                 (k === active
-                  ? " bg-white/85 ring-2 ring-accent/70"
-                  : " hover:bg-white/70")
+                  ? " ring-2 ring-accent/60"
+                  : " hover:bg-[#e9ebee]")
               }
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- small avatar from the character art */}
