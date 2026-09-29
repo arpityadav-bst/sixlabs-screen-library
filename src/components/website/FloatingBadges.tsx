@@ -192,8 +192,8 @@ function FloatingBadge({
 // The character's head and shoulders: the picture scaled up a little and anchored to the top, which
 // leaves its faded bottom outside the badge.
 function Picture({ src }: { src: string }) {
-  // eslint-disable-next-line @next/next/no-img-element -- the floor's own character art
   return (
+    // eslint-disable-next-line @next/next/no-img-element -- the floor's own character art
     <img
       src={src}
       alt=""
