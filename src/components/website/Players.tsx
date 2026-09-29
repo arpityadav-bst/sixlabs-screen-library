@@ -9,7 +9,7 @@ import { PLAYERS } from "./players-data";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 // Cards in the hero container's style: its light grey, hairline border and faint shadow.
-const glass =
+const card =
   "bg-[#e3e5e8] border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)]";
 
 export function Players() {
@@ -19,14 +19,14 @@ export function Players() {
   return (
     <section id="players" className="w-full max-w-[1400px] mx-auto mt-8">
       <div className="relative px-8 md:px-16">
-        {/* soft glow behind the character, so the glass has colour to frost */}
+        {/* soft glow behind the character */}
         <div
           aria-hidden
           className="pointer-events-none absolute right-[8%] top-[6%] h-[520px] w-[620px] rounded-full bg-[radial-gradient(closest-side,rgba(26,109,255,0.28),rgba(26,109,255,0.08)_55%,transparent)]"
         />
 
         <div className="relative grid min-h-[480px] grid-cols-1 gap-8 md:grid-cols-[minmax(0,440px)_1fr]">
-          <div className={"self-center rounded-[32px] p-8 md:p-10 " + glass}>
+          <div className={"self-center rounded-[32px] p-8 md:p-10 " + card}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={player.id}
@@ -93,7 +93,7 @@ export function Players() {
               aria-pressed={k === active}
               className={
                 "flex items-center gap-3 rounded-[24px] p-3 pr-5 text-left transition-all duration-300 " +
-                glass +
+                card +
                 (k === active
                   ? " ring-2 ring-accent/60"
                   : " hover:bg-[#e9ebee]")
