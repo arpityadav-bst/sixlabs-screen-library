@@ -242,7 +242,7 @@ export function AccentWave() {
         Math.max(0, (window.scrollY - (end - WAVE_VH * h)) / (WAVE_VH * h)),
       );
       // Past AUTO_AT on the way down, the page glides the rest of the way by itself, to where the water
-      // has filled the view and the players are in place; it re-arms when the water is mostly drained (a nudge past the finished line is enough).
+      // has filled the view and the players are in place; it re-arms once the water has fully drained (a nudge past the finished line is enough).
       // The same the other way: scrolling back up out of the players glides all the way back to the
       // scroll line (the water fully drained); it re-arms once the view is full again.
       const y = window.scrollY,
