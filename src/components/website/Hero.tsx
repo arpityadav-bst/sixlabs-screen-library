@@ -123,13 +123,17 @@ export function Hero() {
           </motion.div>
         </div>
       </section>
-      {/* Outside the container, in line with the text column: the headline numbers under its bottom-left
-          corner, the wave button under its bottom-right. */}
-      <div className="w-full max-w-[1400px] mx-auto mt-6 px-8 md:px-16 flex items-start justify-between">
+      {/* Outside the container: the headline numbers centred under it, the wave button under its
+          bottom-right corner. */}
+      <div className="w-full max-w-[1400px] mx-auto mt-6 px-8 md:px-16 grid grid-cols-[1fr_auto_1fr] items-start">
+        <span aria-hidden />
         {/* The humans in navy, their digital copies in the accent blue (the headline's "models" colour). */}
-        <dl className="-ml-10 flex items-start gap-14">
+        <dl className="flex items-start gap-14">
           {stats.map((s) => (
-            <div key={s.label[0]} className="flex flex-col">
+            <div
+              key={s.label[0]}
+              className="flex flex-col items-center text-center"
+            >
               <dt className="order-2 mt-2 text-[12px] leading-[1.4] text-slate-500">
                 {s.label.map((line) => (
                   <span key={line} className="block">
@@ -157,18 +161,20 @@ export function Hero() {
             </div>
           ))}
         </dl>
-        {/* Sends the flip wave now: every tile back to default, activated or not. Just the icon; its label
+        <div className="flex justify-end">
+          {/* Sends the flip wave now: every tile back to default, activated or not. Just the icon; its label
             fades in to its left on hover. */}
-        <button
-          type="button"
-          onClick={() => floor.current?.reset()}
-          className="group -mr-10 p-1 flex items-center gap-1.5 text-slate-400 hover:text-[#0a1b33] transition-colors duration-200"
-        >
-          <span className="text-[12px] leading-none opacity-0 translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0">
-            Next wave
-          </span>
-          <Waves className="w-4 h-4" strokeWidth={1.75} />
-        </button>
+          <button
+            type="button"
+            onClick={() => floor.current?.reset()}
+            className="group -mr-10 p-1 flex items-center gap-1.5 text-slate-400 hover:text-[#0a1b33] transition-colors duration-200"
+          >
+            <span className="text-[12px] leading-none opacity-0 translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0">
+              Next wave
+            </span>
+            <Waves className="w-4 h-4" strokeWidth={1.75} />
+          </button>
+        </div>
       </div>
     </>
   );
