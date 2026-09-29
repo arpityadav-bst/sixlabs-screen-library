@@ -3,7 +3,7 @@
 // Third section, the players: straight on the page, no heading or panel. The selected player's title,
 // description and trait bars sit in a card on the left; their character fills the rest,
 // over a soft blue glow. Four cards along the bottom pick the player (the first is selected).
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { PLAYERS } from "./players-data";
 
@@ -14,15 +14,26 @@ const card =
 
 export function Players() {
   const [active, setActive] = useState(0);
-  // The section comes in once the accent water has filled the view (AccentWave.tsx), one part at a time:
-  // the four cards, then the character, then the detail card. It leaves as the water drains.
-  const [shown, setShown] = useState(false);
+  // The section comes in once the accent water has filled the view (AccentWave.tsx) and the section is
+  // actually in view, one part at a time: the four cards, then the character, then the detail card. It
+  // leaves as the water drains.
+  const section = useRef<HTMLElement>(null);
+  const [filled, setFilled] = useState(false);
+  const [inView, setInView] = useState(false);
   useEffect(() => {
     const on = (e: Event) =>
-      setShown((e as CustomEvent<{ filled: boolean }>).detail.filled);
+      setFilled((e as CustomEvent<{ filled: boolean }>).detail.filled);
     window.addEventListener("accentwave", on);
-    return () => window.removeEventListener("accentwave", on);
+    const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), {
+      threshold: 0.2,
+    });
+    if (section.current) io.observe(section.current);
+    return () => {
+      window.removeEventListener("accentwave", on);
+      io.disconnect();
+    };
   }, []);
+  const shown = filled && inView;
   const enter = (delay: number) => ({
     initial: { opacity: 0, y: 24 },
     animate: shown ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 },
@@ -32,6 +43,7 @@ export function Players() {
 
   return (
     <section
+      ref={section}
       id="players"
       className="relative z-30 w-full max-w-[1400px] mx-auto mt-8"
     >
