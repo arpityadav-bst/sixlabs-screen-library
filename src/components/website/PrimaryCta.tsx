@@ -1,6 +1,7 @@
 "use client";
 
-// The page's primary CTA (Try now). On hover it grows a little, its fill lifts 10% toward white, and a
+// The page's primary CTA (Try now). On hover it grows a little, its fill shifts 10% toward the accent blue
+// behind the band as it passes, and a
 // prism-like spectrum band sweeps across it left to right. The band's shape follows the pill: entering, it
 // curves like the pill's left end; through the middle it straightens to a vertical line; leaving, it
 // curves like the right end. Seven spectral stripes, blended as light over the navy, make the prism
@@ -15,7 +16,7 @@ import {
 } from "motion/react";
 
 const NAVY = "#0a152d";
-const NAVY_LIFT = "#232c42"; // NAVY mixed 10% toward white
+const NAVY_SHIFT = "#0c1e42"; // NAVY moved 10% toward the accent (#1a6dff)
 const SWEEP_S = 0.65;
 // A prism's spread: the spectrum in order across the band (red leads, violet trails), stripes a few px
 // apart and only lightly blurred, so the colours stay separate the way refracted light does.
@@ -50,6 +51,14 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
     const b = h * (1 - 2 * u);
     return `M ${x} -2 Q ${x - b} ${h / 2} ${x} ${h + 2}`;
   };
+  // The shifted fill: everything the band's centre line has already crossed.
+  const filled = useTransform(t, (p) => {
+    const { w, h } = box.current;
+    const x = -h / 2 + p * (w + h);
+    const b = h * (1 - 2 * Math.min(1, Math.max(0, x / w)));
+    return `M ${-h} -2 L ${x} -2 Q ${x - b} ${h / 2} ${x} ${h + 2} L ${-h} ${h + 2} Z`;
+  });
+  const shift = useMotionValue(0); // the shifted fill's opacity: on while hovered, eases off after
   const ds = [
     useTransform(t, (p) => path(p, STRANDS[0].dx)),
     useTransform(t, (p) => path(p, STRANDS[1].dx)),
@@ -59,7 +68,11 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
     useTransform(t, (p) => path(p, STRANDS[5].dx)),
     useTransform(t, (p) => path(p, STRANDS[6].dx)),
   ];
-  const opacity = useTransform(t, [-1, 0, 0.12, 0.88, 1], [0, 0, 0.75, 0.75, 0]);
+  const opacity = useTransform(
+    t,
+    [-1, 0, 0.12, 0.88, 1],
+    [0, 0, 0.75, 0.75, 0],
+  );
 
   const sweep = () => {
     const el = ref.current;
@@ -67,22 +80,34 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
       box.current = { w: el.offsetWidth, h: el.offsetHeight };
       setSize(box.current);
     }
-    if (still) return;
+    shift.stop();
+    shift.set(1);
+    if (still) return t.set(1);
     t.set(0);
     animate(t, 1, { duration: SWEEP_S, ease: [0.45, 0, 0.25, 1] });
   };
+  const leave = () => animate(shift, 0, { duration: 0.3 });
 
   return (
     <motion.button
       ref={ref}
       type="button"
       onHoverStart={sweep}
-      whileHover={{ scale: 1.04, backgroundColor: NAVY_LIFT }}
+      onHoverEnd={leave}
+      whileHover={{ scale: 1.04 }}
       whileTap={{ scale: 0.97 }}
-      initial={{ backgroundColor: NAVY }}
+      style={{ backgroundColor: NAVY }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
       className="relative min-w-[220px] overflow-hidden rounded-full px-10 py-3.5 text-[15px] font-medium text-white"
     >
+      <svg
+        aria-hidden
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        viewBox={`0 0 ${size.w} ${size.h}`}
+        preserveAspectRatio="none"
+      >
+        <motion.path d={filled} fill={NAVY_SHIFT} style={{ opacity: shift }} />
+      </svg>
       <svg
         aria-hidden
         className="pointer-events-none absolute inset-0 h-full w-full mix-blend-screen"
