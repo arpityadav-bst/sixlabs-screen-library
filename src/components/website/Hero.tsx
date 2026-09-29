@@ -56,8 +56,8 @@ export function Hero() {
           <p className="font-sans text-[14px] md:text-[15px] text-[#64748b] mt-5 max-w-[440px] leading-relaxed">
             Our model watched millions of hours of gameplay. Now it understands the game player.
           </p>
-          {/* The primary CTA, wide, with the social-proof line under it carrying an inline link as the
-              secondary action. */}
+          {/* The primary CTA, wide, with the secondary action as an underlined link under it, then after
+              some space a quiet line of social proof. */}
           <motion.button
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
@@ -66,14 +66,16 @@ export function Hero() {
           >
             Try now
           </motion.button>
-          <p className="mt-4 font-sans text-[13px] text-slate-400">
-            One million players have a copy. Yours next.{" "}
-            <a
-              href="#"
-              className="font-medium text-[#0a1b33] underline underline-offset-4 decoration-slate-300 hover:decoration-[#0a1b33] transition-colors duration-200"
-            >
-              See What It Does
-            </a>
+          <a
+            href="#"
+            className="mt-4 text-[14px] font-medium text-[#0a1b33] underline underline-offset-4 decoration-slate-300 hover:decoration-[#0a1b33] transition-colors duration-200"
+          >
+            See What It Does
+          </a>
+          <p className="mt-10 font-sans text-[13px] leading-relaxed text-slate-400">
+            One million players have a copy.
+            <br />
+            <span className="text-slate-600">Yours next.</span>
           </p>
         </motion.div>
       </div>
