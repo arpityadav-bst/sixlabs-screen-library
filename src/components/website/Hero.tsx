@@ -56,25 +56,25 @@ export function Hero() {
           <p className="font-sans text-[14px] md:text-[15px] text-[#64748b] mt-5 max-w-[440px] leading-relaxed">
             Our model watched millions of hours of gameplay. Now it understands the game player.
           </p>
-          {/* Primary CTA plus an inline text link, with a quiet line of social proof under them. */}
-          <div className="mt-8 flex items-center gap-6">
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              className="bg-[#0a152d] text-white rounded-full px-6 py-3 text-[15px] font-medium"
-            >
-              Try now
-            </motion.button>
+          {/* The primary CTA, wide, with the social-proof line under it carrying an inline link as the
+              secondary action. */}
+          <motion.button
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            className="mt-8 min-w-[220px] bg-[#0a152d] text-white rounded-full px-10 py-3.5 text-[15px] font-medium"
+          >
+            Try now
+          </motion.button>
+          <p className="mt-4 font-sans text-[13px] text-slate-400">
+            One million players have a copy. Yours next.{" "}
             <a
               href="#"
-              className="group inline-flex items-center gap-1.5 text-[15px] font-medium text-[#0a1b33] hover:text-[#1e2b47] transition-colors duration-200"
+              className="font-medium text-[#0a1b33] underline underline-offset-4 decoration-slate-300 hover:decoration-[#0a1b33] transition-colors duration-200"
             >
               See What It Does
-              <span aria-hidden className="transition-transform duration-200 group-hover:translate-x-1">→</span>
             </a>
-          </div>
-          <p className="mt-4 font-sans text-[13px] text-slate-400">One million players have a copy. Yours next.</p>
+          </p>
         </motion.div>
       </div>
     </section>
