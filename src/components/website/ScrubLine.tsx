@@ -3,7 +3,8 @@
 // Section between the hero and "Real player. Their model.": one sentence, played out on scroll (after the
 // BlueAI "own an AI" page's second section). The section is tall and its stage sticks to the viewport,
 // so you scroll through the sentence while each word fills from faint to full ink. The fill completes at
-// COMPLETE_AT of the track, so the finished line holds for a beat before the section leaves. The phrase
+// COMPLETE_AT of the track, so the finished line holds for a beat before the section leaves. Going
+// back up it empties faster (BACK). The phrase
 // in ACCENT fills to the accent blue. Reduced motion shows it filled.
 import { useEffect, useRef, useState } from "react";
 import { FloatingBadges } from "./FloatingBadges";
@@ -12,6 +13,9 @@ const LINE =
   "A model is built from what the person does, not what they say. Put a thousand models on a new build and you know how it will land before anyone plays it.";
 const ACCENT = ["a", "thousand", "models"]; // "Put a thousand models": the words after "Put"
 const COMPLETE_AT = 0.82;
+// Scrolling back up empties the line BACK times faster than scrolling down fills it; scrolling down
+// again refills at that pace too, until it has caught up with where the scroll is.
+const BACK = 3;
 // The track runs WAVE_VH longer than the words need: the stage stays pinned while the accent water
 // (AccentWave.tsx) rises over it, and only then lets go.
 export const WAVE_VH = 1.3;
@@ -27,7 +31,9 @@ export function ScrubLine() {
 
   useEffect(() => {
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let queued = false;
+    let queued = false,
+      shown = -1, // words lit, fractional; -1 until the first paint
+      lastT = 0;
     const paint = () => {
       queued = false;
       const el = track.current;
@@ -41,7 +47,16 @@ export function ScrubLine() {
               1,
               Math.max(0, -el.getBoundingClientRect().top / scrollable),
             );
-      setLit(Math.floor(Math.min(1, p / COMPLETE_AT) * WORDS.length));
+      // where the scroll puts the fill, in words
+      const t = Math.min(1, p / COMPLETE_AT) * WORDS.length;
+      if (shown < 0) shown = t;
+      else {
+        const d = t - lastT;
+        // up: empties BACK times as fast; down: refills as fast, never past where the scroll is
+        shown = Math.max(0, Math.min(t, shown + d * BACK));
+      }
+      lastT = t;
+      setLit(Math.floor(shown));
     };
     const onScroll = () => {
       if (!queued) {
