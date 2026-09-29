@@ -8,9 +8,11 @@ import { AnimatePresence, motion } from "motion/react";
 import { PLAYERS } from "./players-data";
 
 const ease = [0.22, 1, 0.36, 1] as const;
-// On the accent blue (AccentWave.tsx): the cards are white less 4%, the selected one pure white.
+// On the accent blue (AccentWave.tsx): white cards.
 const card =
-  "bg-[#f5f5f6] border-transparent shadow-[0_24px_48px_-28px_rgba(10,27,51,0.35)]";
+  "bg-white border-transparent shadow-[0_24px_48px_-28px_rgba(10,27,51,0.35)]";
+// the unselected player cards are the same white, held back by opacity (a little more on hover)
+const UNSELECTED = 0.6;
 
 export function Players() {
   const [active, setActive] = useState(0);
@@ -36,9 +38,10 @@ export function Players() {
     };
   }, []);
   const shown = filled && inView;
-  const enter = (delay: number) => ({
+  // `to` is the opacity it settles at: the unselected player cards rest at UNSELECTED
+  const enter = (delay: number, to = 1) => ({
     initial: { opacity: 0, y: 24 },
-    animate: shown ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 },
+    animate: shown ? { opacity: to, y: 0 } : { opacity: 0, y: 24 },
     transition: shown ? { duration: 0.6, ease, delay } : { duration: 0.25 },
   });
   const player = PLAYERS[active];
@@ -123,14 +126,15 @@ export function Players() {
 
         {/* Selector cards, each read as a model on file: the player type and a one-line read of them on top,
             its number and a status along the bottom under a hairline. The selected one, the model running,
-            is pure white; the others are white less 4%, all on the page's accent blue. */}
+            is pure white; the others are the same white at lower opacity, all on the page's accent blue. */}
         <div className="relative mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           {PLAYERS.map((p, k) => {
             const on = k === active;
             return (
               <motion.button
                 key={p.id}
-                {...enter(k * 0.08)}
+                {...enter(k * 0.08, on ? 1 : UNSELECTED)}
+                whileHover={on ? undefined : { opacity: 0.85 }}
                 type="button"
                 onClick={() => setActive(k)}
                 aria-pressed={on}
