@@ -77,7 +77,7 @@ body {
    than the card, masked to the outline only, fading in on hover. In white here, for white cards on the
    accent blue (Players.tsx). */
 .sheen {
-  --sheen-w: 1.5px;
+  --sheen-w: 2px;
   --sheen-r: 28px;
 }
 .sheen::after {
@@ -87,8 +87,9 @@ body {
   z-index: 3;
   padding: var(--sheen-w);
   border-radius: calc(var(--sheen-r) + var(--sheen-w));
-  filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.7));
-  background: radial-gradient(260px circle at var(--gx, 50%) var(--gy, 50%), #ffffff, rgba(255, 255, 255, 0.35) 34%, transparent 68%);
+  /* a bright core and a wide soft bloom, so the edge shines against the blue */
+  filter: drop-shadow(0 0 2px #ffffff) drop-shadow(0 0 10px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 22px rgba(255, 255, 255, 0.6));
+  background: radial-gradient(320px circle at var(--gx, 50%) var(--gy, 50%), #ffffff, rgba(255, 255, 255, 0.75) 38%, transparent 72%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
