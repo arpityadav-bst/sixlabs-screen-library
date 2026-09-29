@@ -6,7 +6,9 @@ export type Player = {
   tagline: string; // one line for the selector card
   body: string;
   picture: string;
-  video?: string; // a left-to-right turn the cursor scrubs (PlayerPortrait.tsx), in place of the still
+  // a left-to-right turn the cursor scrubs (PlayerPortrait.tsx), in place of the still; `straight` is where
+  // in it (a share of its length) they look straight at the camera
+  video?: { src: string; straight: number };
   traits: { label: string; value: number }[];
 };
 
@@ -29,7 +31,7 @@ export const PLAYERS: Player[] = [
     tagline: "Maps every corner before the main path.",
     body: "Opens every menu. Walks the wrong way on purpose. Finds your bugs before QA does.",
     picture: "/players/explorer.webp?v=3",
-    video: "/players/explorer.webm?v=2",
+    video: { src: "/players/explorer.webm?v=3", straight: 0.49 },
     traits: traits(0.95, 0.72, 0.55, 0.6),
   },
   {

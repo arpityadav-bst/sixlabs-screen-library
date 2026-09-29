@@ -125,7 +125,8 @@ export function Players() {
                 {/* a player with a clip turns with the cursor (PlayerPortrait); the others are stills */}
                 {player.video ? (
                   <PlayerPortrait
-                    src={player.video}
+                    src={player.video.src}
+                    straight={player.video.straight}
                     label={player.title}
                     className="h-[var(--ph)] w-auto max-w-none select-none"
                   />
