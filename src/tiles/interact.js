@@ -16,7 +16,8 @@ import { ACT_SECONDS, DEACT_SECONDS, COMMIT_SECONDS } from './sweep.js';
 // Returns a controller: stop() detaches every listener and halts pending frames (for unmounting); hover,
 // click, busy, spent, unspend and inert let the auto-play (autoplay.js) drive the same tiles; onUser, when
 // set, hears whether the visitor's pointer is on a live tile.
-export function startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU, nearU, P, expose = false }) {
+// onConvert fires once each time a character becomes their AI copy.
+export function startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU, nearU, P, expose = false, onConvert }) {
   // fl: linear fade, eased into state.F. locked: clicked, so the activation runs to its end regardless.
   const T = rigs.map((rig) => ({ rig, tL: 0, tA: 0, fl: 0, leaving: false, locked: false }));
   const spent = new Set(); // "i,j" of tiles that have been activated
@@ -61,7 +62,7 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
       const ch = chars.get(st.cell.join(','));
       if (ch) {
         ch.setLift(P.lift * st.L);
-        if (st.S >= ACT_SECONDS && st.F > 0.99) ch.converted = true;
+        if (st.S >= ACT_SECONDS && st.F > 0.99 && !ch.converted) { ch.converted = true; onConvert?.(); }
         ch.setScan(ch.converted ? 1 : s.rig.values().convert * st.F);
       }
       if (st.L === 0 && s.tL === 0) {

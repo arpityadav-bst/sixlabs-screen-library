@@ -7,18 +7,28 @@ import { TileFloor, type FloorHandle } from "@/components/tiles/TileFloor";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-const STATS = [
-  {
-    value: "2B",
-    label: ["human players the 6labs model"],
-    tone: "text-[#0a1b33]",
-  },
-  { value: "1,009,271", label: ["digital copies made"], tone: "text-accent" },
-];
+// Digital copies start from the published figure and count up by one each time a character on the floor
+// becomes their AI copy.
+const COPIES_BASE = 1_009_271;
 
 export function Hero() {
   const [floorReady, setFloorReady] = useState(false);
   const floor = useRef<FloorHandle | null>(null);
+  const [copies, setCopies] = useState(COPIES_BASE);
+  const stats = [
+    {
+      value: "2B",
+      label: ["human players the 6labs model"],
+      tone: "text-[#0a1b33]",
+      live: false,
+    },
+    {
+      value: copies.toLocaleString("en-US"),
+      label: ["digital copies made"],
+      tone: "text-accent",
+      live: true,
+    },
+  ];
   return (
     <>
       <section className="relative w-full max-w-[1400px] mx-auto rounded-[48px] bg-[#e3e5e8] border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)] overflow-hidden h-[680px] flex flex-col">
@@ -33,6 +43,7 @@ export function Hero() {
               floor.current = f;
               setFloorReady(true);
             }}
+            onConvert={() => setCopies((c) => c + 1)}
           />
         </div>
 
@@ -117,8 +128,8 @@ export function Hero() {
       <div className="w-full max-w-[1400px] mx-auto mt-6 px-8 md:px-16 flex items-start justify-between">
         {/* The humans in navy, their digital copies in the accent blue (the headline's "models" colour). */}
         <dl className="flex items-start gap-14">
-          {STATS.map((s) => (
-            <div key={s.value} className="flex flex-col">
+          {stats.map((s) => (
+            <div key={s.label[0]} className="flex flex-col">
               <dt className="order-2 mt-2 text-[12px] leading-[1.4] text-slate-500">
                 {s.label.map((line) => (
                   <span key={line} className="block">
@@ -132,7 +143,16 @@ export function Hero() {
                   s.tone
                 }
               >
-                {s.value}
+                {/* the live figure settles in from just above each time it counts up */}
+                <motion.span
+                  key={s.value}
+                  className="inline-block"
+                  initial={s.live ? { opacity: 0.35, y: -5 } : false}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, ease }}
+                >
+                  {s.value}
+                </motion.span>
               </dd>
             </div>
           ))}

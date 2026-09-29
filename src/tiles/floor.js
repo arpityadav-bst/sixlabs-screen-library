@@ -19,7 +19,7 @@ import { tileGeometry } from './geometry.js';
 import { playIntro } from './intro.js';
 import { startAutoplay } from './autoplay.js';
 
-export async function createFloor(container, { params, base = '/tiles', isStatic = false, expose = false, introDelay = 0 } = {}) {
+export async function createFloor(container, { params, base = '/tiles', isStatic = false, expose = false, introDelay = 0, onConvert = () => {} } = {}) {
   const RAW = params ?? await fetch(`${base}/floor-params.json`).then((r) => r.json());
   const common = Object.assign({ W: 1920, H: 1080, assetBase: base }, RAW);
   const PF = Object.assign({}, common, RAW.states?.default ?? {}), PA = Object.assign({}, common, RAW.states?.shine ?? {});
@@ -243,7 +243,7 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   let stop = () => {}, reset = () => {}, disposed = false;
   if (!isStatic) intro.done.then(() => {
     if (disposed) return;
-    const ctl = startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU: U, nearU, P, expose });
+    const ctl = startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU: U, nearU, P, expose, onConvert });
     const cast = createCasts({ P, renderer, chars, bustTiles, pictures, gone: () => disposed });
     const auto = startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, cast, half });
     stop = () => { auto.stop(); ctl.stop(); };
