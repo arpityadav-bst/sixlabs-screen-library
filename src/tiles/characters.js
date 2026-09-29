@@ -46,8 +46,9 @@ export function loadPictures(P, names) {
 export const preloadCharacters = (P) => loadPictures(P, P.chars ?? []);
 
 // Casts a set of characters onto the tiles: a Map "i,j" -> file name. Design-frame tiles (rank 0) take
-// the pool in order, as they always have. Extra tiles (other screen shapes) take the least recently used
-// character that no tile within two cells already shows. `active` (static renders) pins one tile.
+// the pool in order, as they always have. Then the rest of the tiles in view (rank 1), then those off
+// screen (rank 2), each take the least recently used character that no tile within two cells already
+// shows, so every character is used in view before any repeats there. `active` (static renders) pins one tile.
 // spread: every tile takes the least recently used character (for a cast smaller than the design frame).
 export function castTiles(tiles, names, active, spread = false) {
   const ordered = [...tiles].sort((a, b) => ((a.rank ?? 0) - (b.rank ?? 0)) || (a.screen[1] - b.screen[1]) || (a.screen[0] - b.screen[0]));

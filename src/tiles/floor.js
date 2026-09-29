@@ -150,8 +150,13 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   // so the design's line-up stays the same whatever the screen.
   const inDesign = ([i, j]) => { const v = new THREE.Vector3(cx(i), tileH, cz(j)).project(camera); return Math.abs(v.x) < 1.12 && Math.abs(v.y) < 1.2; };
   const busted = cells.filter(([i, j]) => inDesign([i, j]) || onSomeScreen(camera, P, new THREE.Vector3(cx(i), tileH, cz(j))));
+  // Casting order (characters.js): the design frame first (rank 0), then the rest of what this screen shows
+  // (rank 1), then tiles off screen (rank 2), so repeats land off screen before they land in view.
+  const nowCam = camera.clone();
+  placeCamera(nowCam, P, Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight));
+  const inView = ([i, j]) => { const v = new THREE.Vector3(cx(i), tileH, cz(j)).project(nowCam); return Math.abs(v.x) < 1.05 && Math.abs(v.y) < 1.1; };
   const bustTiles = busted.map(([i, j]) => (
-    { i, j, x: cx(i), y: tileH, z: cz(j), active: i === ia && j === ja, screen: toScreen(cx(i), cz(j)), rank: inDesign([i, j]) ? 0 : 1 }));
+    { i, j, x: cx(i), y: tileH, z: cz(j), active: i === ia && j === ja, screen: toScreen(cx(i), cz(j)), rank: inDesign([i, j]) ? 0 : inView([i, j]) ? 1 : 2 }));
   const chars = await addCharacters(field, P, bustTiles, pictures);
 
   // Capture the reflection from the activeAt tile, with that tile and its busts out of the way.
