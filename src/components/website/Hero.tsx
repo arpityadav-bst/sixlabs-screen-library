@@ -87,14 +87,17 @@ export function Hero() {
             <br />
             <span className="text-slate-600">Yours next.</span>
           </p>
-          {/* Sends the flip wave now: every tile back to default, activated or not. */}
+          {/* Sends the flip wave now: every tile back to default, activated or not. Its label slides in on hover. */}
           <button
             type="button"
-            aria-label="Reset the tiles"
+            aria-label="Send wave"
             onClick={() => floor.current?.reset()}
-            className="mt-3 -ml-1 -mb-1 p-1 flex rounded-full text-slate-400 hover:text-slate-600 transition-colors duration-200 pointer-events-auto"
+            className="group mt-3 -ml-1 -mb-1 p-1 flex items-center gap-1.5 rounded-full text-slate-400 hover:text-slate-600 transition-colors duration-200 pointer-events-auto"
           >
-            <RotateCcw className="w-3.5 h-3.5" strokeWidth={1.75} />
+            <RotateCcw className="w-3.5 h-3.5 transition-transform duration-300 group-hover:-rotate-45" strokeWidth={1.75} />
+            <span className="text-[12px] leading-none opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0">
+              Send wave
+            </span>
           </button>
         </motion.div>
       </div>
