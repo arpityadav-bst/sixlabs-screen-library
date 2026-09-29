@@ -59,7 +59,7 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
     useTransform(t, (p) => path(p, STRANDS[5].dx)),
     useTransform(t, (p) => path(p, STRANDS[6].dx)),
   ];
-  const opacity = useTransform(t, [-1, 0, 0.12, 0.88, 1], [0, 0, 0.5, 0.5, 0]);
+  const opacity = useTransform(t, [-1, 0, 0.12, 0.88, 1], [0, 0, 0.75, 0.75, 0]);
 
   const sweep = () => {
     const el = ref.current;
