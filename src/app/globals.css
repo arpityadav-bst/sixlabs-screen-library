@@ -74,12 +74,4 @@ body {
   .badge-bob { animation: none; }
 }
 
-/* The dot-matrix wave on the floating badges (FloatingBadges.tsx): a dense grid of accent dots, solid
-   down the middle of the band and fading to nothing at both edges. */
-.dot-wave {
-  background-image: radial-gradient(circle, rgba(26, 109, 255, 0.95) 0 0.95px, transparent 1.25px);
-  background-size: 3.5px 3.5px;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 38%, #000 62%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 38%, #000 62%, transparent);
-}
 
