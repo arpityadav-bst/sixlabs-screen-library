@@ -16,6 +16,8 @@ export function AsciiBackdrop() {
     mountAsciiField({
       host,
       track: document.documentElement,
+      reach: 120, // cursor pool radius in px (onBlue: 190)
+      lens: 0.24, // how much the pool brightens a glyph (onBlue: 0.42)
       pointer: window.matchMedia("(hover: hover)").matches,
     });
   }, []);
