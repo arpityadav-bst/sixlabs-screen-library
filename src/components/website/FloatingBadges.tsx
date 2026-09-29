@@ -163,7 +163,7 @@ function FloatingBadge({
           onHoverEnd={leave}
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 300, damping: 22 }}
-          className="pointer-events-auto relative drop-shadow-[0_8px_10px_rgba(10,27,51,0.10)]"
+          className="pointer-events-auto relative drop-shadow-[0_6px_8px_rgba(10,27,51,0.05)]"
           style={{ width: b.size, rotate: b.tilt }}
         >
           <Tile src={`/tiles/float/${b.name}.webp?v=${TILES_V}`} />
