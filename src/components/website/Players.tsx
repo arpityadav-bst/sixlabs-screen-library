@@ -1,8 +1,8 @@
 "use client";
 
 // Third section, the players: straight on the page, no heading or panel. The selected player's title,
-// description and trait bars sit straight on the blue on the left, in white; their character fills the rest,
-// over a soft blue glow. Four cards along the bottom pick the player (the first is selected).
+// description and trait bars sit straight on the blue on the left, in white; their portrait fills the rest, large, its
+// chest fading out behind the four cards (it runs under them), over a soft blue glow. Four cards along the bottom pick the player (the first is selected).
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { PLAYERS } from "./players-data";
@@ -104,7 +104,7 @@ export function Players() {
 
           <motion.div
             {...enter(0.45)}
-            className="relative flex items-end justify-center"
+            className="pointer-events-none relative -mb-44 flex items-end justify-center"
           >
             <AnimatePresence mode="popLayout">
               {}
@@ -112,9 +112,9 @@ export function Players() {
                 key={player.id}
                 src={player.picture}
                 alt={player.title}
-                width={768}
-                height={768}
-                className="h-[480px] w-auto select-none"
+                width={1200}
+                height={1583}
+                className="h-[720px] w-auto max-w-none select-none"
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.02 }}
@@ -127,7 +127,7 @@ export function Players() {
         {/* Selector cards, each read as a model on file: the player type and a one-line read of them on top,
             its number and a status along the bottom under a hairline. The selected one, the model running,
             is pure white; the others are the same white at lower opacity, all on the page's accent blue. */}
-        <div className="relative mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="relative z-10 mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           {PLAYERS.map((p, k) => {
             const on = k === active;
             return (
