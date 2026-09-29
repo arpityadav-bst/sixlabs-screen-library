@@ -34,7 +34,7 @@ const TYPES = { '.js': 'text/javascript', '.html': 'text/html', '.png': 'image/p
   await page.goto('http://sixlabs.local/');
   await page.waitForFunction(() => window.__done === true, null, { timeout: 60000 });
   console.log(JSON.stringify(await page.evaluate(() => window.__info)));
-  await page.locator('canvas').screenshot({ path: out });
+  await page.locator('canvas').screenshot({ path: out, omitBackground: !!params.transparent });
   console.log('saved', out, ((Date.now() - t0) / 1000).toFixed(1) + 's');
   await browser.close();
 })();

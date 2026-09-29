@@ -1,5 +1,5 @@
 // Top header: layout and styling from the Halo prompt's navbar, recoloured to this site's light palette;
-// content from the 6labs.ai header. The mark is a placeholder until the logo file arrives.
+// content from the 6labs.ai header. The mark is the SixLabs logo rendered in the tile glass (tools/tiles).
 import { LanguageMenu } from "./LanguageMenu";
 
 const LINKS = ["Product", "The players", "What it does"];
@@ -9,9 +9,8 @@ export function Header() {
     <nav className="absolute top-0 left-0 right-0 z-20 px-6 py-5">
       <div className="max-w-[1400px] mx-auto flex items-center justify-between">
         <a href="/website" className="flex items-center gap-2.5">
-          <span className="w-7 h-7 rounded-lg bg-[#0a1b33] text-white flex items-center justify-center text-[13px]">
-            ✦
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element -- a fixed 32px mark, no optimisation needed */}
+          <img src="/brand/sixlabs-mark-3d.png" alt="" width={32} height={32} className="w-8 h-8" />
           <span className="font-display text-2xl font-medium tracking-tight text-[#0a1b33]">6labs.ai</span>
         </a>
 
