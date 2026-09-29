@@ -30,7 +30,7 @@ type Badge = {
 const BADGES: Badge[] = [
   {
     name: "03-braids",
-    x: "13%",
+    x: "15%",
     y: "27%",
     size: 188,
     depth: 1.4,
@@ -39,7 +39,7 @@ const BADGES: Badge[] = [
   },
   {
     name: "18-afro-esports",
-    x: "84%",
+    x: "82%",
     y: "25%",
     size: 164,
     depth: 0.8,
@@ -48,7 +48,7 @@ const BADGES: Badge[] = [
   },
   {
     name: "19-ginger-streamer",
-    x: "4.5%",
+    x: "10%",
     y: "56%",
     size: 152,
     depth: 0.6,
@@ -57,7 +57,7 @@ const BADGES: Badge[] = [
   },
   {
     name: "24-pink-hair-rhythm",
-    x: "93%",
+    x: "88%",
     y: "53%",
     size: 196,
     depth: 1.6,
@@ -66,7 +66,7 @@ const BADGES: Badge[] = [
   },
   {
     name: "14-silver-bob-cat-ears",
-    x: "18%",
+    x: "20%",
     y: "77%",
     size: 160,
     depth: 1,
@@ -75,7 +75,7 @@ const BADGES: Badge[] = [
   },
   {
     name: "10-cap-cheer",
-    x: "79%",
+    x: "77%",
     y: "79%",
     size: 172,
     depth: 1.2,
