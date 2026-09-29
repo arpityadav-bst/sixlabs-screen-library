@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "motion/react";
-import { ChevronRight } from "lucide-react";
 import { TileFloor } from "@/components/tiles/TileFloor";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -40,29 +39,6 @@ export function Hero() {
             Contact Us
           </motion.button>
         </motion.div>
-      </div>
-
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30">
-        <motion.nav
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease }}
-          className="flex items-center bg-white/90 backdrop-blur-2xl px-1.5 py-1.5 rounded-full shadow-[0_12px_40px_rgba(0,0,0,0.08)] border border-slate-200/40"
-        >
-          <div className="w-9 h-9 rounded-full bg-white border border-slate-100 shadow-sm flex items-center justify-center text-[#0a1b33] text-[14px]">
-            ✦
-          </div>
-          <button className="px-4 py-2 text-[12px] font-semibold text-slate-500 hover:text-[#0a1b33] transition-colors">
-            Products
-          </button>
-          <button className="px-4 py-2 text-[12px] font-semibold text-slate-500 hover:text-[#0a1b33] transition-colors">
-            Docs
-          </button>
-          <button className="ml-1 flex items-center gap-1 bg-white px-5 py-2 rounded-full text-[12px] font-semibold text-[#0a1b33] border border-slate-200/60 shadow-sm hover:border-slate-300 transition-all">
-            Get in touch
-            <ChevronRight className="w-3.5 h-3.5" />
-          </button>
-        </motion.nav>
       </div>
     </section>
   );

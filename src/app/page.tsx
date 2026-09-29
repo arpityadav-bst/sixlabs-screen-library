@@ -17,7 +17,7 @@ const GROUPS: { title: string; rows: Row[] }[] = [
       {
         href: "/website",
         name: "SixLabs Website",
-        desc: "The landing page: the hero in its rounded container over the live glass tile floor, its floating bottom navbar, and the logo marquee below it.",
+        desc: "The landing page: the top header and the hero in its rounded container over the live glass tile floor.",
       },
     ],
   },

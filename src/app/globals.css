@@ -9,15 +9,3 @@
 body {
   background: #f9fafb;
 }
-
-/* Seamless logo marquee: the list is rendered twice, so sliding by half its width loops exactly. */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-.marquee-track {
-  animation: marquee 32s linear infinite;
-}
-.marquee:hover .marquee-track {
-  animation-play-state: paused;
-}
