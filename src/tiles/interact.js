@@ -111,6 +111,7 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
   };
   canvas.addEventListener('pointermove', (e) => {
     const c = pick(e);
+    canvas.style.cursor = c ? 'pointer' : ''; // only live tiles are clickable
     if (c?.join(',') !== hovered?.join(',')) { hovered = c; ctl.onUser?.(!!c); hover(c); }
   });
   canvas.addEventListener('pointerleave', () => { hovered = null; ctl.onUser?.(false); hover(null); });
@@ -127,7 +128,6 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
     kick();
   };
   window.addEventListener('keydown', onKey);
-  canvas.style.cursor = 'pointer';
   // read-only state probe for automated checks
   if (expose) window.__floorState = () => T.map((s) => ({ cell: s.rig.state.cell, L: +s.rig.state.L.toFixed(3), S: +s.rig.state.S.toFixed(2), fl: +s.fl.toFixed(2), tL: s.tL, tA: s.tA }));
   const ctl = {

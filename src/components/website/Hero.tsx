@@ -92,7 +92,7 @@ export function Hero() {
             type="button"
             aria-label="Reset the tiles"
             onClick={() => floor.current?.reset()}
-            className="mt-3 -ml-1 p-1 rounded-full text-slate-400 hover:text-slate-600 transition-colors duration-200 pointer-events-auto"
+            className="mt-3 -ml-1 -mb-1 p-1 flex rounded-full text-slate-400 hover:text-slate-600 transition-colors duration-200 pointer-events-auto"
           >
             <RotateCcw className="w-3.5 h-3.5" strokeWidth={1.75} />
           </button>
