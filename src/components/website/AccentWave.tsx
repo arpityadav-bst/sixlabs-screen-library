@@ -14,7 +14,8 @@ const ACCENT = [26, 109, 255];
 const ARC = 90; // how much higher the middle of the edge is than its ends, px
 const BAND = 480; // depth of the halftone above the solid colour, px
 const GRAIN = 0.07; // noise strength on the blue
-const AUTO_AT = 0.5; // share of the rise after which the page glides on into the players by itself
+const AUTO_AT = 0.3;
+const GLIDE_S = 1.8; // the glide's length, seconds // share of the rise after which the page glides on into the players by itself
 const WORD = "The players"; // the next section's name, huge in the halftone
 const WORD_ALPHA = 0.14;
 const PITCH = 6; // halftone grid, px; a dot of radius PITCH / 2 touches its neighbours
@@ -137,6 +138,27 @@ export function AccentWave() {
       }
       if (p >= 1) announce(true);
     };
+    // A slow eased glide to `to` (GLIDE_S), ours rather than the browser's quick smooth scroll. The
+    // visitor scrolling or touching during it stops it and hands the page back.
+    let glideRaf = 0;
+    const stopGlide = () => {
+      cancelAnimationFrame(glideRaf);
+      glideRaf = 0;
+    };
+    const glide = (to: number) => {
+      stopGlide();
+      const from = window.scrollY,
+        t0 = performance.now();
+      const step = (now: number) => {
+        const k = Math.min(1, (now - t0) / 1000 / GLIDE_S);
+        const e = k < 0.5 ? 4 * k * k * k : 1 - (-2 * k + 2) ** 3 / 2;
+        window.scrollTo({ top: from + (to - from) * e, behavior: "instant" });
+        glideRaf = k < 1 ? requestAnimationFrame(step) : 0;
+      };
+      glideRaf = requestAnimationFrame(step);
+    };
+    window.addEventListener("wheel", stopGlide, { passive: true });
+    window.addEventListener("touchstart", stopGlide, { passive: true });
     const measure = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       if (w !== window.innerWidth || h !== window.innerHeight) {
@@ -165,7 +187,7 @@ export function AccentWave() {
       if (p < 0.3) glided = false;
       if (down && !glided && p >= AUTO_AT && p < 1) {
         glided = true;
-        window.scrollTo({ top: end, behavior: "smooth" });
+        glide(end);
       }
       if (!raf) raf = requestAnimationFrame(draw);
     };
@@ -176,6 +198,9 @@ export function AccentWave() {
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", measure);
       window.removeEventListener("resize", measure);
+      window.removeEventListener("wheel", stopGlide);
+      window.removeEventListener("touchstart", stopGlide);
+      stopGlide();
     };
   }, []);
 
