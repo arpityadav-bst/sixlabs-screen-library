@@ -82,10 +82,12 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   scene.add(field);
   const cells = [];
   for (let i = 0; i <= iMax; i++) for (let j = jMin; j <= jMax; j++) cells.push([i, j]);
-  const m4 = new THREE.Matrix4(), slot = new Map();
+  // Every tile carries an instance colour from the start (white = untouched), so tinting one later is a
+  // buffer update, not a shader recompile.
+  const m4 = new THREE.Matrix4(), slot = new Map(), WHITE = new THREE.Color('#ffffff'), SPENT = new THREE.Color(P.spentTint ?? '#b8bbc1');
   const addTiles = (list, materials) => {
     const mesh = new THREE.InstancedMesh(geo, materials, list.length);
-    list.forEach(([i, j], k) => { mesh.setMatrixAt(k, m4.makeTranslation(cx(i), 0, cz(j))); slot.set(`${i},${j}`, [mesh, k]); });
+    list.forEach(([i, j], k) => { mesh.setMatrixAt(k, m4.makeTranslation(cx(i), 0, cz(j))); mesh.setColorAt(k, WHITE); slot.set(`${i},${j}`, [mesh, k]); });
     field.add(mesh);
   };
   // Raises one glass tile (it rides up under the cobalt slab) or hides it once the slab covers it.
@@ -93,6 +95,12 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
     const [mesh, k] = slot.get(`${i},${j}`);
     mesh.setMatrixAt(k, hidden ? m4.makeScale(0, 0, 0) : m4.makeTranslation(cx(i), y, cz(j)));
     mesh.instanceMatrix.needsUpdate = true;
+  };
+  // A spent tile (activated once, back in the floor) keeps a slight charcoal tint.
+  const tint = (key, spent) => {
+    const [mesh, k] = slot.get(key);
+    mesh.setColorAt(k, spent ? SPENT : WHITE);
+    mesh.instanceColor.needsUpdate = true;
   };
   // Neighbour tops take the raised tile's contact shadow and blue spill (the rig sets their strength).
   const nearU = nearShadeUniforms(P, { x: ax, z: azz, half });
@@ -207,7 +215,7 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   };
   let stop = () => {}, disposed = false;
   if (!isStatic) intro.done.then(() => {
-    if (!disposed) stop = startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, floorU: U, nearU, P, expose });
+    if (!disposed) stop = startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU: U, nearU, P, expose });
   });
 
   window.__floorReady = true;

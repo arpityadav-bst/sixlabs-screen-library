@@ -2,8 +2,11 @@
 //   hover a tile      : default -> focused (it rises and turns cobalt, smoothly, in one motion)
 //   click it          : focused -> activated (a rim beam runs from the front corner to both side corners,
 //                       the tile brightens, its shadows turn blue, the human becomes their AI copy)
-//   move away         : activated -> focused -> back down into the grid, the same smooth motion reversed
-//   R                 : every character back to human
+//                       Once clicked, the tile plays its whole activation whatever the pointer does, then
+//                       settles back into the grid on its own, keeps a slight charcoal tint and no
+//                       longer reacts to the pointer (spent).
+//   move away         : focused -> back down into the grid, the same smooth motion reversed
+//   R                 : every character back to human, every spent tile live again
 // Every value eases toward its target with an exponential ease-out, so any change can interrupt any
 // other smoothly. Two rigs let one tile settle while the next one rises. Frames render at one sample
 // while anything moves, then sharpen progressively once the scene comes to rest (post.js).
@@ -11,12 +14,15 @@ import * as THREE from 'three';
 import { ACT_SECONDS, DEACT_SECONDS, COMMIT_SECONDS } from './sweep.js';
 
 // Returns a stop() that detaches every listener and halts pending frames (for unmounting).
-export function startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, floorU, nearU, P, expose = false }) {
-  const T = rigs.map((rig) => ({ rig, tL: 0, tA: 0, fl: 0, leaving: false })); // fl: linear fade, eased into state.F
+export function startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU, nearU, P, expose = false }) {
+  // fl: linear fade, eased into state.F. locked: clicked, so the activation runs to its end regardless.
+  const T = rigs.map((rig) => ({ rig, tL: 0, tA: 0, fl: 0, leaving: false, locked: false }));
+  const spent = new Set(); // "i,j" of tiles that have been activated
   const done = (s) => s.rig.state.S >= ACT_SECONDS && s.fl >= 1;
   // The pointer has left this tile: past the commit point the activation finishes first (leaving), else
   // it reverts now. Either way the tile ends back down in the grid as a default tile.
   const release = (s) => {
+    if (s.locked) return;
     if (s.tA === 1 && s.rig.state.S >= COMMIT_SECONDS && !done(s)) s.leaving = true;
     else { s.tA = 0; s.tL = 0; s.leaving = false; }
   };
@@ -35,6 +41,7 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
       const st = s.rig.state;
       if (!st.cell) continue;
       if (s.leaving && done(s)) { s.leaving = false; s.tA = 0; s.tL = 0; } // finished: now go back down
+      if (s.locked && done(s)) { s.locked = false; s.tA = 0; s.tL = 0; spent.add(st.cell.join(',')); }
       // order: rise before activating, and fade back to focused before sinking
       const activating = st.L > 0.9 && s.tA === 1;
       if (activating) {
@@ -53,7 +60,10 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
         if (st.S >= ACT_SECONDS && st.F > 0.99) ch.converted = true;
         ch.setScan(ch.converted ? 1 : s.rig.values().convert * st.F);
       }
-      if (st.L === 0 && s.tL === 0) { s.rig.clear(); s.fl = 0; continue; }
+      if (st.L === 0 && s.tL === 0) {
+        if (spent.has(st.cell.join(','))) tint(st.cell.join(','), true); // back in the floor: now charcoal
+        s.rig.clear(); s.fl = 0; continue;
+      }
       s.rig.apply();
       if (st.L !== wantL || s.leaving || (activating ? !done(s) : s.fl > 0)) moving = true;
     }
@@ -75,8 +85,10 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
     let target = key && T.find((s) => s.rig.state.cell?.join(',') === key);
     for (const s of T) if (s !== target) release(s);
     if (key && !target) {
-      target = T.find((s) => !s.rig.state.cell) ?? T.slice().sort((a, b) => a.rig.state.L - b.rig.state.L)[0];
-      if (target.rig.state.cell) { chars.get(target.rig.state.cell.join(','))?.setLift(0); target.rig.clear(); }
+      target = T.find((s) => !s.rig.state.cell) ?? T.filter((s) => !s.locked).sort((a, b) => a.rig.state.L - b.rig.state.L)[0];
+      if (!target) return; // both rigs busy with clicked tiles
+      const was = target.rig.state.cell?.join(',');
+      if (was) { chars.get(was)?.setLift(0); if (spent.has(was)) tint(was, true); target.rig.clear(); }
       Object.assign(target, { fl: 0, tA: 0, leaving: false });
       target.rig.setCell(...cell);
     }
@@ -92,7 +104,7 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
     ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, 1 - ((e.clientY - r.top) / r.height) * 2);
     rc.setFromCamera(ndc, camera);
     const cell = cellAt(rc.ray);
-    return cell && chars.has(cell.join(',')) ? cell : null;
+    return cell && chars.has(cell.join(',')) && !spent.has(cell.join(',')) ? cell : null;
   };
   canvas.addEventListener('pointermove', (e) => {
     const c = pick(e);
@@ -101,11 +113,13 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
   canvas.addEventListener('pointerleave', () => { hovered = null; hover(null); });
   canvas.addEventListener('click', (e) => {
     const key = pick(e)?.join(','), s = key && T.find((t) => t.rig.state.cell?.join(',') === key);
-    if (s) { s.tA = 1; kick(); }
+    if (s) { s.tA = 1; s.locked = true; kick(); }
   });
   const onKey = (e) => {
     if (e.key.toLowerCase() !== 'r') return;
     chars.forEach((ch) => { ch.converted = false; ch.setScan(0); });
+    spent.forEach((k) => tint(k, false));
+    spent.clear();
     kick();
   };
   window.addEventListener('keydown', onKey);
