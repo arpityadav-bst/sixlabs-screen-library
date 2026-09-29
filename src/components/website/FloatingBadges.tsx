@@ -1,10 +1,11 @@
 "use client";
 
-// Floating tiles around the scroll line (ScrubLine.tsx): the floor's own glass tiles with their characters,
-// pre-rendered square on, in full colour. Each sits at its own depth and drifts with the cursor by that much (a soft spring, nearer ones
-// further), so they parallax against each other, and bobs slowly on its own. Hovering one sweeps a dense
-// dot-matrix band across it that turns the human into their AI copy behind it; leaving eases back. The cast avoids
-// the four characters the players section uses. Touch screens and reduced motion keep them still.
+// Floating tiles around the scroll line (ScrubLine.tsx): the floor's own glass tiles with their
+// characters, pre-rendered square on and upright. Each sits at its own depth and drifts with the cursor by
+// that much (a soft spring, nearer ones further), so they parallax against each other, and bobs slowly
+// on its own. Hovering one sweeps a dense dot-matrix band across it that turns the human into their AI
+// copy behind it; leaving eases back. The cast avoids the four characters the players section uses.
+// Touch screens and reduced motion keep them still.
 import { useEffect } from "react";
 import {
   animate,
@@ -162,7 +163,7 @@ function FloatingBadge({
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 300, damping: 22 }}
           className="pointer-events-auto relative drop-shadow-[0_18px_22px_rgba(10,27,51,0.18)]"
-          style={{ width: b.size, aspectRatio: TILE_ASPECT, rotate: b.tilt }}
+          style={{ width: b.size, aspectRatio: TILE_ASPECT }}
         >
           <Tile src={`/tiles/float/${b.name}.webp`} />
           <motion.div
