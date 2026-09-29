@@ -105,18 +105,17 @@ export function Hero() {
       </section>
       {/* Outside the container, under its bottom-right corner, inset like the text column. */}
       <div className="w-full max-w-[1400px] mx-auto mt-3 px-8 md:px-16 flex justify-end">
-        {/* Sends the flip wave now: every tile back to default, activated or not. Same pill as the header's
-            language button when open. */}
+        {/* Sends the flip wave now: every tile back to default, activated or not. Just the icon; its label
+            fades in to its left on hover. */}
         <button
           type="button"
           onClick={() => floor.current?.reset()}
-          className="group -mr-10 flex items-center gap-1.5 rounded-full px-2.5 py-1.5 bg-slate-200/60 text-slate-500 hover:text-[#0a1b33] hover:bg-slate-200 transition-colors duration-200"
+          className="group -mr-10 p-1 flex items-center gap-1.5 text-slate-400 hover:text-[#0a1b33] transition-colors duration-200"
         >
-          <Waves
-            className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
-            strokeWidth={1.75}
-          />
-          <span className="text-[12px] leading-none">Next wave</span>
+          <span className="text-[12px] leading-none opacity-0 translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0">
+            Next wave
+          </span>
+          <Waves className="w-4 h-4" strokeWidth={1.75} />
         </button>
       </div>
     </>
