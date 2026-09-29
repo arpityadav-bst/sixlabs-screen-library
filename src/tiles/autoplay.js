@@ -57,7 +57,8 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner,
             ch.setScan(0);
             cast.show(t.key, target);
           }
-          flipTile(t.key, p >= 1 ? null : a < Math.PI / 2 ? a : a - Math.PI);
+          // turned the other way round, so each tile rolls over in the wave's direction (left to right)
+          flipTile(t.key, p >= 1 ? null : a < Math.PI / 2 ? -a : Math.PI - a);
           if (p < 1) busy = true;
         }
         refiner.moving();
