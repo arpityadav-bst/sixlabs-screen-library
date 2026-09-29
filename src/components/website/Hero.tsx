@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { RotateCcw } from "lucide-react";
+import { Waves } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { TileFloor, type FloorHandle } from "@/components/tiles/TileFloor";
 
@@ -112,8 +112,8 @@ export function Hero() {
           onClick={() => floor.current?.reset()}
           className="group -mr-10 flex items-center gap-1.5 rounded-full px-2.5 py-1.5 bg-slate-200/60 text-slate-500 hover:text-[#0a1b33] hover:bg-slate-200 transition-colors duration-200"
         >
-          <RotateCcw
-            className="w-3.5 h-3.5 transition-transform duration-300 group-hover:-rotate-45"
+          <Waves
+            className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
             strokeWidth={1.75}
           />
           <span className="text-[12px] leading-none">Next wave</span>
