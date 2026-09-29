@@ -86,7 +86,8 @@ export function Players() {
         </div>
 
         {/* Selector cards, each read as a model on file: the player type and a one-line read of them on top,
-            its number and a status along the bottom (the selected one is the model running). */}
+            its number and a status along the bottom under a hairline (the selected one is the model running,
+            marked by a fine darker stroke). */}
         <div className="relative mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           {PLAYERS.map((p, k) => {
             const on = k === active;
@@ -100,7 +101,7 @@ export function Players() {
                   "flex min-h-[176px] flex-col justify-between rounded-[28px] p-6 text-left transition-all duration-300 " +
                   card +
                   (on
-                    ? " ring-2 ring-accent/60"
+                    ? " ring-1 ring-[#0a1b33]/20 shadow-[0_1px_2px_rgba(10,27,51,0.06),0_24px_48px_-24px_rgba(10,27,51,0.24)]"
                     : " hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(10,27,51,0.05),0_24px_48px_-24px_rgba(10,27,51,0.22)]")
                 }
               >
@@ -112,7 +113,7 @@ export function Players() {
                     {p.tagline}
                   </span>
                 </span>
-                <span className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+                <span className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
                   Model {String(k + 1).padStart(2, "0")}
                   <span
                     className={
