@@ -139,7 +139,7 @@ export function AccentWave() {
       if (p >= 1) announce(true);
     };
     // A slow eased glide to `to` (GLIDE_S), ours rather than the browser's quick smooth scroll. The
-    // visitor scrolling or touching during it stops it and hands the page back.
+    // visitor scrolling back up or touching the screen stops it and hands the page back.
     let glideRaf = 0;
     const stopGlide = () => {
       cancelAnimationFrame(glideRaf);
@@ -157,7 +157,11 @@ export function AccentWave() {
       };
       glideRaf = requestAnimationFrame(step);
     };
-    window.addEventListener("wheel", stopGlide, { passive: true });
+    // only an upward scroll stops it: a trackpad keeps sending downward momentum after the gesture
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY < 0) stopGlide();
+    };
+    window.addEventListener("wheel", onWheel, { passive: true });
     window.addEventListener("touchstart", stopGlide, { passive: true });
     const measure = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -198,7 +202,7 @@ export function AccentWave() {
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", measure);
       window.removeEventListener("resize", measure);
-      window.removeEventListener("wheel", stopGlide);
+      window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", stopGlide);
       stopGlide();
     };
