@@ -22,6 +22,10 @@ export function buildComposer(renderer, scene, camera, P) {
   const aa = new TAARenderPass(scene, camera);
   aa.sampleLevel = P.ssaa ?? 4;
   aa.unbiased = true;
+  // The pass's own scene target, made up front with 4x hardware multisampling (the pass only creates one
+  // when missing): edges stay smooth even on the one-sample frames drawn while tiles move, which with the
+  // auto-play running is nearly all the time.
+  aa._sampleRenderTarget = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: P.msaa ?? 4 });
   composer.addPass(aa);
   if (P.bloomS > 0) composer.addPass(new UnrealBloomPass(new THREE.Vector2(512, 512), P.bloomS, P.bloomR, P.bloomT));
   composer.addPass(new OutputPass());
