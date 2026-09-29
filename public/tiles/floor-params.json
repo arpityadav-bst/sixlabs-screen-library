@@ -16,6 +16,7 @@
  "charEdgeSoft": 0.06,
  "charForward": 0.08,
  "charInset": 0.03,
+ "charLodBias": -0.75,
  "charSize": 0.8,
  "charStretch": 1.35,
  "chars": [

@@ -23,6 +23,9 @@ function charMaterial(tex, t, P, role, scanU) {
       .replace('#include <common>', `#include <common>
 varying vec2 vW; uniform vec2 uTileC; uniform float uScan;
 float sdRS(vec2 p, float b, float r) { vec2 q = abs(p) - vec2(b) + r; return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r; }`)
+      // Sample one detail level sharper than the default: the busts are drawn much smaller than their
+      // pictures, and the default choice of level blurs them. Anti-aliasing absorbs the extra detail.
+      .replace('#include <map_fragment>', `diffuseColor *= texture2D(map, vMapUv, ${(P.charLodBias ?? 0).toFixed(2)});`)
       .replace('#include <alphamap_fragment>', `#include <alphamap_fragment>
 float clip = 1.0 - smoothstep(-${P.charEdgeSoft.toFixed(3)}, 0.0, sdRS(vW - uTileC, ${half.toFixed(3)}, ${rad.toFixed(3)}));
 diffuseColor.a *= clip * ${role === 'ai' ? 'uScan' : '(1.0 - uScan)'};`);
