@@ -9,6 +9,7 @@
 // announces it (window event "accentwave", detail { filled }); the players section waits for that.
 import { useEffect, useRef } from "react";
 import { WAVE_VH } from "./ScrubLine";
+import { getLenis } from "./SmoothScroll";
 
 const ACCENT = [26, 109, 255];
 const ARC = 90; // how much higher the middle of the edge is than its ends, px
@@ -175,6 +176,18 @@ export function AccentWave() {
     // cubic that starts on the visitor's velocity and ends at rest, so mouse and glide are one motion.
     const glide = (to: number, v0: number) => {
       stopGlide();
+      // with the site's smooth scrolling (SmoothScroll.tsx) the glide runs on it: it carries on from the
+      // scroll's own motion and eases out to `to`, holding the visitor's input meanwhile
+      const lenis = getLenis();
+      if (lenis) {
+        lenis.scrollTo(to, {
+          duration: GLIDE_S,
+          easing: (k) => 1 - (1 - k) ** 3,
+          lock: true,
+          force: true,
+        });
+        return;
+      }
       let from = 0,
         t0 = 0,
         v = 0;

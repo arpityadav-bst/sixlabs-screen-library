@@ -9,10 +9,6 @@
   --color-accent: #1a6dff;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 :root {
   --page-rgb: 249 250 251; /* #f9fafb */
 }

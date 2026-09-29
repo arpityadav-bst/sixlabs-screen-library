@@ -5,6 +5,7 @@ import { Players } from "@/components/website/Players";
 import { ScrubLine } from "@/components/website/ScrubLine";
 import { AsciiBackdrop } from "@/components/website/AsciiBackdrop";
 import { AccentWave } from "@/components/website/AccentWave";
+import { SmoothScroll } from "@/components/website/SmoothScroll";
 
 export const metadata: Metadata = {
   title: "SixLabs",
@@ -16,6 +17,7 @@ export default function WebsitePage() {
     <main className="relative min-h-screen px-4 md:px-8 pt-24 pb-24">
       <AsciiBackdrop />
       <AccentWave />
+      <SmoothScroll />
       <Header />
       <Hero />
       <ScrubLine />
