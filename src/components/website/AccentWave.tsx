@@ -16,7 +16,7 @@ const ARC = 90; // how much higher the middle of the edge is than its ends, px
 const BAND = 480; // depth of the halftone above the solid colour, px
 const GRAIN = 0.07; // noise strength on the blue
 // Once the rise has begun (AUTO_AT of it, one scroll's nudge past the finished line), the page glides the
-// rest of the way into the players by itself: slowly (GLIDE_DOWN_S, a soft ease) so "The players" in the
+// rest of the way into the players by itself: slowly (GLIDE_DOWN_S, easing in: a slow start) so "The players" in the
 // water can be read. Going back up out of the players glides back to the line quicker (GLIDE_UP_S).
 const AUTO_AT = 0.03;
 const GLIDE_DOWN_S = 3.2;
@@ -187,10 +187,10 @@ export function AccentWave() {
       if (lenis) {
         lenis.scrollTo(to, {
           duration: seconds,
-          // down, a soft ease-out that still carries the visitor's scroll; up, a quicker settle
+          // down, a slow start that gathers pace to the players; up, a quicker settle
           easing:
             to > window.scrollY
-              ? (k) => 1 - (1 - k) ** 2
+              ? (k) => 1 - Math.cos((k * Math.PI) / 2) // down: eases in, a slow start that gathers pace
               : (k) => 1 - (1 - k) ** 3,
           lock: true,
           force: true,
