@@ -60,10 +60,7 @@ export function Players() {
         />
 
         <div className="relative grid min-h-[480px] grid-cols-1 gap-8 md:grid-cols-[minmax(0,440px)_1fr]">
-          <motion.div
-            {...enter(0.75)}
-            className={"self-center rounded-[32px] p-8 md:p-10 " + card}
-          >
+          <motion.div {...enter(0.75)} className="self-center">
             <AnimatePresence mode="wait">
               <motion.div
                 key={player.id}
@@ -72,26 +69,26 @@ export function Players() {
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.35, ease }}
               >
-                <h3 className="font-display text-[28px] font-medium tracking-tight text-[#0a1b33]">
+                <h3 className="font-display text-[42px] md:text-[56px] font-medium leading-[1.05] tracking-tight text-white">
                   {player.title}
                 </h3>
-                <p className="mt-3 font-sans text-[15px] leading-relaxed text-[#64748b]">
+                <p className="mt-5 max-w-[440px] font-sans text-[16px] md:text-[18px] leading-relaxed text-white/80">
                   {player.body}
                 </p>
               </motion.div>
             </AnimatePresence>
-            <dl className="mt-8 space-y-4">
+            <dl className="mt-10 max-w-[440px] space-y-4">
               {player.traits.map((t) => (
                 <div
                   key={t.label}
                   className="grid grid-cols-[130px_1fr] items-center gap-4"
                 >
-                  <dt className="font-sans text-[13px] text-[#64748b]">
+                  <dt className="font-sans text-[14px] text-white/75">
                     {t.label}
                   </dt>
-                  <dd className="h-1.5 rounded-full bg-slate-200/80">
+                  <dd className="h-1.5 rounded-full bg-white/20">
                     <motion.div
-                      className="h-full rounded-full bg-accent"
+                      className="h-full rounded-full bg-white"
                       initial={false}
                       animate={{ width: `${t.value * 100}%` }}
                       transition={{ duration: 0.7, ease }}
