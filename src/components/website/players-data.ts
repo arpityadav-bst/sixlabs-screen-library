@@ -9,6 +9,7 @@ export type Player = {
   // a left-to-right turn the cursor scrubs (PlayerPortrait.tsx), in place of the still; `straight` is where
   // in it (a share of its length) they look straight at the camera
   video?: { src: string; straight: number };
+  aiVideo?: { src: string; straight: number }; // the same turn as their AI copy (the Human / AI toggle)
   traits: { label: string; value: number }[];
 };
 

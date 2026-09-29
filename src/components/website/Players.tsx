@@ -7,6 +7,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { PLAYERS } from "./players-data";
 import { PlayerPortrait } from "./PlayerPortrait";
+import { ModeToggle, type Mode } from "./ModeToggle";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 // On the accent blue (AccentWave.tsx): white cards.
@@ -23,6 +24,7 @@ const fit = {
 
 export function Players() {
   const [active, setActive] = useState(0);
+  const [mode, setMode] = useState<Mode>("human"); // the real player or their AI copy
   // The section is pulled up over the scroll line's last screen (-mt-[100vh]), so it sits in view the
   // moment the water has filled it, and is centred in that screen.
   // The section comes in once the accent water has filled the view (AccentWave.tsx) and the section is
@@ -52,6 +54,8 @@ export function Players() {
     transition: shown ? { duration: 0.6, ease, delay } : { duration: 0.25 },
   });
   const player = PLAYERS[active];
+  // the AI copy's clip when AI is chosen and the player has one, else the human's
+  const clip = (mode === "ai" && player.aiVideo) || player.video;
 
   return (
     <section
@@ -88,7 +92,10 @@ export function Players() {
                 </p>
               </motion.div>
             </AnimatePresence>
-            <dl className="mt-10 max-w-[440px] space-y-4">
+            <div className="mt-8">
+              <ModeToggle mode={mode} onChange={setMode} />
+            </div>
+            <dl className="mt-8 max-w-[440px] space-y-4">
               {player.traits.map((t) => (
                 <div
                   key={t.label}
@@ -116,17 +123,17 @@ export function Players() {
           >
             <AnimatePresence mode="popLayout">
               <motion.div
-                key={player.id}
+                key={`${player.id}:${clip?.src ?? "still"}`}
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.02 }}
                 transition={{ duration: 0.5, ease }}
               >
                 {/* a player with a clip turns with the cursor (PlayerPortrait); the others are stills */}
-                {player.video ? (
+                {clip ? (
                   <PlayerPortrait
-                    src={player.video.src}
-                    straight={player.video.straight}
+                    src={clip.src}
+                    straight={clip.straight}
                     label={player.title}
                     className="h-[var(--ph)] w-auto max-w-none select-none"
                   />
