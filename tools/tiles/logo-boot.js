@@ -2,7 +2,8 @@
 // materials: each blade is an extruded glass slab with the tile's bevel, lying on the same floor under the
 // same studio light. PARAMS: look 'cobalt' (the focused tile's glass) or 'clear' (a default tile's
 // frosted glass), elev (camera height in degrees), size (logo width in tile units), depth (slab thickness as a share of a tile's), inset (SVG units each blade is
-// pulled in by, which widens the gaps between blades; the navy core keeps its size), transparent (no floor
+// pulled in by, which widens the gaps between blades; the navy core keeps its size), spin (degrees the mark turns in its own plane,
+// for turntable frames), transparent (no floor
 // or background, for a cut-out PNG). __info.corners gives the screen pixels of the mark's top-face square,
 // so the frame can be straightened into a front view (tools/tiles/flatten_logo.py).
 import * as THREE from 'three';
@@ -12,7 +13,7 @@ import { floorMaterial, floorUniforms } from '/src/tiles/floor-material.js';
 import { buildComposer } from '/src/tiles/post.js';
 
 const RAW = await fetch('/tiles/floor-params.json').then((r) => r.json());
-const opt = Object.assign({ look: 'cobalt', elev: 40, size: 1.6, transparent: false, depth: 1, inset: 0 }, window.PARAMS);
+const opt = Object.assign({ look: 'cobalt', elev: 40, size: 1.6, transparent: false, depth: 1, inset: 0, spin: 0 }, window.PARAMS);
 const P = Object.assign({ W: 1920, H: 1080 }, RAW, RAW.states?.default ?? {}, { actHeadGlow: 0 }, opt.transparent ? { filmGrain: 0 } : {});
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: opt.transparent });
@@ -72,6 +73,7 @@ if (opt.look === 'cobalt') logo.position.y = 0.0005;
 const az = THREE.MathUtils.degToRad(P.azim);
 const pivot = new THREE.Group();
 pivot.rotation.y = az;
+logo.rotation.y = THREE.MathUtils.degToRad(-opt.spin); // clockwise as seen from above
 pivot.add(logo);
 scene.add(pivot);
 
@@ -88,7 +90,7 @@ await renderer.compileAsync(scene, camera);
 composer.render();
 const top = P.core * opt.depth + P.bevelT, hs = span / 2, dpr = devicePixelRatio;
 const corners = [[-hs, -hs], [hs, -hs], [hs, hs], [-hs, hs]].map(([x, z]) => {
-  const v = logo.localToWorld(new THREE.Vector3(x, top, z)).project(camera);
+  const v = pivot.localToWorld(new THREE.Vector3(x, top, z)).project(camera);
   return [(v.x + 1) / 2 * w * dpr, (1 - v.y) / 2 * h * dpr];
 });
 window.__info = { look: opt.look, elev: opt.elev, corners };

@@ -1,18 +1,36 @@
 "use client";
 
-import { motion } from "motion/react";
+import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { TileFloor } from "@/components/tiles/TileFloor";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function Hero() {
+  const [floorReady, setFloorReady] = useState(false);
   return (
     <section className="relative w-full max-w-[1400px] mx-auto rounded-[48px] bg-[#e3e5e8] border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)] overflow-hidden h-[600px] flex flex-col">
       {/* The glass tile floor replaces the prompt's background video. It takes pointer events so the
           tiles stay interactive; the text layer above lets them through except on its own block. */}
       <div className="absolute inset-0 z-0 overflow-hidden select-none">
-        <TileFloor className="w-full h-full" />
+        <TileFloor className="w-full h-full" onReady={() => setFloorReady(true)} />
       </div>
+
+      {/* While the floor loads, the logo turns slowly in the tile glass (a pre-rendered turntable,
+          tools/tiles/turntable.py), then fades away as the tiles fade in. */}
+      <AnimatePresence>
+        {!floorReady && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1, transition: { duration: 0.4, ease } }}
+            exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.6, ease } }}
+            className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- an animated WebP, served as is */}
+            <img src="/brand/sixlabs-mark-spin.webp" alt="" width={120} height={120} className="w-[120px] h-[120px]" />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="relative z-20 flex-1 px-8 md:px-16 pt-12 md:pt-16 flex flex-col items-start pointer-events-none">
         <motion.div
