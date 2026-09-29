@@ -1,14 +1,11 @@
 "use client";
 
 // A player's portrait as a video the cursor scrubs: the clip runs from the player looking to the left to
-// looking to the right, so moving the mouse right turns them right and moving it left turns them back.
-// Mouse-scrub mechanics after the Mainframe hero prompt: the horizontal change in the pointer, as a share
-// of the window width, times SENSITIVITY, times the clip's length, moves the target time (clamped to the
-// clip); one seek runs at a time and the next is queued when it lands (onSeeked), so seeks never flood.
-// It starts in the middle, looking ahead. Never autoplays.
+// looking to the right, through looking straight ahead at its midpoint. Where the pointer is across the
+// window picks the moment: the left edge is the first frame, the middle is straight ahead, the right edge
+// is the last. One seek runs at a time and the next is queued when it lands (onSeeked, after the
+// Mainframe hero prompt), so seeks never flood. It starts in the middle. Never autoplays.
 import { useEffect, useRef } from "react";
-
-const SENSITIVITY = 0.8;
 
 export function PlayerPortrait({
   src,
@@ -24,8 +21,7 @@ export function PlayerPortrait({
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
-    let prevX: number | null = null,
-      target = 0,
+    let target = 0,
       seeking = false;
     const seek = () => {
       if (
@@ -46,17 +42,10 @@ export function PlayerPortrait({
       seek();
     };
     const onMove = (e: MouseEvent) => {
-      if (prevX === null) prevX = e.clientX;
-      const delta = e.clientX - prevX;
-      prevX = e.clientX;
       if (!video.duration) return;
-      target = Math.min(
-        video.duration,
-        Math.max(
-          0,
-          target + (delta / window.innerWidth) * SENSITIVITY * video.duration,
-        ),
-      );
+      target =
+        Math.min(1, Math.max(0, e.clientX / window.innerWidth)) *
+        video.duration;
       seek();
     };
     video.addEventListener("seeked", onSeeked);

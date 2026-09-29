@@ -29,7 +29,7 @@ export const PLAYERS: Player[] = [
     tagline: "Maps every corner before the main path.",
     body: "Opens every menu. Walks the wrong way on purpose. Finds your bugs before QA does.",
     picture: "/players/explorer.webp?v=3",
-    video: "/players/explorer.webm?v=1",
+    video: "/players/explorer.webm?v=2",
     traits: traits(0.95, 0.72, 0.55, 0.6),
   },
   {

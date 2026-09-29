@@ -3,7 +3,7 @@
 // Third section, the players: straight on the page, no heading or panel. The selected player's title,
 // description and trait bars sit straight on the blue on the left, in white; their portrait fills the rest, large, its
 // chest fading out behind the four cards (it runs under them), over a soft blue glow. Four cards along the bottom pick the player (the first is selected).
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { PLAYERS } from "./players-data";
 import { PlayerPortrait } from "./PlayerPortrait";
@@ -14,6 +14,12 @@ const card =
   "bg-white border-transparent shadow-[0_24px_48px_-28px_rgba(10,27,51,0.35)]";
 // the unselected player cards are the same white, held back by opacity (a little more on hover)
 const UNSELECTED = 0.6;
+// The portrait's height (--ph): 720px, or less on a short screen so the whole section (header clearance,
+// portrait, cards) fits one view. The cards cover its bottom PORTRAIT_UNDER of it, where its fade runs.
+const PORTRAIT_UNDER = 0.244;
+const fit = {
+  "--ph": `min(720px, calc((100svh - 344px) / ${1 - PORTRAIT_UNDER}))`,
+} as CSSProperties;
 
 export function Players() {
   const [active, setActive] = useState(0);
@@ -51,8 +57,9 @@ export function Players() {
     <section
       ref={section}
       id="players"
+      style={fit}
       className={
-        "relative z-30 w-full max-w-[1400px] mx-auto -mt-[100vh] flex min-h-screen flex-col justify-center pt-40 pb-8 " +
+        "relative z-30 w-full max-w-[1400px] mx-auto -mt-[100vh] flex min-h-screen flex-col justify-center pt-24 pb-10 " +
         (shown ? "" : "pointer-events-none") // hidden, it must not block the floating tiles under it
       }
     >
@@ -63,7 +70,7 @@ export function Players() {
           className="pointer-events-none absolute right-[8%] top-[6%] h-[520px] w-[620px] rounded-full bg-[radial-gradient(closest-side,rgba(26,109,255,0.28),rgba(26,109,255,0.08)_55%,transparent)]"
         />
 
-        <div className="relative grid min-h-[480px] grid-cols-1 gap-8 md:grid-cols-[minmax(0,440px)_1fr]">
+        <div className="relative grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,440px)_1fr]">
           <motion.div {...enter(0.75)} className="self-center">
             <AnimatePresence mode="wait">
               <motion.div
@@ -105,7 +112,7 @@ export function Players() {
 
           <motion.div
             {...enter(0.45)}
-            className="pointer-events-none relative -mb-44 flex items-end justify-center"
+            className="pointer-events-none relative mb-[calc(var(--ph)*-0.244)] flex items-end justify-center"
           >
             <AnimatePresence mode="popLayout">
               <motion.div
@@ -120,7 +127,7 @@ export function Players() {
                   <PlayerPortrait
                     src={player.video}
                     label={player.title}
-                    className="h-[720px] w-auto max-w-none select-none"
+                    className="h-[var(--ph)] w-auto max-w-none select-none"
                   />
                 ) : (
                   // eslint-disable-next-line @next/next/no-img-element -- the player's portrait
@@ -129,7 +136,7 @@ export function Players() {
                     alt={player.title}
                     width={1200}
                     height={1583}
-                    className="h-[720px] w-auto max-w-none select-none"
+                    className="h-[var(--ph)] w-auto max-w-none select-none"
                   />
                 )}
               </motion.div>
