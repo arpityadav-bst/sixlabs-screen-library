@@ -103,22 +103,19 @@ export function Hero() {
           </motion.div>
         </div>
       </section>
-      {/* Outside the container, under its bottom-left corner, in line with the text column. */}
-      <div className="w-full max-w-[1400px] mx-auto mt-3 px-8 md:px-16">
-        {/* Sends the flip wave now: every tile back to default, activated or not. Its label slides in on hover. */}
+      {/* Outside the container, under its bottom-right corner, inset like the text column. */}
+      <div className="w-full max-w-[1400px] mx-auto mt-3 px-8 md:px-16 flex justify-end">
+        {/* Sends the flip wave now: every tile back to default, activated or not. */}
         <button
           type="button"
-          aria-label="Send wave"
           onClick={() => floor.current?.reset()}
-          className="group -ml-1 p-1 flex items-center gap-1.5 rounded-full text-slate-400 hover:text-slate-600 transition-colors duration-200"
+          className="group -mr-1 p-1 flex items-center gap-1.5 rounded-full text-slate-400 hover:text-slate-600 transition-colors duration-200"
         >
           <RotateCcw
             className="w-3.5 h-3.5 transition-transform duration-300 group-hover:-rotate-45"
             strokeWidth={1.75}
           />
-          <span className="text-[12px] leading-none opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0">
-            Send wave
-          </span>
+          <span className="text-[12px] leading-none">Next wave</span>
         </button>
       </div>
     </>
