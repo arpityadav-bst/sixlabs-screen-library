@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Waves } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { TileFloor, type FloorHandle } from "@/components/tiles/TileFloor";
+import { ScrollCue } from "./ScrollCue";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -31,7 +32,7 @@ export function Hero() {
   ];
   return (
     <>
-      <section className="relative w-full max-w-[1400px] mx-auto rounded-[48px] bg-[#e3e5e8] border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)] overflow-hidden h-[680px] flex flex-col">
+      <section className="relative w-full max-w-[1400px] mx-auto rounded-[48px] bg-[#e3e5e8] border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)] overflow-hidden h-[760px] flex flex-col">
         {/* The glass tile floor replaces the prompt's background video. It takes pointer events so the
           tiles stay interactive; the text layer above lets them through except on its own block. */}
         <div className="absolute inset-0 z-0 overflow-hidden select-none">
@@ -123,10 +124,12 @@ export function Hero() {
           </motion.div>
         </div>
       </section>
-      {/* Outside the container: the headline numbers centred under it, the wave button under its
-          bottom-right corner. */}
+      {/* Outside the container, one row: the scroll cue under its bottom-left corner, the headline numbers
+          centred, the wave button under its bottom-right corner. */}
       <div className="w-full max-w-[1400px] mx-auto mt-6 px-8 md:px-16 grid grid-cols-[1fr_auto_1fr] items-start">
-        <span aria-hidden />
+        <div className="-ml-10 flex">
+          <ScrollCue />
+        </div>
         {/* The humans in navy, their digital copies in the accent blue (the headline's "models" colour). */}
         <dl className="flex items-start gap-14">
           {stats.map((s) => (
