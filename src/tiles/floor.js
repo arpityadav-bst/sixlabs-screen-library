@@ -235,12 +235,13 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
     const i = Math.round((hit.x - ox) / pitch), j = Math.round((hit.z - oz) / pitch);
     return Math.abs(hit.x - cx(i)) < half && Math.abs(hit.z - cz(j)) < half && slot.has(`${i},${j}`) ? [i, j] : null;
   };
-  let stop = () => {}, disposed = false;
+  let stop = () => {}, reset = () => {}, disposed = false;
   if (!isStatic) intro.done.then(() => {
     if (disposed) return;
     const ctl = startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU: U, nearU, P, expose });
     const auto = startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, P });
     stop = () => { auto.stop(); ctl.stop(); };
+    reset = auto.reset;
   });
 
   window.__floorReady = true;
@@ -250,6 +251,7 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   }
 
   return {
+    reset: () => reset(), // the reset wave, on demand (autoplay.js)
     dispose() {
       disposed = true;
       resize.disconnect();

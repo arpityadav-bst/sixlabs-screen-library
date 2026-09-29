@@ -139,6 +139,14 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
     spent,
     unspend: (key) => { spent.delete(key); tint(key, false); },
     set inert(v) { inert = v; if (v) { hovered = null; hover(null); } },
+    // Drops every raised tile straight back into the grid (for the reset wave, which flips them anyway).
+    clearAll: () => {
+      for (const s of T) {
+        if (s.rig.state.cell) { chars.get(s.rig.state.cell.join(','))?.setLift(0); s.rig.clear(); }
+        Object.assign(s, { tL: 0, tA: 0, fl: 0, leaving: false, locked: false });
+      }
+      kick();
+    },
   };
   return ctl;
 }

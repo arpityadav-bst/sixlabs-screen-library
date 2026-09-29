@@ -4,7 +4,8 @@
 // left to right across the screen: each spent tile flips over like a card, about the axis through its
 // centre parallel to its top-right edge, and lands as a clear default tile with its human back. Then the
 // cycle starts again. The visitor always wins: pointing at a live tile pauses the auto-play (a clicked
-// tile still finishes), and it resumes RESUME_MS after the pointer leaves the tiles.
+// tile still finishes), and it resumes RESUME_MS after the pointer leaves the tiles. reset() sends the wave
+// at once over every character tile on screen, activated or not, and restarts the cycle from the middle.
 import * as THREE from 'three';
 
 const RESUME_MS = 3000, FOCUS_MS = 380, GAP_MS = 220;
@@ -12,7 +13,7 @@ const WAVE_SPREAD = 1.3, FLIP_SECONDS = 0.75; // stagger across the screen, one 
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner }) {
-  let stopped = false, paused = false, resumeTimer = 0, first = true;
+  let stopped = false, paused = false, resumeTimer = 0, first = true, resetReq = false, waving = false;
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const until = async (ok) => { while (!stopped && !ok()) await wait(60); };
   const cellOf = (key) => key.split(',').map(Number);
@@ -30,11 +31,12 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner 
     else resumeTimer = setTimeout(() => { paused = false; }, RESUME_MS);
   };
 
-  async function wave() {
-    const tiles = onScreen().filter((t) => ctl.spent.has(t.key));
+  async function wave(all = false) {
+    const tiles = onScreen().filter((t) => all || ctl.spent.has(t.key));
     for (const key of ctl.spent) if (!tiles.some((t) => t.key === key)) ctl.unspend(key); // off screen: reset quietly
     if (!tiles.length) return;
     ctl.inert = true;
+    waving = true;
     const x0 = Math.min(...tiles.map((t) => t.x)), span = Math.max(1e-3, Math.max(...tiles.map((t) => t.x)) - x0);
     const swapped = new Set();
     refiner.moving();
@@ -49,7 +51,7 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner 
           const p = Math.min(1, Math.max(0, (s - ((t.x - x0) / span) * WAVE_SPREAD) / FLIP_SECONDS));
           const a = Math.PI * ease(p);
           // Edge-on, the far side comes up: swap to the default look and turn on from the other side.
-          if (a >= Math.PI / 2 && !swapped.has(t.key)) {
+          if (a >= Math.PI / 2 && !swapped.has(t.key)) { // (unspend also clears any tint)
             swapped.add(t.key);
             ctl.unspend(t.key);
             const ch = chars.get(t.key);
@@ -67,16 +69,24 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner 
       requestAnimationFrame(frame);
     });
     refiner.start();
+    waving = false;
     ctl.inert = false;
     first = true;
   }
 
   (async () => {
     while (!stopped) {
+      if (resetReq) {
+        resetReq = false;
+        ctl.clearAll();
+        await wave(true);
+        await wait(GAP_MS);
+        continue;
+      }
       const todo = onScreen().filter((t) => !ctl.spent.has(t.key));
       if (!todo.length) {
-        await until(() => !ctl.busy());
-        if (!stopped) await wave();
+        await until(() => !ctl.busy() || resetReq);
+        if (!stopped && !resetReq) await wave();
         await wait(GAP_MS);
         continue;
       }
@@ -89,12 +99,15 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner 
       ctl.hover(cell);
       await wait(FOCUS_MS);
       if (stopped) break;
-      if (paused) continue; // the visitor took over before the click
+      if (paused || resetReq) continue; // the visitor took over before the click
       ctl.click(cell);
-      await until(() => !ctl.busy());
+      await until(() => !ctl.busy() || resetReq);
       await wait(GAP_MS);
     }
   })();
 
-  return { stop: () => { stopped = true; clearTimeout(resumeTimer); ctl.onUser = null; } };
+  return {
+    stop: () => { stopped = true; clearTimeout(resumeTimer); ctl.onUser = null; },
+    reset: () => { if (!waving) resetReq = true; },
+  };
 }

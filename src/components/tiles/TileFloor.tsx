@@ -5,17 +5,19 @@
 // is ready; the tiles then wait introDelay seconds before fading in (so a loader can leave first).
 import { useEffect, useRef } from "react";
 
-export function TileFloor({ className, onReady, introDelay = 0 }: { className?: string; onReady?: () => void; introDelay?: number }) {
+export type FloorHandle = { dispose(): void; reset(): void };
+
+export function TileFloor({ className, onReady, introDelay = 0 }: { className?: string; onReady?: (floor: FloorHandle) => void; introDelay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let alive = true;
-    let handle: { dispose(): void } | undefined;
+    let handle: FloorHandle | undefined;
     import("@/tiles/floor.js").then(({ createFloor }) =>
-      createFloor(ref.current, { base: "/tiles", introDelay }).then((h: { dispose(): void }) => {
+      createFloor(ref.current, { base: "/tiles", introDelay }).then((h: FloorHandle) => {
         if (alive) {
           handle = h;
-          onReady?.();
+          onReady?.(h);
         } else h.dispose();
       }),
     );

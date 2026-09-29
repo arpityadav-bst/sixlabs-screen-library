@@ -1,20 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { RotateCcw } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { TileFloor } from "@/components/tiles/TileFloor";
+import { TileFloor, type FloorHandle } from "@/components/tiles/TileFloor";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export function Hero() {
   const [floorReady, setFloorReady] = useState(false);
+  const floor = useRef<FloorHandle | null>(null);
   return (
     <section className="relative w-full max-w-[1400px] mx-auto rounded-[48px] bg-[#e3e5e8] border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)] overflow-hidden h-[600px] flex flex-col">
       {/* The glass tile floor replaces the prompt's background video. It takes pointer events so the
           tiles stay interactive; the text layer above lets them through except on its own block. */}
       <div className="absolute inset-0 z-0 overflow-hidden select-none">
         {/* the logo placeholder fades out over 0.45s, then the tiles fade in */}
-        <TileFloor className="w-full h-full" introDelay={0.5} onReady={() => setFloorReady(true)} />
+        <TileFloor className="w-full h-full" introDelay={0.5} onReady={(f) => { floor.current = f; setFloorReady(true); }} />
       </div>
 
       {/* While the floor loads, the logo lies on the floor in the tiles' white glass, toward the bottom right
@@ -85,6 +87,15 @@ export function Hero() {
             <br />
             <span className="text-slate-600">Yours next.</span>
           </p>
+          {/* Sends the flip wave now: every tile back to default, activated or not. */}
+          <button
+            type="button"
+            aria-label="Reset the tiles"
+            onClick={() => floor.current?.reset()}
+            className="mt-3 -ml-1 p-1 rounded-full text-slate-400 hover:text-slate-600 transition-colors duration-200 pointer-events-auto"
+          >
+            <RotateCcw className="w-3.5 h-3.5" strokeWidth={1.75} />
+          </button>
         </motion.div>
       </div>
     </section>
