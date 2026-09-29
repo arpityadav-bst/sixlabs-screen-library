@@ -16,11 +16,11 @@ import {
 
 const NAVY = "#0a152d";
 const NAVY_LIFT = "#162138"; // NAVY mixed 5% toward white
-const SWEEP_S = 0.75;
+const SWEEP_S = 1;
 const STRANDS = [
-  { dx: -2.5, color: "rgba(255,90,110,0.55)" },
+  { dx: -4, color: "rgba(255,90,110,0.55)" },
   { dx: 0, color: "rgba(255,255,255,0.7)" },
-  { dx: 2.5, color: "rgba(90,170,255,0.6)" },
+  { dx: 4, color: "rgba(90,170,255,0.6)" },
 ];
 
 export function PrimaryCta({ children }: { children: React.ReactNode }) {
@@ -42,7 +42,7 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
   const d0 = useTransform(t, (p) => path(p, STRANDS[0].dx));
   const d1 = useTransform(t, (p) => path(p, STRANDS[1].dx));
   const d2 = useTransform(t, (p) => path(p, STRANDS[2].dx));
-  const opacity = useTransform(t, [-1, 0, 0.12, 0.88, 1], [0, 0, 0.6, 0.6, 0]);
+  const opacity = useTransform(t, [-1, 0, 0.12, 0.88, 1], [0, 0, 0.85, 0.85, 0]);
 
   const sweep = () => {
     const el = ref.current;
@@ -80,14 +80,14 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
             width="200%"
             height="120%"
           >
-            <feGaussianBlur stdDeviation="3" />
+            <feGaussianBlur stdDeviation="4.5" />
           </filter>
         </defs>
         <motion.g
           style={{ opacity }}
           filter="url(#cta-sweep-blur)"
           fill="none"
-          strokeWidth={9}
+          strokeWidth={16}
           strokeLinecap="round"
         >
           <motion.path d={d0} stroke={STRANDS[0].color} />
