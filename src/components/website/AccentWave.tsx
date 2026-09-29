@@ -15,8 +15,12 @@ const ACCENT = [26, 109, 255];
 const ARC = 90; // how much higher the middle of the edge is than its ends, px
 const BAND = 480; // depth of the halftone above the solid colour, px
 const GRAIN = 0.07; // noise strength on the blue
-const AUTO_AT = 0.75;
-const GLIDE_S = 1.8; // the glide's length, seconds // share of the rise after which the page glides on into the players by itself
+// Once the rise has begun (AUTO_AT of it, one scroll's nudge past the finished line), the page glides the
+// rest of the way into the players by itself: slowly (GLIDE_DOWN_S, a soft ease) so "The players" in the
+// water can be read. Going back up out of the players glides back to the line quicker (GLIDE_UP_S).
+const AUTO_AT = 0.03;
+const GLIDE_DOWN_S = 3.2;
+const GLIDE_UP_S = 1.8;
 const WORD = "The players"; // the next section's name, huge in the halftone
 const WORD_ALPHA = 0.3;
 const PITCH = 6; // halftone grid, px; a dot of radius PITCH / 2 touches its neighbours
@@ -142,7 +146,7 @@ export function AccentWave() {
       }
       if (p >= 0.995) announce(true); // a hair of slack: a scroll can land a fraction short
     };
-    // A slow eased glide to `to` (GLIDE_S), ours rather than the browser's quick smooth scroll. It runs
+    // A slow eased glide to `to` (GLIDE_DOWN_S or GLIDE_UP_S), ours rather than the browser's quick smooth scroll. It runs
     // to the end, and while it runs the page's own scrolling (wheel, touch, keys) is held, so the two
     // never fight and the transition is always seen whole.
     let glideRaf = 0;
@@ -174,15 +178,19 @@ export function AccentWave() {
     // It picks up where the page really is on its first frame (a wheel scroll may still be animating when
     // it triggers) and at the speed the visitor was already scrolling, then eases to a stop at `to`: a
     // cubic that starts on the visitor's velocity and ends at rest, so mouse and glide are one motion.
-    const glide = (to: number, v0: number) => {
+    const glide = (to: number, v0: number, seconds: number) => {
       stopGlide();
       // with the site's smooth scrolling (SmoothScroll.tsx) the glide runs on it: it carries on from the
       // scroll's own motion and eases out to `to`, holding the visitor's input meanwhile
       const lenis = getLenis();
       if (lenis) {
         lenis.scrollTo(to, {
-          duration: GLIDE_S,
-          easing: (k) => 1 - (1 - k) ** 3,
+          duration: seconds,
+          // down, a soft ease-out that still carries the visitor's scroll; up, a quicker settle
+          easing:
+            to > window.scrollY
+              ? (k) => 1 - (1 - k) ** 2
+              : (k) => 1 - (1 - k) ** 3,
           lock: true,
           force: true,
         });
@@ -191,7 +199,7 @@ export function AccentWave() {
       let from = 0,
         t0 = 0,
         v = 0;
-      const T = GLIDE_S * 1000;
+      const T = seconds * 1000;
       const step = (now: number) => {
         if (!t0) {
           t0 = now;
@@ -233,7 +241,7 @@ export function AccentWave() {
         Math.max(0, (window.scrollY - (end - WAVE_VH * h)) / (WAVE_VH * h)),
       );
       // Past AUTO_AT on the way down, the page glides the rest of the way by itself, to where the water
-      // has filled the view and the players are in place; it re-arms when the water is mostly drained.
+      // has filled the view and the players are in place; it re-arms when the water is mostly drained (a nudge past the finished line is enough).
       // The same the other way: scrolling back up out of the players glides all the way back to the
       // scroll line (the water fully drained); it re-arms once the view is full again.
       const y = window.scrollY,
@@ -248,10 +256,14 @@ export function AccentWave() {
       if (p >= 0.995) glidedUp = false;
       if (down && !glided && p >= AUTO_AT && p < 1) {
         glided = true;
-        glide(end + 4, Math.min(Math.max(speed, 0), 2.5)); // a few px past the end, so it lands full
+        glide(end + 4, Math.min(Math.max(speed, 0), 2.5), GLIDE_DOWN_S); // a few px past the end, so it lands full
       } else if (!down && y < lastYBefore && !glidedUp && p < 0.97 && p > 0) {
         glidedUp = true;
-        glide(end - WAVE_VH * h - 4, Math.max(Math.min(speed, 0), -2.5)); // back to the scroll line, drained
+        glide(
+          end - WAVE_VH * h - 4,
+          Math.max(Math.min(speed, 0), -2.5),
+          GLIDE_UP_S,
+        ); // back to the scroll line, drained
       }
       if (!raf) raf = requestAnimationFrame(draw);
     };
