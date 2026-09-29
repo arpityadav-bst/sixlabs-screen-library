@@ -81,7 +81,7 @@ export async function addCharacters(scene, P, tiles, cache = preloadCharacters(P
       meshes.push(bust);
     }
     out.set(`${t.i},${t.j}`, {
-      name, meshes, converted: false,
+      name, meshes, converted: false, at: [t.x, t.y, t.z],
       setScan: (s) => { scanU.value = s; },
       setLift: (y) => meshes.forEach((m) => { m.position.y = t.y + 0.002 + y; }),
     });

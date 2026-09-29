@@ -16,6 +16,7 @@ import { startInteraction } from './interact.js';
 import { placeCamera, coverage, onSomeScreen } from './viewport.js';
 import { tileGeometry } from './geometry.js';
 import { playIntro } from './intro.js';
+import { startAutoplay } from './autoplay.js';
 
 export async function createFloor(container, { params, base = '/tiles', isStatic = false, expose = false, introDelay = 0 } = {}) {
   const RAW = params ?? await fetch(`${base}/floor-params.json`).then((r) => r.json());
@@ -101,6 +102,26 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
     const [mesh, k] = slot.get(key);
     mesh.setColorAt(k, spent ? SPENT : WHITE);
     mesh.instanceColor.needsUpdate = true;
+  };
+  // Card flip for the reset wave (autoplay.js): turns tile `key` by angle a about the axis through its centre
+  // parallel to its top-right edge (world x), lifted just enough to clear the floor; its busts turn with it.
+  // a = null puts it back.
+  const flipM = new THREE.Matrix4(), fm = new THREE.Matrix4(), bustBase = new Map();
+  const flipTile = (key, a) => {
+    const [i, j] = key.split(',').map(Number), [mesh, k] = slot.get(key), busts = chars.get(key)?.meshes ?? [];
+    if (a === null) {
+      mesh.setMatrixAt(k, m4.makeTranslation(cx(i), 0, cz(j)));
+      busts.forEach((m) => { m.matrixAutoUpdate = true; });
+    } else {
+      const hc = tileH / 2;
+      flipM.makeTranslation(cx(i), hc + 0.52 * half * 2 * Math.abs(Math.sin(a)), cz(j)).multiply(fm.makeRotationX(a)).multiply(fm.makeTranslation(-cx(i), -hc, -cz(j)));
+      mesh.setMatrixAt(k, m4.copy(flipM).multiply(fm.makeTranslation(cx(i), 0, cz(j))));
+      busts.forEach((m) => {
+        if (m.matrixAutoUpdate) { m.updateMatrix(); bustBase.set(m, m.matrix.clone()); m.matrixAutoUpdate = false; }
+        m.matrix.multiplyMatrices(flipM, bustBase.get(m));
+      });
+    }
+    mesh.instanceMatrix.needsUpdate = true;
   };
   // Neighbour tops take the raised tile's contact shadow and blue spill (the rig sets their strength).
   const nearU = nearShadeUniforms(P, { x: ax, z: azz, half });
@@ -215,7 +236,10 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   };
   let stop = () => {}, disposed = false;
   if (!isStatic) intro.done.then(() => {
-    if (!disposed) stop = startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU: U, nearU, P, expose });
+    if (disposed) return;
+    const ctl = startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU: U, nearU, P, expose });
+    const auto = startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, P });
+    stop = () => { auto.stop(); ctl.stop(); };
   });
 
   window.__floorReady = true;

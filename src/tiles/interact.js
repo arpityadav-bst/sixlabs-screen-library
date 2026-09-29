@@ -13,7 +13,9 @@
 import * as THREE from 'three';
 import { ACT_SECONDS, DEACT_SECONDS, COMMIT_SECONDS } from './sweep.js';
 
-// Returns a stop() that detaches every listener and halts pending frames (for unmounting).
+// Returns a controller: stop() detaches every listener and halts pending frames (for unmounting); hover,
+// click, busy, spent, unspend and inert let the auto-play (autoplay.js) drive the same tiles; onUser, when
+// set, hears whether the visitor's pointer is on a live tile.
 export function startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU, nearU, P, expose = false }) {
   // fl: linear fade, eased into state.F. locked: clicked, so the activation runs to its end regardless.
   const T = rigs.map((rig) => ({ rig, tL: 0, tA: 0, fl: 0, leaving: false, locked: false }));
@@ -99,23 +101,24 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
 
   const canvas = renderer.domElement;
   const ndc = new THREE.Vector2(), rc = new THREE.Raycaster();
-  let hovered = null;
+  let hovered = null, inert = false;
   const pick = (e) => {
     const r = canvas.getBoundingClientRect();
     ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, 1 - ((e.clientY - r.top) / r.height) * 2);
     rc.setFromCamera(ndc, camera);
     const cell = cellAt(rc.ray);
-    return cell && chars.has(cell.join(',')) && !spent.has(cell.join(',')) ? cell : null;
+    return !inert && cell && chars.has(cell.join(',')) && !spent.has(cell.join(',')) ? cell : null;
   };
   canvas.addEventListener('pointermove', (e) => {
     const c = pick(e);
-    if (c?.join(',') !== hovered?.join(',')) { hovered = c; hover(c); }
+    if (c?.join(',') !== hovered?.join(',')) { hovered = c; ctl.onUser?.(!!c); hover(c); }
   });
-  canvas.addEventListener('pointerleave', () => { hovered = null; hover(null); });
-  canvas.addEventListener('click', (e) => {
-    const key = pick(e)?.join(','), s = key && T.find((t) => t.rig.state.cell?.join(',') === key);
+  canvas.addEventListener('pointerleave', () => { hovered = null; ctl.onUser?.(false); hover(null); });
+  const activate = (key) => {
+    const s = key && T.find((t) => t.rig.state.cell?.join(',') === key);
     if (s) { s.tA = 1; s.locked = true; kick(); }
-  });
+  };
+  canvas.addEventListener('click', (e) => activate(pick(e)?.join(',')));
   const onKey = (e) => {
     if (e.key.toLowerCase() !== 'r') return;
     chars.forEach((ch) => { ch.converted = false; ch.setScan(0); });
@@ -127,5 +130,15 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
   canvas.style.cursor = 'pointer';
   // read-only state probe for automated checks
   if (expose) window.__floorState = () => T.map((s) => ({ cell: s.rig.state.cell, L: +s.rig.state.L.toFixed(3), S: +s.rig.state.S.toFixed(2), fl: +s.fl.toFixed(2), tL: s.tL, tA: s.tA }));
-  return () => { stopped = true; window.removeEventListener('keydown', onKey); };
+  const ctl = {
+    onUser: null,
+    stop: () => { stopped = true; window.removeEventListener('keydown', onKey); },
+    hover: (cell) => hover(cell),
+    click: (cell) => activate(cell?.join(',')),
+    busy: () => T.some((s) => s.rig.state.cell),
+    spent,
+    unspend: (key) => { spent.delete(key); tint(key, false); },
+    set inert(v) { inert = v; if (v) { hovered = null; hover(null); } },
+  };
+  return ctl;
 }
