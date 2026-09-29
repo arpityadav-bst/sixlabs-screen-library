@@ -189,7 +189,7 @@ export function AccentWave() {
         const pos =
           from +
           (to - from) * (3 * k * k - 2 * k * k * k) +
-          v0 * T * (k * k * k - 2 * k * k + k);
+          v * T * (k * k * k - 2 * k * k + k);
         window.scrollTo({ top: pos, behavior: "instant" });
         glideRaf = k < 1 ? requestAnimationFrame(step) : 0;
       };
