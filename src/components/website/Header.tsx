@@ -28,7 +28,8 @@ export function Header() {
 
         <div className="flex items-center gap-4">
           <LanguageMenu />
-          <button className="bg-[#0a152d] text-white text-[15px] font-medium px-6 py-3 rounded-full hover:bg-[#1e2b47] transition-colors duration-200">
+          {/* Secondary: outlined, so Try now in the hero stays the one solid CTA on the page. */}
+          <button className="border border-slate-300 text-[#0a1b33] text-[15px] px-6 py-3 rounded-full hover:bg-white/70 hover:border-slate-400 transition-colors duration-200">
             Sign in
           </button>
         </div>
