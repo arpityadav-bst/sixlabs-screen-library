@@ -1,20 +1,19 @@
 "use client";
 
-// Between the scroll line and the players, the accent blue rises up the view and takes it over. Once the
-// scroll line releases the screen (its track ends), it plays up from the bottom on its own (RISE_S), and
-// drains back down if the page is scrolled back above that point. Its leading edge is one arc (higher in
-// the middle) of halftone: far from the blue the dots are tiny and faint, and nearer it they grow and
-// strengthen, continuously, until they touch and merge into the solid colour. It sits above the scroll
-// line (covering it) and below the players section and the header, which come in on top of it. When the
-// view is full it announces it (window event "accentwave", detail { filled }); the players section waits
-// for that. Drawn on one canvas, only while it moves.
+// Between the scroll line and the players, the accent blue rises up the view and takes it over. It rises
+// with the scroll over the last stretch of the scroll line's track (WAVE_VH of a screen, a few scrolls),
+// while that section is still pinned, so it comes up over it; scrolling back drains it. Its leading edge
+// is one arc (higher in the middle) of wide halftone: far from the blue the dots are tiny and faint, and
+// nearer it they grow and strengthen, continuously, until they touch and merge into the solid colour. It
+// sits above the scroll line and below the players section and the header. When the view is full it
+// announces it (window event "accentwave", detail { filled }); the players section waits for that.
 import { useEffect, useRef } from "react";
+import { WAVE_VH } from "./ScrubLine";
 
 const ACCENT = [26, 109, 255];
 const ARC = 90; // how much higher the middle of the edge is than its ends, px
-const BAND = 220; // depth of the halftone above the solid colour, px
+const BAND = 480; // depth of the halftone above the solid colour, px
 const PITCH = 6; // halftone grid, px; a dot of radius PITCH / 2 touches its neighbours
-const RISE_S = 1.2; // seconds to fill the view (and to drain it)
 
 export function AccentWave() {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -24,11 +23,8 @@ export function AccentWave() {
       line = document.getElementById("model-line");
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx || !line) return;
-    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let p = 0,
-      target = 0,
       raf = 0,
-      last = 0,
       filled = false,
       w = 0,
       h = 0;
@@ -45,15 +41,8 @@ export function AccentWave() {
     const edge = (x: number, level: number) =>
       level + ARC * ((2 * x) / w - 1) ** 2;
 
-    const draw = (now: number) => {
+    const draw = () => {
       raf = 0;
-      const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
-      last = now;
-      p = still
-        ? target
-        : target > p
-          ? Math.min(target, p + dt / RISE_S)
-          : Math.max(target, p - dt / RISE_S);
       if (p < 1) announce(false);
       ctx.clearRect(0, 0, w, h);
       // the level runs from below the view, halftone included (p 0), to above it, arc included (p 1)
@@ -92,8 +81,6 @@ export function AccentWave() {
         ctx.globalAlpha = 1;
       }
       if (p >= 1) announce(true);
-      if (p !== target) raf = requestAnimationFrame(draw);
-      else last = 0;
     };
     const measure = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -104,12 +91,16 @@ export function AccentWave() {
         canvas.height = Math.round(h * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
-      const release =
+      // the rise runs over the last WAVE_VH of the scroll line's track, while its stage is still pinned
+      const end =
         line.getBoundingClientRect().top +
         window.scrollY +
         line.offsetHeight -
         h;
-      target = window.scrollY > release + 20 ? 1 : 0;
+      p = Math.min(
+        1,
+        Math.max(0, (window.scrollY - (end - WAVE_VH * h)) / (WAVE_VH * h)),
+      );
       if (!raf) raf = requestAnimationFrame(draw);
     };
     measure();

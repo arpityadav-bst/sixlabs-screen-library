@@ -12,6 +12,9 @@ const LINE =
   "A model is built from what the person does, not what they say. Put a thousand models on a new build and you know how it will land before anyone plays it.";
 const ACCENT = ["a", "thousand", "models"]; // "Put a thousand models": the words after "Put"
 const COMPLETE_AT = 0.82;
+// The track runs WAVE_VH longer than the words need: the stage stays pinned while the accent water
+// (AccentWave.tsx) rises over it, and only then lets go.
+export const WAVE_VH = 0.75;
 
 const WORDS = LINE.split(" ");
 const accentAt = WORDS.findIndex(
@@ -30,7 +33,7 @@ export function ScrubLine() {
       const el = track.current;
       if (!el) return;
       if (still) return setLit(WORDS.length);
-      const scrollable = el.offsetHeight - window.innerHeight;
+      const scrollable = el.offsetHeight - window.innerHeight * (1 + WAVE_VH);
       const p =
         scrollable <= 0
           ? 1
@@ -56,7 +59,12 @@ export function ScrubLine() {
   }, []);
 
   return (
-    <section ref={track} id="model-line" aria-label={LINE} className="relative h-[260vh]">
+    <section
+      ref={track}
+      id="model-line"
+      aria-label={LINE}
+      className="relative h-[335vh]"
+    >
       <div className="sticky top-0 flex h-screen items-center justify-center px-6">
         <FloatingBadges />
         <p
