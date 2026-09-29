@@ -1,7 +1,6 @@
 // Top header: layout and styling from the Halo prompt's navbar, recoloured to this site's light palette;
 // content from the 6labs.ai header. Sticky: fixed to the top, on a frosted strip of the page colour so
-// the sections read through it as they scroll under.
-// Content from the 6labs.ai header. The mark is the SixLabs logo rendered in the tile glass (tools/tiles).
+// the sections read through it as they scroll under. The mark is the SixLabs logo rendered in the tile glass (tools/tiles).
 import { LanguageMenu } from "./LanguageMenu";
 
 const LINKS = [
