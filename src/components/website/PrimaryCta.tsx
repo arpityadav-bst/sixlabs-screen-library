@@ -1,10 +1,9 @@
 "use client";
 
 // The page's primary CTA (Try now). On hover it grows a little, its fill lifts 5% toward white, and a
-// soft chromatic band sweeps across it left to right. The band's shape follows the pill: entering, it
+// prism-like spectrum band sweeps across it left to right. The band's shape follows the pill: entering, it
 // curves like the pill's left end; through the middle it straightens to a vertical line; leaving, it
-// curves like the right end. Three blurred strands (red, white, blue), a pixel or two apart, blended as
-// light over the navy, make the chromatic edge. Reduced motion keeps the grow and the fill, not the sweep.
+// curves like the right end. Seven spectral stripes, blended as light over the navy, make the prism edge. Reduced motion keeps the grow and the fill, not the sweep.
 import { useRef, useState } from "react";
 import {
   animate,
@@ -17,11 +16,22 @@ import {
 const NAVY = "#0a152d";
 const NAVY_LIFT = "#162138"; // NAVY mixed 5% toward white
 const SWEEP_S = 1;
-const STRANDS = [
-  { dx: -4, color: "rgba(255,90,110,0.55)" },
-  { dx: 0, color: "rgba(255,255,255,0.7)" },
-  { dx: 4, color: "rgba(90,170,255,0.6)" },
+// A prism's spread: the spectrum in order across the band (red leads, violet trails), stripes a few px
+// apart and only lightly blurred, so the colours stay separate the way refracted light does.
+const SPECTRUM = [
+  "#ff3b3b",
+  "#ff8a1f",
+  "#ffe14d",
+  "#46f08c",
+  "#2fdcff",
+  "#3d7bff",
+  "#9b5cff",
 ];
+const GAP = 4.5;
+const STRANDS = SPECTRUM.map((color, k) => ({
+  dx: (SPECTRUM.length / 2 - k) * GAP,
+  color,
+}));
 
 export function PrimaryCta({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLButtonElement>(null);
@@ -39,9 +49,15 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
     const b = h * (1 - 2 * u);
     return `M ${x} -2 Q ${x - b} ${h / 2} ${x} ${h + 2}`;
   };
-  const d0 = useTransform(t, (p) => path(p, STRANDS[0].dx));
-  const d1 = useTransform(t, (p) => path(p, STRANDS[1].dx));
-  const d2 = useTransform(t, (p) => path(p, STRANDS[2].dx));
+  const ds = [
+    useTransform(t, (p) => path(p, STRANDS[0].dx)),
+    useTransform(t, (p) => path(p, STRANDS[1].dx)),
+    useTransform(t, (p) => path(p, STRANDS[2].dx)),
+    useTransform(t, (p) => path(p, STRANDS[3].dx)),
+    useTransform(t, (p) => path(p, STRANDS[4].dx)),
+    useTransform(t, (p) => path(p, STRANDS[5].dx)),
+    useTransform(t, (p) => path(p, STRANDS[6].dx)),
+  ];
   const opacity = useTransform(t, [-1, 0, 0.12, 0.88, 1], [0, 0, 1, 1, 0]);
 
   const sweep = () => {
@@ -80,19 +96,24 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
             width="200%"
             height="120%"
           >
-            <feGaussianBlur stdDeviation="7" />
+            <feGaussianBlur stdDeviation="1.6" />
           </filter>
         </defs>
         <motion.g
           style={{ opacity }}
           filter="url(#cta-sweep-blur)"
           fill="none"
-          strokeWidth={16}
+          strokeWidth={5}
           strokeLinecap="round"
         >
-          <motion.path d={d0} stroke={STRANDS[0].color} />
-          <motion.path d={d1} stroke={STRANDS[1].color} />
-          <motion.path d={d2} stroke={STRANDS[2].color} />
+          {STRANDS.map((st, k) => (
+            <motion.path
+              key={st.color}
+              d={ds[k]}
+              stroke={st.color}
+              strokeOpacity={0.75}
+            />
+          ))}
         </motion.g>
       </svg>
       <span className="relative">{children}</span>
