@@ -18,7 +18,7 @@ import { SPECTRUM } from "./prism";
 
 const NAVY = "#0a152d";
 const NAVY_SHIFT = "#0c1e42"; // NAVY moved 10% toward the accent (#1a6dff)
-const SWEEP_S = 0.65;
+const SWEEP_S = 1;
 // Which wave crosses the pill: "dots" (a dense dot-matrix band, as on the floating badges) or "prism"
 // (seven spectral stripes).
 const SWEEP: "dots" | "prism" = "dots";

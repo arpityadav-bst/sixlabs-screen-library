@@ -86,7 +86,7 @@ const BADGES: Badge[] = [
 ];
 
 const DRIFT = 22; // px a depth-1 badge moves with the cursor at the edge of the screen
-const SWEEP_S = 0.65;
+const SWEEP_S = 1;
 const BAND = 34; // band width, % of the badge
 const ENTER_AFTER = 0.6,
   ENTER_EACH = 0.35; // s before the first badge, s between badges
