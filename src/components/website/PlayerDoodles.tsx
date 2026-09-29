@@ -6,13 +6,18 @@
 // (the portrait and its doodles leave together). Coordinates are the portrait video's own frame
 // (810 x 1080, the head in its upper middle); the drawings sit beside and above the head, past the frame's
 // sides where needed. A dotted stroke is revealed through a mask that is itself drawn on, so the dots
-// appear along the line in order. Only the explorer has doodles so far.
+// appear along the line in order. Every line wavers a little (a noise displacement), like drawn by hand.
+// Only the explorer has doodles so far.
 import { useId } from "react";
 import { motion, useReducedMotion } from "motion/react";
 
 type Stroke = { d: string; at: number; dur: number; dotted?: boolean };
 
 const DELAY_S = 5;
+// the hand's unevenness: lines pushed off their path by smooth noise, WOBBLE frame px at most, over
+// waves about 1 / ROUGH_FREQ long, so no stroke runs perfectly clean
+const WOBBLE = 6;
+const ROUGH_FREQ = 0.03;
 const circle = (x: number, y: number, r: number) =>
   `M ${x} ${y - r} a ${r} ${r} 0 1 1 -0.1 0`;
 const sparkle = (x: number, y: number, s: number) =>
@@ -94,44 +99,62 @@ export function PlayerDoodles({ id, start }: { id: string; start: boolean }) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      {strokes.map((s, i) =>
-        s.dotted ? (
-          <g key={i}>
-            <mask
-              id={`${uid}-${i}`}
-              maskUnits="userSpaceOnUse"
-              x="-400"
-              y="-300"
-              width="1610"
-              height="1680"
-            >
-              <motion.path
+      <filter
+        id={`${uid}-rough`}
+        filterUnits="userSpaceOnUse"
+        x="-400"
+        y="-300"
+        width="1610"
+        height="1680"
+      >
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency={ROUGH_FREQ}
+          numOctaves={2}
+          seed={7}
+        />
+        <feDisplacementMap in="SourceGraphic" scale={WOBBLE * 2} />
+      </filter>
+      <g filter={`url(#${uid}-rough)`}>
+        {strokes.map((s, i) =>
+          s.dotted ? (
+            <g key={i}>
+              <mask
+                id={`${uid}-${i}`}
+                maskUnits="userSpaceOnUse"
+                x="-400"
+                y="-300"
+                width="1610"
+                height="1680"
+              >
+                <motion.path
+                  d={s.d}
+                  stroke="#ffffff"
+                  strokeWidth={28}
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  {...draw(s)}
+                />
+              </mask>
+              <path
                 d={s.d}
-                stroke="#ffffff"
-                strokeWidth={28}
-                initial={{ pathLength: 0, opacity: 0 }}
-                {...draw(s)}
+                mask={`url(#${uid}-${i})`}
+                strokeWidth={5}
+                strokeDasharray="0 15"
+                strokeOpacity={0.85}
               />
-            </mask>
-            <path
+            </g>
+          ) : (
+            <motion.path
+              key={i}
               d={s.d}
-              mask={`url(#${uid}-${i})`}
-              strokeWidth={5}
-              strokeDasharray="0 15"
+              strokeWidth={3.5}
               strokeOpacity={0.85}
+              initial={{ pathLength: 0, opacity: 0 }}
+              {...draw(s)}
             />
-          </g>
-        ) : (
-          <motion.path
-            key={i}
-            d={s.d}
-            strokeWidth={3.5}
-            strokeOpacity={0.85}
-            initial={{ pathLength: 0, opacity: 0 }}
-            {...draw(s)}
-          />
-        ),
-      )}
+          ),
+        )}
+      </g>
     </svg>
   );
 }
