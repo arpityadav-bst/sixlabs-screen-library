@@ -61,7 +61,7 @@ for (const path of svg.paths) {
     const beamU = { uBeam: { value: 2 }, uBeamI: { value: 0 }, uFlare: { value: 0 }, uBackRim: { value: 0 }, uShine: { value: new THREE.Color(0) }, uHotF: { value: new THREE.Color(0) }, uHotR: { value: new THREE.Color(0) } };
     const rearEnv = studioEnvironment(renderer, P, { leftStrip: false, strip: P.actEnvStrip });
     let mats;
-    if (navy) {
+    if (navy && opt.look !== 'clear') { // the clear look keeps the core in the same white glass
       const dark = new THREE.MeshPhysicalMaterial({ color: '#030d2d', roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 1.2 });
       mats = [dark, dark];
     } else mats = opt.look === 'clear' ? glassMaterials(P, { leftBand: false }) : activeMaterials(P, rearEnv, beamU);

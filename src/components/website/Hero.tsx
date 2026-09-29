@@ -16,18 +16,26 @@ export function Hero() {
         <TileFloor className="w-full h-full" onReady={() => setFloorReady(true)} />
       </div>
 
-      {/* While the floor loads, the logo turns slowly in the tile glass (a pre-rendered turntable,
-          tools/tiles/turntable.py), then fades away as the tiles fade in. */}
+      {/* While the floor loads, the logo turns slowly in the tiles' white glass on the right, where the
+          tiles will be (a pre-rendered turntable on the floor, tools/tiles/turntable.py; its square frame
+          is feathered into the container), then fades away as the tiles fade in. The mark spans about
+          two thirds of the frame, so a 30%-wide frame makes it 40% of the right half. */}
       <AnimatePresence>
         {!floorReady && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition: { duration: 0.4, ease } }}
             exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.6, ease } }}
-            className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none"
+            className="absolute top-1/2 left-3/4 -translate-x-1/2 -translate-y-1/2 z-10 w-[30%] max-h-full aspect-square pointer-events-none"
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- an animated WebP, served as is */}
-            <img src="/brand/sixlabs-mark-spin.webp" alt="" width={120} height={120} className="w-[120px] h-[120px]" />
+            <img
+              src="/brand/sixlabs-mark-spin.webp"
+              alt=""
+              width={520}
+              height={520}
+              className="w-full h-full [mask-image:radial-gradient(closest-side,#000_72%,transparent_98%)]"
+            />
           </motion.div>
         )}
       </AnimatePresence>

@@ -8,7 +8,7 @@ from PIL import Image
 frames_dir, corners, out = sys.argv[1], json.loads(sys.argv[2]), sys.argv[3]
 size = int(sys.argv[4]) if len(sys.argv) > 4 else 240
 ms = int(sys.argv[5]) if len(sys.argv) > 5 else 100
-S, pad = 1000, 200  # the top-face square spans S; pad leaves room for the turning corners and the slab edge
+S, pad = 1000, 260  # the top-face square spans S; pad leaves room for the turning corners and the slab edge
 C = S + 2 * pad
 dst = [(pad, pad), (pad + S, pad), (pad + S, pad + S), (pad, pad + S)]
 A, b = [], []
