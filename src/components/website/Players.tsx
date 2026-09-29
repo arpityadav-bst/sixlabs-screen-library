@@ -10,6 +10,7 @@ import { PlayerPortrait } from "./PlayerPortrait";
 import { PortraitSwap } from "./PortraitSwap";
 import { ModeToggle } from "./ModeToggle";
 import { usePlayerMode } from "./usePlayerMode";
+import { PlayerDoodles } from "./PlayerDoodles";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 // On the accent blue (AccentWave.tsx): white cards.
@@ -125,11 +126,13 @@ export function Players() {
             <AnimatePresence mode="popLayout">
               <motion.div
                 key={player.id}
+                className="relative isolate" // its own layer, so the doodles sit behind the portrait but above the glow
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.02 }}
                 transition={{ duration: 0.5, ease }}
               >
+                <PlayerDoodles id={player.id} start={shown} />
                 {/* a player with a clip turns with the cursor (PlayerPortrait), switching to their AI copy's clip with the toggle (PortraitSwap); the others are stills */}
                 {player.video && player.aiVideo ? (
                   <PortraitSwap
