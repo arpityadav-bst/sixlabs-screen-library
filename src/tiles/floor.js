@@ -15,6 +15,7 @@ import { createFocusRig } from './focus-rig.js';
 import { startInteraction } from './interact.js';
 import { placeCamera, coverage, onSomeScreen } from './viewport.js';
 import { tileGeometry } from './geometry.js';
+import { playIntro } from './intro.js';
 
 export async function createFloor(container, { params, base = '/tiles', isStatic = false, expose = false } = {}) {
   const RAW = params ?? await fetch(`${base}/floor-params.json`).then((r) => r.json());
@@ -76,13 +77,16 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
 
   // Glass tiles, instanced, one per cell. The first column gets its own material: its left edge faces the
   // empty floor, so it carries no seen-through shadow band on that side. The raised tile hides its cell.
+  // Tiles and busts share one group, so the load-in (intro.js) can raise them together.
+  const field = new THREE.Group();
+  scene.add(field);
   const cells = [];
   for (let i = 0; i <= iMax; i++) for (let j = jMin; j <= jMax; j++) cells.push([i, j]);
   const m4 = new THREE.Matrix4(), slot = new Map();
   const addTiles = (list, materials) => {
     const mesh = new THREE.InstancedMesh(geo, materials, list.length);
     list.forEach(([i, j], k) => { mesh.setMatrixAt(k, m4.makeTranslation(cx(i), 0, cz(j))); slot.set(`${i},${j}`, [mesh, k]); });
-    scene.add(mesh);
+    field.add(mesh);
   };
   // Raises one glass tile (it rides up under the cobalt slab) or hides it once the slab covers it.
   const setTileLift = (i, j, y, hidden) => {
@@ -115,7 +119,7 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   // so the design's line-up stays the same whatever the screen.
   const inDesign = ([i, j]) => { const v = new THREE.Vector3(cx(i), tileH, cz(j)).project(camera); return Math.abs(v.x) < 1.12 && Math.abs(v.y) < 1.2; };
   const busted = cells.filter(([i, j]) => inDesign([i, j]) || onSomeScreen(camera, P, new THREE.Vector3(cx(i), tileH, cz(j))));
-  const chars = await addCharacters(scene, P, busted.map(([i, j]) => (
+  const chars = await addCharacters(field, P, busted.map(([i, j]) => (
     { i, j, x: cx(i), y: tileH, z: cz(j), active: i === ia && j === ja, screen: toScreen(cx(i), cz(j)), rank: inDesign([i, j]) ? 0 : 1 })), pictures);
 
   // Capture the reflection from the activeAt tile, with that tile and its busts out of the way.
@@ -189,7 +193,9 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
     U.uGlowS.value = U.uGlowTint.value = 0;
   }
   draw(true);
-  const resize = new ResizeObserver(() => draw());
+  // Live: the tiles fade in and rise out of the floor; a resize mid-way snaps them into place.
+  const intro = isStatic ? null : playIntro({ renderer, composer, refiner, field, rise: tileH });
+  const resize = new ResizeObserver(() => { const w = `${Math.max(1, container.clientWidth)}x${Math.max(1, container.clientHeight)}`; if (w !== size) intro?.cancel(); draw(); });
   resize.observe(container);
 
   // Picks the tile under a ray: where it meets the tile tops, rounded to the nearest cell, inside the tile.
@@ -199,7 +205,10 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
     const i = Math.round((hit.x - ox) / pitch), j = Math.round((hit.z - oz) / pitch);
     return Math.abs(hit.x - cx(i)) < half && Math.abs(hit.z - cz(j)) < half && slot.has(`${i},${j}`) ? [i, j] : null;
   };
-  const stop = isStatic ? () => {} : startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, floorU: U, nearU, P, expose });
+  let stop = () => {}, disposed = false;
+  if (!isStatic) intro.done.then(() => {
+    if (!disposed) stop = startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, floorU: U, nearU, P, expose });
+  });
 
   window.__floorReady = true;
   if (expose) {
@@ -209,7 +218,9 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
 
   return {
     dispose() {
+      disposed = true;
       resize.disconnect();
+      intro?.cancel();
       stop();
       refiner?.stop();
       mirrorRT.dispose();
