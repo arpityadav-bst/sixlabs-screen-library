@@ -16,25 +16,27 @@ export function Hero() {
         <TileFloor className="w-full h-full" onReady={() => setFloorReady(true)} />
       </div>
 
-      {/* While the floor loads, the logo turns slowly in the tiles' white glass on the right, where the
-          tiles will be (a pre-rendered turntable on the floor, tools/tiles/turntable.py; its square frame
-          is feathered into the container), then fades away as the tiles fade in. The mark spans about
-          two thirds of the frame, so a 30%-wide frame makes it 40% of the right half. */}
+      {/* While the floor loads, the logo lies on the floor in the tiles' white glass, on the right where
+          the tiles will be, and turns very slowly about the floor's vertical axis; it fades away as the
+          tiles fade in. One still render seen from straight above (16 KB), laid on the floor by a CSS
+          tilt matching the tile camera (40 degrees up, a long lens) and spun by the compositor
+          (.floor-spin in globals.css), so it costs almost nothing to load and turns smoothly. Its
+          square is feathered into the floor. It may run past the container's edge. */}
       <AnimatePresence>
         {!floorReady && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition: { duration: 0.4, ease } }}
             exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.6, ease } }}
-            className="absolute top-1/2 left-3/4 -translate-x-1/2 -translate-y-1/2 z-10 w-[30%] max-h-full aspect-square pointer-events-none"
+            className="absolute top-1/2 left-3/4 -translate-x-1/2 -translate-y-1/2 z-10 w-[45%] aspect-square pointer-events-none"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element -- an animated WebP, served as is */}
+            {/* eslint-disable-next-line @next/next/no-img-element -- one small still, served as is */}
             <img
-              src="/brand/sixlabs-mark-spin.webp"
+              src="/brand/sixlabs-mark-floor.webp"
               alt=""
-              width={520}
-              height={520}
-              className="w-full h-full [mask-image:radial-gradient(closest-side,#000_72%,transparent_98%)]"
+              width={1350}
+              height={1350}
+              className="floor-spin w-full h-full [mask-image:radial-gradient(closest-side,#000_72%,transparent_98%)]"
             />
           </motion.div>
         )}

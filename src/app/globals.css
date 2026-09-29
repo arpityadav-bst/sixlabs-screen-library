@@ -12,3 +12,17 @@
 body {
   background: #f9fafb;
 }
+
+/* Hero loader (Hero.tsx): lays the logo on the tile floor and turns it about the floor's vertical axis.
+   rotateZ spins it in its own plane, then rotateX tips that plane back 50 degrees, so it is seen from
+   40 degrees up like the tiles; the long perspective matches the tile camera's narrow lens. */
+@keyframes floor-spin {
+  from { transform: perspective(2400px) rotateX(50deg) rotateZ(0deg); }
+  to { transform: perspective(2400px) rotateX(50deg) rotateZ(360deg); }
+}
+.floor-spin {
+  animation: floor-spin 90s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .floor-spin { animation: none; transform: perspective(2400px) rotateX(50deg); }
+}
