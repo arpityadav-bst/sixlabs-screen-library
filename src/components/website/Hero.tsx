@@ -46,7 +46,7 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, ease }}
-          className="flex flex-col items-start pointer-events-auto"
+          className="flex-1 flex flex-col items-start pb-10 md:pb-12"
         >
           <h1 className="font-display text-[42px] md:text-[56px] font-medium tracking-tight leading-[1.05] text-[#0a1b33]">
             Making models of
@@ -56,23 +56,26 @@ export function Hero() {
           <p className="font-sans text-[14px] md:text-[15px] text-[#64748b] mt-5 max-w-[440px] leading-relaxed">
             Our model watched millions of hours of gameplay. Now it understands the game player.
           </p>
-          {/* The primary CTA, wide, with the secondary action as an underlined link under it, then after
-              some space a quiet line of social proof. */}
-          <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            className="mt-8 min-w-[220px] bg-[#0a152d] text-white rounded-full px-10 py-3.5 text-[15px] font-medium"
-          >
-            Try now
-          </motion.button>
-          <a
-            href="#"
-            className="mt-4 text-[14px] font-medium text-[#0a1b33] underline underline-offset-4 decoration-slate-300 hover:decoration-[#0a1b33] transition-colors duration-200"
-          >
-            See What It Does
-          </a>
-          <p className="mt-10 font-sans text-[13px] leading-relaxed text-slate-400">
+          {/* The primary CTA, wide, with the secondary action as an underlined link centred under it. The
+              quiet line of social proof sits at the bottom of the container. Only the controls take the
+              pointer, so the tiles under the rest of this column stay interactive. */}
+          <div className="mt-8 flex flex-col items-center pointer-events-auto">
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className="min-w-[220px] bg-[#0a152d] text-white rounded-full px-10 py-3.5 text-[15px] font-medium"
+            >
+              Try now
+            </motion.button>
+            <a
+              href="#"
+              className="mt-4 text-[14px] font-medium text-[#0a1b33] underline underline-offset-4 decoration-slate-300 hover:decoration-[#0a1b33] transition-colors duration-200"
+            >
+              See What It Does
+            </a>
+          </div>
+          <p className="mt-auto font-sans text-[13px] leading-relaxed text-slate-400">
             One million players have a copy.
             <br />
             <span className="text-slate-600">Yours next.</span>
