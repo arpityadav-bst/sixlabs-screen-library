@@ -5,6 +5,7 @@ import { Waves } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { TileFloor, type FloorHandle } from "@/components/tiles/TileFloor";
 import { ScrollCue } from "./ScrollCue";
+import { PrimaryCta } from "./PrimaryCta";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -107,14 +108,7 @@ export function Hero() {
               of social proof sits at the bottom of the container. Only the controls take the pointer, so
               the tiles under the rest of this column stay interactive. */}
             <div className="mt-8 pointer-events-auto">
-              <motion.button
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                className="min-w-[220px] bg-[#0a152d] text-white rounded-full px-10 py-3.5 text-[15px] font-medium"
-              >
-                Try now
-              </motion.button>
+              <PrimaryCta>Try now</PrimaryCta>
             </div>
             <p className="mt-8 font-sans text-[13px] leading-relaxed text-slate-400">
               One million players have a copy.
