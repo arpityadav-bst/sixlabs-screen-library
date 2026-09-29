@@ -118,7 +118,7 @@ export function Players() {
                 onClick={() => setActive(k)}
                 aria-pressed={on}
                 className={
-                  "flex min-h-[176px] flex-col justify-between rounded-[28px] border p-6 text-left transition-all duration-300 " +
+                  "flex min-h-[176px] flex-col justify-between rounded-[28px] border p-6 text-left transition-[background-color,box-shadow,translate] duration-300 " +
                   (on
                     ? "bg-white border-transparent shadow-[0_28px_56px_-26px_rgba(10,27,51,0.45)]"
                     : card +
