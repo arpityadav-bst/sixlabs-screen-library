@@ -8,7 +8,7 @@
 // at once over every character tile on screen, activated or not, and restarts the cycle from the middle.
 import { shownShare } from './viewport.js';
 
-const RESUME_MS = 3000, FOCUS_MS = 380, GAP_MS = 220, MIN_SHOWN = 0.4;
+const RESUME_MS = 3000, FOCUS_MS = 380, GAP_MS = 220, MIN_SHOWN = 0.4, WAVE_SHOWN = 0.02;
 const WAVE_SPREAD = 1.3, FLIP_SECONDS = 0.75; // stagger across the screen, one tile's flip
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
@@ -20,8 +20,10 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner,
 
   // The character tiles that count as on screen: at least MIN_SHOWN of the tile's top face inside the view
   // (its projected outline clipped to the screen, by area). x, y: the centre, in normalised device coords.
-  const onScreen = () => [...chars.entries()].map(([key, ch]) => ({ key, ...shownShare(camera, ...ch.at, half) }))
-    .filter((t) => t.shown >= MIN_SHOWN);
+  // The wave also takes the barely visible tiles at the edges (WAVE_SHOWN), activated or not, so nothing
+  // in view changes without flipping.
+  const onScreen = (min = MIN_SHOWN) => [...chars.entries()].map(([key, ch]) => ({ key, ...shownShare(camera, ...ch.at, half) }))
+    .filter((t) => t.shown >= min);
 
   ctl.onUser = (active) => {
     clearTimeout(resumeTimer);
@@ -30,7 +32,7 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner,
   };
 
   async function wave(all = false) {
-    const tiles = onScreen().filter((t) => all || ctl.spent.has(t.key));
+    const tiles = onScreen(WAVE_SHOWN).filter((t) => all || ctl.spent.has(t.key) || t.shown < MIN_SHOWN);
     for (const key of ctl.spent) if (!tiles.some((t) => t.key === key)) ctl.unspend(key); // off screen: reset quietly
     if (!tiles.length) return;
     ctl.inert = true;

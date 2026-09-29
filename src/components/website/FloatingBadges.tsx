@@ -1,7 +1,7 @@
 "use client";
 
 // Floating tiles around the scroll line (ScrubLine.tsx): the floor's own glass tiles with their
-// characters, pre-rendered square on and upright. Each sits at its own depth and drifts with the cursor by
+// characters, pre-rendered each at its own angle (tools/tiles/tile-boot.js) and tilted a little more. Each sits at its own depth and drifts with the cursor by
 // that much (a soft spring, nearer ones further), so they parallax against each other, and bobs slowly
 // on its own. Hovering one sweeps a dense dot-matrix band across it that turns the human into their AI
 // copy behind it; leaving eases back. The cast avoids the four characters the players section uses.
@@ -86,7 +86,6 @@ const BADGES: Badge[] = [
 const DRIFT = 22; // px a depth-1 badge moves with the cursor at the edge of the screen
 const SWEEP_S = 1;
 const BAND = 34; // band width, % of the tile
-const TILE_ASPECT = 808 / 725; // the rendered tiles' width / height
 
 export function FloatingBadges() {
   // pointer position, -1..1 across the viewport, smoothed
@@ -163,7 +162,7 @@ function FloatingBadge({
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 300, damping: 22 }}
           className="pointer-events-auto relative drop-shadow-[0_18px_22px_rgba(10,27,51,0.18)]"
-          style={{ width: b.size, aspectRatio: TILE_ASPECT }}
+          style={{ width: b.size, rotate: b.tilt }}
         >
           <Tile src={`/tiles/float/${b.name}.webp`} />
           <motion.div
@@ -195,14 +194,10 @@ function FloatingBadge({
   );
 }
 
-// One floating tile: the floor's glass tile with its character, pre-rendered square on (tools/tiles/tile-boot.js).
+// One floating tile: the floor's glass tile with its character, pre-rendered (tools/tiles/tile-boot.js).
 function Tile({ src }: { src: string }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element -- pre-rendered tile art
-    <img
-      src={src}
-      alt=""
-      className="absolute inset-0 h-full w-full select-none"
-    />
+    <img src={src} alt="" className="block h-auto w-full select-none" />
   );
 }

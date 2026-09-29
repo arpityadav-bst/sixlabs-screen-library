@@ -3,7 +3,8 @@
 // floor's camera angle. PARAMS: name (character file), ai (true: the AI copy), transparent (no floor or
 // background), elev (camera height in degrees), mask (the tile's outline only, white on black: the
 // cut-out mask for the grey-backed render, so the glass keeps the floor's look once cut out), straight
-// (square on to the camera, the bust upright along the tile's axis, a gentler angle; default true).
+// (square on to the camera, the bust upright along the tile's axis, a gentler angle; default true),
+// az (with straight: the camera's turn around the tile in degrees, so each tile can sit at its own angle).
 import * as THREE from 'three';
 import { studioEnvironment, glassMaterials } from '/src/tiles/materials.js';
 import { buildComposer } from '/src/tiles/post.js';
@@ -11,7 +12,7 @@ import { addCharacters, loadPictures } from '/src/tiles/characters.js';
 import { tileGeometry } from '/src/tiles/geometry.js';
 
 const RAW = await fetch('/tiles/floor-params.json').then((r) => r.json());
-const opt = Object.assign({ name: '03-braids.webp', ai: false, transparent: true, elev: null, mask: false, straight: true }, window.PARAMS);
+const opt = Object.assign({ name: '03-braids.webp', ai: false, transparent: true, elev: null, mask: false, straight: true, az: 0 }, window.PARAMS);
 const P = Object.assign({ W: 1920, H: 1080, assetBase: '/tiles' }, RAW, RAW.states?.default ?? {}, { chars: [opt.name], charActive: null }, opt.transparent ? { filmGrain: 0 } : {});
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: opt.transparent });
@@ -53,7 +54,7 @@ if (opt.mask) {
   scene.background = new THREE.Color('#000000');
 }
 
-const az = opt.straight ? 0 : THREE.MathUtils.degToRad(P.azim);
+const az = THREE.MathUtils.degToRad(opt.straight ? opt.az : P.azim);
 const el = THREE.MathUtils.degToRad(opt.elev ?? (opt.straight ? 62 : P.elev));
 const d = (P.tile * 1.55) / Math.tan(THREE.MathUtils.degToRad(P.fov / 2)) / 2;
 const camera = new THREE.PerspectiveCamera(P.fov, w / h, 0.1, 400);
