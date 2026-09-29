@@ -47,7 +47,10 @@ export function Players() {
     <section
       ref={section}
       id="players"
-      className="relative z-30 w-full max-w-[1400px] mx-auto -mt-[100vh] flex min-h-screen flex-col justify-center pt-24"
+      className={
+        "relative z-30 w-full max-w-[1400px] mx-auto -mt-[100vh] flex min-h-screen flex-col justify-center pt-24 " +
+        (shown ? "" : "pointer-events-none") // hidden, it must not block the floating tiles under it
+      }
     >
       <div className="relative px-8 md:px-16">
         {/* soft glow behind the character */}
