@@ -14,7 +14,7 @@ const ACCENT = ["a", "thousand", "models"]; // "Put a thousand models": the word
 const COMPLETE_AT = 0.82;
 // The track runs WAVE_VH longer than the words need: the stage stays pinned while the accent water
 // (AccentWave.tsx) rises over it, and only then lets go.
-export const WAVE_VH = 0.75;
+export const WAVE_VH = 1.3;
 
 const WORDS = LINE.split(" ");
 const accentAt = WORDS.findIndex(
@@ -63,7 +63,7 @@ export function ScrubLine() {
       ref={track}
       id="model-line"
       aria-label={LINE}
-      className="relative h-[335vh]"
+      className="relative h-[390vh]"
     >
       <div className="sticky top-0 flex h-screen items-center justify-center px-6">
         <FloatingBadges />

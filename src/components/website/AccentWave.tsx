@@ -15,7 +15,7 @@ const ARC = 90; // how much higher the middle of the edge is than its ends, px
 const BAND = 480; // depth of the halftone above the solid colour, px
 const GRAIN = 0.07; // noise strength on the blue
 const AUTO_AT = 0.5; // share of the rise after which the page glides on into the players by itself
-const WORD = "Players"; // the next section's name, huge in the halftone
+const WORD = "The players"; // the next section's name, huge in the halftone
 const WORD_ALPHA = 0.14;
 const PITCH = 6; // halftone grid, px; a dot of radius PITCH / 2 touches its neighbours
 
@@ -75,7 +75,9 @@ export function AccentWave() {
       // the level runs from below the view, halftone included (p 0), up until the solid covers it (p 1)
       // p 1 is the moment the solid colour covers the view (its lowest points, the arc's ends, reach the
       // top): that is when it reads as full, so that is when it announces it
-      const level = h + BAND - p * (h + BAND + ARC + PITCH * 3);
+      // eased, so the water starts gently and settles gently
+      const pe = p * p * (3 - 2 * p);
+      const level = h + BAND - pe * (h + BAND + ARC + PITCH * 3);
       if (p > 0) {
         ctx.fillStyle = fill;
         ctx.beginPath();
