@@ -105,11 +105,12 @@ export function Hero() {
       </section>
       {/* Outside the container, under its bottom-right corner, inset like the text column. */}
       <div className="w-full max-w-[1400px] mx-auto mt-3 px-8 md:px-16 flex justify-end">
-        {/* Sends the flip wave now: every tile back to default, activated or not. */}
+        {/* Sends the flip wave now: every tile back to default, activated or not. Same pill as the header's
+            language button when open. */}
         <button
           type="button"
           onClick={() => floor.current?.reset()}
-          className="group -mr-1 p-1 flex items-center gap-1.5 rounded-full text-slate-400 hover:text-slate-600 transition-colors duration-200"
+          className="group flex items-center gap-1.5 rounded-full px-2.5 py-1.5 bg-slate-200/60 text-slate-500 hover:text-[#0a1b33] hover:bg-slate-200 transition-colors duration-200"
         >
           <RotateCcw
             className="w-3.5 h-3.5 transition-transform duration-300 group-hover:-rotate-45"
