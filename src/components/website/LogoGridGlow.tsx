@@ -1,7 +1,7 @@
 "use client";
 
 // Page background: a grid of tiny monochrome SixLabs marks that shows only in a soft circle around the
-// cursor, very faintly. One repeating SVG tile (public/brand/mark-grid-tile.svg), revealed by a radial
+// cursor, very faintly. One repeating SVG tile (public/brand/mark-grid-26.svg (named by mark size, so a change always busts the cache)), revealed by a radial
 // mask that follows the pointer through CSS variables (no re-renders). It sits behind everything, so the
 // containers cover it and it only shows on the page's own white. Off for touch and reduced motion.
 import { useEffect, useRef } from "react";

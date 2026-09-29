@@ -45,8 +45,8 @@ body {
 
 /* Background mark grid around the cursor (LogoGridGlow.tsx). */
 .logo-grid-glow {
-  background-image: url("/brand/mark-grid-tile.svg");
-  background-size: 27px 27px;
+  background-image: url("/brand/mark-grid-26.svg");
+  background-size: 29px 29px;
   background-attachment: fixed;
   mask-image: radial-gradient(110px circle at var(--mx, -999px) var(--my, -999px), rgba(0, 0, 0, 0.09), transparent 100%);
   -webkit-mask-image: radial-gradient(110px circle at var(--mx, -999px) var(--my, -999px), rgba(0, 0, 0, 0.09), transparent 100%);
