@@ -7,20 +7,10 @@
 // (810 x 1080, the head in its upper middle); the drawings sit beside and above the head, past the frame's
 // sides where needed. A dotted stroke is revealed through a mask that is itself drawn on, so the dots
 // appear along the line in order. Every line wavers a little (a noise displacement), like drawn by hand.
-// Only the explorer has doodles so far.
+// The drawings themselves are in player-doodles.ts.
 import { useId } from "react";
 import { motion, useReducedMotion } from "motion/react";
-
-// `o` is the centre of the drawing a stroke belongs to as written, which it is shrunk about (SIZE), and
-// `to` is where that centre is placed, close around the head
-type Stroke = {
-  d: string;
-  at: number;
-  dur: number;
-  dotted?: boolean;
-  o?: [number, number];
-  to?: [number, number];
-};
+import { DOODLES, type Stroke } from "./player-doodles";
 
 const DELAY_S = 5;
 const SIZE = 0.7; // each drawing's size against how its strokes are written, about its own centre
@@ -28,128 +18,6 @@ const SIZE = 0.7; // each drawing's size against how its strokes are written, ab
 // waves about 1 / ROUGH_FREQ long, so no stroke runs perfectly clean
 const WOBBLE = 6;
 const ROUGH_FREQ = 0.03;
-const circle = (x: number, y: number, r: number) =>
-  `M ${x} ${y - r} a ${r} ${r} 0 1 1 -0.1 0`;
-const sparkle = (x: number, y: number, s: number) =>
-  `M ${x} ${y - s} Q ${x} ${y} ${x + s} ${y} Q ${x} ${y} ${x} ${y + s} Q ${x} ${y} ${x - s} ${y} Q ${x} ${y} ${x} ${y - s}`;
-
-// The explorer: a compass and a dotted route over the head to a map pin, the pin's trail on to an X, a
-// magnifying glass, a peak with a flag, and a few sparkles. `at` is when each stroke starts, seconds.
-const EXPLORER: Stroke[] = [
-  { d: circle(-50, 150, 46), at: 0, dur: 0.7, o: [-50, 140], to: [60, 132] },
-  {
-    d: "M -50 116 L -41 150 L -50 184 L -59 150 Z",
-    at: 0.6,
-    dur: 0.4,
-    o: [-50, 140],
-    to: [60, 132],
-  },
-  {
-    d: "M -57 88 L -50 74 L -43 88",
-    at: 0.95,
-    dur: 0.25,
-    o: [-50, 140],
-    to: [60, 132],
-  },
-  { d: "M 95 80 Q 400 -85 700 72", at: 1.15, dur: 1.2, dotted: true },
-  {
-    d: "M 830 190 C 800 150 790 130 790 110 A 40 40 0 1 1 870 110 C 870 130 860 150 830 190 Z",
-    at: 2.15,
-    dur: 0.6,
-    o: [830, 140],
-    to: [725, 125],
-  },
-  {
-    d: circle(830, 108, 14),
-    at: 2.65,
-    dur: 0.3,
-    o: [830, 140],
-    to: [725, 125],
-  },
-  {
-    d: "M 838 205 C 875 250 845 290 900 320 S 955 370 935 398",
-    at: 2.85,
-    dur: 0.8,
-    dotted: true,
-    o: [830, 140],
-    to: [725, 125],
-  },
-  {
-    d: "M 918 408 L 950 440",
-    at: 3.55,
-    dur: 0.2,
-    o: [830, 140],
-    to: [725, 125],
-  },
-  {
-    d: "M 950 408 L 918 440",
-    at: 3.75,
-    dur: 0.2,
-    o: [830, 140],
-    to: [725, 125],
-  },
-  {
-    d: circle(-70, 430, 40),
-    at: 4.05,
-    dur: 0.6,
-    o: [-60, 440],
-    to: [35, 420],
-  },
-  { d: "M -42 459 L 2 503", at: 4.55, dur: 0.3, o: [-60, 440], to: [35, 420] },
-  {
-    d: "M -94 424 A 25 25 0 0 1 -74 404",
-    at: 4.85,
-    dur: 0.25,
-    o: [-60, 440],
-    to: [35, 420],
-  },
-  {
-    d: "M 700 560 L 770 480 L 805 515 L 870 430 L 960 560",
-    at: 5.15,
-    dur: 0.8,
-    o: [830, 470],
-    to: [795, 445],
-  },
-  {
-    d: "M 848 458 L 866 472 L 886 454",
-    at: 5.85,
-    dur: 0.25,
-    o: [830, 470],
-    to: [795, 445],
-  },
-  {
-    d: "M 870 430 L 870 360",
-    at: 6.05,
-    dur: 0.25,
-    o: [830, 470],
-    to: [795, 445],
-  },
-  {
-    d: "M 870 362 L 912 377 L 870 392",
-    at: 6.25,
-    dur: 0.3,
-    o: [830, 470],
-    to: [795, 445],
-  },
-  { d: sparkle(150, 26, 18), at: 6.55, dur: 0.3, o: [150, 26], to: [195, 35] },
-  { d: sparkle(650, 4, 14), at: 6.75, dur: 0.3, o: [650, 4], to: [605, 12] },
-  {
-    d: sparkle(-150, 300, 12),
-    at: 6.95,
-    dur: 0.3,
-    o: [-150, 300],
-    to: [-20, 295],
-  },
-  {
-    d: sparkle(990, 250, 12),
-    at: 7.15,
-    dur: 0.3,
-    o: [990, 250],
-    to: [875, 220],
-  },
-];
-
-const DOODLES: Record<string, Stroke[]> = { explorer: EXPLORER };
 
 export function PlayerDoodles({ id, start }: { id: string; start: boolean }) {
   const strokes = DOODLES[id];

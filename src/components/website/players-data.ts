@@ -42,6 +42,8 @@ export const PLAYERS: Player[] = [
     tagline: "Runs the same loop until something changes.",
     body: "Same loop, every night. Never reads the tutorial. Notices the second you change the drop rate.",
     picture: "/players/grinder.webp?v=2",
+    video: { src: "/players/grinder.webm?v=1", straight: 0.5 },
+    aiVideo: { src: "/players/grinder-ai.webm?v=1", straight: 0.5 },
     traits: traits(0.2, 0.96, 0.8, 0.82),
   },
   {
@@ -50,6 +52,8 @@ export const PLAYERS: Player[] = [
     tagline: "Pays the moment the value is clear.",
     body: "Checks the shop before the quest. Buys when the value is obvious. Leaves when the price shows first.",
     picture: "/players/spender.webp?v=2",
+    video: { src: "/players/spender.webm?v=1", straight: 0.54 },
+    aiVideo: { src: "/players/spender-ai.webm?v=1", straight: 0.52 },
     traits: traits(0.5, 0.35, 0.18, 0.45),
   },
   {
@@ -58,6 +62,8 @@ export const PLAYERS: Player[] = [
     tagline: "Quits at the first wall that feels unfair.",
     body: "Hits the wall at the boss. Tries twice. Closes the app. Your D7 number is made of this player.",
     picture: "/players/lost.webp?v=2",
+    video: { src: "/players/lost.webm?v=1", straight: 0.52 },
+    aiVideo: { src: "/players/lost-ai.webm?v=1", straight: 0.52 },
     traits: traits(0.4, 0.15, 0.7, 0.3),
   },
 ];
