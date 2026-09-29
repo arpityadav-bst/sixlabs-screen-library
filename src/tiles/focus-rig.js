@@ -15,7 +15,8 @@ const lerp = (a, b, t) => a + (b - a) * t;
 const lerp4 = (a, b, t) => a.map((v, k) => lerp(v, b[k], t));
 const col = (c, k) => new THREE.Color(c).multiplyScalar(k);
 
-export function createFocusRig({ renderer, scene, PF, PA, geo, tileH, cx, cz, toCam, setTileLift }) {
+// mirror: the shared side-wall reflection (floor.js captures it once at startup).
+export function createFocusRig({ renderer, scene, PF, PA, geo, tileH, cx, cz, toCam, setTileLift, mirror }) {
   const rearEnv = studioEnvironment(renderer, PF, { leftStrip: false, strip: PF.actEnvStrip });
   // The beam lives on both slabs with shared uniforms, so it reads the same whichever slab is showing.
   const beamU = {
@@ -45,11 +46,8 @@ export function createFocusRig({ renderer, scene, PF, PA, geo, tileH, cx, cz, to
   const parts = [slabF, slabA, glintF, glintA];
   scene.add(...parts, blue, halo.mesh);
 
-  // Sidewall reflections: a cube map shot from the tile's position, so the walls mirror the real floor.
-  const cubeRT = new THREE.WebGLCubeRenderTarget(512, { type: THREE.HalfFloatType });
-  const cubeCam = new THREE.CubeCamera(0.01, 60, cubeRT);
-  if (PF.actSideMirror > 0) {
-    matsF[1].envMap = cubeRT.texture;
+  if (mirror && PF.actSideMirror > 0) {
+    matsF[1].envMap = mirror;
     matsF[1].envMapIntensity = PF.actSideMirror;
     matsF[1].needsUpdate = true;
   }
@@ -96,6 +94,12 @@ export function createFocusRig({ renderer, scene, PF, PA, geo, tileH, cx, cz, to
 
   return {
     state: st, apply, drive, values,
+    // Shows every part (at wherever it last was) so a shader warm-up compiles them; off again after.
+    preview(on) {
+      if (on) { show(true); halo.mesh.visible = true; return; }
+      show(!!st.cell); // back to whatever this rig was showing before the warm-up
+      if (st.cell) apply(); else halo.mesh.visible = false;
+    },
     setCell(i, j) {
       if (st.cell) setTileLift(...st.cell, 0, false);
       Object.assign(st, { cell: [i, j], L: 0, S: 0, F: 0 });
@@ -108,19 +112,6 @@ export function createFocusRig({ renderer, scene, PF, PA, geo, tileH, cx, cz, to
       show(false);
       halo.set(0, 0, 0, -9);
       blue.intensity = 0;
-    },
-    // Re-shoots the sidewall reflection from the current cell, with this tile and its own busts hidden.
-    updateMirror(hidden = []) {
-      if (!st.cell || !(PF.actSideMirror > 0)) return;
-      const [i, j] = st.cell;
-      cubeCam.position.set(cx(i), PF.lift + tileH / 2, cz(j));
-      show(false);
-      setTileLift(i, j, 0, true);
-      hidden.forEach((m) => { m.visible = false; });
-      cubeCam.update(renderer, scene);
-      hidden.forEach((m) => { m.visible = true; });
-      show(true);
-      apply();
     },
   };
 }

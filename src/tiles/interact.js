@@ -6,13 +6,12 @@
 //   R                 : every character back to human
 // Every value eases toward its target with an exponential ease-out, so any change can interrupt any
 // other smoothly. Two rigs let one tile settle while the next one rises. Frames render at one sample
-// while anything moves, then once at full supersampling when the scene comes to rest.
+// while anything moves, then sharpen progressively once the scene comes to rest (post.js).
 import * as THREE from 'three';
 import { ACT_SECONDS, DEACT_SECONDS, COMMIT_SECONDS } from './sweep.js';
 
 // Returns a stop() that detaches every listener and halts pending frames (for unmounting).
-export function startInteraction({ renderer, camera, composer, rigs, chars, cellAt, floorU, nearU, P, expose = false }) {
-  const ssaa = composer.passes[0];
+export function startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, floorU, nearU, P, expose = false }) {
   const T = rigs.map((rig) => ({ rig, tL: 0, tA: 0, fl: 0, leaving: false })); // fl: linear fade, eased into state.F
   const done = (s) => s.rig.state.S >= ACT_SECONDS && s.fl >= 1;
   // The pointer has left this tile: past the commit point the activation finishes first (leaving), else
@@ -21,7 +20,7 @@ export function startInteraction({ renderer, camera, composer, rigs, chars, cell
     if (s.tA === 1 && s.rig.state.S >= COMMIT_SECONDS && !done(s)) s.leaving = true;
     else { s.tA = 0; s.tL = 0; s.leaving = false; }
   };
-  let last = 0, hqTimer = 0, running = false;
+  let last = 0, running = false;
 
   const settleTo = (v, t, dt, tau) => { const n = t + (v - t) * Math.exp(-dt / tau); return Math.abs(n - t) < 0.001 ? t : n; };
 
@@ -62,11 +61,11 @@ export function startInteraction({ renderer, camera, composer, rigs, chars, cell
     if (lead) lead.rig.drive(floorU, nearU);
     else { nearU.uShadowAmt.value = nearU.uSpillAmt.value = 0; floorU.uGlowS.value = floorU.uGlowTint.value = 0; }
 
-    ssaa.sampleLevel = 0;
+    refiner.moving();
     composer.render();
     running = moving;
     if (running) requestAnimationFrame(frame);
-    else { last = 0; clearTimeout(hqTimer); hqTimer = setTimeout(() => { if (!stopped) { ssaa.sampleLevel = P.ssaa; composer.render(); } }, 140); }
+    else { last = 0; refiner.start(); } // at rest: sharpen progressively
   }
   const kick = () => { if (!running) { running = true; requestAnimationFrame(frame); } };
 
@@ -79,7 +78,6 @@ export function startInteraction({ renderer, camera, composer, rigs, chars, cell
       if (target.rig.state.cell) { chars.get(target.rig.state.cell.join(','))?.setLift(0); target.rig.clear(); }
       Object.assign(target, { fl: 0, tA: 0, leaving: false });
       target.rig.setCell(...cell);
-      target.rig.updateMirror(chars.get(key)?.meshes);
     }
     if (target) { target.tL = 1; target.leaving = false; }
     kick();
@@ -113,5 +111,5 @@ export function startInteraction({ renderer, camera, composer, rigs, chars, cell
   canvas.style.cursor = 'pointer';
   // read-only state probe for automated checks
   if (expose) window.__floorState = () => T.map((s) => ({ cell: s.rig.state.cell, L: +s.rig.state.L.toFixed(3), S: +s.rig.state.S.toFixed(2), fl: +s.fl.toFixed(2), tL: s.tL, tA: s.tA }));
-  return () => { stopped = true; clearTimeout(hqTimer); window.removeEventListener('keydown', onKey); };
+  return () => { stopped = true; window.removeEventListener('keydown', onKey); };
 }

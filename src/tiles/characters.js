@@ -31,16 +31,22 @@ diffuseColor.a *= clip * ${role === 'ai' ? 'uScan' : '(1.0 - uScan)'};`);
 }
 
 // Returns a Map "i,j" -> { setScan(s), setLift(y), meshes, converted }.
-export async function addCharacters(scene, P, tiles) {
+// Starts downloading every human and AI picture at once; addCharacters then uses these.
+export function preloadCharacters(P) {
+  const loader = new THREE.TextureLoader(), cache = new Map();
+  for (const name of P.chars ?? []) for (const dir of ['chars', 'chars-ai']) {
+    cache.set(`${dir}/${name}`, loader.loadAsync(`${P.assetBase ?? ''}/${dir}/${name}`).then((t) => {
+      t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 16; return t;
+    }));
+  }
+  return cache;
+}
+
+export async function addCharacters(scene, P, tiles, cache = preloadCharacters(P)) {
   const out = new Map();
   if (!P.chars?.length) return out;
-  const loader = new THREE.TextureLoader();
-  const cache = new Map(); // one texture per picture, shared by every tile that shows it
-  const load = (dir, name) => {
-    const key = `${dir}/${name}`;
-    if (!cache.has(key)) cache.set(key, loader.loadAsync(`${P.assetBase ?? ''}/${key}`).then((t) => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 16; return t; }));
-    return cache.get(key);
-  };
+  await Promise.all(cache.values());
+  const load = (dir, name) => cache.get(`${dir}/${name}`);
   const geo = new THREE.PlaneGeometry(1, 1);
   const ordered = [...tiles].sort((a, b) => ((a.rank ?? 0) - (b.rank ?? 0)) || (a.screen[1] - b.screen[1]) || (a.screen[0] - b.screen[0]));
   const pool = P.chars.filter((c) => c !== P.charActive);

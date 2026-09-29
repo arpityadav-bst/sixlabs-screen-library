@@ -1,7 +1,7 @@
-// Render pipeline: 16-sample supersampling, bloom on the brightest highlights, tone mapping, film grain.
+// Render pipeline: anti-aliasing, bloom on the brightest highlights, tone mapping, film grain.
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { SSAARenderPass } from 'three/addons/postprocessing/SSAARenderPass.js';
+import { TAARenderPass } from 'three/addons/postprocessing/TAARenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
@@ -17,10 +17,12 @@ void main() { vec4 c = texture2D(tDiffuse, vUv); gl_FragColor = vec4(c.rgb + (h(
 
 export function buildComposer(renderer, scene, camera, P) {
   const composer = new EffectComposer(renderer);
-  const ssaa = new SSAARenderPass(scene, camera);
-  ssaa.sampleLevel = P.ssaa ?? 4;
-  ssaa.unbiased = true;
-  composer.addPass(ssaa);
+  // TAA with accumulate off is plain supersampling (static renders use it at P.ssaa); the live floor
+  // switches accumulation on through createRefiner.
+  const aa = new TAARenderPass(scene, camera);
+  aa.sampleLevel = P.ssaa ?? 4;
+  aa.unbiased = true;
+  composer.addPass(aa);
   if (P.bloomS > 0) composer.addPass(new UnrealBloomPass(new THREE.Vector2(512, 512), P.bloomS, P.bloomR, P.bloomT));
   composer.addPass(new OutputPass());
   if (P.filmGrain > 0) {
@@ -29,4 +31,20 @@ export function buildComposer(renderer, scene, camera, P) {
     composer.addPass(grain);
   }
   return composer;
+}
+
+// Progressive smoothing for the live floor. While anything moves, frames are one plain sample each.
+// Once the scene is still, every frame adds one more jittered sample to a running average until 32 are
+// in, so the image sharpens over about half a second instead of one heavy frame blocking the GPU.
+export function createRefiner(composer) {
+  const aa = composer.passes[0];
+  let raf = 0;
+  const step = () => { composer.render(); raf = aa.accumulateIndex < 32 ? requestAnimationFrame(step) : 0; };
+  return {
+    moving() { cancelAnimationFrame(raf); raf = 0; aa.accumulate = false; aa.sampleLevel = 0; },
+    start() { cancelAnimationFrame(raf); aa.accumulate = true; aa.sampleLevel = 0; aa.accumulateIndex = -1; raf = requestAnimationFrame(step); },
+    // The pass keeps its hold buffer at the old size after a resize; drop it so it is rebuilt.
+    resized() { aa._holdRenderTarget?.dispose(); aa._holdRenderTarget = null; aa.accumulateIndex = -1; },
+    stop() { cancelAnimationFrame(raf); raf = 0; },
+  };
 }

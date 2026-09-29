@@ -19,6 +19,15 @@ function vnoise(x, y) {
   return a + (b - a) * fx + (c - a) * fy + (a - b - c + d) * fx * fy;
 }
 
+// Procedural textures are built once per params object and key, then shared (both rigs use the same).
+const memo = new WeakMap();
+function once(P, key, make) {
+  let m = memo.get(P);
+  if (!m) memo.set(P, (m = new Map()));
+  if (!m.has(key)) m.set(key, make());
+  return m.get(key);
+}
+
 // blur (in texture pixels) softens every edge after painting, used for the glint's strokes.
 function canvasTexture(size, paint, srgb = true, blur = 0) {
   const c = document.createElement('canvas');
@@ -54,24 +63,26 @@ function canvasTexture(size, paint, srgb = true, blur = 0) {
 // reflection band runs across the face horizontally on screen (actBand), with the part above it
 // darkening toward navy (actUpper), the way a glossy slab reflects a bright horizon.
 export function activeGradient(P) {
-  const [gx, gz] = P.actGradDir, gl = Math.hypot(gx, gz);
-  const lo = hex(P.actDarkCol), hi = hex(P.actLightCol), rim = hex(P.actRim), navy = hex(P.actUnderCol), sheen = hex(P.actSheenCol);
-  const g = (v, c, w) => Math.exp(-((v - c) ** 2) / (2 * w * w));
-  const az = THREE.MathUtils.degToRad(P.azim), bx = -Math.sin(az), bz = -Math.cos(az), band = hex(P.actBandCol);
-  return canvasTexture(512, (x, z) => {
-    let c = mix(lo, hi, smooth(-0.9, 0.9, (x * gx + z * gz) / gl / 0.5));
-    const tb = (x * bx + z * bz) / 0.5; // -1 at the front corner, +1 at the rear: vertical on screen
-    c = mix(c, navy, smooth(P.actUpperAt, 1, tb) * P.actUpper);
-    c = mix(c, band, Math.min(1, g(tb, P.actBandAt, P.actBandW) * P.actBand));
-    c = mix(c, sheen, Math.min(1, g(x, P.actSheenAt[0], P.actSheenR) * g(z, P.actSheenAt[1], P.actSheenR) * P.actSheen));
-    const u = -(x + z) * Math.SQRT1_2, v = (x - z) * Math.SQRT1_2; // along / across the rear diagonal
-    c = mix(c, navy, Math.min(1, g(u, P.actNavyAt, P.actNavyAlong) * g(v, 0, P.actNavyAcross) * P.actUnderDark));
-    // A soft lighter pool behind the character's head, so the bust stands out from the dark surface (after the
-    // navy pool, so it is not darkened again).
-    if (P.actHeadGlow > 0) c = mix(c, hex(P.actHeadCol), Math.min(1, g(x, P.actHeadAt[0], P.actHeadR) * g(z, P.actHeadAt[1], P.actHeadR) * P.actHeadGlow));
-    const d = -sdRoundSquare(x, z, 0.5 - P.bevel, P.tile * P.radius - P.bevel);
-    c = mix(rim, c, smooth(0.0, P.actRimBand, d));
-    return [...c, 255];
+  return once(P, 'grad', () => {
+    const [gx, gz] = P.actGradDir, gl = Math.hypot(gx, gz);
+    const lo = hex(P.actDarkCol), hi = hex(P.actLightCol), rim = hex(P.actRim), navy = hex(P.actUnderCol), sheen = hex(P.actSheenCol);
+    const g = (v, c, w) => Math.exp(-((v - c) ** 2) / (2 * w * w));
+    const az = THREE.MathUtils.degToRad(P.azim), bx = -Math.sin(az), bz = -Math.cos(az), band = hex(P.actBandCol);
+    return canvasTexture(512, (x, z) => {
+      let c = mix(lo, hi, smooth(-0.9, 0.9, (x * gx + z * gz) / gl / 0.5));
+      const tb = (x * bx + z * bz) / 0.5; // -1 at the front corner, +1 at the rear: vertical on screen
+      c = mix(c, navy, smooth(P.actUpperAt, 1, tb) * P.actUpper);
+      c = mix(c, band, Math.min(1, g(tb, P.actBandAt, P.actBandW) * P.actBand));
+      c = mix(c, sheen, Math.min(1, g(x, P.actSheenAt[0], P.actSheenR) * g(z, P.actSheenAt[1], P.actSheenR) * P.actSheen));
+      const u = -(x + z) * Math.SQRT1_2, v = (x - z) * Math.SQRT1_2; // along / across the rear diagonal
+      c = mix(c, navy, Math.min(1, g(u, P.actNavyAt, P.actNavyAlong) * g(v, 0, P.actNavyAcross) * P.actUnderDark));
+      // A soft lighter pool behind the character's head, so the bust stands out from the dark surface (after the
+      // navy pool, so it is not darkened again).
+      if (P.actHeadGlow > 0) c = mix(c, hex(P.actHeadCol), Math.min(1, g(x, P.actHeadAt[0], P.actHeadR) * g(z, P.actHeadAt[1], P.actHeadR) * P.actHeadGlow));
+      const d = -sdRoundSquare(x, z, 0.5 - P.bevel, P.tile * P.radius - P.bevel);
+      c = mix(rim, c, smooth(0.0, P.actRimBand, d));
+      return [...c, 255];
+    });
   });
 }
 
@@ -84,26 +95,28 @@ export function activeGradient(P) {
 // units each way for the ring.
 export const GLINT_SPAN = 1.4;
 export function glintBean(P) {
-  const g = (d, c, w) => Math.exp(-((d - c) ** 2) / (2 * w * w));
-  const D = P.glintDroop;
-  const fill = hex(P.glintFillCol), edgeC = hex(P.glintEdgeCol), ringC = hex(P.glintRingCol), haloC = hex(P.glintHaloCol);
-  return canvasTexture(512, (x, y) => {
-    const X = x * 2 * GLINT_SPAN, Y = y * 2 * GLINT_SPAN, ax = Math.abs(X);
-    let d; // approximate distance to the edge, > 0 inside the bean
-    if (ax < 1) {
-      const f = 1 - X * X, top = D * X * X - P.glintTop * f ** P.glintTopQ, bot = D * X * X + P.glintBottom * f ** P.glintBottomQ;
-      d = Math.min(Y - top, bot - Y, (1 - ax) * 0.5);
-    } else d = -Math.hypot(ax - 1, Y - D);
-    const body = smooth(0, 0.04, d), edge = g(d, P.glintEdgeAt, P.glintEdgeW);
-    const out = 1 - body, ring = out * (d < 0 ? g(d, 0, P.glintRingW) : 1) * P.glintRingA;
-    const halo = out * (d < 0 ? g(d, 0, P.glintHaloW) : 1) * P.glintHaloA;
-    const specks = g(d, 0.06, 0.03) * smooth(0.6, 0.95, Math.abs(X)) * P.glintWarm;
-    let c = mix(fill, edgeC, Math.min(1, edge));
-    c = mix(c, [255, 196, 160], Math.min(1, specks));
-    if (out > 0.5) c = mix(haloC, ringC, ring / (ring + halo + 1e-6));
-    const a = Math.min(1, body * P.glintFill + edge * P.glintEdgeA + ring + halo);
-    return [...c.map(Math.round), Math.round(a * 255)];
-  }, true, P.glintBlur);
+  return once(P, 'glint', () => {
+    const g = (d, c, w) => Math.exp(-((d - c) ** 2) / (2 * w * w));
+    const D = P.glintDroop;
+    const fill = hex(P.glintFillCol), edgeC = hex(P.glintEdgeCol), ringC = hex(P.glintRingCol), haloC = hex(P.glintHaloCol);
+    return canvasTexture(512, (x, y) => {
+      const X = x * 2 * GLINT_SPAN, Y = y * 2 * GLINT_SPAN, ax = Math.abs(X);
+      let d; // approximate distance to the edge, > 0 inside the bean
+      if (ax < 1) {
+        const f = 1 - X * X, top = D * X * X - P.glintTop * f ** P.glintTopQ, bot = D * X * X + P.glintBottom * f ** P.glintBottomQ;
+        d = Math.min(Y - top, bot - Y, (1 - ax) * 0.5);
+      } else d = -Math.hypot(ax - 1, Y - D);
+      const body = smooth(0, 0.04, d), edge = g(d, P.glintEdgeAt, P.glintEdgeW);
+      const out = 1 - body, ring = out * (d < 0 ? g(d, 0, P.glintRingW) : 1) * P.glintRingA;
+      const halo = out * (d < 0 ? g(d, 0, P.glintHaloW) : 1) * P.glintHaloA;
+      const specks = g(d, 0.06, 0.03) * smooth(0.6, 0.95, Math.abs(X)) * P.glintWarm;
+      let c = mix(fill, edgeC, Math.min(1, edge));
+      c = mix(c, [255, 196, 160], Math.min(1, specks));
+      if (out > 0.5) c = mix(haloC, ringC, ring / (ring + halo + 1e-6));
+      const a = Math.min(1, body * P.glintFill + edge * P.glintEdgeA + ring + halo);
+      return [...c.map(Math.round), Math.round(a * 255)];
+    }, true, P.glintBlur);
+  });
 }
 
 // Frosted top: soft mottling, and the tile's far bottom edges seen through the glass as soft darker
@@ -112,17 +125,19 @@ export function glintBean(P) {
 // and fades out before the corners. leftBand: false drops the left one, for the first column only,
 // whose left edge faces the empty floor.
 export function frostTexture(P, { leftBand = true } = {}) {
-  const a = THREE.MathUtils.degToRad(P.azim), cx = Math.sin(a) * P.ghostShift, cz = Math.cos(a) * P.ghostShift;
-  const b = 0.5 - P.bevel, w2 = 2 * P.ghostWidth * P.ghostWidth;
-  const along = (t) => 1 - smooth(P.ghostFadeStart, P.ghostFadeEnd, Math.abs(t)); // 1 mid-edge, 0 near corners
-  return canvasTexture(1024, (x, z) => {
-    const mottle = (vnoise(x * 7 + 3.1, z * 7 + 1.7) - 0.5) * P.frostMottle;
-    const xs = x - cx, zs = z - cz;
-    const dTop = zs + b - P.ghostInset, dLeft = xs + b - P.ghostInset; // distance inside each far edge's image
-    const top = Math.exp(-(dTop * dTop) / w2) * along(xs);
-    const left = leftBand ? Math.exp(-(dLeft * dLeft) / w2) * along(zs) : 0;
-    const ghost = Math.max(top, left) * P.ghostDark;
-    const v = Math.round(255 * Math.min(1, Math.max(0, 1 + mottle - ghost)));
-    return [v, v, v, 255];
+  return once(P, `frost-${leftBand}`, () => {
+    const a = THREE.MathUtils.degToRad(P.azim), cx = Math.sin(a) * P.ghostShift, cz = Math.cos(a) * P.ghostShift;
+    const b = 0.5 - P.bevel, w2 = 2 * P.ghostWidth * P.ghostWidth;
+    const along = (t) => 1 - smooth(P.ghostFadeStart, P.ghostFadeEnd, Math.abs(t)); // 1 mid-edge, 0 near corners
+    return canvasTexture(1024, (x, z) => {
+      const mottle = (vnoise(x * 7 + 3.1, z * 7 + 1.7) - 0.5) * P.frostMottle;
+      const xs = x - cx, zs = z - cz;
+      const dTop = zs + b - P.ghostInset, dLeft = xs + b - P.ghostInset; // distance inside each far edge's image
+      const top = Math.exp(-(dTop * dTop) / w2) * along(xs);
+      const left = leftBand ? Math.exp(-(dLeft * dLeft) / w2) * along(zs) : 0;
+      const ghost = Math.max(top, left) * P.ghostDark;
+      const v = Math.round(255 * Math.min(1, Math.max(0, 1 + mottle - ghost)));
+      return [v, v, v, 255];
+    });
   });
 }

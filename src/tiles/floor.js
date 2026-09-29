@@ -9,8 +9,8 @@ import * as THREE from 'three';
 import { studioEnvironment, glassMaterials } from './materials.js';
 import { nearShadeUniforms, applyNearShade } from './near-shade.js';
 import { floorMaterial, floorUniforms } from './floor-material.js';
-import { buildComposer } from './post.js';
-import { addCharacters } from './characters.js';
+import { buildComposer, createRefiner } from './post.js';
+import { addCharacters, preloadCharacters } from './characters.js';
 import { createFocusRig } from './focus-rig.js';
 import { startInteraction } from './interact.js';
 import { placeCamera, coverage, onSomeScreen } from './viewport.js';
@@ -21,6 +21,7 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   const common = Object.assign({ W: 1920, H: 1080, assetBase: base }, RAW);
   const PF = Object.assign({}, common, RAW.states?.default ?? {}), PA = Object.assign({}, common, RAW.states?.shine ?? {});
   const P = PF;
+  const pictures = preloadCharacters(P); // downloads while the scene is built
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
   renderer.toneMapping = THREE.NeutralToneMapping;
@@ -96,8 +97,13 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   addTiles(cells.filter(([i]) => i === 0), shaded(glassMaterials(P, { leftBand: false })));
   addTiles(cells.filter(([i]) => i > 0), shaded(glassMaterials(P)));
 
+  // Side-wall reflection for the raised tile: one cube map, captured once (below) and shared by both
+  // rigs. Re-shooting it on every hover froze the GPU for up to seconds; it is a soft reflection of the
+  // same floor, so one capture reads the same on any tile.
+  const mirrorRT = new THREE.WebGLCubeRenderTarget(512, { type: THREE.HalfFloatType });
+  const mirrorCam = new THREE.CubeCamera(0.01, 60, mirrorRT);
   // Two rigs, so one tile can settle back down while the next one rises.
-  const rigs = [0, 1].map(() => createFocusRig({ renderer, scene, PF, PA, geo, tileH, cx, cz, toCam, setTileLift }));
+  const rigs = [0, 1].map(() => createFocusRig({ renderer, scene, PF, PA, geo, tileH, cx, cz, toCam, setTileLift, mirror: mirrorRT.texture }));
 
   scene.add(new THREE.HemisphereLight('#ffffff', P.hemiGround, P.hemi));
   const key = new THREE.DirectionalLight('#ffffff', P.dir);
@@ -110,12 +116,22 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   const inDesign = ([i, j]) => { const v = new THREE.Vector3(cx(i), tileH, cz(j)).project(camera); return Math.abs(v.x) < 1.12 && Math.abs(v.y) < 1.2; };
   const busted = cells.filter(([i, j]) => inDesign([i, j]) || onSomeScreen(camera, P, new THREE.Vector3(cx(i), tileH, cz(j))));
   const chars = await addCharacters(scene, P, busted.map(([i, j]) => (
-    { i, j, x: cx(i), y: tileH, z: cz(j), active: i === ia && j === ja, screen: toScreen(cx(i), cz(j)), rank: inDesign([i, j]) ? 0 : 1 })));
+    { i, j, x: cx(i), y: tileH, z: cz(j), active: i === ia && j === ja, screen: toScreen(cx(i), cz(j)), rank: inDesign([i, j]) ? 0 : 1 })), pictures);
+
+  // Capture the reflection from the activeAt tile, with that tile and its busts out of the way.
+  if (P.actSideMirror > 0) {
+    const own = chars.get(`${ia},${ja}`)?.meshes ?? [];
+    mirrorCam.position.set(ax, P.lift + tileH / 2, azz);
+    setTileLift(ia, ja, 0, true);
+    own.forEach((m) => { m.visible = false; });
+    mirrorCam.update(renderer, scene);
+    own.forEach((m) => { m.visible = true; });
+    setTileLift(ia, ja, 0, false);
+  }
 
   if (isStatic) {
     const rig = rigs[0], act = RAW.actState === 'shine' ? 1 : 0;
     rig.setCell(ia, ja);
-    rig.updateMirror(chars.get(`${ia},${ja}`)?.meshes);
     Object.assign(rig.state, { L: 1, S: RAW.staticS ?? act * 0.9, F: RAW.staticF ?? act }); // staticS: seconds into the activation
     rig.apply();
     rig.drive(U, nearU);
@@ -126,17 +142,54 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   // The canvas fills its container; its buffer matches the displayed size exactly, so the browser never
   // rescales it. The camera reframes for the container's shape (viewport.js).
   const composer = buildComposer(renderer, scene, camera, P);
-  const draw = () => {
+  const refiner = isStatic ? null : createRefiner(composer);
+
+  // Shader warm-up: compile every material up front, in parallel where the GPU driver allows, including
+  // the raised-tile parts that start hidden. It compiles against a render target because the effects
+  // pipeline and the reflection camera both draw into one, and those need their own shader versions.
+  // Without this the first hover and first click each froze for a second or more while compiling.
+  const warmTarget = new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType });
+  rigs.forEach((r) => r.preview(true));
+  renderer.setRenderTarget(warmTarget);
+  await renderer.compileAsync(scene, camera);
+  renderer.setRenderTarget(null);
+  rigs.forEach((r) => r.preview(false));
+  warmTarget.dispose();
+
+  // Live: a one-sample frame straight away, then progressive smoothing (post.js). Static renders take
+  // the full supersampled frame in one go. Resizes re-run it; an unchanged size is skipped (the
+  // observer also fires once when it starts).
+  let size = '';
+  const draw = (force = false) => {
     const w = Math.max(1, container.clientWidth), h = Math.max(1, container.clientHeight);
+    if (`${w}x${h}` === size && !force) return;
+    size = `${w}x${h}`;
     placeCamera(camera, P, w / h, scene.fog);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(w, h, false);
     composer.setPixelRatio(window.devicePixelRatio);
     composer.setSize(w, h);
+    refiner?.resized();
+    refiner?.moving();
     composer.render();
+    refiner?.start();
   };
-  draw();
-  const resize = new ResizeObserver(draw);
+  // Rehearsal: one frame with a tile raised mid-activation (reflection, glow, spill all live), so any
+  // first-use GPU work happens now rather than on the first hover. It is overwritten before it is shown.
+  if (!isStatic) {
+    const rig = rigs[0];
+    rig.setCell(ia, ja);
+    Object.assign(rig.state, { L: 1, S: 0.5, F: 1 });
+    rig.apply();
+    rig.drive(U, nearU);
+    draw(true);
+    refiner.stop();
+    rig.clear();
+    nearU.uShadowAmt.value = nearU.uSpillAmt.value = 0;
+    U.uGlowS.value = U.uGlowTint.value = 0;
+  }
+  draw(true);
+  const resize = new ResizeObserver(() => draw());
   resize.observe(container);
 
   // Picks the tile under a ray: where it meets the tile tops, rounded to the nearest cell, inside the tile.
@@ -146,8 +199,9 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
     const i = Math.round((hit.x - ox) / pitch), j = Math.round((hit.z - oz) / pitch);
     return Math.abs(hit.x - cx(i)) < half && Math.abs(hit.z - cz(j)) < half && slot.has(`${i},${j}`) ? [i, j] : null;
   };
-  const stop = isStatic ? () => {} : startInteraction({ renderer, camera, composer, rigs, chars, cellAt, floorU: U, nearU, P, expose });
+  const stop = isStatic ? () => {} : startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, floorU: U, nearU, P, expose });
 
+  window.__floorReady = true;
   if (expose) {
     window.__info = { characterTiles: busted.length, active: [ia, ja], activeScreen: toScreen(ax, azz).map(Math.round) };
     window.__done = true;
@@ -157,6 +211,8 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
     dispose() {
       resize.disconnect();
       stop();
+      refiner?.stop();
+      mirrorRT.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
       renderer.domElement.remove();

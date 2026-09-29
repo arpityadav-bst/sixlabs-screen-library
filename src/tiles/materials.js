@@ -4,7 +4,17 @@ import { activeGradient, frostTexture } from './textures.js';
 
 // Studio lightformers baked into a PMREM environment. They create the white edge lines on the glass.
 // leftStrip: false gives a variant lit from behind only, used so the active slab shines on one rim.
+// One PMREM environment per renderer and distinct setup, shared by everything that asks (a texture
+// belongs to the renderer that made it, so a remounted floor builds its own).
+const envMemo = new WeakMap();
 export function studioEnvironment(renderer, P, { leftStrip = true, strip = P.envStrip } = {}) {
+  if (!envMemo.has(renderer)) envMemo.set(renderer, new Map());
+  const cache = envMemo.get(renderer), key = JSON.stringify([P.envBase, P.envTop, P.envGround, leftStrip, strip]);
+  if (!cache.has(key)) cache.set(key, buildEnvironment(renderer, P, leftStrip, strip));
+  return cache.get(key);
+}
+
+function buildEnvironment(renderer, P, leftStrip, strip) {
   const env = new THREE.Scene();
   env.background = new THREE.Color(P.envBase);
   const panel = (w, h, intensity, pos) => {
