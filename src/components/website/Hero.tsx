@@ -127,7 +127,7 @@ export function Hero() {
           corner, the wave button under its bottom-right. */}
       <div className="w-full max-w-[1400px] mx-auto mt-6 px-8 md:px-16 flex items-start justify-between">
         {/* The humans in navy, their digital copies in the accent blue (the headline's "models" colour). */}
-        <dl className="flex items-start gap-14">
+        <dl className="-ml-10 flex items-start gap-14">
           {stats.map((s) => (
             <div key={s.label[0]} className="flex flex-col">
               <dt className="order-2 mt-2 text-[12px] leading-[1.4] text-slate-500">
