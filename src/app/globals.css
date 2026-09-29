@@ -57,3 +57,15 @@ body {
   pointer-events: none;
   opacity: var(--ascii, 0.4);
 }
+
+/* Floating character badges around the scroll line (FloatingBadges.tsx): a slow, small bob. */
+@keyframes badge-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+.badge-bob {
+  animation: badge-bob 5.5s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .badge-bob { animation: none; }
+}

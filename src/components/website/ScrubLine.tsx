@@ -6,6 +6,7 @@
 // COMPLETE_AT of the track, so the finished line holds for a beat before the section leaves. The phrase
 // in ACCENT fills to the accent blue. Reduced motion shows it filled.
 import { useEffect, useRef, useState } from "react";
+import { FloatingBadges } from "./FloatingBadges";
 
 const LINE =
   "A model is built from what the person does, not what they say. Put a thousand models on a new build and you know how it will land before anyone plays it.";
@@ -57,9 +58,10 @@ export function ScrubLine() {
   return (
     <section ref={track} aria-label={LINE} className="relative h-[260vh]">
       <div className="sticky top-0 flex h-screen items-center justify-center px-6">
+        <FloatingBadges />
         <p
           aria-hidden
-          className="max-w-[980px] text-center font-display text-[26px] md:text-[44px] font-medium leading-[1.3] tracking-tight"
+          className="relative max-w-[980px] text-center font-display text-[26px] md:text-[44px] font-medium leading-[1.3] tracking-tight"
         >
           {WORDS.map((w, k) => {
             const accent = k >= accentAt && k < accentAt + ACCENT.length;
