@@ -24,7 +24,7 @@ export function Header() {
     <nav
       className={
         "fixed top-0 left-0 right-0 z-40 px-6 py-5 bg-[rgb(var(--page-rgb)/0.75)] backdrop-blur-md border-b transition-colors duration-300 " +
-        (scrolled ? "border-slate-200/70" : "border-transparent")
+        (scrolled ? "border-slate-300/80" : "border-transparent")
       }
     >
       <div className="max-w-[1400px] mx-auto flex items-center justify-between">
