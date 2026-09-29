@@ -29,7 +29,7 @@ export function Header() {
         <div className="flex items-center gap-4">
           <LanguageMenu />
           {/* Secondary: outlined, so Try now in the hero stays the one solid CTA on the page. */}
-          <button className="border border-slate-300 text-[#0a1b33] text-[15px] px-6 py-3 rounded-full hover:bg-white/70 transition-colors duration-200">
+          <button className="border border-slate-300 text-[#0a1b33] text-[15px] px-6 py-3 rounded-full hover:bg-white/70 hover:border-[#b7c0cb] transition-colors duration-200">
             Sign in
           </button>
         </div>
