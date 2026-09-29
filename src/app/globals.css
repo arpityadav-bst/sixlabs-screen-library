@@ -13,8 +13,12 @@ html {
   scroll-behavior: smooth;
 }
 
+:root {
+  --page-rgb: 249 250 251; /* #f9fafb; BackdropShade.tsx darkens it on the way to the players */
+}
+
 body {
-  background: #f9fafb;
+  background: rgb(var(--page-rgb));
 }
 
 /* Hero loader (Hero.tsx): lays the logo on the tile floor and turns it about the floor's vertical axis.

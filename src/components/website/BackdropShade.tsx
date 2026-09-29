@@ -25,7 +25,11 @@ export function BackdropShade() {
         1,
         Math.max(0, (y - start) / Math.max(1, end - start)),
       );
-      document.body.style.backgroundColor = `rgb(${FROM.map((c, k) => Math.round(c + (TO[k] - c) * t)).join(",")})`;
+      // one variable, read by the page background and the sticky header's frosted strip
+      document.documentElement.style.setProperty(
+        "--page-rgb",
+        FROM.map((c, k) => Math.round(c + (TO[k] - c) * t)).join(" "),
+      );
     };
     const onScroll = () => {
       if (!queued) {
@@ -39,7 +43,7 @@ export function BackdropShade() {
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
-      document.body.style.backgroundColor = "";
+      document.documentElement.style.removeProperty("--page-rgb");
     };
   }, []);
   return null;
