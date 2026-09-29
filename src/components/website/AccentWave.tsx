@@ -67,27 +67,31 @@ export function AccentWave() {
         ctx.fillStyle = fill;
         ctx.beginPath();
         ctx.moveTo(0, h);
-        for (let x = 0; x <= w; x += 12) ctx.lineTo(x, edge(x, level));
-        ctx.lineTo(w, edge(w, level));
+        // the solid colour starts a little under the edge; the grown dots cover the seam between
+        for (let x = 0; x <= w; x += 12)
+          ctx.lineTo(x, edge(x, level) + PITCH * 2);
+        ctx.lineTo(w, edge(w, level) + PITCH * 2);
         ctx.lineTo(w, h);
         ctx.closePath();
         ctx.fill();
-        // halftone above the edge: s runs 0 (top of the band) to 1 (at the colour)
+        // halftone above the edge: s runs 0 (top of the band) to 1 (at the edge). The dots keep growing
+        // past touching (radius PITCH / 2) to covering their whole cell (PITCH * 0.72, over half the
+        // diagonal) and carry on a few rows under the edge, so they melt into the solid with no seam.
         for (let gx = PITCH / 2; gx < w; gx += PITCH) {
           const e = edge(gx, level);
           for (
             let gy = Math.floor((e - BAND) / PITCH) * PITCH + PITCH / 2;
-            gy < e;
+            gy < e + PITCH * 3;
             gy += PITCH
           ) {
-            const s = 1 - (e - gy) / BAND;
+            const s = Math.min(1, 1 - (e - gy) / BAND);
             if (s <= 0 || gy < -PITCH || gy > h + PITCH) continue;
             ctx.globalAlpha = Math.min(1, 0.15 + s * 0.95);
             ctx.beginPath();
             ctx.arc(
               gx,
               gy,
-              0.35 + (PITCH / 2 - 0.35) * s ** 1.4,
+              0.35 + (PITCH * 0.72 - 0.35) * s ** 1.4,
               0,
               Math.PI * 2,
             );
