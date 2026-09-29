@@ -9,6 +9,10 @@
   --color-accent: #1a6dff;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: #f9fafb;
 }
