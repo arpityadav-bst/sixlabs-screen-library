@@ -7,8 +7,8 @@
 // stroke in the same order, exactly over the hand's line, clean and glowing, twice as fast, a bright pen
 // point at its tip, and each hand line stays whole under the copy while it is traced and fades once it
 // is done.
-// A stroke the hand has not finished yet is copied as soon as it is. Switching back to Human, the hand sketches
-// it all again, each AI stroke fading once the hand has redrawn it. Everything leaves with the player (another pick) and
+// A stroke the hand has not finished yet is copied as soon as it is. Switching back to Human puts the
+// AI's copy away and the hand sketches it all again. Everything leaves with the player (another pick) and
 // is wiped when the section leaves view. The drawings are in player-doodles.ts (coordinates in the
 // portrait video's own 810 x 1080 frame); one stroke is DoodleStroke.tsx.
 import { useEffect, useId, useRef, useState } from "react";
@@ -116,10 +116,9 @@ export function PlayerDoodles({
     } else if (mode === "human" && prev === "ai") {
       strokes.forEach((s, i) => {
         const v = mv[i];
+        animate(v.aiFade, 0, { duration: still ? 0 : 0.3 });
         const at = still ? 0 : AI_LEAD_S + s.at * HAND_PACE,
           dur = still ? 0 : s.dur * HAND_PACE;
-        // the AI's copy of the stroke stays until the hand has drawn it again, then fades
-        animate(v.aiFade, 0, { delay: at + dur, duration: still ? 0 : 0.4 });
         v.len.set(0);
         v.show.set(1);
         v.fade.set(1);
