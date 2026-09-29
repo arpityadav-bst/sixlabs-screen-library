@@ -19,13 +19,6 @@ const accentAt = WORDS.findIndex(
   (w, k) => w === "a" && WORDS[k + 1] === "thousand",
 );
 
-// the two sentences, as [first word, end) ranges
-const SAY = WORDS.indexOf("say.") + 1;
-const SENTENCES: [number, number][] = [
-  [0, SAY],
-  [SAY, WORDS.length],
-];
-
 export function ScrubLine() {
   const track = useRef<HTMLElement>(null);
   const [lit, setLit] = useState(0);
@@ -74,33 +67,27 @@ export function ScrubLine() {
         <FloatingBadges progress={progress} />
         <p
           aria-hidden
-          className="relative max-w-[820px] text-center font-display text-[26px] md:text-[44px] font-medium leading-[1.3] tracking-tight"
+          className="relative max-w-[980px] text-center font-display text-[26px] md:text-[44px] font-medium leading-[1.3] tracking-tight"
         >
-          {/* each sentence on its own run of lines, balanced so no line is left with a word or two */}
-          {SENTENCES.map(([from, to]) => (
-            <span key={from} className="block text-balance">
-              {WORDS.slice(from, to).map((w, n) => {
-                const k = from + n;
-                const accent = k >= accentAt && k < accentAt + ACCENT.length;
-                const on = k < lit;
-                return (
-                  <span
-                    key={k}
-                    className={
-                      "transition-colors duration-200 " +
-                      (on
-                        ? accent
-                          ? "text-accent"
-                          : "text-[#0a1b33]"
-                        : "text-[#0a1b33]/15")
-                    }
-                  >
-                    {w}{" "}
-                  </span>
-                );
-              })}
-            </span>
-          ))}
+          {WORDS.map((w, k) => {
+            const accent = k >= accentAt && k < accentAt + ACCENT.length;
+            const on = k < lit;
+            return (
+              <span
+                key={k}
+                className={
+                  "transition-colors duration-200 " +
+                  (on
+                    ? accent
+                      ? "text-accent"
+                      : "text-[#0a1b33]"
+                    : "text-[#0a1b33]/15")
+                }
+              >
+                {w}{" "}
+              </span>
+            );
+          })}
         </p>
       </div>
     </section>
