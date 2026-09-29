@@ -19,6 +19,10 @@ import { SPECTRUM } from "./prism";
 const NAVY = "#0a152d";
 const NAVY_SHIFT = "#0c1e42"; // NAVY moved 10% toward the accent (#1a6dff)
 const SWEEP_S = 0.65;
+// Which wave crosses the pill: "dots" (a dense dot-matrix band, as on the floating badges) or "prism"
+// (seven spectral stripes).
+const SWEEP: "dots" | "prism" = "dots";
+const DOT_BAND = 34; // dot band width, px
 
 const GAP = 4.5;
 const STRANDS = SPECTRUM.map((color, k) => ({
@@ -48,6 +52,17 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
     const x = -h / 2 + p * (w + h);
     const b = h * (1 - 2 * Math.min(1, Math.max(0, x / w)));
     return `M ${-h} -2 L ${x} -2 Q ${x - b} ${h / 2} ${x} ${h + 2} L ${-h} ${h + 2} Z`;
+  });
+  // The dot band: the region between two copies of the curved front, DOT_BAND apart.
+  const dotBand = useTransform(t, (p) => {
+    const { w, h } = box.current;
+    const edge = (dx: number) => {
+      const x = -h / 2 + p * (w + h) + dx;
+      return [x, h * (1 - 2 * Math.min(1, Math.max(0, x / w)))];
+    };
+    const [xl, bl] = edge(-DOT_BAND / 2),
+      [xr, br] = edge(DOT_BAND / 2);
+    return `M ${xl} -2 Q ${xl - bl} ${h / 2} ${xl} ${h + 2} L ${xr} ${h + 2} Q ${xr - br} ${h / 2} ${xr} -2 Z`;
   });
   const shift = useMotionValue(0); // the shifted fill's opacity: on while hovered, eases off after
   const ds = [
@@ -99,40 +114,93 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
       >
         <motion.path d={filled} fill={NAVY_SHIFT} style={{ opacity: shift }} />
       </svg>
-      <svg
-        aria-hidden
-        className="pointer-events-none absolute inset-0 h-full w-full mix-blend-screen"
-        viewBox={`0 0 ${size.w} ${size.h}`}
-        preserveAspectRatio="none"
-      >
-        <defs>
-          <filter
-            id="cta-sweep-blur"
-            x="-50%"
-            y="-10%"
-            width="200%"
-            height="120%"
-          >
-            <feGaussianBlur stdDeviation="1.6" />
-          </filter>
-        </defs>
-        <motion.g
-          style={{ opacity }}
-          filter="url(#cta-sweep-blur)"
-          fill="none"
-          strokeWidth={5}
-          strokeLinecap="round"
+      {SWEEP === "dots" && (
+        <svg
+          aria-hidden
+          className="pointer-events-none absolute inset-0 h-full w-full"
+          viewBox={`0 0 ${size.w} ${size.h}`}
+          preserveAspectRatio="none"
         >
-          {STRANDS.map((st, k) => (
-            <motion.path
-              key={st.color}
-              d={ds[k]}
-              stroke={st.color}
-              strokeOpacity={0.75}
-            />
-          ))}
-        </motion.g>
-      </svg>
+          <defs>
+            <pattern
+              id="cta-dots"
+              width="3.5"
+              height="3.5"
+              patternUnits="userSpaceOnUse"
+            >
+              <circle cx="1.75" cy="1.75" r="0.95" fill="#9cc0ff" />
+            </pattern>
+            <filter
+              id="cta-dot-soft"
+              x="-50%"
+              y="-20%"
+              width="200%"
+              height="140%"
+            >
+              <feGaussianBlur stdDeviation="5" />
+            </filter>
+            <mask
+              id="cta-dot-mask"
+              maskUnits="userSpaceOnUse"
+              x="-100"
+              y="-10"
+              width={size.w + 200}
+              height={size.h + 20}
+            >
+              <motion.path
+                d={dotBand}
+                fill="#fff"
+                filter="url(#cta-dot-soft)"
+              />
+            </mask>
+          </defs>
+          <motion.rect
+            x="-100"
+            y="-10"
+            width={size.w + 200}
+            height={size.h + 20}
+            fill="url(#cta-dots)"
+            mask="url(#cta-dot-mask)"
+            style={{ opacity }}
+          />
+        </svg>
+      )}
+      {SWEEP === "prism" && (
+        <svg
+          aria-hidden
+          className="pointer-events-none absolute inset-0 h-full w-full mix-blend-screen"
+          viewBox={`0 0 ${size.w} ${size.h}`}
+          preserveAspectRatio="none"
+        >
+          <defs>
+            <filter
+              id="cta-sweep-blur"
+              x="-50%"
+              y="-10%"
+              width="200%"
+              height="120%"
+            >
+              <feGaussianBlur stdDeviation="1.6" />
+            </filter>
+          </defs>
+          <motion.g
+            style={{ opacity }}
+            filter="url(#cta-sweep-blur)"
+            fill="none"
+            strokeWidth={5}
+            strokeLinecap="round"
+          >
+            {STRANDS.map((st, k) => (
+              <motion.path
+                key={st.color}
+                d={ds[k]}
+                stroke={st.color}
+                strokeOpacity={0.75}
+              />
+            ))}
+          </motion.g>
+        </svg>
+      )}
       <span className="relative">{children}</span>
     </motion.button>
   );
