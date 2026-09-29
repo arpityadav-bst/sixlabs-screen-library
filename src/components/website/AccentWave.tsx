@@ -13,6 +13,7 @@ import { WAVE_VH } from "./ScrubLine";
 const ACCENT = [26, 109, 255];
 const ARC = 90; // how much higher the middle of the edge is than its ends, px
 const BAND = 480; // depth of the halftone above the solid colour, px
+const GRAIN = 0.07; // noise strength on the blue
 const PITCH = 6; // halftone grid, px; a dot of radius PITCH / 2 touches its neighbours
 
 export function AccentWave() {
@@ -29,6 +30,21 @@ export function AccentWave() {
       w = 0,
       h = 0;
     const fill = `rgb(${ACCENT.join(",")})`;
+    // Film-grain noise laid over the blue (dots included): one tile of random light and dark pixels,
+    // repeated, at GRAIN strength.
+    const grainTile = document.createElement("canvas");
+    grainTile.width = grainTile.height = 160;
+    const gctx = grainTile.getContext("2d");
+    if (gctx) {
+      const img = gctx.createImageData(160, 160);
+      for (let k = 0; k < img.data.length; k += 4) {
+        const v = Math.random() * 255;
+        img.data[k] = img.data[k + 1] = img.data[k + 2] = v;
+        img.data[k + 3] = 255;
+      }
+      gctx.putImageData(img, 0, 0);
+    }
+    const grain = ctx.createPattern(grainTile, "repeat");
 
     const announce = (on: boolean) => {
       if (on === filled) return;
@@ -77,6 +93,15 @@ export function AccentWave() {
             );
             ctx.fill();
           }
+        }
+        // the grain, only where the blue already is
+        if (grain) {
+          ctx.globalCompositeOperation = "source-atop";
+          ctx.globalAlpha = GRAIN;
+          ctx.fillStyle = grain;
+          ctx.fillRect(0, 0, w, h);
+          ctx.globalCompositeOperation = "source-over";
+          ctx.fillStyle = fill;
         }
         ctx.globalAlpha = 1;
       }

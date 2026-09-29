@@ -14,6 +14,14 @@ const LINKS = [
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
+  // solid white once the accent water has filled the view (AccentWave.tsx), so it stands clear of the blue
+  const [onBlue, setOnBlue] = useState(false);
+  useEffect(() => {
+    const on = (e: Event) =>
+      setOnBlue((e as CustomEvent<{ filled: boolean }>).detail.filled);
+    window.addEventListener("accentwave", on);
+    return () => window.removeEventListener("accentwave", on);
+  }, []);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 4);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -23,7 +31,8 @@ export function Header() {
   return (
     <nav
       className={
-        "fixed top-0 left-0 right-0 z-40 px-6 py-5 bg-[rgb(var(--page-rgb)/0.75)] backdrop-blur-md border-b transition-colors duration-300 " +
+        "fixed top-0 left-0 right-0 z-40 px-6 py-5 backdrop-blur-md border-b transition-colors duration-300 " +
+        (onBlue ? "bg-white " : "bg-[rgb(var(--page-rgb)/0.75)] ") +
         (scrolled ? "border-slate-300/80" : "border-transparent")
       }
     >

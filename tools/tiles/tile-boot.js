@@ -15,7 +15,7 @@ import { tileGeometry } from '/src/tiles/geometry.js';
 
 const RAW = await fetch('/tiles/floor-params.json').then((r) => r.json());
 const opt = Object.assign({ name: '03-braids.webp', ai: false, transparent: true, elev: null, mask: false, straight: true, az: 0, bg: null, exposure: null }, window.PARAMS);
-const P = Object.assign({ W: 1920, H: 1080, assetBase: '/tiles' }, RAW, RAW.states?.default ?? {}, { chars: [opt.name], charActive: null }, opt.transparent ? { filmGrain: 0 } : {});
+const P = Object.assign({ W: 1920, H: 1080, assetBase: '/tiles' }, RAW, RAW.states?.default ?? {}, { chars: [opt.name], charActive: null, charEdgeSoft: opt.straight ? 0.004 : RAW.charEdgeSoft }, opt.transparent ? { filmGrain: 0 } : {});
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: opt.transparent });
 renderer.toneMapping = THREE.NeutralToneMapping;
@@ -44,12 +44,15 @@ ch.setScan(opt.ai ? 1 : 0);
 // the camera edge (the floor lays it corner to corner for its diamond view).
 // The floor stretches the bust along the view to undo its 40 degree tilt; this gentler view needs less,
 // and the bust is sized so the character fills about 70% of the tile, as on the floor.
-const TILE_FILL = 0.88; // bust picture width in tile widths: its figure spans ~80% of the picture, so ~70% of the tile
+const TILE_FILL = 0.88 * 1.3; // bust picture width in tile widths (the floor's ~70% figure, scaled up 30%)
 const undoTilt = Math.sin(THREE.MathUtils.degToRad(P.elev)) / Math.sin(THREE.MathUtils.degToRad(opt.elev ?? 62));
 if (opt.straight) ch.meshes.forEach((m) => {
   m.rotation.z = 0;
-  m.position.set(0, m.position.y, P.charForward);
-  m.scale.set(TILE_FILL, TILE_FILL * P.charStretch * undoTilt, 1);
+  const tall = TILE_FILL * P.charStretch * undoTilt;
+  // Seated on the near edge, not faded into the glass: the picture's own soft bottom (its last ~20%) is
+  // pushed past the tile's edge, which clips it with a hard line (charEdgeSoft), so the figure meets it.
+  m.position.set(0, m.position.y, P.tile / 2 - tall * 0.3);
+  m.scale.set(TILE_FILL, tall, 1);
 });
 if (opt.mask) {
   ch.meshes.forEach((m) => { m.visible = false; });
