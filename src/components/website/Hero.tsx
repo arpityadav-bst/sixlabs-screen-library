@@ -22,7 +22,7 @@ export function Hero() {
           contrast-boosted and straightened, which a CSS tilt lays back on the floor (40 degrees up, a
           long lens) and the compositor spins (.floor-spin in globals.css), so it costs almost nothing to
           load and turns smoothly. Its square is feathered into the floor. Sized and placed so about a fifth of the
-          mark runs past the container's bottom and right edges (the mark spans two thirds of its square,
+          mark runs past the container's bottom edge and a little (under a tenth) past its right (the mark spans two thirds of its square,
           and the tilt shortens it to about half its width in height), at 60% opacity. */}
       <AnimatePresence>
         {!floorReady && (
@@ -30,7 +30,7 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition: { duration: 0.4, ease } }}
             exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.6, ease } }}
-            className="absolute top-[77%] left-[86%] -translate-x-1/2 -translate-y-1/2 z-10 w-[70%] aspect-square pointer-events-none"
+            className="absolute top-[77%] left-[80%] -translate-x-1/2 -translate-y-1/2 z-10 w-[70%] aspect-square pointer-events-none"
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- one small still, served as is */}
             <img
