@@ -28,12 +28,14 @@ export function PlayerPortrait({
   className,
   label,
   videoRef,
+  load = true,
 }: {
   src: string;
   straight?: number;
   className?: string;
   label: string;
   videoRef?: RefObject<HTMLVideoElement | null>; // for a caller that reads its frames (PortraitSwap.tsx)
+  load?: boolean; // false keeps the clip from downloading until it is wanted
 }) {
   const own = useRef<HTMLVideoElement>(null);
   const ref = videoRef ?? own;
@@ -83,12 +85,12 @@ export function PlayerPortrait({
       video.removeEventListener("loadedmetadata", aim);
       window.removeEventListener("mousemove", aim);
     };
-  }, [src, straight, ref]);
+  }, [src, straight, ref, load]);
 
   return (
     <video
       ref={ref}
-      src={src}
+      src={load ? src : undefined}
       muted
       playsInline
       preload="auto"

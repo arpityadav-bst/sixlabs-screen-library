@@ -35,6 +35,8 @@ export function Players() {
   const section = useRef<HTMLElement>(null);
   const [filled, setFilled] = useState(false);
   const [inView, setInView] = useState(false);
+  // the clips download only once the visitor is within two screens of the section (and then stay)
+  const [near, setNear] = useState(false);
   useEffect(() => {
     const on = (e: Event) =>
       setFilled((e as CustomEvent<{ filled: boolean }>).detail.filled);
@@ -42,10 +44,23 @@ export function Players() {
     const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), {
       threshold: 0.2,
     });
-    if (section.current) io.observe(section.current);
+    const nearing = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setNear(true);
+          nearing.disconnect();
+        }
+      },
+      { rootMargin: "200% 0px" },
+    );
+    if (section.current) {
+      io.observe(section.current);
+      nearing.observe(section.current);
+    }
     return () => {
       window.removeEventListener("accentwave", on);
       io.disconnect();
+      nearing.disconnect();
     };
   }, []);
   const shown = filled && inView;
@@ -140,6 +155,7 @@ export function Players() {
                     ai={player.aiVideo}
                     mode={mode}
                     label={player.title}
+                    load={near}
                     className="h-[var(--ph)] w-auto max-w-none select-none"
                   />
                 ) : player.video ? (
@@ -147,6 +163,7 @@ export function Players() {
                     src={player.video.src}
                     straight={player.video.straight}
                     label={player.title}
+                    load={near}
                     className="h-[var(--ph)] w-auto max-w-none select-none"
                   />
                 ) : (

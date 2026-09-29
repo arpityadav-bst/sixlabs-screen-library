@@ -14,6 +14,7 @@ const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, cast, half }) {
   let stopped = false, paused = false, resumeTimer = 0, first = true, resetReq = false, waving = false;
+  let held = false; // the floor is off screen or the tab hidden (floor.js): nothing is played, nothing drawn
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const until = async (ok) => { while (!stopped && !ok()) await wait(60); };
   const cellOf = (key) => key.split(',').map(Number);
@@ -79,6 +80,7 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner,
 
   (async () => {
     while (!stopped) {
+      if (held) { await wait(250); continue; }
       if (resetReq) {
         resetReq = false;
         ctl.clearAll();
@@ -112,5 +114,6 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner,
   return {
     stop: () => { stopped = true; clearTimeout(resumeTimer); ctl.onUser = null; },
     reset: () => { if (!waving) resetReq = true; },
+    hold: (on) => { held = on; },
   };
 }

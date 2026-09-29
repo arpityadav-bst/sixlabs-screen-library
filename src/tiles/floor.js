@@ -246,7 +246,14 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
     const ctl = startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU: U, nearU, P, expose, onConvert });
     const cast = createCasts({ P, renderer, chars, bustTiles, pictures, gone: () => disposed });
     const auto = startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, cast, half });
-    stop = () => { auto.stop(); ctl.stop(); };
+    // Off screen (scrolled past) or in a hidden tab, the auto-play holds, so the floor draws nothing
+    // while the visitor is elsewhere on the page; it carries on when they come back.
+    let onScreen = true;
+    const sync = () => auto.hold(!onScreen || document.hidden);
+    const seen = new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; sync(); });
+    seen.observe(container);
+    document.addEventListener('visibilitychange', sync);
+    stop = () => { auto.stop(); ctl.stop(); seen.disconnect(); document.removeEventListener('visibilitychange', sync); };
     reset = auto.reset;
   });
 

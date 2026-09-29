@@ -6,8 +6,9 @@
 // further), so they parallax against each other, and bobs slowly on its own. Every few seconds (a relaxed,
 // random FLIP_EVERY) one tile, at random and only one at a time, flips round its vertical middle and lands
 // showing the next human of its spot's cast. The casts avoid the four characters the players section
-// uses. Touch screens and reduced motion keep them still.
-import { useEffect, useState } from "react";
+// uses. The flipping (and fetching the rest of each cast) runs only while the tiles are near the view.
+// Touch screens and reduced motion keep them still.
+import { useEffect, useRef, useState } from "react";
 import {
   animate,
   motion,
@@ -129,6 +130,16 @@ export function FloatingBadges() {
     sy = useSpring(my, { stiffness: 60, damping: 18 });
   // which member of its cast each tile shows
   const [shown, setShown] = useState(() => BADGES.map(() => 0));
+  // near the view (within half a screen); only then do the tiles flip and the rest of the casts download
+  const box = useRef<HTMLDivElement>(null);
+  const [near, setNear] = useState(false);
+  useEffect(() => {
+    const io = new IntersectionObserver(([e]) => setNear(e.isIntersecting), {
+      rootMargin: "50% 0px",
+    });
+    if (box.current) io.observe(box.current);
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
     if (
@@ -146,6 +157,7 @@ export function FloatingBadges() {
   }, [mx, my]);
 
   useEffect(() => {
+    if (!near) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     BADGES.forEach((b) =>
       b.cast.forEach((n) => {
@@ -171,10 +183,10 @@ export function FloatingBadges() {
     };
     next();
     return () => clearTimeout(timer);
-  }, []);
+  }, [near]);
 
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0">
+    <div ref={box} aria-hidden className="pointer-events-none absolute inset-0">
       {BADGES.map((b, i) => (
         <FloatingBadge
           key={b.cast[0]}

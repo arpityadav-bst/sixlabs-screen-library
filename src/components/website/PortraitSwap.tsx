@@ -34,12 +34,14 @@ export function PortraitSwap({
   mode,
   label,
   className,
+  load = true,
 }: {
   human: Clip;
   ai: Clip;
   mode: Mode;
   label: string;
   className?: string;
+  load?: boolean; // false holds both clips back from downloading
 }) {
   const humanVideo = useRef<HTMLVideoElement>(null);
   const aiVideo = useRef<HTMLVideoElement>(null);
@@ -186,6 +188,7 @@ export function PortraitSwap({
           label={label}
           className={"block " + (className ?? "")}
           videoRef={humanVideo}
+          load={load}
         />
       </div>
       <div
@@ -199,6 +202,7 @@ export function PortraitSwap({
           label={`${label}, AI copy`}
           className="block h-full w-full"
           videoRef={aiVideo}
+          load={load}
         />
       </div>
       <canvas
