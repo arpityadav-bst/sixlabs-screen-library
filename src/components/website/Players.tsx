@@ -174,7 +174,8 @@ export function Players() {
               <motion.button
                 key={p.id}
                 {...enter(k * 0.08, on ? 1 : UNSELECTED)}
-                whileHover={on ? undefined : { opacity: 0.85 }}
+                // always set (the selected card's is a no-op): removing it mid-hover strands the card lit at 0.85
+                whileHover={{ opacity: on ? 1 : 0.85 }}
                 type="button"
                 onClick={() => setActive(k)}
                 // the stroke light follows the pointer (.sheen in globals.css)
