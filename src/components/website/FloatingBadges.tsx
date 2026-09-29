@@ -1,17 +1,18 @@
 "use client";
 
-// Frosted glass badges of the floor's characters floating around the scroll line (ScrubLine.tsx). They
-// enter one by one as the section scrolls in (tied to the scroll, all in by the middle of the track),
+// Frosted glass badges of the floor's characters floating around the scroll line (ScrubLine.tsx), in
+// monochrome (human and AI copy alike). Once the section is reached they fade in one after another,
 // each sits at its own depth and drifts with the cursor by that much (a soft spring, nearer ones
 // further), so they parallax against each other, and bobs slowly on its own. Hovering one sweeps a dense
 // dot-matrix band across it that turns the human into their AI copy behind it; leaving eases back. The
 // picture is cropped to head and shoulders, so the pictures' faded bottoms never show. The cast avoids
 // the four characters the players section uses. Touch screens and reduced motion keep them still.
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   animate,
   motion,
   useMotionValue,
+  useMotionValueEvent,
   useSpring,
   useTransform,
   type MotionValue,
@@ -87,13 +88,19 @@ const BADGES: Badge[] = [
 const DRIFT = 22; // px a depth-1 badge moves with the cursor at the edge of the screen
 const SWEEP_S = 0.65;
 const BAND = 34; // band width, % of the badge
-const ENTER_BY = 0.5; // share of the track by which every badge has entered
+const ENTER_AFTER = 0.6,
+  ENTER_EACH = 0.35; // s before the first badge, s between badges
 
 export function FloatingBadges({
   progress,
 }: {
   progress: MotionValue<number>;
 }) {
+  // the entrance starts once the section has been reached (its stage has begun to scroll), and stays
+  const [entered, setEntered] = useState(false);
+  useMotionValueEvent(progress, "change", (v) => {
+    if (v > 0.01) setEntered(true);
+  });
   // pointer position, -1..1 across the viewport, smoothed
   const mx = useMotionValue(0),
     my = useMotionValue(0);
@@ -123,7 +130,7 @@ export function FloatingBadges({
           badge={b}
           sx={sx}
           sy={sy}
-          progress={progress}
+          entered={entered}
           order={k}
         />
       ))}
@@ -135,20 +142,15 @@ function FloatingBadge({
   badge: b,
   sx,
   sy,
-  progress,
+  entered,
   order,
 }: {
   badge: Badge;
   sx: MotionValue<number>;
   sy: MotionValue<number>;
-  progress: MotionValue<number>;
+  entered: boolean;
   order: number;
 }) {
-  // entrance: badge k comes in over its own slice of the track, the last finishing at ENTER_BY
-  const start = 0.04 + (order / BADGES.length) * (ENTER_BY - 0.12);
-  const shown = useTransform(progress, [start, start + 0.08], [0, 1]);
-  const enterScale = useTransform(shown, [0, 1], [0.82, 1]);
-  const enterY = useTransform(shown, [0, 1], [28, 0]);
   const x = useTransform(sx, (v) => v * DRIFT * b.depth);
   const y = useTransform(sy, (v) => v * DRIFT * b.depth);
   // sweep progress 0..1: the band's centre runs from just off the left edge to just off the right
@@ -177,7 +179,19 @@ function FloatingBadge({
       className="absolute -translate-x-1/2 -translate-y-1/2"
       style={{ left: b.x, top: b.y, x, y }}
     >
-      <motion.div style={{ opacity: shown, scale: enterScale, y: enterY }}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 16 }}
+        animate={
+          entered
+            ? { opacity: 1, scale: 1, y: 0 }
+            : { opacity: 0, scale: 0.9, y: 16 }
+        }
+        transition={{
+          duration: 0.7,
+          ease: [0.22, 1, 0.36, 1],
+          delay: entered ? ENTER_AFTER + order * ENTER_EACH : 0,
+        }}
+      >
         <div className="badge-bob" style={{ animationDelay: `${-b.delay}s` }}>
           <motion.div
             onHoverStart={enter}
@@ -187,7 +201,7 @@ function FloatingBadge({
             className="pointer-events-auto rounded-[24px] border border-white/80 bg-white/55 p-1 shadow-[0_18px_40px_-18px_rgba(10,27,51,0.35)] backdrop-blur-md"
             style={{ width: b.size, height: b.size, rotate: b.tilt }}
           >
-            <div className="relative h-full w-full overflow-hidden rounded-[20px] bg-slate-100">
+            <div className="relative h-full w-full overflow-hidden rounded-[20px] bg-slate-100 grayscale">
               <Picture src={`/tiles/chars/${b.name}.webp`} />
               <motion.div
                 className="absolute inset-0"
