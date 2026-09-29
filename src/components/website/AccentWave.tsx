@@ -1,51 +1,39 @@
 "use client";
 
-// Between the scroll line and the players, the page fills with the accent blue like water rising. Once the
-// scroll line releases the screen (its track ends), the water plays up the view from the bottom on its own
-// (RISE_S), and drains back down if the page is scrolled back above that point. Its leading edge is a
-// dot matrix: fine dense dots first, then larger ones, then the solid blue, all following a wavy surface
-// that keeps drifting while it is in view, with a paler wave just behind the solid one. When the water
-// has filled the view it announces it (window event "accentwave", detail { filled }), which is what the
-// players section waits for before it comes in. Fixed behind every section.
-import { useEffect, useRef, useState } from "react";
+// Between the scroll line and the players, the accent blue rises up the view and takes it over. Once the
+// scroll line releases the screen (its track ends), it plays up from the bottom on its own (RISE_S), and
+// drains back down if the page is scrolled back above that point. Its leading edge is one arc (higher in
+// the middle) of halftone: far from the blue the dots are tiny and faint, and nearer it they grow and
+// strengthen, continuously, until they touch and merge into the solid colour. It sits above the scroll
+// line (covering it) and below the players section and the header, which come in on top of it. When the
+// view is full it announces it (window event "accentwave", detail { filled }); the players section waits
+// for that. Drawn on one canvas, only while it moves.
+import { useEffect, useRef } from "react";
 
-const AMP = 18; // wave height, px
-const LENGTH = 520; // wavelength, px
-const FINE = 70,
-  COARSE = 90; // heights of the fine-dot band (on top) and the coarse-dot band, px
-const SPEED = 0.0012; // wave drift, radians per ms
+const ACCENT = [26, 109, 255];
+const ARC = 90; // how much higher the middle of the edge is than its ends, px
+const BAND = 220; // depth of the halftone above the solid colour, px
+const PITCH = 6; // halftone grid, px; a dot of radius PITCH / 2 touches its neighbours
 const RISE_S = 1.2; // seconds to fill the view (and to drain it)
 
 export function AccentWave() {
-  const [size, setSize] = useState({ w: 1440, h: 900 });
-  const front = useRef<SVGPathElement>(null),
-    back = useRef<SVGPathElement>(null);
-  const fine = useRef<SVGPathElement>(null),
-    coarse = useRef<SVGPathElement>(null);
+  const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const line = document.getElementById("model-line"),
-      players = document.getElementById("players");
-    if (!line || !players) return;
+    const canvas = ref.current,
+      line = document.getElementById("model-line");
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx || !line) return;
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let p = 0,
       target = 0,
       raf = 0,
       last = 0,
       filled = false,
-      w = window.innerWidth,
-      h = window.innerHeight;
+      w = 0,
+      h = 0;
+    const fill = `rgb(${ACCENT.join(",")})`;
 
-    const surface = (level: number, phase: number, amp: number) => {
-      const pts: string[] = [];
-      for (let x = 0; x <= w + 16; x += 16)
-        pts.push(
-          `${x} ${(level + amp * Math.sin((x / LENGTH) * Math.PI * 2 + phase)).toFixed(1)}`,
-        );
-      return pts;
-    };
-    const between = (upper: string[], lower: string[]) =>
-      `M ${upper.join(" L ")} L ${[...lower].reverse().join(" L ")} Z`;
     const announce = (on: boolean) => {
       if (on === filled) return;
       filled = on;
@@ -53,6 +41,9 @@ export function AccentWave() {
         new CustomEvent("accentwave", { detail: { filled: on } }),
       );
     };
+    // the edge's height at x for a given level: an arc, highest in the middle
+    const edge = (x: number, level: number) =>
+      level + ARC * ((2 * x) / w - 1) ** 2;
 
     const draw = (now: number) => {
       raf = 0;
@@ -64,31 +55,55 @@ export function AccentWave() {
           ? Math.min(target, p + dt / RISE_S)
           : Math.max(target, p - dt / RISE_S);
       if (p < 1) announce(false);
-      // the solid surface rises from below the view to above it, its dot bands included
-      const level = h + AMP * 2 - p * (h + AMP * 4 + FINE + COARSE);
-      const phase = still ? 0 : now * SPEED;
-      const solid = surface(level, phase, AMP),
-        mid = surface(level - COARSE, phase, AMP),
-        top = surface(level - COARSE - FINE, phase, AMP);
-      front.current?.setAttribute(
-        "d",
-        `M 0 ${h} L ${solid.join(" L ")} L ${w + 16} ${h} Z`,
-      );
-      back.current?.setAttribute(
-        "d",
-        `M 0 ${h} L ${surface(level - AMP * 0.9, phase * 0.8 + 1.7, AMP * 0.8).join(" L ")} L ${w + 16} ${h} Z`,
-      );
-      coarse.current?.setAttribute("d", between(mid, solid));
-      fine.current?.setAttribute("d", between(top, mid));
+      ctx.clearRect(0, 0, w, h);
+      // the level runs from below the view, halftone included (p 0), to above it, arc included (p 1)
+      const level = h + BAND - p * (h + BAND * 2 + ARC);
+      if (p > 0) {
+        ctx.fillStyle = fill;
+        ctx.beginPath();
+        ctx.moveTo(0, h);
+        for (let x = 0; x <= w; x += 12) ctx.lineTo(x, edge(x, level));
+        ctx.lineTo(w, edge(w, level));
+        ctx.lineTo(w, h);
+        ctx.closePath();
+        ctx.fill();
+        // halftone above the edge: s runs 0 (top of the band) to 1 (at the colour)
+        for (let gx = PITCH / 2; gx < w; gx += PITCH) {
+          const e = edge(gx, level);
+          for (
+            let gy = Math.floor((e - BAND) / PITCH) * PITCH + PITCH / 2;
+            gy < e;
+            gy += PITCH
+          ) {
+            const s = 1 - (e - gy) / BAND;
+            if (s <= 0 || gy < -PITCH || gy > h + PITCH) continue;
+            ctx.globalAlpha = Math.min(1, 0.15 + s * 0.95);
+            ctx.beginPath();
+            ctx.arc(
+              gx,
+              gy,
+              0.35 + (PITCH / 2 - 0.35) * s ** 1.4,
+              0,
+              Math.PI * 2,
+            );
+            ctx.fill();
+          }
+        }
+        ctx.globalAlpha = 1;
+      }
       if (p >= 1) announce(true);
-      if (p !== target || (!still && p > 0 && p < 1))
-        raf = requestAnimationFrame(draw);
+      if (p !== target) raf = requestAnimationFrame(draw);
       else last = 0;
     };
     const measure = () => {
-      w = window.innerWidth;
-      h = window.innerHeight;
-      setSize({ w, h });
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      if (w !== window.innerWidth || h !== window.innerHeight) {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
       const release =
         line.getBoundingClientRect().top +
         window.scrollY +
@@ -108,33 +123,10 @@ export function AccentWave() {
   }, []);
 
   return (
-    <svg
+    <canvas
+      ref={ref}
       aria-hidden
-      className="pointer-events-none fixed inset-0 -z-10 h-full w-full"
-      viewBox={`0 0 ${size.w} ${size.h}`}
-    >
-      <defs>
-        <pattern
-          id="wave-fine"
-          width="4"
-          height="4"
-          patternUnits="userSpaceOnUse"
-        >
-          <circle cx="2" cy="2" r="0.8" fill="#1a6dff" />
-        </pattern>
-        <pattern
-          id="wave-coarse"
-          width="8"
-          height="8"
-          patternUnits="userSpaceOnUse"
-        >
-          <circle cx="4" cy="4" r="2.4" fill="#1a6dff" />
-        </pattern>
-      </defs>
-      <path ref={fine} fill="url(#wave-fine)" />
-      <path ref={coarse} fill="url(#wave-coarse)" />
-      <path ref={back} fill="#1a6dff" fillOpacity={0.45} />
-      <path ref={front} fill="#1a6dff" />
-    </svg>
+      className="pointer-events-none fixed inset-0 z-20 h-full w-full"
+    />
   );
 }

@@ -31,7 +31,10 @@ export function Players() {
   const player = PLAYERS[active];
 
   return (
-    <section id="players" className="w-full max-w-[1400px] mx-auto mt-8">
+    <section
+      id="players"
+      className="relative z-30 w-full max-w-[1400px] mx-auto mt-8"
+    >
       <div className="relative px-8 md:px-16">
         {/* soft glow behind the character */}
         <div
@@ -112,8 +115,8 @@ export function Players() {
             const on = k === active;
             return (
               <motion.button
-                {...enter(k * 0.08)}
                 key={p.id}
+                {...enter(k * 0.08)}
                 type="button"
                 onClick={() => setActive(k)}
                 aria-pressed={on}
