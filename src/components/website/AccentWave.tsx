@@ -1,36 +1,41 @@
 "use client";
 
-// Between the scroll line and the players, the page fills with the accent blue like water rising: a fill
-// comes up from the bottom of the view, tied to the scroll, with a wavy surface that keeps moving. Two
-// waves (a paler one just behind and above) give it the look of water, and a band of accent dots rides
-// just above the surface, fading upward, so the white dissolves into it. It starts as the scroll line
-// releases the screen (its track ends) and has filled the view by the time the players section
-// (#players) reaches the top; scrolling back drains it again. Fixed behind every section.
+// Between the scroll line and the players, the page fills with the accent blue like water rising. Once the
+// scroll line releases the screen (its track ends), the water plays up the view from the bottom on its own
+// (RISE_S), and drains back down if the page is scrolled back above that point. Its leading edge is a
+// dot matrix: fine dense dots first, then larger ones, then the solid blue, all following a wavy surface
+// that keeps drifting while it is in view, with a paler wave just behind the solid one. When the water
+// has filled the view it announces it (window event "accentwave", detail { filled }), which is what the
+// players section waits for before it comes in. Fixed behind every section.
 import { useEffect, useRef, useState } from "react";
 
 const AMP = 18; // wave height, px
 const LENGTH = 520; // wavelength, px
-const DOTS = 110; // dot band above the surface, px
+const FINE = 70,
+  COARSE = 90; // heights of the fine-dot band (on top) and the coarse-dot band, px
 const SPEED = 0.0012; // wave drift, radians per ms
+const RISE_S = 1.2; // seconds to fill the view (and to drain it)
 
 export function AccentWave() {
   const [size, setSize] = useState({ w: 1440, h: 900 });
   const front = useRef<SVGPathElement>(null),
     back = useRef<SVGPathElement>(null);
-  const band = useRef<SVGPathElement>(null),
-    fade = useRef<SVGLinearGradientElement>(null);
+  const fine = useRef<SVGPathElement>(null),
+    coarse = useRef<SVGPathElement>(null);
 
   useEffect(() => {
     const line = document.getElementById("model-line"),
       players = document.getElementById("players");
     if (!line || !players) return;
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let t = 0,
+    let p = 0,
+      target = 0,
       raf = 0,
+      last = 0,
+      filled = false,
       w = window.innerWidth,
       h = window.innerHeight;
 
-    // the surface at height `level`, as points every 16px, shifted by `phase`
     const surface = (level: number, phase: number, amp: number) => {
       const pts: string[] = [];
       for (let x = 0; x <= w + 16; x += 16)
@@ -39,40 +44,57 @@ export function AccentWave() {
         );
       return pts;
     };
+    const between = (upper: string[], lower: string[]) =>
+      `M ${upper.join(" L ")} L ${[...lower].reverse().join(" L ")} Z`;
+    const announce = (on: boolean) => {
+      if (on === filled) return;
+      filled = on;
+      window.dispatchEvent(
+        new CustomEvent("accentwave", { detail: { filled: on } }),
+      );
+    };
+
     const draw = (now: number) => {
       raf = 0;
-      // the surface rises from below the view (t 0) to above it, dots included (t 1)
-      const level = h + AMP * 2 - t * (h + AMP * 4 + DOTS);
+      const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
+      last = now;
+      p = still
+        ? target
+        : target > p
+          ? Math.min(target, p + dt / RISE_S)
+          : Math.max(target, p - dt / RISE_S);
+      if (p < 1) announce(false);
+      // the solid surface rises from below the view to above it, its dot bands included
+      const level = h + AMP * 2 - p * (h + AMP * 4 + FINE + COARSE);
       const phase = still ? 0 : now * SPEED;
-      const f = surface(level, phase, AMP),
-        b = surface(level - AMP * 0.9, phase * 0.8 + 1.7, AMP * 0.8);
+      const solid = surface(level, phase, AMP),
+        mid = surface(level - COARSE, phase, AMP),
+        top = surface(level - COARSE - FINE, phase, AMP);
       front.current?.setAttribute(
         "d",
-        `M 0 ${h} L ${f.join(" L ")} L ${w + 16} ${h} Z`,
+        `M 0 ${h} L ${solid.join(" L ")} L ${w + 16} ${h} Z`,
       );
       back.current?.setAttribute(
         "d",
-        `M 0 ${h} L ${b.join(" L ")} L ${w + 16} ${h} Z`,
+        `M 0 ${h} L ${surface(level - AMP * 0.9, phase * 0.8 + 1.7, AMP * 0.8).join(" L ")} L ${w + 16} ${h} Z`,
       );
-      const top = surface(level - DOTS, phase, AMP);
-      band.current?.setAttribute(
-        "d",
-        `M ${top.join(" L ")} L ${[...f].reverse().join(" L ")} Z`,
-      );
-      fade.current?.setAttribute("y1", String(level - DOTS));
-      fade.current?.setAttribute("y2", String(level));
-      // keep the water moving only while the surface is in view
-      if (!still && t > 0 && t < 1) raf = requestAnimationFrame(draw);
+      coarse.current?.setAttribute("d", between(mid, solid));
+      fine.current?.setAttribute("d", between(top, mid));
+      if (p >= 1) announce(true);
+      if (p !== target || (!still && p > 0 && p < 1))
+        raf = requestAnimationFrame(draw);
+      else last = 0;
     };
     const measure = () => {
       w = window.innerWidth;
       h = window.innerHeight;
       setSize({ w, h });
-      const y = window.scrollY;
-      const start =
-        line.getBoundingClientRect().top + y + line.offsetHeight - h;
-      const end = players.getBoundingClientRect().top + y;
-      t = Math.min(1, Math.max(0, (y - start) / Math.max(1, end - start)));
+      const release =
+        line.getBoundingClientRect().top +
+        window.scrollY +
+        line.offsetHeight -
+        h;
+      target = window.scrollY > release + 20 ? 1 : 0;
       if (!raf) raf = requestAnimationFrame(draw);
     };
     measure();
@@ -93,37 +115,24 @@ export function AccentWave() {
     >
       <defs>
         <pattern
-          id="wave-dots"
-          width="6"
-          height="6"
+          id="wave-fine"
+          width="4"
+          height="4"
           patternUnits="userSpaceOnUse"
         >
-          <circle cx="3" cy="3" r="1.4" fill="#1a6dff" />
+          <circle cx="2" cy="2" r="0.8" fill="#1a6dff" />
         </pattern>
-        <linearGradient
-          ref={fade}
-          id="wave-fade"
-          gradientUnits="userSpaceOnUse"
-          x1="0"
-          x2="0"
-          y1="0"
-          y2="0"
+        <pattern
+          id="wave-coarse"
+          width="8"
+          height="8"
+          patternUnits="userSpaceOnUse"
         >
-          <stop offset="0" stopColor="#fff" stopOpacity="0" />
-          <stop offset="1" stopColor="#fff" stopOpacity="1" />
-        </linearGradient>
-        <mask
-          id="wave-dot-mask"
-          maskUnits="userSpaceOnUse"
-          x="0"
-          y="0"
-          width={size.w}
-          height={size.h}
-        >
-          <rect width={size.w} height={size.h} fill="url(#wave-fade)" />
-        </mask>
+          <circle cx="4" cy="4" r="2.4" fill="#1a6dff" />
+        </pattern>
       </defs>
-      <path ref={band} fill="url(#wave-dots)" mask="url(#wave-dot-mask)" />
+      <path ref={fine} fill="url(#wave-fine)" />
+      <path ref={coarse} fill="url(#wave-coarse)" />
       <path ref={back} fill="#1a6dff" fillOpacity={0.45} />
       <path ref={front} fill="#1a6dff" />
     </svg>

@@ -3,7 +3,7 @@
 // Third section, the players: straight on the page, no heading or panel. The selected player's title,
 // description and trait bars sit in a card on the left; their character fills the rest,
 // over a soft blue glow. Four cards along the bottom pick the player (the first is selected).
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { PLAYERS } from "./players-data";
 
@@ -14,6 +14,20 @@ const card =
 
 export function Players() {
   const [active, setActive] = useState(0);
+  // The section comes in once the accent water has filled the view (AccentWave.tsx), one part at a time:
+  // the four cards, then the character, then the detail card. It leaves as the water drains.
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const on = (e: Event) =>
+      setShown((e as CustomEvent<{ filled: boolean }>).detail.filled);
+    window.addEventListener("accentwave", on);
+    return () => window.removeEventListener("accentwave", on);
+  }, []);
+  const enter = (delay: number) => ({
+    initial: { opacity: 0, y: 24 },
+    animate: shown ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 },
+    transition: shown ? { duration: 0.6, ease, delay } : { duration: 0.25 },
+  });
   const player = PLAYERS[active];
 
   return (
@@ -26,7 +40,10 @@ export function Players() {
         />
 
         <div className="relative grid min-h-[480px] grid-cols-1 gap-8 md:grid-cols-[minmax(0,440px)_1fr]">
-          <div className={"self-center rounded-[32px] p-8 md:p-10 " + card}>
+          <motion.div
+            {...enter(0.75)}
+            className={"self-center rounded-[32px] p-8 md:p-10 " + card}
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={player.id}
@@ -63,9 +80,12 @@ export function Players() {
                 </div>
               ))}
             </dl>
-          </div>
+          </motion.div>
 
-          <div className="relative flex items-end justify-center">
+          <motion.div
+            {...enter(0.45)}
+            className="relative flex items-end justify-center"
+          >
             <AnimatePresence mode="popLayout">
               {}
               <motion.img
@@ -81,7 +101,7 @@ export function Players() {
                 transition={{ duration: 0.5, ease }}
               />
             </AnimatePresence>
-          </div>
+          </motion.div>
         </div>
 
         {/* Selector cards, each read as a model on file: the player type and a one-line read of them on top,
@@ -91,7 +111,8 @@ export function Players() {
           {PLAYERS.map((p, k) => {
             const on = k === active;
             return (
-              <button
+              <motion.button
+                {...enter(k * 0.08)}
                 key={p.id}
                 type="button"
                 onClick={() => setActive(k)}
@@ -143,7 +164,7 @@ export function Players() {
                     {on ? "Running" : "Ready"}
                   </span>
                 </span>
-              </button>
+              </motion.button>
             );
           })}
         </div>
