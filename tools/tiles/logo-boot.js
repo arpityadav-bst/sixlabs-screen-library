@@ -1,7 +1,8 @@
 // Headless render of the SixLabs mark (public/brand/sixlabs-mark.svg) built from the floor's own tile
 // materials: each blade is an extruded glass slab with the tile's bevel, lying on the same floor under the
 // same studio light. PARAMS: look 'cobalt' (the focused tile's glass) or 'clear' (a default tile's
-// frosted glass), elev (camera height in degrees), size (logo width in tile units), depth (slab thickness as a share of a tile's), transparent (no floor
+// frosted glass), elev (camera height in degrees), size (logo width in tile units), depth (slab thickness as a share of a tile's), inset (SVG units each blade is
+// pulled in by, which widens the gaps between blades; the navy core keeps its size), transparent (no floor
 // or background, for a cut-out PNG). __info.corners gives the screen pixels of the mark's top-face square,
 // so the frame can be straightened into a front view (tools/tiles/flatten_logo.py).
 import * as THREE from 'three';
@@ -11,7 +12,7 @@ import { floorMaterial, floorUniforms } from '/src/tiles/floor-material.js';
 import { buildComposer } from '/src/tiles/post.js';
 
 const RAW = await fetch('/tiles/floor-params.json').then((r) => r.json());
-const opt = Object.assign({ look: 'cobalt', elev: 40, size: 1.6, transparent: false, depth: 1 }, window.PARAMS);
+const opt = Object.assign({ look: 'cobalt', elev: 40, size: 1.6, transparent: false, depth: 1, inset: 0 }, window.PARAMS);
 const P = Object.assign({ W: 1920, H: 1080 }, RAW, RAW.states?.default ?? {}, { actHeadGlow: 0 }, opt.transparent ? { filmGrain: 0 } : {});
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: opt.transparent });
@@ -46,7 +47,7 @@ for (const path of svg.paths) {
   const navy = path.color.getHexString() === '030d2d';
   for (const shape of path.toShapes(true)) {
     const g = new THREE.ExtrudeGeometry(shape, {
-      depth: P.core * opt.depth / k, bevelEnabled: true, bevelThickness: P.bevelT / k, bevelSize: P.bevel / k, bevelSegments: 6, curveSegments: 24,
+      depth: P.core * opt.depth / k, bevelEnabled: true, bevelThickness: P.bevelT / k, bevelSize: P.bevel / k, bevelOffset: navy ? 0 : -opt.inset, bevelSegments: 6, curveSegments: 24,
     });
     g.translate(-cx, -cy, 0);
     g.scale(k, k, k);
