@@ -77,11 +77,13 @@ export function PlayerDoodles({ id, start }: { id: string; start: boolean }) {
             key={i}
             transform={
               s.o
-                ? `translate(${(s.to ?? s.o)[0]} ${(s.to ?? s.o)[1]}) scale(${SIZE}) translate(${-s.o[0]} ${-s.o[1]})`
+                ? `translate(${(s.to ?? s.o)[0]} ${(s.to ?? s.o)[1]}) scale(${SIZE * (s.scale ?? 1)}) translate(${-s.o[0]} ${-s.o[1]})`
                 : undefined
             }
             // the line keeps its weight however small the drawing is
-            strokeWidth={(s.dotted ? 5 : 3.5) / (s.o ? SIZE : 1)}
+            strokeWidth={
+              (s.dotted ? 5 : 3.5) / (s.o ? SIZE * (s.scale ?? 1) : 1)
+            }
           >
             {s.dotted ? (
               <>
@@ -104,7 +106,7 @@ export function PlayerDoodles({ id, start }: { id: string; start: boolean }) {
                 <path
                   d={s.d}
                   mask={`url(#${uid}-${i})`}
-                  strokeDasharray={`0 ${15 / (s.o ? SIZE : 1)}`}
+                  strokeDasharray={`0 ${15 / (s.o ? SIZE * (s.scale ?? 1) : 1)}`}
                   strokeOpacity={0.85}
                 />
               </>

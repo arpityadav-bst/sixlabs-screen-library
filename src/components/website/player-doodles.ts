@@ -10,6 +10,7 @@ export type Stroke = {
   dotted?: boolean;
   o?: [number, number];
   to?: [number, number];
+  scale?: number; // this drawing's size against the others (1 = the usual)
 };
 
 const circle = (x: number, y: number, r: number) =>
@@ -134,15 +135,18 @@ const EXPLORER: Stroke[] = [
 ];
 
 // A drawing written about its own centre (0, 0), placed at `to`, its strokes following one another from `at`
-// seconds, each starting a little before the last one ends. A part is [path, seconds, dotted?].
+// seconds, each starting a little before the last one ends. A part is [path, seconds, dotted?]. The
+// drawings beside the shoulders (LOWER) are a little larger, so they hold their space.
+const LOWER = 1.25;
 const cluster = (
   to: [number, number],
   at: number,
   parts: [string, number, boolean?][],
+  scale = 1,
 ): Stroke[] => {
   let t = at;
   return parts.map(([d, dur, dotted]) => {
-    const s: Stroke = { d, at: t, dur, dotted, o: [0, 0], to };
+    const s: Stroke = { d, at: t, dur, dotted, o: [0, 0], to, scale };
     t += dur * 0.85;
     return s;
   });
@@ -162,25 +166,35 @@ const GRINDER: Stroke[] = [
     [sparkle(60, -32, 11), 0.25],
     [sparkle(66, 26, 7), 0.2],
   ]),
-  ...cluster([35, 420], 3.5, [
+  ...cluster(
+    [35, 420],
+    3.5,
     [
-      "M -34 -20 H 30 V 22 A 14 14 0 0 1 16 36 H -20 A 14 14 0 0 1 -34 22 Z",
-      0.6,
+      [
+        "M -34 -20 H 30 V 22 A 14 14 0 0 1 16 36 H -20 A 14 14 0 0 1 -34 22 Z",
+        0.6,
+      ],
+      ["M 30 -10 C 52 -10 52 22 30 22", 0.3],
+      [
+        "M -16 -30 C -24 -40 -8 -48 -16 -58 M 0 -30 C -8 -40 8 -48 0 -58 M 16 -30 C 8 -40 24 -48 16 -58",
+        0.5,
+      ],
     ],
-    ["M 30 -10 C 52 -10 52 22 30 22", 0.3],
+    LOWER,
+  ),
+  ...cluster(
+    [795, 445],
+    4.9,
     [
-      "M -16 -30 C -24 -40 -8 -48 -16 -58 M 0 -30 C -8 -40 8 -48 0 -58 M 16 -30 C 8 -40 24 -48 16 -58",
-      0.5,
+      [
+        "M -52 -16 C -52 -30 -40 -32 -26 -30 H 26 C 40 -32 52 -30 52 -16 L 60 22 C 62 36 46 42 36 30 L 26 18 H -26 L -36 30 C -46 42 -62 36 -60 22 Z",
+        0.8,
+      ],
+      ["M -34 -14 V 6 M -44 -4 H -24", 0.25],
+      [circle(24, -10, 4) + " " + circle(36, 0, 4), 0.25],
     ],
-  ]),
-  ...cluster([795, 445], 4.9, [
-    [
-      "M -52 -16 C -52 -30 -40 -32 -26 -30 H 26 C 40 -32 52 -30 52 -16 L 60 22 C 62 36 46 42 36 30 L 26 18 H -26 L -36 30 C -46 42 -62 36 -60 22 Z",
-      0.8,
-    ],
-    ["M -34 -14 V 6 M -44 -4 H -24", 0.25],
-    [circle(24, -10, 4) + " " + circle(36, 0, 4), 0.25],
-  ]),
+    LOWER,
+  ),
   { d: sparkle(195, 35, 18), at: 6.3, dur: 0.3, o: [195, 35] },
   { d: sparkle(-20, 295, 12), at: 6.5, dur: 0.3, o: [-20, 295] },
 ];
@@ -202,26 +216,36 @@ const SPENDER: Stroke[] = [
     ["M -50 -16 H 50 M -14 -16 L 0 -40 L 14 -16", 0.3],
     ["M -30 -40 L -14 -16 L 0 44 L 14 -16 L 30 -40", 0.35],
   ]),
-  ...cluster([45, 420], 3.5, [
-    [circle(0, 0, 40), 0.5],
-    [circle(0, 0, 31), 0.35],
+  ...cluster(
+    [45, 420],
+    3.5,
     [
-      "M 11 -12 C 8 -18 -12 -18 -12 -7 C -12 3 12 -1 12 10 C 12 20 -8 20 -12 12 M 0 -24 V 24",
-      0.45,
+      [circle(0, 0, 40), 0.5],
+      [circle(0, 0, 31), 0.35],
+      [
+        "M 11 -12 C 8 -18 -12 -18 -12 -7 C -12 3 12 -1 12 10 C 12 20 -8 20 -12 12 M 0 -24 V 24",
+        0.45,
+      ],
     ],
-  ]),
-  ...cluster([795, 445], 4.8, [
-    ["M -62 -34 H -46 L -32 20 H 40 L 54 -18 H -40", 0.7],
-    ["M -36 0 H 47", 0.2],
-    [circle(-20, 36, 7) + " " + circle(30, 36, 7), 0.3],
-  ]),
+    LOWER,
+  ),
+  ...cluster(
+    [795, 445],
+    4.8,
+    [
+      ["M -62 -34 H -46 L -32 20 H 40 L 54 -18 H -40", 0.7],
+      ["M -36 0 H 47", 0.2],
+      [circle(-20, 36, 7) + " " + circle(30, 36, 7), 0.3],
+    ],
+    LOWER,
+  ),
   { d: sparkle(190, 45, 18), at: 6.1, dur: 0.3, o: [190, 45] },
   { d: sparkle(640, 30, 13), at: 6.3, dur: 0.3, o: [640, 30] },
   { d: sparkle(-20, 295, 12), at: 6.5, dur: 0.3, o: [-20, 295] },
 ];
 
 // The one you lose: a skull for the boss that stopped him, a dotted run over the head that sags and drops,
-// a broken heart, a battery nearly empty, and a chart arrow falling away.
+// a broken heart, a battery nearly empty, a chart arrow falling away, and a bored "zzz".
 const LOST: Stroke[] = [
   ...cluster([100, 130], 0, [
     [
@@ -244,13 +268,28 @@ const LOST: Stroke[] = [
     ],
     ["M 0 -22 L -8 -6 L 6 6 L -4 22 L 0 40", 0.35],
   ]),
-  ...cluster([90, 380], 3.5, [
-    ["M -46 -22 H 40 V 22 H -46 Z M 40 -8 H 48 V 8 H 40", 0.6],
-    ["M -38 -14 H -28 V 14 H -38 Z", 0.25],
-  ]),
-  ...cluster([790, 420], 4.4, [
-    ["M -60 -40 L -26 -8 L -6 -24 L 36 26", 0.6],
-    ["M 14 26 H 38 V 2", 0.25],
+  ...cluster(
+    [90, 380],
+    3.5,
+    [
+      ["M -46 -22 H 40 V 22 H -46 Z M 40 -8 H 48 V 8 H 40", 0.6],
+      ["M -38 -14 H -28 V 14 H -38 Z", 0.25],
+    ],
+    LOWER,
+  ),
+  ...cluster(
+    [790, 420],
+    4.4,
+    [
+      ["M -60 -40 L -26 -8 L -6 -24 L 36 26", 0.6],
+      ["M 14 26 H 38 V 2", 0.25],
+    ],
+    LOWER,
+  ),
+  ...cluster([640, 10], 5.4, [
+    ["M 0 0 H 16 L 0 16 H 16", 0.25],
+    ["M 26 -24 H 38 L 26 -12 H 38", 0.2],
+    ["M 46 -42 H 55 L 46 -33 H 55", 0.15],
   ]),
 ];
 
