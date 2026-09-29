@@ -64,7 +64,7 @@ export function Hero() {
               href="#"
               className="pointer-events-auto underline underline-offset-4 decoration-slate-300 hover:decoration-[#64748b] transition-colors duration-200"
             >
-              See What It Does
+              See what it does
             </a>
           </p>
           {/* The primary CTA, wide; the secondary action is the link that ends the subtitle. The quiet line
