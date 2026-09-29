@@ -14,6 +14,7 @@ const ACCENT = [26, 109, 255];
 const ARC = 90; // how much higher the middle of the edge is than its ends, px
 const BAND = 480; // depth of the halftone above the solid colour, px
 const GRAIN = 0.07; // noise strength on the blue
+const AUTO_AT = 0.5; // share of the rise after which the page glides on into the players by itself
 const PITCH = 6; // halftone grid, px; a dot of radius PITCH / 2 touches its neighbours
 
 export function AccentWave() {
@@ -24,6 +25,8 @@ export function AccentWave() {
       line = document.getElementById("model-line");
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx || !line) return;
+    let lastY = window.scrollY,
+      glided = false;
     let p = 0,
       raf = 0,
       filled = false,
@@ -133,6 +136,17 @@ export function AccentWave() {
         1,
         Math.max(0, (window.scrollY - (end - WAVE_VH * h)) / (WAVE_VH * h)),
       );
+      // Past AUTO_AT on the way down, the page glides the rest of the way by itself, to where the water
+      // has filled the view and the players are in place. Once per pass: it re-arms when the water is
+      // mostly drained again.
+      const y = window.scrollY,
+        down = y > lastY;
+      lastY = y;
+      if (p < 0.3) glided = false;
+      if (down && !glided && p >= AUTO_AT && p < 1) {
+        glided = true;
+        window.scrollTo({ top: end, behavior: "smooth" });
+      }
       if (!raf) raf = requestAnimationFrame(draw);
     };
     measure();
