@@ -132,7 +132,7 @@ export function Players() {
                 exit={{ opacity: 0, scale: 1.02 }}
                 transition={{ duration: 0.5, ease }}
               >
-                <PlayerDoodles id={player.id} start={shown} />
+                <PlayerDoodles id={player.id} start={shown} mode={mode} />
                 {/* a player with a clip turns with the cursor (PlayerPortrait), switching to their AI copy's clip with the toggle (PortraitSwap); the others are stills */}
                 {player.video && player.aiVideo ? (
                   <PortraitSwap
