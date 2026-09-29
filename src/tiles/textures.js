@@ -91,7 +91,8 @@ export function activeGradient(P) {
 // (glintTopQ, glintBottomQ) keep both edges broad and flat-ish, so the ends turn over in tight round
 // caps. glintDroop lowers the ends so the top follows the corner's curve. Per-state look: fill, an
 // inner edge line, an outer ring (dark navy in the default state) or cyan halo (shining), and warm
-// chromatic specks near the rounded ends, all softened by glintBlur. The texture spans GLINT_SPAN
+// chromatic specks near the rounded ends, plus (glintCA) a sideways colour split that fringes the left and
+// right ends, all softened by glintBlur. The texture spans GLINT_SPAN
 // units each way for the ring.
 export const GLINT_SPAN = 1.4;
 export function glintBean(P) {
@@ -99,13 +100,17 @@ export function glintBean(P) {
     const g = (d, c, w) => Math.exp(-((d - c) ** 2) / (2 * w * w));
     const D = P.glintDroop;
     const fill = hex(P.glintFillCol), edgeC = hex(P.glintEdgeCol), ringC = hex(P.glintRingCol), haloC = hex(P.glintHaloCol);
+    // approximate distance to the edge, > 0 inside the bean
+    const dist = (X, Y) => {
+      const ax = Math.abs(X);
+      if (ax >= 1) return -Math.hypot(ax - 1, Y - D);
+      const f = 1 - X * X, top = D * X * X - P.glintTop * f ** P.glintTopQ, bot = D * X * X + P.glintBottom * f ** P.glintBottomQ;
+      return Math.min(Y - top, bot - Y, (1 - ax) * 0.5);
+    };
+    const ca = (P.glintCA ?? 0) * 0.12; // sideways colour split: red shifts right, blue left
     return canvasTexture(512, (x, y) => {
-      const X = x * 2 * GLINT_SPAN, Y = y * 2 * GLINT_SPAN, ax = Math.abs(X);
-      let d; // approximate distance to the edge, > 0 inside the bean
-      if (ax < 1) {
-        const f = 1 - X * X, top = D * X * X - P.glintTop * f ** P.glintTopQ, bot = D * X * X + P.glintBottom * f ** P.glintBottomQ;
-        d = Math.min(Y - top, bot - Y, (1 - ax) * 0.5);
-      } else d = -Math.hypot(ax - 1, Y - D);
+      const X = x * 2 * GLINT_SPAN, Y = y * 2 * GLINT_SPAN;
+      const d = dist(X, Y);
       const body = smooth(0, 0.04, d), edge = g(d, P.glintEdgeAt, P.glintEdgeW);
       const out = 1 - body, ring = out * (d < 0 ? g(d, 0, P.glintRingW) : 1) * P.glintRingA;
       const halo = out * (d < 0 ? g(d, 0, P.glintHaloW) : 1) * P.glintHaloA;
@@ -113,7 +118,18 @@ export function glintBean(P) {
       let c = mix(fill, edgeC, Math.min(1, edge));
       c = mix(c, [255, 196, 160], Math.min(1, specks));
       if (out > 0.5) c = mix(haloC, ringC, ring / (ring + halo + 1e-6));
-      const a = Math.min(1, body * P.glintFill + edge * P.glintEdgeA + ring + halo);
+      let a = Math.min(1, body * P.glintFill + edge * P.glintEdgeA + ring + halo);
+      // Chromatic aberration on the left and right ends: each colour channel sees the bean shifted sideways,
+      // so the right end fringes warm and the left end fringes blue, while the flat top and bottom barely change.
+      if (ca > 0) {
+        const cov = [smooth(0, 0.04, dist(X - ca, Y)), body, smooth(0, 0.04, dist(X + ca, Y))], top = Math.max(...cov);
+        if (top > 0.001) {
+          const split = [0, 1, 2].map((k) => cov[k] / top), fringe = top - body;
+          if (fringe > body) c = fill.map((v, k) => v * split[k]);        // outside the main bean: the pure fringe
+          else c = c.map((v, k) => v * (1 - P.glintCA * 0.6 * (1 - split[k]))); // inside: tint where a channel drops out
+          a = Math.min(1, a + fringe * P.glintFill);
+        }
+      }
       return [...c.map(Math.round), Math.round(a * 255)];
     }, true, P.glintBlur);
   });
