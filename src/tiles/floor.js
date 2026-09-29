@@ -104,7 +104,8 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
     mesh.instanceColor.needsUpdate = true;
   };
   // Card flip for the reset wave (autoplay.js): turns tile `key` by angle a about the axis through its centre
-  // parallel to its top-right edge (world x), lifted just enough to clear the floor; its busts turn with it.
+  // parallel to its top-right edge (world x), in place (no lift: the half turning downward passes into the
+// floor); its busts turn with it.
   // a = null puts it back.
   const flipM = new THREE.Matrix4(), fm = new THREE.Matrix4(), bustBase = new Map();
   const flipTile = (key, a) => {
@@ -114,7 +115,7 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
       busts.forEach((m) => { m.matrixAutoUpdate = true; });
     } else {
       const hc = tileH / 2;
-      flipM.makeTranslation(cx(i), hc + 0.52 * half * 2 * Math.abs(Math.sin(a)), cz(j)).multiply(fm.makeRotationX(a)).multiply(fm.makeTranslation(-cx(i), -hc, -cz(j)));
+      flipM.makeTranslation(cx(i), hc, cz(j)).multiply(fm.makeRotationX(a)).multiply(fm.makeTranslation(-cx(i), -hc, -cz(j)));
       mesh.setMatrixAt(k, m4.copy(flipM).multiply(fm.makeTranslation(cx(i), 0, cz(j))));
       busts.forEach((m) => {
         if (m.matrixAutoUpdate) { m.updateMatrix(); bustBase.set(m, m.matrix.clone()); m.matrixAutoUpdate = false; }
