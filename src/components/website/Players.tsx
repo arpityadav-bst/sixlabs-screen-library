@@ -86,8 +86,8 @@ export function Players() {
         </div>
 
         {/* Selector cards, each read as a model on file: the player type and a one-line read of them on top,
-            its number and a status along the bottom under a hairline (the selected one is the model running,
-            marked by a fine accent stroke; the others carry a very faint dark one). */}
+            its number and a status along the bottom under a hairline. The selected one, the model running,
+            is filled in the accent blue; the others are white with a very faint dark stroke. */}
         <div className="relative mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           {PLAYERS.map((p, k) => {
             const on = k === active;
@@ -98,32 +98,49 @@ export function Players() {
                 onClick={() => setActive(k)}
                 aria-pressed={on}
                 className={
-                  "flex min-h-[176px] flex-col justify-between rounded-[28px] p-6 text-left transition-all duration-300 " +
-                  card +
+                  "flex min-h-[176px] flex-col justify-between rounded-[28px] border p-6 text-left transition-all duration-300 " +
                   (on
-                    ? " border-accent/70 ring-1 ring-accent/70 shadow-[0_1px_2px_rgba(10,27,51,0.06),0_24px_48px_-24px_rgba(10,27,51,0.24)]"
-                    : " hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(10,27,51,0.05),0_24px_48px_-24px_rgba(10,27,51,0.22)]")
+                    ? "bg-accent border-accent shadow-[0_1px_2px_rgba(10,27,51,0.08),0_24px_48px_-20px_rgba(26,109,255,0.45)]"
+                    : card +
+                      " hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(10,27,51,0.05),0_24px_48px_-24px_rgba(10,27,51,0.22)]")
                 }
               >
                 <span>
-                  <span className="block font-display text-[22px] font-medium leading-tight tracking-tight text-[#0a1b33]">
+                  <span
+                    className={
+                      "block font-display text-[22px] font-medium leading-tight tracking-tight " +
+                      (on ? "text-white" : "text-[#0a1b33]")
+                    }
+                  >
                     {p.title}
                   </span>
-                  <span className="mt-2 block font-sans text-[14px] leading-snug text-[#64748b]">
+                  <span
+                    className={
+                      "mt-2 block font-sans text-[14px] leading-snug " +
+                      (on ? "text-white/80" : "text-[#64748b]")
+                    }
+                  >
                     {p.tagline}
                   </span>
                 </span>
-                <span className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+                <span
+                  className={
+                    "mt-6 flex items-center justify-between border-t pt-4 font-mono text-[11px] uppercase tracking-[0.14em] " +
+                    (on
+                      ? "border-white/20 text-white/70"
+                      : "border-slate-100 text-slate-400")
+                  }
+                >
                   Model {String(k + 1).padStart(2, "0")}
                   <span
                     className={
-                      "flex items-center gap-1.5 " + (on ? "text-accent" : "")
+                      "flex items-center gap-1.5 " + (on ? "text-white" : "")
                     }
                   >
                     <span
                       className={
                         "h-1.5 w-1.5 rounded-full " +
-                        (on ? "bg-accent animate-pulse" : "bg-slate-300")
+                        (on ? "bg-white animate-pulse" : "bg-slate-300")
                       }
                     />
                     {on ? "Running" : "Ready"}
