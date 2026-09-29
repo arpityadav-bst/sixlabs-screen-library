@@ -136,18 +136,42 @@ export function AccentWave() {
         }
         ctx.globalAlpha = 1;
       }
-      if (p >= 1) announce(true);
+      if (p >= 0.995) announce(true); // a hair of slack: a scroll can land a fraction short
     };
     // A slow eased glide to `to` (GLIDE_S), ours rather than the browser's quick smooth scroll. It runs
-    // to the end whatever the visitor does meanwhile (it sets the position every frame), so the transition
-    // is always seen whole.
+    // to the end, and while it runs the page's own scrolling (wheel, touch, keys) is held, so the two
+    // never fight and the transition is always seen whole.
     let glideRaf = 0;
     const stopGlide = () => {
       cancelAnimationFrame(glideRaf);
       glideRaf = 0;
     };
+    const hold = (e: Event) => {
+      if (glideRaf) e.preventDefault();
+    };
+    const holdKeys = (e: KeyboardEvent) => {
+      if (
+        glideRaf &&
+        [
+          " ",
+          "ArrowDown",
+          "ArrowUp",
+          "PageDown",
+          "PageUp",
+          "Home",
+          "End",
+        ].includes(e.key)
+      )
+        e.preventDefault();
+    };
+    window.addEventListener("wheel", hold, { passive: false });
+    window.addEventListener("touchmove", hold, { passive: false });
+    window.addEventListener("keydown", holdKeys);
     const glide = (to: number) => {
       stopGlide();
+      window.removeEventListener("wheel", hold);
+      window.removeEventListener("touchmove", hold);
+      window.removeEventListener("keydown", holdKeys);
       const from = window.scrollY,
         t0 = performance.now();
       const step = (now: number) => {
@@ -186,7 +210,7 @@ export function AccentWave() {
       if (p < 0.3) glided = false;
       if (down && !glided && p >= AUTO_AT && p < 1) {
         glided = true;
-        glide(end);
+        glide(end + 4); // a few px past the end, so it lands full
       }
       if (!raf) raf = requestAnimationFrame(draw);
     };
