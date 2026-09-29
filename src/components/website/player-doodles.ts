@@ -148,105 +148,109 @@ const cluster = (
   });
 };
 
-// The grinder: a repeat loop, a dotted run over the head to a crescent moon and its stars (the night
-// session), an XP bar filling with a level-up arrow, tally marks, and a loot gem dropping in.
+// The grinder, at it every night: a clock at 2 a.m., a dotted run over the hood to a crescent moon and
+// its stars, a mug of coffee still steaming, and a game controller.
 const GRINDER: Stroke[] = [
   ...cluster([60, 132], 0, [
-    ["M -40 -24 A 46 46 0 0 1 38 -26", 0.45],
-    ["M 22 -40 L 38 -26 L 20 -14", 0.2],
-    ["M 40 24 A 46 46 0 0 1 -38 26", 0.45],
-    ["M -22 40 L -38 26 L -20 14", 0.2],
+    [circle(0, 0, 46), 0.6],
+    ["M 0 -46 V -38 M 46 0 H 38 M 0 46 V 38 M -46 0 H -38", 0.3],
+    ["M 0 -30 V 0 L 19 -11", 0.3],
   ]),
   { d: "M 95 80 Q 400 -85 700 72", at: 1.15, dur: 1.2, dotted: true },
   ...cluster([725, 125], 2.15, [
-    ["M 10 -47 A 48 48 0 1 0 38 30 A 44 44 0 0 1 10 -47 Z", 0.7],
-    [sparkle(62, -40, 11), 0.25],
-    [sparkle(72, 18, 7), 0.2],
+    ["M 12 -42 A 44 44 0 1 0 42 14 A 34 34 0 0 1 12 -42 Z", 0.7],
+    [sparkle(60, -32, 11), 0.25],
+    [sparkle(66, 26, 7), 0.2],
   ]),
   ...cluster([35, 420], 3.5, [
-    ["M -80 -14 H 80 A 14 14 0 0 1 80 14 H -80 A 14 14 0 0 1 -80 -14 Z", 0.6],
     [
-      "M -66 8 L -56 -8 M -46 8 L -36 -8 M -26 8 L -16 -8 M -6 8 L 4 -8 M 14 8 L 24 -8",
+      "M -34 -20 H 30 V 22 A 14 14 0 0 1 16 36 H -20 A 14 14 0 0 1 -34 22 Z",
+      0.6,
+    ],
+    ["M 30 -10 C 52 -10 52 22 30 22", 0.3],
+    [
+      "M -16 -30 C -24 -40 -8 -48 -16 -58 M 0 -30 C -8 -40 8 -48 0 -58 M 16 -30 C 8 -40 24 -48 16 -58",
       0.5,
     ],
-    ["M 58 -30 V -62 M 46 -50 L 58 -62 L 70 -50", 0.3],
   ]),
   ...cluster([795, 445], 4.9, [
-    ["M -45 -35 V 35 M -22 -35 V 35 M 1 -35 V 35 M 24 -35 V 35", 0.55],
-    ["M -60 22 L 40 -22", 0.2],
+    [
+      "M -52 -16 C -52 -30 -40 -32 -26 -30 H 26 C 40 -32 52 -30 52 -16 L 60 22 C 62 36 46 42 36 30 L 26 18 H -26 L -36 30 C -46 42 -62 36 -60 22 Z",
+      0.8,
+    ],
+    ["M -34 -14 V 6 M -44 -4 H -24", 0.25],
+    [circle(24, -10, 4) + " " + circle(36, 0, 4), 0.25],
   ]),
-  ...cluster([875, 235], 5.8, [
-    ["M 0 -78 V -36", 0.35, true],
-    ["M -18 -8 L -8 -20 H 8 L 18 -8 L 0 18 Z M -18 -8 H 18", 0.4],
-  ]),
-  { d: sparkle(195, 35, 18), at: 6.6, dur: 0.3, o: [195, 35] },
-  { d: sparkle(-20, 295, 12), at: 6.8, dur: 0.3, o: [-20, 295] },
+  { d: sparkle(195, 35, 18), at: 6.3, dur: 0.3, o: [195, 35] },
+  { d: sparkle(-20, 295, 12), at: 6.5, dur: 0.3, o: [-20, 295] },
 ];
 
-// The spender: a price tag on its string, a dotted arc high over the ponytail to a cut gem, a stack of
-// coins, a shopping bag, and sparkles.
+// The spender: a credit card, a dotted arc high over the ponytail to a cut diamond, a coin with a dollar
+// sign, a shopping cart, and sparkles.
 const SPENDER: Stroke[] = [
   ...cluster([70, 135], 0, [
-    ["M -60 0 L -30 -32 H 55 V 32 H -30 Z", 0.6],
-    [circle(-32, 0, 7), 0.2],
-    ["M -39 0 C -60 -30 -82 -30 -96 -12", 0.3],
+    [
+      "M -58 -36 H 58 A 8 8 0 0 1 66 -28 V 28 A 8 8 0 0 1 58 36 H -58 A 8 8 0 0 1 -66 28 V -28 A 8 8 0 0 1 -58 -36 Z",
+      0.7,
+    ],
+    ["M -66 -16 H 66", 0.2],
+    ["M -48 2 H -26 V 18 H -48 Z M 2 20 H 48", 0.35],
   ]),
   { d: "M 110 70 Q 400 -150 700 60", at: 1.15, dur: 1.2, dotted: true },
   ...cluster([725, 130], 2.15, [
-    ["M -50 -18 L -26 -44 H 26 L 50 -18 L 0 46 Z", 0.6],
-    ["M -50 -18 H 50 M -12 -18 L 0 -44 L 12 -18", 0.3],
-    ["M -12 -18 L 0 46 L 12 -18", 0.25],
+    ["M -50 -16 L -30 -40 H 30 L 50 -16 L 0 44 Z", 0.6],
+    ["M -50 -16 H 50 M -14 -16 L 0 -40 L 14 -16", 0.3],
+    ["M -30 -40 L -14 -16 L 0 44 L 14 -16 L 30 -40", 0.35],
   ]),
   ...cluster([45, 420], 3.5, [
-    ["M -40 -24 a 40 13 0 1 0 80 0 a 40 13 0 1 0 -80 0", 0.45],
-    ["M -40 -24 V 24 M 40 -24 V 24", 0.25],
-    ["M -40 0 a 40 13 0 0 0 80 0 M -40 24 a 40 13 0 0 0 80 0", 0.4],
-  ]),
-  ...cluster([795, 445], 4.8, [
-    ["M -38 -20 H 38 L 44 50 H -44 Z", 0.55],
-    ["M -18 -20 C -18 -54 18 -54 18 -20", 0.3],
-  ]),
-  { d: sparkle(190, 45, 18), at: 5.9, dur: 0.3, o: [190, 45] },
-  { d: sparkle(640, 30, 13), at: 6.1, dur: 0.3, o: [640, 30] },
-  { d: sparkle(-20, 295, 12), at: 6.3, dur: 0.3, o: [-20, 295] },
-  { d: sparkle(875, 230, 12), at: 6.5, dur: 0.3, o: [875, 230] },
-];
-
-// The one you lose: a brick wall, a dotted run over the head that sags and drops, a power button (the app
-// closed), a retry arrow tried twice, a retention line falling away, and a bored "zzz".
-const LOST: Stroke[] = [
-  ...cluster([100, 130], 0, [
-    ["M -60 -40 H 60 V 40 H -60 Z", 0.6],
-    ["M -60 -13 H 60 M -60 13 H 60", 0.3],
+    [circle(0, 0, 40), 0.5],
+    [circle(0, 0, 31), 0.35],
     [
-      "M -20 -40 V -13 M 30 -40 V -13 M 0 -13 V 13 M -40 -13 V 13 M 45 -13 V 13 M -25 13 V 40 M 20 13 V 40",
+      "M 11 -12 C 8 -18 -12 -18 -12 -7 C -12 3 12 -1 12 10 C 12 20 -8 20 -12 12 M 0 -24 V 24",
       0.45,
     ],
   ]),
+  ...cluster([795, 445], 4.8, [
+    ["M -62 -34 H -46 L -32 20 H 40 L 54 -18 H -40", 0.7],
+    ["M -36 0 H 47", 0.2],
+    [circle(-20, 36, 7) + " " + circle(30, 36, 7), 0.3],
+  ]),
+  { d: sparkle(190, 45, 18), at: 6.1, dur: 0.3, o: [190, 45] },
+  { d: sparkle(640, 30, 13), at: 6.3, dur: 0.3, o: [640, 30] },
+  { d: sparkle(-20, 295, 12), at: 6.5, dur: 0.3, o: [-20, 295] },
+];
+
+// The one you lose: a skull for the boss that stopped him, a dotted run over the head that sags and drops,
+// a broken heart, a battery nearly empty, and a chart arrow falling away.
+const LOST: Stroke[] = [
+  ...cluster([100, 130], 0, [
+    [
+      "M -38 10 C -48 -30 -24 -48 0 -48 C 24 -48 48 -30 38 10 C 34 18 26 20 24 28 V 40 H -24 V 28 C -26 20 -34 18 -38 10 Z",
+      0.8,
+    ],
+    [circle(-15, -6, 10) + " " + circle(15, -6, 10), 0.35],
+    ["M -4 14 L 0 6 L 4 14 Z M -12 28 V 40 M 0 28 V 40 M 12 28 V 40", 0.35],
+  ]),
   {
     d: "M 150 60 C 300 -70 520 -80 630 10 C 670 45 680 80 690 120",
-    at: 1.15,
+    at: 1.3,
     dur: 1.2,
     dotted: true,
   },
-  ...cluster([720, 125], 2.3, [
-    ["M -26 -28 A 38 38 0 1 0 26 -28", 0.55],
-    ["M 0 -44 V -6", 0.2],
+  ...cluster([720, 125], 2.4, [
+    [
+      "M 0 40 C -60 0 -50 -40 -22 -40 C -8 -40 0 -30 0 -22 C 0 -30 8 -40 22 -40 C 50 -40 60 0 0 40 Z",
+      0.7,
+    ],
+    ["M 0 -22 L -8 -6 L 6 6 L -4 22 L 0 40", 0.35],
   ]),
-  ...cluster([90, 380], 3.2, [
-    ["M 30 -22 A 36 36 0 1 0 36 10", 0.5],
-    ["M 20 -36 L 31 -21 L 13 -14", 0.2],
-    ["M 58 -12 V 12 M 72 -12 V 12", 0.25],
+  ...cluster([90, 380], 3.5, [
+    ["M -46 -22 H 40 V 22 H -46 Z M 40 -8 H 48 V 8 H 40", 0.6],
+    ["M -38 -14 H -28 V 14 H -38 Z", 0.25],
   ]),
-  ...cluster([790, 420], 4.3, [
-    ["M -60 -50 V 45 H 70", 0.45],
-    ["M -48 -36 L -20 -24 L 6 2 L 32 10 L 60 34", 0.5],
-    [circle(60, 34, 5), 0.15],
-  ]),
-  ...cluster([640, 10], 5.4, [
-    ["M 0 0 H 16 L 0 16 H 16", 0.25],
-    ["M 26 -24 H 38 L 26 -12 H 38", 0.2],
-    ["M 46 -42 H 55 L 46 -33 H 55", 0.15],
+  ...cluster([790, 420], 4.4, [
+    ["M -60 -40 L -26 -8 L -6 -24 L 36 26", 0.6],
+    ["M 14 26 H 38 V 2", 0.25],
   ]),
 ];
 
