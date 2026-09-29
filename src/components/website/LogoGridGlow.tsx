@@ -38,7 +38,7 @@ export function LogoGridGlow() {
     <div
       ref={ref}
       aria-hidden
-      className="logo-grid-glow pointer-events-none fixed inset-0 opacity-0 transition-opacity duration-500"
+      className="logo-grid-glow pointer-events-none fixed inset-0 -z-10 opacity-0 transition-opacity duration-500"
     />
   );
 }
