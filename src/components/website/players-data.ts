@@ -33,6 +33,7 @@ export const PLAYERS: Player[] = [
     body: "Opens every menu. Walks the wrong way on purpose. Finds your bugs before QA does.",
     picture: "/players/explorer.webp?v=3",
     video: { src: "/players/explorer.webm?v=3", straight: 0.49 },
+    aiVideo: { src: "/players/explorer-ai.webm?v=1", straight: 0.49 },
     traits: traits(0.95, 0.72, 0.55, 0.6),
   },
   {

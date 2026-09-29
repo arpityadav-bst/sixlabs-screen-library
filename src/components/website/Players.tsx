@@ -7,6 +7,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { PLAYERS } from "./players-data";
 import { PlayerPortrait } from "./PlayerPortrait";
+import { PortraitSwap } from "./PortraitSwap";
 import { ModeToggle, type Mode } from "./ModeToggle";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -54,8 +55,6 @@ export function Players() {
     transition: shown ? { duration: 0.6, ease, delay } : { duration: 0.25 },
   });
   const player = PLAYERS[active];
-  // the AI copy's clip when AI is chosen and the player has one, else the human's
-  const clip = (mode === "ai" && player.aiVideo) || player.video;
 
   return (
     <section
@@ -123,17 +122,25 @@ export function Players() {
           >
             <AnimatePresence mode="popLayout">
               <motion.div
-                key={`${player.id}:${clip?.src ?? "still"}`}
+                key={player.id}
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.02 }}
                 transition={{ duration: 0.5, ease }}
               >
-                {/* a player with a clip turns with the cursor (PlayerPortrait); the others are stills */}
-                {clip ? (
+                {/* a player with a clip turns with the cursor (PlayerPortrait), switching to their AI copy's clip with the toggle (PortraitSwap); the others are stills */}
+                {player.video && player.aiVideo ? (
+                  <PortraitSwap
+                    human={player.video}
+                    ai={player.aiVideo}
+                    mode={mode}
+                    label={player.title}
+                    className="h-[var(--ph)] w-auto max-w-none select-none"
+                  />
+                ) : player.video ? (
                   <PlayerPortrait
-                    src={clip.src}
-                    straight={clip.straight}
+                    src={player.video.src}
+                    straight={player.video.straight}
                     label={player.title}
                     className="h-[var(--ph)] w-auto max-w-none select-none"
                   />

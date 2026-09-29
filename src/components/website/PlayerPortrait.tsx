@@ -8,7 +8,7 @@
 // portrait that appears later already faces the cursor. One seek runs at a time and the next is queued
 // when it lands (onSeeked, after the Mainframe hero prompt), so seeks never flood. Before the pointer has
 // moved at all they look straight ahead. Never autoplays.
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 
 const REACH = 0.5;
 // the pointer's last x in the window, px (null until it first moves)
@@ -27,13 +27,16 @@ export function PlayerPortrait({
   straight = 0.5,
   className,
   label,
+  videoRef,
 }: {
   src: string;
   straight?: number;
   className?: string;
   label: string;
+  videoRef?: RefObject<HTMLVideoElement | null>; // for a caller that reads its frames (PortraitSwap.tsx)
 }) {
-  const ref = useRef<HTMLVideoElement>(null);
+  const own = useRef<HTMLVideoElement>(null);
+  const ref = videoRef ?? own;
 
   useEffect(() => {
     const video = ref.current;
@@ -80,7 +83,7 @@ export function PlayerPortrait({
       video.removeEventListener("loadedmetadata", aim);
       window.removeEventListener("mousemove", aim);
     };
-  }, [src, straight]);
+  }, [src, straight, ref]);
 
   return (
     <video
