@@ -29,6 +29,8 @@ export function AccentWave() {
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx || !line) return;
     let lastY = window.scrollY,
+      lastT = performance.now(),
+      speed = 0,
       glided = false;
     let p = 0,
       raf = 0,
@@ -167,17 +169,25 @@ export function AccentWave() {
     window.addEventListener("wheel", hold, { passive: false });
     window.addEventListener("touchmove", hold, { passive: false });
     window.addEventListener("keydown", holdKeys);
-    const glide = (to: number) => {
+    // It picks up where the page really is on its first frame (a wheel scroll may still be animating when
+    // it triggers) and at the speed the visitor was already scrolling, then eases to a stop at `to`: a
+    // cubic that starts on the visitor's velocity and ends at rest, so mouse and glide are one motion.
+    const glide = (to: number, v0: number) => {
       stopGlide();
-      window.removeEventListener("wheel", hold);
-      window.removeEventListener("touchmove", hold);
-      window.removeEventListener("keydown", holdKeys);
-      const from = window.scrollY,
-        t0 = performance.now();
+      let from = 0,
+        t0 = 0;
+      const T = GLIDE_S * 1000;
       const step = (now: number) => {
-        const k = Math.min(1, (now - t0) / 1000 / GLIDE_S);
-        const e = k < 0.5 ? 4 * k * k * k : 1 - (-2 * k + 2) ** 3 / 2;
-        window.scrollTo({ top: from + (to - from) * e, behavior: "instant" });
+        if (!t0) {
+          t0 = now;
+          from = window.scrollY;
+        }
+        const k = Math.min(1, (now - t0) / T);
+        const pos =
+          from +
+          (to - from) * (3 * k * k - 2 * k * k * k) +
+          v0 * T * (k * k * k - 2 * k * k + k);
+        window.scrollTo({ top: pos, behavior: "instant" });
         glideRaf = k < 1 ? requestAnimationFrame(step) : 0;
       };
       glideRaf = requestAnimationFrame(step);
@@ -205,12 +215,17 @@ export function AccentWave() {
       // has filled the view and the players are in place. Once per pass: it re-arms when the water is
       // mostly drained again.
       const y = window.scrollY,
-        down = y > lastY;
+        down = y > lastY,
+        now = performance.now();
+      // the visitor's scroll speed, px per ms, for the glide to carry on from
+      if (!glideRaf)
+        speed = Math.max(0, (y - lastY) / Math.max(8, now - lastT));
       lastY = y;
+      lastT = now;
       if (p < 0.3) glided = false;
       if (down && !glided && p >= AUTO_AT && p < 1) {
         glided = true;
-        glide(end + 4); // a few px past the end, so it lands full
+        glide(end + 4, Math.min(speed, 2.5)); // a few px past the end, so it lands full
       }
       if (!raf) raf = requestAnimationFrame(draw);
     };
