@@ -1,10 +1,9 @@
 "use client";
 
-// Frosted glass badges of the floor's characters floating around the scroll line (ScrubLine.tsx), in
-// full colour. Each sits at its own depth and drifts with the cursor by that much (a soft spring, nearer ones
+// Floating tiles around the scroll line (ScrubLine.tsx): the floor's own glass tiles with their characters,
+// pre-rendered square on, in full colour. Each sits at its own depth and drifts with the cursor by that much (a soft spring, nearer ones
 // further), so they parallax against each other, and bobs slowly on its own. Hovering one sweeps a dense
-// dot-matrix band across it that turns the human into their AI copy behind it; leaving eases back. The
-// picture is cropped to head and shoulders, so the pictures' faded bottoms never show. The cast avoids
+// dot-matrix band across it that turns the human into their AI copy behind it; leaving eases back. The cast avoids
 // the four characters the players section uses. Touch screens and reduced motion keep them still.
 import { useEffect } from "react";
 import {
@@ -85,7 +84,8 @@ const BADGES: Badge[] = [
 
 const DRIFT = 22; // px a depth-1 badge moves with the cursor at the edge of the screen
 const SWEEP_S = 1;
-const BAND = 34; // band width, % of the badge
+const BAND = 34; // band width, % of the tile
+const TILE_ASPECT = 808 / 725; // the rendered tiles' width / height
 
 export function FloatingBadges() {
   // pointer position, -1..1 across the viewport, smoothed
@@ -161,18 +161,24 @@ function FloatingBadge({
           onHoverEnd={leave}
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 300, damping: 22 }}
-          className="pointer-events-auto rounded-[24px] border border-white/80 bg-white/55 p-1 shadow-[0_18px_40px_-18px_rgba(10,27,51,0.35)] backdrop-blur-md"
-          style={{ width: b.size, height: b.size, rotate: b.tilt }}
+          className="pointer-events-auto relative drop-shadow-[0_18px_22px_rgba(10,27,51,0.18)]"
+          style={{ width: b.size, aspectRatio: TILE_ASPECT, rotate: b.tilt }}
         >
-          <div className="relative h-full w-full overflow-hidden rounded-[20px] bg-slate-100">
-            <Picture src={`/tiles/chars/${b.name}.webp`} />
-            <motion.div
-              className="absolute inset-0"
-              style={{ clipPath: reveal, opacity: ai }}
-            >
-              <Picture src={`/tiles/chars-ai/${b.name}.webp`} />
-            </motion.div>
-            {/* the dot-matrix wave: a dense halftone of accent dots, soft at both edges */}
+          <Tile src={`/tiles/float/${b.name}.webp`} />
+          <motion.div
+            className="absolute inset-0"
+            style={{ clipPath: reveal, opacity: ai }}
+          >
+            <Tile src={`/tiles/float/${b.name}-ai.webp`} />
+          </motion.div>
+          {/* the dot-matrix wave: a dense halftone of accent dots, soft at both edges, kept to the tile */}
+          <div
+            className="absolute inset-0"
+            style={{
+              maskImage: `url(/tiles/float/${b.name}.webp)`,
+              maskSize: "100% 100%",
+            }}
+          >
             <motion.div
               className="dot-wave absolute inset-y-0"
               style={{
@@ -188,15 +194,14 @@ function FloatingBadge({
   );
 }
 
-// The character's head and shoulders: the picture scaled up a little and anchored to the top, which
-// leaves its faded bottom outside the badge.
-function Picture({ src }: { src: string }) {
+// One floating tile: the floor's glass tile with its character, pre-rendered square on (tools/tiles/tile-boot.js).
+function Tile({ src }: { src: string }) {
   return (
-    // eslint-disable-next-line @next/next/no-img-element -- the floor's own character art
+    // eslint-disable-next-line @next/next/no-img-element -- pre-rendered tile art
     <img
       src={src}
       alt=""
-      className="absolute left-1/2 top-[-2%] w-[128%] max-w-none -translate-x-1/2 select-none"
+      className="absolute inset-0 h-full w-full select-none"
     />
   );
 }

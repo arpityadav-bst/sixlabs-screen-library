@@ -40,12 +40,13 @@ ch.setScan(opt.ai ? 1 : 0);
 // Straight: turn the bust from the tile's diagonal onto its axis, head to the back edge, chest toward
 // the camera edge (the floor lays it corner to corner for its diamond view).
 // The floor stretches the bust along the view to undo its 40 degree tilt; this gentler view needs less,
-// and the bust is a touch smaller so the hair clears the back edge.
+// and the bust is sized so the character fills about 70% of the tile, as on the floor.
+const TILE_FILL = 0.88; // bust picture width in tile widths: its figure spans ~80% of the picture, so ~70% of the tile
 const undoTilt = Math.sin(THREE.MathUtils.degToRad(P.elev)) / Math.sin(THREE.MathUtils.degToRad(opt.elev ?? 62));
 if (opt.straight) ch.meshes.forEach((m) => {
   m.rotation.z = 0;
   m.position.set(0, m.position.y, P.charForward);
-  m.scale.set(P.charSize * 0.92, P.charSize * 0.92 * P.charStretch * undoTilt, 1);
+  m.scale.set(TILE_FILL, TILE_FILL * P.charStretch * undoTilt, 1);
 });
 if (opt.mask) {
   ch.meshes.forEach((m) => { m.visible = false; });
