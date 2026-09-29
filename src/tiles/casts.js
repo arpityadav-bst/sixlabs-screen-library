@@ -15,7 +15,7 @@ export function createCasts({ P, renderer, chars, bustTiles, pictures, gone }) {
     settled(loadPictures(P, P.chars2)).then((tex) => {
       if (gone()) return;
       tex.forEach((t) => renderer.initTexture(t));
-      casts[1] = { names: castTiles(bustTiles, P.chars2, null, true), tex };
+      casts[1] = { names: castTiles(bustTiles, P.chars2, null), tex };
     });
   }
   let shown = 0;

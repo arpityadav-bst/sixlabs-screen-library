@@ -45,19 +45,16 @@ export function loadPictures(P, names) {
 }
 export const preloadCharacters = (P) => loadPictures(P, P.chars ?? []);
 
-// Casts a set of characters onto the tiles: a Map "i,j" -> file name. Design-frame tiles (rank 0) take
-// the pool in order, as they always have. Then the rest of the tiles in view (rank 1), then those off
-// screen (rank 2), each take the least recently used character that no tile within two cells already
-// shows, so every character is used in view before any repeats there. `active` (static renders) pins one tile.
-// spread: every tile takes the least recently used character (for a cast smaller than the design frame).
-export function castTiles(tiles, names, active, spread = false) {
-  const ordered = [...tiles].sort((a, b) => ((a.rank ?? 0) - (b.rank ?? 0)) || (a.screen[1] - b.screen[1]) || (a.screen[0] - b.screen[0]));
+// Casts a set of characters onto the tiles: a Map "i,j" -> file name. Tiles go most visible first (their
+// `shown` share of the screen), each taking the least recently used character that no tile within two
+// cells already shows: every character lands on a well-visible tile before any repeats, and repeats end
+// up on the most cut-off tiles. `active` (static renders) pins one tile.
+export function castTiles(tiles, names, active) {
+  const ordered = [...tiles].sort((a, b) => ((b.shown ?? 0) - (a.shown ?? 0)) || (a.screen[1] - b.screen[1]) || (a.screen[0] - b.screen[0]));
   const pool = names.filter((c) => c !== active);
-  let k = 0;
   const placed = [], lastUsed = new Map(pool.map((n) => [n, -1])), cast = new Map();
   const pick = (t) => {
     if (t.active && active) return active;
-    if ((t.rank ?? 0) === 0 && !spread) return pool[k++ % pool.length];
     const near = new Set(placed.filter((p) => Math.abs(p.i - t.i) <= 2 && Math.abs(p.j - t.j) <= 2).map((p) => p.name));
     const byAge = [...pool].sort((x, y) => lastUsed.get(x) - lastUsed.get(y));
     return byAge.find((n) => !near.has(n)) ?? byAge[0];

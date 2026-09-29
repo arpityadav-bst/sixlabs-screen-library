@@ -14,7 +14,7 @@ import { addCharacters, preloadCharacters } from './characters.js';
 import { createCasts } from './casts.js';
 import { createFocusRig } from './focus-rig.js';
 import { startInteraction } from './interact.js';
-import { placeCamera, coverage, onSomeScreen } from './viewport.js';
+import { placeCamera, coverage, onSomeScreen, shownShare } from './viewport.js';
 import { tileGeometry } from './geometry.js';
 import { playIntro } from './intro.js';
 import { startAutoplay } from './autoplay.js';
@@ -146,17 +146,15 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   scene.add(key);
 
   // Characters go on every tile whose bust would be on screen (the tile's centre, inside the frame plus a
-  // margin) at any supported screen shape. Tiles inside the 16:9 design frame are assigned first (rank 0),
-  // so the design's line-up stays the same whatever the screen.
+  // margin) at any supported screen shape.
   const inDesign = ([i, j]) => { const v = new THREE.Vector3(cx(i), tileH, cz(j)).project(camera); return Math.abs(v.x) < 1.12 && Math.abs(v.y) < 1.2; };
   const busted = cells.filter(([i, j]) => inDesign([i, j]) || onSomeScreen(camera, P, new THREE.Vector3(cx(i), tileH, cz(j))));
-  // Casting order (characters.js): the design frame first (rank 0), then the rest of what this screen shows
-  // (rank 1), then tiles off screen (rank 2), so repeats land off screen before they land in view.
+  // Casting order (characters.js): by how much of each tile this screen shows, most first, so every
+  // character lands on a well-visible tile before any repeats, and repeats go to the most cut-off tiles.
   const nowCam = camera.clone();
   placeCamera(nowCam, P, Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight));
-  const inView = ([i, j]) => { const v = new THREE.Vector3(cx(i), tileH, cz(j)).project(nowCam); return Math.abs(v.x) < 1.05 && Math.abs(v.y) < 1.1; };
   const bustTiles = busted.map(([i, j]) => (
-    { i, j, x: cx(i), y: tileH, z: cz(j), active: i === ia && j === ja, screen: toScreen(cx(i), cz(j)), rank: inDesign([i, j]) ? 0 : inView([i, j]) ? 1 : 2 }));
+    { i, j, x: cx(i), y: tileH, z: cz(j), active: i === ia && j === ja, screen: toScreen(cx(i), cz(j)), shown: shownShare(nowCam, cx(i), tileH, cz(j), half).shown }));
   const chars = await addCharacters(field, P, bustTiles, pictures);
 
   // Capture the reflection from the activeAt tile, with that tile and its busts out of the way.
