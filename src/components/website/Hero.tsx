@@ -9,7 +9,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 // Digital copies start from the published figure and count up by one each time a character on the floor
 // becomes their AI copy.
-const COPIES_BASE = 1_009_271;
+const COPIES_BASE = 10_956;
 
 export function Hero() {
   const [floorReady, setFloorReady] = useState(false);
