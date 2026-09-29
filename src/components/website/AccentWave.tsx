@@ -118,7 +118,7 @@ export function AccentWave() {
         ctx.globalCompositeOperation = "source-atop";
         ctx.globalAlpha = WORD_ALPHA;
         ctx.fillStyle = "#ffffff";
-        ctx.font = `500 ${Math.round(w * 0.2)}px ${display}, sans-serif`;
+        ctx.font = `500 ${Math.round(w * 0.14)}px ${display}, sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "alphabetic";
         ctx.fillText(WORD, w / 2, level + BAND * 0.12);
