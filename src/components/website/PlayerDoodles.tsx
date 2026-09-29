@@ -5,8 +5,7 @@
 // starts DELAY_S after the player comes into view; its lines waver (a noise displacement) like drawn by
 // hand. When the portrait switches to the AI copy (`mode`), the AI copies the drawing: it retraces every
 // stroke in the same order, exactly over the hand's line, clean and glowing, twice as fast, a bright pen
-// point at its tip, and each hand line stays whole under the copy while it is traced and fades once it
-// is done.
+// point at its tip, and each hand line dims as the copy starts over it and is gone once the copy is done.
 // A stroke the hand has not finished yet is copied as soon as it is. Switching back to Human puts the
 // AI's copy away and the hand sketches it all again. Everything leaves with the player (another pick) and
 // is wiped when the section leaves view. The drawings are in player-doodles.ts (coordinates in the
@@ -110,8 +109,12 @@ export function PlayerDoodles({
         v.aiFade.set(1);
         animate(v.aiLen, 1, { delay, duration: dur, ease: "linear" });
         animate(v.aiShow, 1, { delay, duration: 0.01 });
-        // the hand's line stays whole under the copy while it is traced, and fades once it is complete
-        animate(v.fade, 0, { delay: delay + dur, duration: still ? 0 : 0.4 });
+        // the hand's line dims as the copy starts over it, and is gone once the copy is complete
+        animate(v.fade, [1, 0.3, 0], {
+          delay,
+          duration: dur + 0.3,
+          times: [0, 0.1, 1],
+        });
       });
     } else if (mode === "human" && prev === "ai") {
       strokes.forEach((s, i) => {
