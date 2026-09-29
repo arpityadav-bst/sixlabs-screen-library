@@ -63,15 +63,21 @@ export function PlayerDoodles({
     strokes.forEach((s, i) => {
       const v = mv[i];
       if (!start) {
+        // cancel whatever is still booked (a hand line's fade from a copy under way, say), then wipe
+        v.fade.stop();
+        v.aiFade.stop();
         for (const m of [v.len, v.show, v.aiLen, v.aiShow])
           animate(m, 0, { duration: 0.2 });
         return;
       }
-      v.fade.set(1);
-      v.aiFade.set(1);
+      // a fresh start: jump() also cancels anything still booked on these
+      v.fade.jump(1);
+      v.aiFade.jump(1);
+      v.aiLen.jump(0);
+      v.aiShow.jump(0);
       if (still) {
-        v.len.set(1);
-        v.show.set(1);
+        v.len.jump(1);
+        v.show.jump(1);
         handDone.current[i] = now;
         return;
       }
@@ -104,9 +110,9 @@ export function PlayerDoodles({
         );
         const delay = still ? 0 : (begin - now) / 1000,
           dur = still ? 0 : s.dur * AI_PACE;
-        v.aiLen.set(0);
-        v.aiShow.set(0);
-        v.aiFade.set(1);
+        v.aiLen.jump(0);
+        v.aiShow.jump(0);
+        v.aiFade.jump(1);
         animate(v.aiLen, 1, { delay, duration: dur, ease: "linear" });
         animate(v.aiShow, 1, { delay, duration: 0.01 });
         // the hand's line dims as the copy starts over it, and is gone once the copy is complete
@@ -122,9 +128,9 @@ export function PlayerDoodles({
         animate(v.aiFade, 0, { duration: still ? 0 : 0.3 });
         const at = still ? 0 : AI_LEAD_S + s.at * HAND_PACE,
           dur = still ? 0 : s.dur * HAND_PACE;
-        v.len.set(0);
-        v.show.set(1);
-        v.fade.set(1);
+        v.len.jump(0);
+        v.show.jump(1);
+        v.fade.jump(1); // also cancels a hand-line fade still booked from the copy
         animate(v.len, 1, { delay: at, duration: dur, ease });
         handDone.current[i] = now + (at + dur) * 1000;
       });
