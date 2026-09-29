@@ -100,7 +100,7 @@
  "rimTopBottom": 0.15,
  "riseTau": 0.12,
  "animSpeed": 1.69,
- "spentTint": "#d0d3d8",
+ "spentTint": "#e3e5e8",
  "sideEnv": 5,
  "sideRough": 0.03,
  "sideShadow": 0.18,
