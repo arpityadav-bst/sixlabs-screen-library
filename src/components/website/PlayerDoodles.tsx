@@ -23,7 +23,9 @@ const WOBBLE = 6;
 const ROUGH_FREQ = 0.03;
 const AI_LEAD_S = 0.6; // after the switch, while the portrait's sweep is under way, the copying begins
 const AI_PACE = 0.5; // the copy's timing against the hand's: twice as fast
-const BACK_PACE = 0.6; // the hand sketching again after the AI's copy is put away
+// the hand's pace against the drawings' written timing (player-doodles.ts), first time and again after
+// the AI's copy is put away: brisk, so it has finished before the portrait first turns AI
+const HAND_PACE = 0.6;
 const AI_GLOW = "#7fb2ff";
 const ease = "easeInOut" as const;
 const REDUCED = "(prefers-reduced-motion: reduce)";
@@ -73,10 +75,11 @@ export function PlayerDoodles({
         handDone.current[i] = now;
         return;
       }
-      const at = DELAY_S + s.at;
-      animate(v.len, 1, { delay: at, duration: s.dur, ease });
+      const at = DELAY_S + s.at * HAND_PACE,
+        dur = s.dur * HAND_PACE;
+      animate(v.len, 1, { delay: at, duration: dur, ease });
       animate(v.show, 1, { delay: at, duration: 0.01 });
-      handDone.current[i] = now + (at + s.dur) * 1000;
+      handDone.current[i] = now + (at + dur) * 1000;
     });
   }, [start, strokes, mv]);
 
@@ -117,8 +120,8 @@ export function PlayerDoodles({
       strokes.forEach((s, i) => {
         const v = mv[i];
         animate(v.aiFade, 0, { duration: still ? 0 : 0.3 });
-        const at = still ? 0 : AI_LEAD_S + s.at * BACK_PACE,
-          dur = still ? 0 : s.dur * BACK_PACE;
+        const at = still ? 0 : AI_LEAD_S + s.at * HAND_PACE,
+          dur = still ? 0 : s.dur * HAND_PACE;
         v.len.set(0);
         v.show.set(1);
         v.fade.set(1);
