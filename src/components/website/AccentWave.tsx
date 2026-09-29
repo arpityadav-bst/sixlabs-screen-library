@@ -61,8 +61,10 @@ export function AccentWave() {
       raf = 0;
       if (p < 1) announce(false);
       ctx.clearRect(0, 0, w, h);
-      // the level runs from below the view, halftone included (p 0), to above it, arc included (p 1)
-      const level = h + BAND - p * (h + BAND * 2 + ARC);
+      // the level runs from below the view, halftone included (p 0), up until the solid covers it (p 1)
+      // p 1 is the moment the solid colour covers the view (its lowest points, the arc's ends, reach the
+      // top): that is when it reads as full, so that is when it announces it
+      const level = h + BAND - p * (h + BAND + ARC + PITCH * 3);
       if (p > 0) {
         ctx.fillStyle = fill;
         ctx.beginPath();
