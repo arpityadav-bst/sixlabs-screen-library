@@ -59,7 +59,8 @@ export function AccentWave() {
 
     const draw = () => {
       raf = 0;
-      if (p < 1) announce(false);
+      // some slack before it counts as drained, so scrolling back a step does not undo the players
+      if (p < 0.8) announce(false);
       ctx.clearRect(0, 0, w, h);
       // the level runs from below the view, halftone included (p 0), up until the solid covers it (p 1)
       // p 1 is the moment the solid colour covers the view (its lowest points, the arc's ends, reach the

@@ -48,7 +48,7 @@ export function Players() {
       ref={section}
       id="players"
       className={
-        "relative z-30 w-full max-w-[1400px] mx-auto -mt-[100vh] flex min-h-screen flex-col justify-center pt-24 " +
+        "relative z-30 w-full max-w-[1400px] mx-auto -mt-[100vh] flex min-h-screen flex-col justify-center pt-40 pb-8 " +
         (shown ? "" : "pointer-events-none") // hidden, it must not block the floating tiles under it
       }
     >
