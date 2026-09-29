@@ -33,7 +33,7 @@ export function Hero() {
   ];
   return (
     <>
-      <section className="relative w-full max-w-[1400px] mx-auto rounded-[48px] bg-[#e3e5e8] border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)] overflow-hidden h-[664px] flex flex-col">
+      <section className="relative w-full max-w-[1400px] mx-auto rounded-[48px] bg-[#e3e5e8] border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)] overflow-hidden h-[664px] max-md:h-[720px] max-md:rounded-[32px] flex flex-col">
         {/* The glass tile floor replaces the prompt's background video. It takes pointer events so the
           tiles stay interactive; the text layer above lets them through except on its own block. */}
         <div className="absolute inset-0 z-0 overflow-hidden select-none">
@@ -48,6 +48,13 @@ export function Hero() {
             onConvert={() => setCopies((c) => c + 1)}
           />
         </div>
+
+        {/* Phones only: the copy covers most of the narrow container, so the floor's upper rows fade under a
+          scrim of the container colour and the tiles show clear in the lower part. */}
+        <div
+          aria-hidden
+          className="md:hidden pointer-events-none absolute inset-x-0 top-0 z-10 h-[66%] bg-gradient-to-b from-[#e3e5e8] from-60% to-transparent"
+        />
 
         {/* While the floor loads, the logo lies on the floor in the tiles' white glass, toward the bottom right
           where the tiles will be, and turns very slowly about the floor's vertical axis; it fades away just before the
@@ -81,7 +88,7 @@ export function Hero() {
           )}
         </AnimatePresence>
 
-        <div className="relative z-20 flex-1 px-8 md:px-16 pt-12 md:pt-16 flex flex-col items-start pointer-events-none">
+        <div className="relative z-20 flex-1 px-6 md:px-16 pt-10 md:pt-16 flex flex-col items-start pointer-events-none">
           <motion.div
             // Fade only: the block is in its final place from the first frame (a slide-up read as a jerk).
             initial={{ opacity: 0 }}
@@ -89,7 +96,7 @@ export function Hero() {
             transition={{ duration: 0.6, ease }}
             className="flex-1 flex flex-col items-start pb-10 md:pb-12"
           >
-            <h1 className="font-display text-[42px] md:text-[56px] font-medium tracking-tight leading-[1.05] text-[#0a1b33]">
+            <h1 className="font-display text-[34px] md:text-[56px] font-medium tracking-tight leading-[1.05] text-[#0a1b33]">
               Making <span className="text-accent">models</span> of
               <br />
               human players.
@@ -120,8 +127,8 @@ export function Hero() {
       </section>
       {/* Outside the container, one row: the scroll cue under its bottom-left corner, the headline numbers
           centred, the wave button under its bottom-right corner. */}
-      <div className="w-full max-w-[1400px] mx-auto mt-10 px-8 md:px-16 grid grid-cols-[1fr_auto_1fr] items-start">
-        <div className="-ml-10 flex">
+      <div className="w-full max-w-[1400px] mx-auto mt-10 max-md:mt-8 px-8 max-md:px-2 md:px-16 grid grid-cols-[1fr_auto_1fr] items-start max-md:relative max-md:flex max-md:justify-center">
+        <div className="-ml-10 max-md:hidden flex">
           <ScrollCue />
         </div>
         {/* The humans in navy, their digital copies in the accent blue (the headline's "models" colour). */}
@@ -131,14 +138,14 @@ export function Hero() {
           initial={{ opacity: 0, y: 6 }}
           animate={floorReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
           transition={{ duration: 0.6, ease, delay: floorReady ? 1.2 : 0 }}
-          className="flex items-start gap-14"
+          className="flex items-start gap-14 max-md:gap-8"
         >
           {stats.map((s) => (
             <div
               key={s.label[0]}
               className="flex flex-col items-center text-center"
             >
-              <dt className="order-2 mt-2 font-sans text-[14px] md:text-[15px] leading-snug text-[#64748b]">
+              <dt className="order-2 mt-2 font-sans text-[14px] md:text-[15px] leading-snug text-[#64748b] max-md:whitespace-nowrap">
                 {s.label.map((line) => (
                   <span key={line} className="block">
                     {line}
@@ -165,13 +172,13 @@ export function Hero() {
             </div>
           ))}
         </motion.dl>
-        <div className="flex justify-end">
+        <div className="flex justify-end max-md:absolute max-md:right-2 max-md:top-1">
           {/* Sends the flip wave now: every tile back to default, activated or not. Just the icon; its label
             fades in to its left on hover. */}
           <button
             type="button"
             onClick={() => floor.current?.reset()}
-            className="group -mr-10 p-1 flex items-center gap-1.5 text-slate-400 hover:text-[#0a1b33] transition-colors duration-200"
+            className="group -mr-10 max-md:mr-0 p-1 flex items-center gap-1.5 text-slate-400 hover:text-[#0a1b33] transition-colors duration-200"
           >
             <span className="text-[12px] leading-none opacity-0 translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0">
               Next wave

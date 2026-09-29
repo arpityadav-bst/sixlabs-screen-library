@@ -11,6 +11,7 @@ import { PortraitSwap } from "./PortraitSwap";
 import { ModeToggle } from "./ModeToggle";
 import { usePlayerMode } from "./usePlayerMode";
 import { PlayerDoodles } from "./PlayerDoodles";
+import { PlayerTraits } from "./PlayerTraits";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 // On the accent blue (AccentWave.tsx): white cards.
@@ -80,18 +81,18 @@ export function Players() {
       id="players"
       style={fit}
       className={
-        "relative z-30 w-full max-w-[1400px] mx-auto -mt-[100vh] flex min-h-screen flex-col justify-center pt-24 pb-10 " +
+        "relative z-30 w-full max-w-[1400px] mx-auto -mt-[100vh] flex min-h-screen flex-col justify-center pt-24 pb-10 max-lg:justify-start max-md:pt-20 md:max-lg:pt-28 max-lg:pb-16 max-lg:[--ph:min(560px,120vw)]! lg:max-xl:[--ph:min(720px,calc((100svh-344px)/0.756),calc((100vw-640px)/0.75))]! " +
         (shown ? "" : "pointer-events-none") // hidden, it must not block the floating tiles under it
       }
     >
-      <div className="relative px-8 md:px-16">
+      <div className="relative px-5 md:px-16">
         {/* soft glow behind the character */}
         <div
           aria-hidden
-          className="pointer-events-none absolute right-[8%] top-[6%] h-[520px] w-[620px] rounded-full bg-[radial-gradient(closest-side,rgba(26,109,255,0.28),rgba(26,109,255,0.08)_55%,transparent)]"
+          className="pointer-events-none absolute right-[8%] top-[6%] h-[520px] w-[620px] max-lg:right-[-10%] max-lg:top-[22%] max-lg:h-[360px] max-lg:w-[380px] rounded-full bg-[radial-gradient(closest-side,rgba(26,109,255,0.28),rgba(26,109,255,0.08)_55%,transparent)]"
         />
 
-        <div className="relative grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,480px)_1fr]">
+        <div className="relative grid grid-cols-1 gap-8 max-lg:gap-4 lg:grid-cols-[minmax(0,480px)_1fr]">
           <motion.div {...enter(0.75)} className="self-center">
             <AnimatePresence mode="wait">
               <motion.div
@@ -101,35 +102,19 @@ export function Players() {
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.35, ease }}
               >
-                <h3 className="font-display text-[42px] md:text-[56px] font-medium leading-[1.05] tracking-tight text-white">
+                <h3 className="font-display text-[34px] md:text-[56px] font-medium leading-[1.05] tracking-tight text-white">
                   {player.title}
                 </h3>
-                <p className="mt-5 max-w-[480px] text-balance font-sans text-[16px] md:text-[18px] leading-relaxed text-white/80">
+                <p className="mt-5 max-md:mt-3 max-w-[480px] text-balance font-sans text-[16px] md:text-[18px] leading-relaxed text-white/80">
                   {player.body}
                 </p>
               </motion.div>
             </AnimatePresence>
-            <dl className="mt-10 max-w-[440px] space-y-4">
-              {player.traits.map((t) => (
-                <div
-                  key={t.label}
-                  className="grid grid-cols-[130px_1fr] items-center gap-4"
-                >
-                  <dt className="font-sans text-[14px] text-white/75">
-                    {t.label}
-                  </dt>
-                  <dd className="h-1.5 rounded-full bg-white/20">
-                    <motion.div
-                      className="h-full rounded-full bg-white"
-                      initial={false}
-                      animate={{ width: `${t.value * 100}%` }}
-                      transition={{ duration: 0.7, ease }}
-                    />
-                  </dd>
-                </div>
-              ))}
-            </dl>
-            <div className="mt-10">
+            <PlayerTraits
+              traits={player.traits}
+              className="mt-10 max-lg:hidden"
+            />
+            <div className="mt-10 max-lg:mt-5">
               <ModeToggle mode={mode} onChange={setMode} />
             </div>
           </motion.div>
@@ -184,7 +169,7 @@ export function Players() {
         {/* Selector cards, each read as a model on file: the player type and a one-line read of them on top,
             its number and a status along the bottom under a hairline. The selected one, the model running,
             is pure white; the others are the same white at lower opacity, all on the page's accent blue. */}
-        <div className="relative z-10 mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="relative z-10 mt-8 grid grid-cols-2 gap-4 max-md:gap-3 lg:grid-cols-4">
           {PLAYERS.map((p, k) => {
             const on = k === active;
             return (
@@ -209,7 +194,7 @@ export function Players() {
                 }}
                 aria-pressed={on}
                 className={
-                  "sheen relative flex min-h-[176px] flex-col justify-between rounded-[28px] border p-6 text-left transition-[background-color,box-shadow,translate] duration-300 " +
+                  "sheen relative flex min-h-[176px] flex-col justify-between rounded-[28px] border p-6 max-lg:min-h-0 max-lg:rounded-[22px] max-lg:p-4 text-left transition-[background-color,box-shadow,translate] duration-300 " +
                   (on
                     ? "bg-white border-transparent shadow-[0_28px_56px_-26px_rgba(10,27,51,0.45)]"
                     : card +
@@ -219,7 +204,7 @@ export function Players() {
                 <span>
                   <span
                     className={
-                      "block font-display text-[22px] font-medium leading-tight tracking-tight " +
+                      "block font-display text-[22px] max-lg:text-[18px] font-medium leading-tight tracking-tight " +
                       "text-[#0a1b33]"
                     }
                   >
@@ -227,7 +212,7 @@ export function Players() {
                   </span>
                   <span
                     className={
-                      "mt-2 block font-sans text-[14px] leading-snug " +
+                      "mt-2 block font-sans text-[14px] leading-snug max-lg:hidden " +
                       "text-[#64748b]"
                     }
                   >
@@ -236,11 +221,15 @@ export function Players() {
                 </span>
                 <span
                   className={
-                    "mt-6 flex items-center justify-between border-t pt-4 font-mono text-[11px] uppercase tracking-[0.14em] " +
+                    "mt-6 flex items-center justify-between border-t pt-4 font-mono text-[11px] uppercase tracking-[0.14em] max-lg:mt-4 max-lg:pt-3 max-lg:text-[10px] max-lg:tracking-[0.08em] " +
                     "border-slate-200/70 text-slate-400"
                   }
                 >
-                  Model {String(k + 1).padStart(2, "0")}
+                  <span>
+                    {/* phones drop the word, so number and status keep to one line */}
+                    <span className="max-sm:hidden">Model </span>
+                    {String(k + 1).padStart(2, "0")}
+                  </span>
                   <span
                     className={
                       "flex items-center gap-1.5 " + (on ? "text-accent" : "")
@@ -259,6 +248,10 @@ export function Players() {
             );
           })}
         </div>
+        {/* phones and tablets (the stacked layout): the selected player's traits, after the cards */}
+        <motion.div {...enter(0.3)} className="lg:hidden">
+          <PlayerTraits traits={player.traits} className="mt-8" />
+        </motion.div>
       </div>
     </section>
   );

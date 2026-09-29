@@ -7,7 +7,9 @@
 // random FLIP_EVERY) one tile, at random and only one at a time, flips round its vertical middle and lands
 // showing the next human of its spot's cast. The casts avoid the four characters the players section
 // uses. The flipping (and fetching the rest of each cast) runs only while the tiles are near the view.
-// Touch screens and reduced motion keep them still.
+// Below 1600px (where the line would run under the middle tiles) they sit three above the line and three
+// below it: 80% size on laptops, 65% on tablets, half on phones (mx, my, ty). Touch screens and
+// reduced motion keep them still.
 import { useEffect, useRef, useState } from "react";
 import {
   animate,
@@ -15,6 +17,7 @@ import {
   useMotionValue,
   useSpring,
   useTransform,
+  type MotionStyle,
   type MotionValue,
 } from "motion/react";
 
@@ -22,6 +25,9 @@ type Badge = {
   cast: string[];
   x: string;
   y: string;
+  mx: string; // below 1600px the line reaches the middle tiles: three tiles above it, three below
+  my: string; // (phones)
+  ty: string; // (tablets and laptops)
   size: number;
   depth: number;
   tilt: number;
@@ -38,6 +44,9 @@ const BADGES: Badge[] = [
     ],
     x: "15%",
     y: "27%",
+    mx: "17%",
+    my: "21%",
+    ty: "24%",
     size: 220,
     depth: 1.4,
     tilt: -6,
@@ -52,6 +61,9 @@ const BADGES: Badge[] = [
     ],
     x: "82%",
     y: "25%",
+    mx: "83%",
+    my: "20%",
+    ty: "23%",
     size: 196,
     depth: 0.8,
     tilt: 5,
@@ -66,6 +78,9 @@ const BADGES: Badge[] = [
     ],
     x: "10%",
     y: "56%",
+    mx: "50%",
+    my: "16%",
+    ty: "22%",
     size: 180,
     depth: 0.6,
     tilt: 4,
@@ -80,6 +95,9 @@ const BADGES: Badge[] = [
     ],
     x: "88%",
     y: "53%",
+    mx: "50%",
+    my: "85%",
+    ty: "78%",
     size: 232,
     depth: 1.6,
     tilt: -4,
@@ -94,6 +112,9 @@ const BADGES: Badge[] = [
     ],
     x: "20%",
     y: "77%",
+    mx: "17%",
+    my: "79%",
+    ty: "76%",
     size: 188,
     depth: 1,
     tilt: 6,
@@ -108,6 +129,9 @@ const BADGES: Badge[] = [
     ],
     x: "77%",
     y: "79%",
+    mx: "83%",
+    my: "80%",
+    ty: "77%",
     size: 204,
     depth: 1.2,
     tilt: -5,
@@ -234,14 +258,30 @@ function FloatingBadge({
 
   return (
     <motion.div
-      className="absolute -translate-x-1/2 -translate-y-1/2"
-      style={{ left: b.x, top: b.y, x, y }}
+      className="absolute -translate-x-1/2 -translate-y-1/2 left-(--x) top-(--y) max-[1600px]:left-(--mx) max-md:top-(--my) md:max-[1600px]:top-(--ty)"
+      style={
+        {
+          "--x": b.x,
+          "--y": b.y,
+          "--mx": b.mx,
+          "--my": b.my,
+          "--ty": b.ty,
+          x,
+          y,
+        } as unknown as MotionStyle
+      }
     >
       <div className="badge-bob" style={{ animationDelay: `${-b.delay}s` }}>
         <div style={{ perspective: 900 }}>
           <motion.div
-            className="drop-shadow-[0_6px_8px_rgba(10,27,51,0.05)]"
-            style={{ width: b.size, rotate: b.tilt, rotateY: turn }}
+            className="drop-shadow-[0_6px_8px_rgba(10,27,51,0.05)] w-(--s) max-md:w-[calc(var(--s)*0.5)] md:max-xl:w-[calc(var(--s)*0.65)] xl:max-[1600px]:w-[calc(var(--s)*0.8)]"
+            style={
+              {
+                "--s": `${b.size}px`,
+                rotate: b.tilt,
+                rotateY: turn,
+              } as unknown as MotionStyle
+            }
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- pre-rendered tile art */}
             <img

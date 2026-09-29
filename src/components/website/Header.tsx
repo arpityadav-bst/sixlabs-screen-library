@@ -31,7 +31,7 @@ export function Header() {
   return (
     <nav
       className={
-        "fixed top-0 left-0 right-0 z-40 px-6 py-5 backdrop-blur-md border-b transition-colors duration-300 " +
+        "fixed top-0 left-0 right-0 z-40 px-6 py-5 max-md:px-4 max-md:py-4 backdrop-blur-md border-b transition-colors duration-300 " +
         (onBlue ? "bg-white " : "bg-[rgb(var(--page-rgb)/0.75)] ") +
         (scrolled ? "border-slate-300/80" : "border-transparent")
       }
@@ -63,10 +63,10 @@ export function Header() {
           ))}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 max-md:gap-2">
           <LanguageMenu />
           {/* Secondary: outlined, so Try now in the hero stays the one solid CTA on the page. */}
-          <button className="border border-slate-300 text-[#0a1b33] text-[15px] px-6 py-3 rounded-full hover:bg-white/70 hover:border-[#b7c0cb] transition-colors duration-200">
+          <button className="border border-slate-300 text-[#0a1b33] text-[15px] px-6 py-3 max-md:px-4 max-md:py-2 max-md:text-[14px] rounded-full hover:bg-white/70 hover:border-[#b7c0cb] transition-colors duration-200">
             Sign in
           </button>
         </div>
