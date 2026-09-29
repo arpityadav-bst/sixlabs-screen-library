@@ -137,9 +137,21 @@ export function Players() {
                 whileHover={on ? undefined : { opacity: 0.85 }}
                 type="button"
                 onClick={() => setActive(k)}
+                // the stroke light follows the pointer (.sheen in globals.css)
+                onPointerMove={(e) => {
+                  const r = e.currentTarget.getBoundingClientRect();
+                  e.currentTarget.style.setProperty(
+                    "--gx",
+                    `${e.clientX - r.left}px`,
+                  );
+                  e.currentTarget.style.setProperty(
+                    "--gy",
+                    `${e.clientY - r.top}px`,
+                  );
+                }}
                 aria-pressed={on}
                 className={
-                  "flex min-h-[176px] flex-col justify-between rounded-[28px] border p-6 text-left transition-[background-color,box-shadow,translate] duration-300 " +
+                  "sheen relative flex min-h-[176px] flex-col justify-between rounded-[28px] border p-6 text-left transition-[background-color,box-shadow,translate] duration-300 " +
                   (on
                     ? "bg-white border-transparent shadow-[0_28px_56px_-26px_rgba(10,27,51,0.45)]"
                     : card +

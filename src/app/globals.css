@@ -71,3 +71,32 @@ body {
 }
 
 
+
+/* Light travelling along a card's stroke, after the onBlue creators page (onblue-vesper/onblue.css,
+   .card::after): a soft radial at the pointer (--gx, --gy, set on hover) on a box one stroke-width larger
+   than the card, masked to the outline only, fading in on hover. In white here, for white cards on the
+   accent blue (Players.tsx). */
+.sheen {
+  --sheen-w: 1.5px;
+  --sheen-r: 28px;
+}
+.sheen::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--sheen-w) * -1);
+  z-index: 3;
+  padding: var(--sheen-w);
+  border-radius: calc(var(--sheen-r) + var(--sheen-w));
+  filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.7));
+  background: radial-gradient(260px circle at var(--gx, 50%) var(--gy, 50%), #ffffff, rgba(255, 255, 255, 0.35) 34%, transparent 68%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.sheen:hover::after {
+  opacity: 1;
+}
