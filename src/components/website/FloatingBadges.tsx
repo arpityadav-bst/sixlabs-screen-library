@@ -1,7 +1,7 @@
 "use client";
 
 // Frosted glass badges of the floor's characters floating around the scroll line (ScrubLine.tsx), in
-// monochrome (human and AI copy alike). Once the section is reached they fade in one after another,
+// full colour. Once the section is reached they fade in one after another,
 // each sits at its own depth and drifts with the cursor by that much (a soft spring, nearer ones
 // further), so they parallax against each other, and bobs slowly on its own. Hovering one sweeps a dense
 // dot-matrix band across it that turns the human into their AI copy behind it; leaving eases back. The
@@ -201,7 +201,7 @@ function FloatingBadge({
             className="pointer-events-auto rounded-[24px] border border-white/80 bg-white/55 p-1 shadow-[0_18px_40px_-18px_rgba(10,27,51,0.35)] backdrop-blur-md"
             style={{ width: b.size, height: b.size, rotate: b.tilt }}
           >
-            <div className="relative h-full w-full overflow-hidden rounded-[20px] bg-slate-100 grayscale">
+            <div className="relative h-full w-full overflow-hidden rounded-[20px] bg-slate-100">
               <Picture src={`/tiles/chars/${b.name}.webp`} />
               <motion.div
                 className="absolute inset-0"
