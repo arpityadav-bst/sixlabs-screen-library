@@ -30,8 +30,8 @@ type Badge = {
 const BADGES: Badge[] = [
   {
     name: "03-braids",
-    x: "9%",
-    y: "21%",
+    x: "13%",
+    y: "27%",
     size: 128,
     depth: 1.4,
     tilt: -6,
@@ -39,8 +39,8 @@ const BADGES: Badge[] = [
   },
   {
     name: "18-afro-esports",
-    x: "87%",
-    y: "18%",
+    x: "84%",
+    y: "25%",
     size: 112,
     depth: 0.8,
     tilt: 5,
@@ -66,8 +66,8 @@ const BADGES: Badge[] = [
   },
   {
     name: "14-silver-bob-cat-ears",
-    x: "15%",
-    y: "84%",
+    x: "18%",
+    y: "77%",
     size: 110,
     depth: 1,
     tilt: 6,
@@ -75,8 +75,8 @@ const BADGES: Badge[] = [
   },
   {
     name: "10-cap-cheer",
-    x: "82%",
-    y: "86%",
+    x: "79%",
+    y: "79%",
     size: 118,
     depth: 1.2,
     tilt: -5,
