@@ -85,6 +85,8 @@ const BADGES: Badge[] = [
 
 const DRIFT = 22; // px a depth-1 badge moves with the cursor at the edge of the screen
 const SWEEP_S = 1;
+// bump when the tile renders change, so browsers fetch the new ones instead of their cached copies
+const TILES_V = 2;
 const BAND = 34; // band width, % of the tile
 
 export function FloatingBadges() {
@@ -164,18 +166,18 @@ function FloatingBadge({
           className="pointer-events-auto relative drop-shadow-[0_8px_10px_rgba(10,27,51,0.10)]"
           style={{ width: b.size, rotate: b.tilt }}
         >
-          <Tile src={`/tiles/float/${b.name}.webp`} />
+          <Tile src={`/tiles/float/${b.name}.webp?v=${TILES_V}`} />
           <motion.div
             className="absolute inset-0"
             style={{ clipPath: reveal, opacity: ai }}
           >
-            <Tile src={`/tiles/float/${b.name}-ai.webp`} />
+            <Tile src={`/tiles/float/${b.name}-ai.webp?v=${TILES_V}`} />
           </motion.div>
           {/* the dot-matrix wave: a dense halftone of accent dots, soft at both edges, kept to the tile */}
           <div
             className="absolute inset-0"
             style={{
-              maskImage: `url(/tiles/float/${b.name}.webp)`,
+              maskImage: `url(/tiles/float/${b.name}.webp?v=${TILES_V})`,
               maskSize: "100% 100%",
             }}
           >
