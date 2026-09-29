@@ -1,6 +1,6 @@
 "use client";
 
-// "Scroll" cue in the row under the hero: an arrow that bobs gently beside a small label. It fades away
+// "Scroll" cue in the row under the hero: a small label with an arrow under it, both left-aligned; the arrow bobs gently. It fades away
 // once the page has been scrolled.
 import { useEffect, useState } from "react";
 import { ArrowDown } from "lucide-react";
@@ -18,12 +18,12 @@ export function ScrollCue() {
     <div
       aria-hidden
       className={
-        "pointer-events-none flex items-center gap-2 p-1 text-slate-400 transition-opacity duration-300 " +
+        "pointer-events-none flex flex-col items-start gap-1.5 p-1 text-slate-400 transition-opacity duration-300 " +
         (away ? "opacity-0" : "opacity-100")
       }
     >
-      <ArrowDown className="scroll-bob h-4 w-4" strokeWidth={1.75} />
       <span className="text-[11px] font-medium uppercase tracking-[0.18em]">Scroll</span>
+      <ArrowDown className="scroll-bob h-4 w-4" strokeWidth={1.75} />
     </div>
   );
 }
