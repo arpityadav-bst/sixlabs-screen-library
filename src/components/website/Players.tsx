@@ -75,7 +75,7 @@ export function Players() {
 
           <div className="relative flex items-end justify-center">
             <AnimatePresence mode="popLayout">
-              {/* eslint-disable-next-line @next/next/no-img-element -- the floor's own character art */}
+              { }
               <motion.img
                 key={player.id}
                 src={player.picture}
