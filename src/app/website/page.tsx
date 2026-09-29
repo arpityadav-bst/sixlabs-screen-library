@@ -3,7 +3,7 @@ import { Header } from "@/components/website/Header";
 import { Hero } from "@/components/website/Hero";
 import { Players } from "@/components/website/Players";
 import { ScrubLine } from "@/components/website/ScrubLine";
-import { LogoGridGlow } from "@/components/website/LogoGridGlow";
+import { AsciiBackdrop } from "@/components/website/AsciiBackdrop";
 
 export const metadata: Metadata = {
   title: "SixLabs",
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function WebsitePage() {
   return (
     <main className="relative min-h-screen px-4 md:px-8 pt-24 pb-24">
-      <LogoGridGlow />
+      <AsciiBackdrop />
       <Header />
       <Hero />
       <ScrubLine />
