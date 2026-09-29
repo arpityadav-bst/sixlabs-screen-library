@@ -15,7 +15,7 @@ import { tileGeometry } from '/src/tiles/geometry.js';
 
 const RAW = await fetch('/tiles/floor-params.json').then((r) => r.json());
 const opt = Object.assign({ name: '03-braids.webp', ai: false, transparent: true, elev: null, mask: false, straight: true, az: 0, bg: null, exposure: null }, window.PARAMS);
-const P = Object.assign({ W: 1920, H: 1080, assetBase: '/tiles' }, RAW, RAW.states?.default ?? {}, { chars: [opt.name], charActive: null, charEdgeSoft: opt.straight ? 0.004 : RAW.charEdgeSoft }, opt.transparent ? { filmGrain: 0 } : {});
+const P = Object.assign({ W: 1920, H: 1080, assetBase: '/tiles' }, RAW, RAW.states?.default ?? {}, { chars: [opt.name], charActive: null, charEdgeSoft: opt.straight ? 0.004 : RAW.charEdgeSoft, charInset: opt.straight ? 0.004 : RAW.charInset }, opt.transparent ? { filmGrain: 0 } : {});
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: opt.transparent });
 renderer.toneMapping = THREE.NeutralToneMapping;

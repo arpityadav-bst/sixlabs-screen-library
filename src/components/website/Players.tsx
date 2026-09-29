@@ -14,6 +14,8 @@ const card =
 
 export function Players() {
   const [active, setActive] = useState(0);
+  // The section is pulled up over the scroll line's last screen (-mt-[100vh]), so it sits in view the
+  // moment the water has filled it, and is centred in that screen.
   // The section comes in once the accent water has filled the view (AccentWave.tsx) and the section is
   // actually in view, one part at a time: the four cards, then the character, then the detail card. It
   // leaves as the water drains.
@@ -45,7 +47,7 @@ export function Players() {
     <section
       ref={section}
       id="players"
-      className="relative z-30 w-full max-w-[1400px] mx-auto mt-8"
+      className="relative z-30 w-full max-w-[1400px] mx-auto -mt-[100vh] flex min-h-screen flex-col justify-center pt-24"
     >
       <div className="relative px-8 md:px-16">
         {/* soft glow behind the character */}

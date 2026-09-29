@@ -86,7 +86,7 @@ const BADGES: Badge[] = [
 const DRIFT = 22; // px a depth-1 badge moves with the cursor at the edge of the screen
 const SWEEP_S = 1;
 // bump when the tile renders change, so browsers fetch the new ones instead of their cached copies
-const TILES_V = 3;
+const TILES_V = 4;
 const BAND = 34; // band width, % of the tile
 
 export function FloatingBadges() {
