@@ -11,8 +11,9 @@
 import { useEffect, useRef } from "react";
 import { PlayerPortrait } from "./PlayerPortrait";
 import type { Mode } from "./ModeToggle";
+import type { ClipFormat } from "./useClipFormat";
 
-type Clip = { src: string; straight: number; still: string };
+type Clip = { src: string; straight: number; stacked: string; still: string };
 
 const SWEEP_S = 1.5; // the band's run up the portrait, seconds
 const BAND = 0.6; // the band's depth, a share of the portrait's height
@@ -35,7 +36,7 @@ export function PortraitSwap({
   label,
   className,
   load = true,
-  still = false,
+  format = "webm",
 }: {
   human: Clip;
   ai: Clip;
@@ -43,12 +44,16 @@ export function PortraitSwap({
   label: string;
   className?: string;
   load?: boolean; // false holds both clips back from downloading
-  still?: boolean; // show each copy's still instead of its clip (where see-through clips do not play)
+  format?: ClipFormat; // which of each copy's files this browser shows (useClipFormat.ts)
 }) {
   const humanVideo = useRef<HTMLVideoElement>(null);
   const aiVideo = useRef<HTMLVideoElement>(null);
   const humanStill = useRef<HTMLImageElement>(null);
   const aiStill = useRef<HTMLImageElement>(null);
+  const humanFrame = useRef<HTMLCanvasElement>(null);
+  const aiFrame = useRef<HTMLCanvasElement>(null);
+  const still = format === "still",
+    stacked = format === "stacked";
   const humanLayer = useRef<HTMLDivElement>(null);
   const aiLayer = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -65,11 +70,15 @@ export function PortraitSwap({
       humanEl.style.clipPath = mode === "ai" ? HIDDEN : "none";
       cv.style.opacity = "0";
     };
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // the sweep draws from whatever the new copy is showing: its clip, or its still
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    // the sweep draws from whatever the new copy is showing: its clip, its stacked clip's canvas, its still
     const incoming = still
       ? (mode === "ai" ? aiStill : humanStill).current
-      : (mode === "ai" ? aiVideo : humanVideo).current;
+      : stacked
+        ? (mode === "ai" ? aiFrame : humanFrame).current
+        : (mode === "ai" ? aiVideo : humanVideo).current;
     const ctx = cv.getContext("2d");
     // Only a change from the copy on screen sweeps; the first showing (and React running an effect twice
     // in development) just settles.
@@ -81,11 +90,15 @@ export function PortraitSwap({
     const W =
         (incoming instanceof HTMLVideoElement
           ? incoming.videoWidth
-          : incoming.naturalWidth) || 810,
+          : incoming instanceof HTMLImageElement
+            ? incoming.naturalWidth
+            : incoming.width) || 810,
       H =
         (incoming instanceof HTMLVideoElement
           ? incoming.videoHeight
-          : incoming.naturalHeight) || 1080;
+          : incoming instanceof HTMLImageElement
+            ? incoming.naturalHeight
+            : incoming.height) || 1080;
     cv.width = W;
     cv.height = H;
     // one colour channel at a time is built here, then added onto the band
@@ -190,7 +203,7 @@ export function PortraitSwap({
     cv.style.opacity = "1";
     raf = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(raf);
-  }, [mode, still]);
+  }, [mode, still, stacked]);
 
   return (
     <div className="relative">
@@ -213,6 +226,8 @@ export function PortraitSwap({
             className={"block " + (className ?? "")}
             videoRef={humanVideo}
             load={load}
+            stacked={stacked ? human.stacked : undefined}
+            frameRef={humanFrame}
           />
         )}
       </div>
@@ -239,6 +254,8 @@ export function PortraitSwap({
             className="block h-full w-full"
             videoRef={aiVideo}
             load={load}
+            stacked={stacked ? ai.stacked : undefined}
+            frameRef={aiFrame}
           />
         )}
       </div>

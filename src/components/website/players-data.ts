@@ -1,5 +1,12 @@
 // The four player types of the "Real player. Their model." section, each with its own portrait (public/players:
 // head to chest, fading out at the bottom). Trait values are 0..1 and drive the bars.
+export type Clip = {
+  src: string;
+  straight: number;
+  stacked: string;
+  still: string;
+};
+
 export type Player = {
   id: string;
   title: string;
@@ -8,9 +15,10 @@ export type Player = {
   picture: string;
   // a left-to-right turn the cursor scrubs (PlayerPortrait.tsx), in place of the still; `straight` is where
   // in it (a share of its length) they look straight at the camera
-  // `still` is that clip's straight-ahead frame, shown where see-through clips do not play (useAlphaVideo.ts)
-  video?: { src: string; straight: number; still: string };
-  aiVideo?: { src: string; straight: number; still: string }; // the same turn as their AI copy (the Human / AI toggle)
+  // `stacked` is the same clip as a stacked-alpha MP4 and `still` its straight-ahead frame, for browsers
+  // that cannot show the WebM's transparency (useClipFormat.ts)
+  video?: Clip;
+  aiVideo?: Clip; // the same turn as their AI copy (the Human / AI toggle)
   traits: { label: string; value: number }[];
 };
 
@@ -36,11 +44,13 @@ export const PLAYERS: Player[] = [
     video: {
       src: "/players/explorer.webm?v=3",
       straight: 0.49,
+      stacked: "/players/explorer-stacked.mp4?v=1",
       still: "/players/explorer-still.webp",
     },
     aiVideo: {
       src: "/players/explorer-ai.webm?v=1",
       straight: 0.49,
+      stacked: "/players/explorer-ai-stacked.mp4?v=1",
       still: "/players/explorer-ai-still.webp",
     },
     traits: traits(0.95, 0.72, 0.55, 0.6),
@@ -54,11 +64,13 @@ export const PLAYERS: Player[] = [
     video: {
       src: "/players/grinder.webm?v=1",
       straight: 0.5,
+      stacked: "/players/grinder-stacked.mp4?v=1",
       still: "/players/grinder-still.webp",
     },
     aiVideo: {
       src: "/players/grinder-ai.webm?v=1",
       straight: 0.5,
+      stacked: "/players/grinder-ai-stacked.mp4?v=1",
       still: "/players/grinder-ai-still.webp",
     },
     traits: traits(0.2, 0.96, 0.8, 0.82),
@@ -72,11 +84,13 @@ export const PLAYERS: Player[] = [
     video: {
       src: "/players/spender.webm?v=1",
       straight: 0.54,
+      stacked: "/players/spender-stacked.mp4?v=1",
       still: "/players/spender-still.webp",
     },
     aiVideo: {
       src: "/players/spender-ai.webm?v=1",
       straight: 0.52,
+      stacked: "/players/spender-ai-stacked.mp4?v=1",
       still: "/players/spender-ai-still.webp",
     },
     traits: traits(0.5, 0.35, 0.18, 0.45),
@@ -90,11 +104,13 @@ export const PLAYERS: Player[] = [
     video: {
       src: "/players/lost.webm?v=1",
       straight: 0.52,
+      stacked: "/players/lost-stacked.mp4?v=1",
       still: "/players/lost-still.webp",
     },
     aiVideo: {
       src: "/players/lost-ai.webm?v=1",
       straight: 0.52,
+      stacked: "/players/lost-ai-stacked.mp4?v=1",
       still: "/players/lost-ai-still.webp",
     },
     traits: traits(0.4, 0.15, 0.7, 0.3),
