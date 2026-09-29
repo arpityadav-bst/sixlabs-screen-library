@@ -56,7 +56,7 @@ export function ScrubLine() {
   }, []);
 
   return (
-    <section ref={track} aria-label={LINE} className="relative h-[260vh]">
+    <section ref={track} id="model-line" aria-label={LINE} className="relative h-[260vh]">
       <div className="sticky top-0 flex h-screen items-center justify-center px-6">
         <FloatingBadges />
         <p

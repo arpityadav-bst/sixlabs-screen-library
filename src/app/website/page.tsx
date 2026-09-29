@@ -4,6 +4,7 @@ import { Hero } from "@/components/website/Hero";
 import { Players } from "@/components/website/Players";
 import { ScrubLine } from "@/components/website/ScrubLine";
 import { AsciiBackdrop } from "@/components/website/AsciiBackdrop";
+import { BackdropShade } from "@/components/website/BackdropShade";
 
 export const metadata: Metadata = {
   title: "SixLabs",
@@ -14,6 +15,7 @@ export default function WebsitePage() {
   return (
     <main className="relative min-h-screen px-4 md:px-8 pt-24 pb-24">
       <AsciiBackdrop />
+      <BackdropShade />
       <Header />
       <Hero />
       <ScrubLine />
