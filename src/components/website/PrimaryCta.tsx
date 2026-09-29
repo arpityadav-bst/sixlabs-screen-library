@@ -3,7 +3,8 @@
 // The page's primary CTA (Try now). On hover it grows a little, its fill lifts 5% toward white, and a
 // prism-like spectrum band sweeps across it left to right. The band's shape follows the pill: entering, it
 // curves like the pill's left end; through the middle it straightens to a vertical line; leaving, it
-// curves like the right end. Seven spectral stripes, blended as light over the navy, make the prism edge. Reduced motion keeps the grow and the fill, not the sweep.
+// curves like the right end. Seven spectral stripes, blended as light over the navy, make the prism
+// edge. Reduced motion keeps the grow and the fill, not the sweep.
 import { useRef, useState } from "react";
 import {
   animate,
