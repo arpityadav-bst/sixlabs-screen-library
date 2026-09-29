@@ -11,13 +11,9 @@ const STATS = [
   {
     value: "2B",
     label: ["human players", "the 6labs model"],
-    tile: "bg-gradient-to-br from-white to-slate-200 border border-slate-300/80 shadow-[0_1px_2px_rgba(10,27,51,0.12)]",
+    tone: "text-[#0a1b33]",
   },
-  {
-    value: "1,009,271",
-    label: ["digital copies made"],
-    tile: "bg-gradient-to-br from-[#5b97ff] to-accent shadow-[0_0_0_3px_rgba(26,109,255,0.14),0_2px_6px_rgba(26,109,255,0.45)]",
-  },
+  { value: "1,009,271", label: ["digital copies made"], tone: "text-accent" },
 ];
 
 export function Hero() {
@@ -118,33 +114,26 @@ export function Hero() {
       </section>
       {/* Outside the container, in line with the text column: the headline numbers under its bottom-left
           corner, the wave button under its bottom-right. */}
-      <div className="w-full max-w-[1400px] mx-auto mt-5 px-8 md:px-16 flex items-start justify-between">
-        {/* Each stat carries a tiny floor tile, turned to the floor's diamond: a clear glass tile for the
-            humans, the activated blue tile for their digital copies. */}
-        <dl className="flex items-center">
-          {STATS.map((s, k) => (
-            <div key={s.value} className="flex items-center">
-              {k > 0 && (
-                <span aria-hidden className="mx-7 h-9 w-px bg-slate-200" />
-              )}
-              <span
-                aria-hidden
+      <div className="w-full max-w-[1400px] mx-auto mt-6 px-8 md:px-16 flex items-start justify-between">
+        {/* The humans in navy, their digital copies in the accent blue (the headline's "models" colour). */}
+        <dl className="flex items-start gap-14">
+          {STATS.map((s) => (
+            <div key={s.value} className="flex flex-col">
+              <dt className="order-2 mt-2 text-[12px] leading-[1.4] text-slate-500">
+                {s.label.map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
+                ))}
+              </dt>
+              <dd
                 className={
-                  "mr-3.5 h-3 w-3 shrink-0 rotate-45 rounded-[3px] " + s.tile
+                  "order-1 font-display text-[30px] font-medium leading-none tracking-tight tabular-nums " +
+                  s.tone
                 }
-              />
-              <div className="flex flex-col">
-                <dt className="order-2 mt-1.5 text-[12px] leading-[1.35] text-slate-500">
-                  {s.label.map((line) => (
-                    <span key={line} className="block">
-                      {line}
-                    </span>
-                  ))}
-                </dt>
-                <dd className="order-1 font-display text-[26px] font-medium leading-none tracking-tight tabular-nums text-[#0a1b33]">
-                  {s.value}
-                </dd>
-              </div>
+              >
+                {s.value}
+              </dd>
             </div>
           ))}
         </dl>
