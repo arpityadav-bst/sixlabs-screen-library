@@ -110,7 +110,7 @@ export function Hero() {
         <button
           type="button"
           onClick={() => floor.current?.reset()}
-          className="group flex items-center gap-1.5 rounded-full px-2.5 py-1.5 bg-slate-200/60 text-slate-500 hover:text-[#0a1b33] hover:bg-slate-200 transition-colors duration-200"
+          className="group -mr-10 flex items-center gap-1.5 rounded-full px-2.5 py-1.5 bg-slate-200/60 text-slate-500 hover:text-[#0a1b33] hover:bg-slate-200 transition-colors duration-200"
         >
           <RotateCcw
             className="w-3.5 h-3.5 transition-transform duration-300 group-hover:-rotate-45"
