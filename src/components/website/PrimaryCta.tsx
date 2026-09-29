@@ -1,6 +1,6 @@
 "use client";
 
-// The page's primary CTA (Try now). On hover it grows a little, its fill lifts 5% toward white, and a
+// The page's primary CTA (Try now). On hover it grows a little, its fill lifts 10% toward white, and a
 // prism-like spectrum band sweeps across it left to right. The band's shape follows the pill: entering, it
 // curves like the pill's left end; through the middle it straightens to a vertical line; leaving, it
 // curves like the right end. Seven spectral stripes, blended as light over the navy, make the prism
@@ -15,7 +15,7 @@ import {
 } from "motion/react";
 
 const NAVY = "#0a152d";
-const NAVY_LIFT = "#162138"; // NAVY mixed 5% toward white
+const NAVY_LIFT = "#232c42"; // NAVY mixed 10% toward white
 const SWEEP_S = 0.65;
 // A prism's spread: the spectrum in order across the band (red leads, violet trails), stripes a few px
 // apart and only lightly blurred, so the colours stay separate the way refracted light does.
