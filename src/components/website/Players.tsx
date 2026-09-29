@@ -92,10 +92,7 @@ export function Players() {
                 </p>
               </motion.div>
             </AnimatePresence>
-            <div className="mt-8">
-              <ModeToggle mode={mode} onChange={setMode} />
-            </div>
-            <dl className="mt-8 max-w-[440px] space-y-4">
+            <dl className="mt-10 max-w-[440px] space-y-4">
               {player.traits.map((t) => (
                 <div
                   key={t.label}
@@ -115,6 +112,9 @@ export function Players() {
                 </div>
               ))}
             </dl>
+            <div className="mt-10">
+              <ModeToggle mode={mode} onChange={setMode} />
+            </div>
           </motion.div>
 
           <motion.div
