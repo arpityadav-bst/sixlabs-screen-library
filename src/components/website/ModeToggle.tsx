@@ -34,7 +34,7 @@ export function ModeToggle({
             aria-checked={on}
             onClick={() => onChange(o.id)}
             className={
-              "relative rounded-full px-5 py-2 font-sans text-[14px] font-medium transition-colors duration-200 " +
+              "relative w-28 rounded-full py-2 text-center font-sans text-[14px] font-medium transition-colors duration-200 " +
               (on ? "text-[#0a1b33]" : "text-white/80 hover:text-white")
             }
           >
