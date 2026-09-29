@@ -49,13 +49,12 @@ export function Hero() {
           className="flex flex-col items-start pointer-events-auto"
         >
           <h1 className="font-display text-[42px] md:text-[56px] font-medium tracking-tight leading-[1.05] text-[#0a1b33]">
-            Foundation of the
+            Making models of
             <br />
-            new digital epoch
+            human players.
           </h1>
           <p className="font-sans text-[14px] md:text-[15px] text-[#64748b] mt-5 max-w-[440px] leading-relaxed">
-            Designing products, powering ecosystems and laying the foundation of a decentralized web
-            for enterprises, builders and communities alike.
+            Our model watched millions of hours of gameplay. Now it understands the game player.
           </p>
           <motion.button
             whileHover={{ scale: 1.04 }}

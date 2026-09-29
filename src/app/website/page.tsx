@@ -4,7 +4,7 @@ import { Hero } from "@/components/website/Hero";
 
 export const metadata: Metadata = {
   title: "SixLabs",
-  description: "Foundation of the new digital epoch.",
+  description: "Making models of human players.",
 };
 
 export default function WebsitePage() {
