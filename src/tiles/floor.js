@@ -11,6 +11,7 @@ import { nearShadeUniforms, applyNearShade } from './near-shade.js';
 import { floorMaterial, floorUniforms } from './floor-material.js';
 import { buildComposer, createRefiner } from './post.js';
 import { addCharacters, preloadCharacters } from './characters.js';
+import { createCasts } from './casts.js';
 import { createFocusRig } from './focus-rig.js';
 import { startInteraction } from './interact.js';
 import { placeCamera, coverage, onSomeScreen } from './viewport.js';
@@ -149,8 +150,9 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   // so the design's line-up stays the same whatever the screen.
   const inDesign = ([i, j]) => { const v = new THREE.Vector3(cx(i), tileH, cz(j)).project(camera); return Math.abs(v.x) < 1.12 && Math.abs(v.y) < 1.2; };
   const busted = cells.filter(([i, j]) => inDesign([i, j]) || onSomeScreen(camera, P, new THREE.Vector3(cx(i), tileH, cz(j))));
-  const chars = await addCharacters(field, P, busted.map(([i, j]) => (
-    { i, j, x: cx(i), y: tileH, z: cz(j), active: i === ia && j === ja, screen: toScreen(cx(i), cz(j)), rank: inDesign([i, j]) ? 0 : 1 })), pictures);
+  const bustTiles = busted.map(([i, j]) => (
+    { i, j, x: cx(i), y: tileH, z: cz(j), active: i === ia && j === ja, screen: toScreen(cx(i), cz(j)), rank: inDesign([i, j]) ? 0 : 1 }));
+  const chars = await addCharacters(field, P, bustTiles, pictures);
 
   // Capture the reflection from the activeAt tile, with that tile and its busts out of the way.
   if (P.actSideMirror > 0) {
@@ -239,7 +241,8 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   if (!isStatic) intro.done.then(() => {
     if (disposed) return;
     const ctl = startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU: U, nearU, P, expose });
-    const auto = startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, P });
+    const cast = createCasts({ P, renderer, chars, bustTiles, pictures, gone: () => disposed });
+    const auto = startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, cast });
     stop = () => { auto.stop(); ctl.stop(); };
     reset = auto.reset;
   });

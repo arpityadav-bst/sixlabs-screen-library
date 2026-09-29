@@ -33,34 +33,30 @@ diffuseColor.a *= clip * ${role === 'ai' ? 'uScan' : '(1.0 - uScan)'};`);
   return mat;
 }
 
-// Returns a Map "i,j" -> { setScan(s), setLift(y), meshes, converted }.
-// Starts downloading every human and AI picture at once; addCharacters then uses these.
-export function preloadCharacters(P) {
+// Starts downloading every human and AI picture of `names` at once: a Map "dir/name" -> Promise<Texture>.
+export function loadPictures(P, names) {
   const loader = new THREE.TextureLoader(), cache = new Map();
-  for (const name of P.chars ?? []) for (const dir of ['chars', 'chars-ai']) {
+  for (const name of names) for (const dir of ['chars', 'chars-ai']) {
     cache.set(`${dir}/${name}`, loader.loadAsync(`${P.assetBase ?? ''}/${dir}/${name}`).then((t) => {
       t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 16; return t;
     }));
   }
   return cache;
 }
+export const preloadCharacters = (P) => loadPictures(P, P.chars ?? []);
 
-export async function addCharacters(scene, P, tiles, cache = preloadCharacters(P)) {
-  const out = new Map();
-  if (!P.chars?.length) return out;
-  await Promise.all(cache.values());
-  const load = (dir, name) => cache.get(`${dir}/${name}`);
-  const geo = new THREE.PlaneGeometry(1, 1);
+// Casts a set of characters onto the tiles: a Map "i,j" -> file name. Design-frame tiles (rank 0) take
+// the pool in order, as they always have. Extra tiles (other screen shapes) take the least recently used
+// character that no tile within two cells already shows. `active` (static renders) pins one tile.
+// spread: every tile takes the least recently used character (for a cast smaller than the design frame).
+export function castTiles(tiles, names, active, spread = false) {
   const ordered = [...tiles].sort((a, b) => ((a.rank ?? 0) - (b.rank ?? 0)) || (a.screen[1] - b.screen[1]) || (a.screen[0] - b.screen[0]));
-  const pool = P.chars.filter((c) => c !== P.charActive);
-  const fwd = P.charForward * Math.SQRT1_2; // along the diagonal toward the (+x, +z) corner, nearest the camera
-  // Design-frame tiles (rank 0) take the pool in order, as they always have. Extra tiles (other screen
-  // shapes) take the least recently used character that no tile within two cells already shows.
+  const pool = names.filter((c) => c !== active);
   let k = 0;
-  const placed = [], lastUsed = new Map(pool.map((n) => [n, -1]));
+  const placed = [], lastUsed = new Map(pool.map((n) => [n, -1])), cast = new Map();
   const pick = (t) => {
-    if (t.active) return P.charActive;
-    if ((t.rank ?? 0) === 0) return pool[k++ % pool.length];
+    if (t.active && active) return active;
+    if ((t.rank ?? 0) === 0 && !spread) return pool[k++ % pool.length];
     const near = new Set(placed.filter((p) => Math.abs(p.i - t.i) <= 2 && Math.abs(p.j - t.j) <= 2).map((p) => p.name));
     const byAge = [...pool].sort((x, y) => lastUsed.get(x) - lastUsed.get(y));
     return byAge.find((n) => !near.has(n)) ?? byAge[0];
@@ -69,6 +65,22 @@ export async function addCharacters(scene, P, tiles, cache = preloadCharacters(P
     const name = pick(t);
     placed.push({ i: t.i, j: t.j, name });
     if (lastUsed.has(name)) lastUsed.set(name, placed.length);
+    cast.set(`${t.i},${t.j}`, name);
+  }
+  return cast;
+}
+
+// Returns a Map "i,j" -> { name, meshes, converted, at, setScan(s), setLift(y), setPictures(human, ai) }.
+export async function addCharacters(scene, P, tiles, cache = preloadCharacters(P)) {
+  const out = new Map();
+  if (!P.chars?.length) return out;
+  await Promise.all(cache.values());
+  const load = (dir, name) => cache.get(`${dir}/${name}`);
+  const geo = new THREE.PlaneGeometry(1, 1);
+  const cast = castTiles(tiles, P.chars, P.charActive);
+  const fwd = P.charForward * Math.SQRT1_2; // along the diagonal toward the (+x, +z) corner, nearest the camera
+  for (const t of tiles) {
+    const name = cast.get(`${t.i},${t.j}`);
     const scanU = { value: 0 };
     const meshes = [];
     for (const [role, dir, order] of [['human', 'chars', 3], ['ai', 'chars-ai', 4]]) {
@@ -84,6 +96,7 @@ export async function addCharacters(scene, P, tiles, cache = preloadCharacters(P
       name, meshes, converted: false, at: [t.x, t.y, t.z],
       setScan: (s) => { scanU.value = s; },
       setLift: (y) => meshes.forEach((m) => { m.position.y = t.y + 0.002 + y; }),
+      setPictures: (human, ai) => { meshes[0].material.map = human; meshes[1].material.map = ai; },
     });
   }
   return out;

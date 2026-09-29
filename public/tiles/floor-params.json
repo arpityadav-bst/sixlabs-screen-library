@@ -38,6 +38,21 @@
   "16-top-knot.png",
   "17-platinum-crop.png"
  ],
+ "chars2": [
+  "18-afro-esports.png",
+  "19-ginger-streamer.png",
+  "20-turban-simracer.png",
+  "21-purple-braids-fighter.png",
+  "22-grey-beard-raider.png",
+  "23-mohawk-speedrunner.png",
+  "24-pink-hair-rhythm.png",
+  "25-braid-strategist.png",
+  "26-ponytail-mobile.png",
+  "27-vr-explorer.png",
+  "28-pixie-cozy.png",
+  "29-longhair-retro.png",
+  "30-holo-cosplay.png"
+ ],
  "core": 0.094,
  "cornerShade": 0.12,
  "dir": 0.3,
