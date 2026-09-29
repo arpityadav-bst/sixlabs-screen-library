@@ -1,10 +1,11 @@
 "use client";
 
-// Frosted glass badges of the floor's characters floating around the scroll line (ScrubLine.tsx). Each
-// sits at its own depth and drifts with the cursor by that much (a soft spring, nearer ones further), so
-// they parallax against each other, and bobs slowly on its own. Hovering one sweeps a prism band across
-// it (the Try now sweep, prism.ts) that turns the human into their AI copy behind it; leaving eases back.
-// The picture is cropped to head and shoulders, so the pictures' faded bottoms never show. The cast avoids
+// Frosted glass badges of the floor's characters floating around the scroll line (ScrubLine.tsx). They
+// enter one by one as the section scrolls in (tied to the scroll, all in by the middle of the track),
+// each sits at its own depth and drifts with the cursor by that much (a soft spring, nearer ones
+// further), so they parallax against each other, and bobs slowly on its own. Hovering one sweeps a dense
+// dot-matrix band across it that turns the human into their AI copy behind it; leaving eases back. The
+// picture is cropped to head and shoulders, so the pictures' faded bottoms never show. The cast avoids
 // the four characters the players section uses. Touch screens and reduced motion keep them still.
 import { useEffect } from "react";
 import {
@@ -15,7 +16,6 @@ import {
   useTransform,
   type MotionValue,
 } from "motion/react";
-import { SPECTRUM_STRIPES } from "./prism";
 
 type Badge = {
   name: string;
@@ -32,7 +32,7 @@ const BADGES: Badge[] = [
     name: "03-braids",
     x: "13%",
     y: "27%",
-    size: 128,
+    size: 188,
     depth: 1.4,
     tilt: -6,
     delay: 0,
@@ -41,7 +41,7 @@ const BADGES: Badge[] = [
     name: "18-afro-esports",
     x: "84%",
     y: "25%",
-    size: 112,
+    size: 164,
     depth: 0.8,
     tilt: 5,
     delay: 1.2,
@@ -50,7 +50,7 @@ const BADGES: Badge[] = [
     name: "19-ginger-streamer",
     x: "4.5%",
     y: "56%",
-    size: 104,
+    size: 152,
     depth: 0.6,
     tilt: 4,
     delay: 2.1,
@@ -59,7 +59,7 @@ const BADGES: Badge[] = [
     name: "24-pink-hair-rhythm",
     x: "93%",
     y: "53%",
-    size: 132,
+    size: 196,
     depth: 1.6,
     tilt: -4,
     delay: 0.6,
@@ -68,7 +68,7 @@ const BADGES: Badge[] = [
     name: "14-silver-bob-cat-ears",
     x: "18%",
     y: "77%",
-    size: 110,
+    size: 160,
     depth: 1,
     tilt: 6,
     delay: 1.7,
@@ -77,7 +77,7 @@ const BADGES: Badge[] = [
     name: "10-cap-cheer",
     x: "79%",
     y: "79%",
-    size: 118,
+    size: 172,
     depth: 1.2,
     tilt: -5,
     delay: 0.3,
@@ -86,9 +86,14 @@ const BADGES: Badge[] = [
 
 const DRIFT = 22; // px a depth-1 badge moves with the cursor at the edge of the screen
 const SWEEP_S = 0.65;
-const BAND = 26; // band width, % of the badge
+const BAND = 34; // band width, % of the badge
+const ENTER_BY = 0.5; // share of the track by which every badge has entered
 
-export function FloatingBadges() {
+export function FloatingBadges({
+  progress,
+}: {
+  progress: MotionValue<number>;
+}) {
   // pointer position, -1..1 across the viewport, smoothed
   const mx = useMotionValue(0),
     my = useMotionValue(0);
@@ -112,8 +117,15 @@ export function FloatingBadges() {
 
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0">
-      {BADGES.map((b) => (
-        <FloatingBadge key={b.name} badge={b} sx={sx} sy={sy} />
+      {BADGES.map((b, k) => (
+        <FloatingBadge
+          key={b.name}
+          badge={b}
+          sx={sx}
+          sy={sy}
+          progress={progress}
+          order={k}
+        />
       ))}
     </div>
   );
@@ -123,11 +135,20 @@ function FloatingBadge({
   badge: b,
   sx,
   sy,
+  progress,
+  order,
 }: {
   badge: Badge;
   sx: MotionValue<number>;
   sy: MotionValue<number>;
+  progress: MotionValue<number>;
+  order: number;
 }) {
+  // entrance: badge k comes in over its own slice of the track, the last finishing at ENTER_BY
+  const start = 0.04 + (order / BADGES.length) * (ENTER_BY - 0.12);
+  const shown = useTransform(progress, [start, start + 0.08], [0, 1]);
+  const enterScale = useTransform(shown, [0, 1], [0.82, 1]);
+  const enterY = useTransform(shown, [0, 1], [28, 0]);
   const x = useTransform(sx, (v) => v * DRIFT * b.depth);
   const y = useTransform(sy, (v) => v * DRIFT * b.depth);
   // sweep progress 0..1: the band's centre runs from just off the left edge to just off the right
@@ -138,7 +159,7 @@ function FloatingBadge({
     (c) => `inset(0 ${Math.max(0, 100 - c)}% 0 0)`,
   ); // AI copy, left of the band
   const bandLeft = useTransform(centre, (c) => `${c - BAND / 2}%`);
-  const bandOpacity = useTransform(p, [0, 0.1, 0.9, 1], [0, 0.55, 0.55, 0]);
+  const bandOpacity = useTransform(p, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
   const ai = useMotionValue(0); // the AI copy's opacity: on while hovered, eases off after
 
   const enter = () => {
@@ -156,35 +177,37 @@ function FloatingBadge({
       className="absolute -translate-x-1/2 -translate-y-1/2"
       style={{ left: b.x, top: b.y, x, y }}
     >
-      <div className="badge-bob" style={{ animationDelay: `${-b.delay}s` }}>
-        <motion.div
-          onHoverStart={enter}
-          onHoverEnd={leave}
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 300, damping: 22 }}
-          className="pointer-events-auto rounded-[24px] border border-white/80 bg-white/55 p-1 shadow-[0_18px_40px_-18px_rgba(10,27,51,0.35)] backdrop-blur-md"
-          style={{ width: b.size, height: b.size, rotate: b.tilt }}
-        >
-          <div className="relative h-full w-full overflow-hidden rounded-[20px] bg-slate-100">
-            <Picture src={`/tiles/chars/${b.name}.webp`} />
-            <motion.div
-              className="absolute inset-0"
-              style={{ clipPath: reveal, opacity: ai }}
-            >
-              <Picture src={`/tiles/chars-ai/${b.name}.webp`} />
-            </motion.div>
-            <motion.div
-              className="absolute inset-y-0 blur-[1.5px]"
-              style={{
-                left: bandLeft,
-                width: `${BAND}%`,
-                opacity: bandOpacity,
-                backgroundImage: SPECTRUM_STRIPES,
-              }}
-            />
-          </div>
-        </motion.div>
-      </div>
+      <motion.div style={{ opacity: shown, scale: enterScale, y: enterY }}>
+        <div className="badge-bob" style={{ animationDelay: `${-b.delay}s` }}>
+          <motion.div
+            onHoverStart={enter}
+            onHoverEnd={leave}
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            className="pointer-events-auto rounded-[24px] border border-white/80 bg-white/55 p-1 shadow-[0_18px_40px_-18px_rgba(10,27,51,0.35)] backdrop-blur-md"
+            style={{ width: b.size, height: b.size, rotate: b.tilt }}
+          >
+            <div className="relative h-full w-full overflow-hidden rounded-[20px] bg-slate-100">
+              <Picture src={`/tiles/chars/${b.name}.webp`} />
+              <motion.div
+                className="absolute inset-0"
+                style={{ clipPath: reveal, opacity: ai }}
+              >
+                <Picture src={`/tiles/chars-ai/${b.name}.webp`} />
+              </motion.div>
+              {/* the dot-matrix wave: a dense halftone of accent dots, soft at both edges */}
+              <motion.div
+                className="dot-wave absolute inset-y-0"
+                style={{
+                  left: bandLeft,
+                  width: `${BAND}%`,
+                  opacity: bandOpacity,
+                }}
+              />
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
     </motion.div>
   );
 }
