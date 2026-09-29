@@ -3,7 +3,9 @@
 // same studio light. PARAMS: look 'cobalt' (the focused tile's glass) or 'clear' (a default tile's
 // frosted glass), elev (camera height in degrees), size (logo width in tile units), depth (slab thickness as a share of a tile's), inset (SVG units each blade is
 // pulled in by, which widens the gaps between blades; the navy core keeps its size), spin (degrees the mark turns in its own plane,
-// for turntable frames), transparent (no floor
+// for turntable frames), coreDepth (the core's thickness as a share of the blades': thin keeps it reading as a
+// circle once straightened, its wall hidden), accentPath (index of the SVG path drawn in the accent blue,
+// the site's --color-accent), transparent (no floor
 // or background, for a cut-out PNG). __info.corners gives the screen pixels of the mark's top-face square,
 // so the frame can be straightened into a front view (tools/tiles/flatten_logo.py).
 import * as THREE from 'three';
@@ -13,7 +15,7 @@ import { floorMaterial, floorUniforms } from '/src/tiles/floor-material.js';
 import { buildComposer } from '/src/tiles/post.js';
 
 const RAW = await fetch('/tiles/floor-params.json').then((r) => r.json());
-const opt = Object.assign({ look: 'cobalt', elev: 40, size: 1.6, transparent: false, depth: 1, inset: 0, spin: 0 }, window.PARAMS);
+const opt = Object.assign({ look: 'cobalt', elev: 40, size: 1.6, transparent: false, depth: 1, inset: 0, spin: 0, coreDepth: 1, accentPath: -1 }, window.PARAMS);
 const P = Object.assign({ W: 1920, H: 1080 }, RAW, RAW.states?.default ?? {}, { actHeadGlow: 0 }, opt.transparent ? { filmGrain: 0 } : {});
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: opt.transparent });
@@ -44,18 +46,23 @@ const svg = new SVGLoader().parse(await fetch('/brand/sixlabs-mark.svg').then((r
 const [vx, vy, vw, vh] = svg.xml.getAttribute('viewBox').split(/\s+/).map(Number);
 const k = opt.size / vw, cx = vx + vw / 2, cy = vy + vh / 2, span = Math.max(vw, vh) * k; // UV square: the tile textures are square
 const logo = new THREE.Group();
-for (const path of svg.paths) {
-  const navy = path.color.getHexString() === '030d2d';
+// The accent blade: the same cobalt glass, its colours lifted to the site accent (#1a6dff).
+const PX = Object.assign({}, P, {
+  actLightCol: '#4d8dff', actDarkCol: '#1a6dff', actSheenCol: '#5b97ff', actUnderCol: '#1a5ee6', actRim: '#1a5ee6',
+  actSide: '#8ab4ff', actSideDark: '#1a5ee6', actSideLight: '#4d8dff',
+});
+svg.paths.forEach((path, pi) => {
+  const navy = path.color.getHexString() === '030d2d', depth = P.core * opt.depth * (navy ? opt.coreDepth : 1);
   for (const shape of path.toShapes(true)) {
     const g = new THREE.ExtrudeGeometry(shape, {
-      depth: P.core * opt.depth / k, bevelEnabled: true, bevelThickness: P.bevelT / k, bevelSize: P.bevel / k, bevelOffset: navy ? 0 : -opt.inset, bevelSegments: 6, curveSegments: 24,
+      depth: depth / k, bevelEnabled: true, bevelThickness: P.bevelT / k, bevelSize: P.bevel / k, bevelOffset: navy ? 0 : -opt.inset, bevelSegments: 6, curveSegments: 24,
     });
     g.translate(-cx, -cy, 0);
     g.scale(k, k, k);
     // Lie flat with the SVG's first face on top: SVG down becomes toward the camera, so the mark reads
     // upright, and nothing is mirrored (a mirror would turn every face inside out).
     g.rotateX(Math.PI / 2);
-    g.translate(0, P.core * opt.depth + P.bevelT, 0);
+    g.translate(0, depth + P.bevelT, 0);
     const pos = g.attributes.position, uv = g.attributes.uv;
     for (let n = 0; n < pos.count; n++) uv.setXY(n, pos.getX(n) / span + 0.5, 0.5 - pos.getZ(n) / span);
     const beamU = { uBeam: { value: 2 }, uBeamI: { value: 0 }, uFlare: { value: 0 }, uBackRim: { value: 0 }, uShine: { value: new THREE.Color(0) }, uHotF: { value: new THREE.Color(0) }, uHotR: { value: new THREE.Color(0) } };
@@ -64,10 +71,10 @@ for (const path of svg.paths) {
     if (navy && opt.look !== 'clear') { // the clear look keeps the core in the same white glass
       const dark = new THREE.MeshPhysicalMaterial({ color: '#030d2d', roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 1.2 });
       mats = [dark, dark];
-    } else mats = opt.look === 'clear' ? glassMaterials(P, { leftBand: false }) : activeMaterials(P, rearEnv, beamU);
+    } else mats = opt.look === 'clear' ? glassMaterials(P, { leftBand: false }) : activeMaterials(pi === opt.accentPath ? PX : P, rearEnv, beamU);
     logo.add(new THREE.Mesh(g, mats));
   }
-}
+});
 if (opt.look === 'cobalt') logo.position.y = 0.0005;
 // Turn the mark to face the camera, which sits on the floor's own azimuth.
 const az = THREE.MathUtils.degToRad(P.azim);
