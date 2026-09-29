@@ -26,3 +26,15 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .floor-spin { animation: none; transform: perspective(2400px) rotateX(50deg); }
 }
+
+/* Scroll cue arrow (ScrollCue.tsx): a slow, short bob. */
+@keyframes scroll-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+.scroll-bob {
+  animation: scroll-bob 1.8s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll-bob { animation: none; }
+}
