@@ -6,6 +6,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { PLAYERS } from "./players-data";
+import { PlayerPortrait } from "./PlayerPortrait";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 // On the accent blue (AccentWave.tsx): white cards.
@@ -107,19 +108,31 @@ export function Players() {
             className="pointer-events-none relative -mb-44 flex items-end justify-center"
           >
             <AnimatePresence mode="popLayout">
-              {}
-              <motion.img
+              <motion.div
                 key={player.id}
-                src={player.picture}
-                alt={player.title}
-                width={1200}
-                height={1583}
-                className="h-[720px] w-auto max-w-none select-none"
                 initial={{ opacity: 0, scale: 0.97 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.02 }}
                 transition={{ duration: 0.5, ease }}
-              />
+              >
+                {/* a player with a clip turns with the cursor (PlayerPortrait); the others are stills */}
+                {player.video ? (
+                  <PlayerPortrait
+                    src={player.video}
+                    label={player.title}
+                    className="h-[720px] w-auto max-w-none select-none"
+                  />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element -- the player's portrait
+                  <img
+                    src={player.picture}
+                    alt={player.title}
+                    width={1200}
+                    height={1583}
+                    className="h-[720px] w-auto max-w-none select-none"
+                  />
+                )}
+              </motion.div>
             </AnimatePresence>
           </motion.div>
         </div>
