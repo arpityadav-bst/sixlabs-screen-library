@@ -65,7 +65,7 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
         s.rig.clear(); s.fl = 0; continue;
       }
       s.rig.apply();
-      if (st.L !== wantL || s.leaving || (activating ? !done(s) : s.fl > 0)) moving = true;
+      if (st.L !== wantL || s.leaving || s.locked || (activating ? !done(s) : s.fl > 0)) moving = true;
     }
     // the highest tile drives the shared floor pool and neighbour shadows
     const lead = T.filter((s) => s.rig.state.cell).sort((a, b) => b.rig.state.L - a.rig.state.L)[0];
