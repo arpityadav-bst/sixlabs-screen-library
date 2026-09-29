@@ -23,6 +23,7 @@ const GLIDE_DOWN_S = 3.2;
 const GLIDE_UP_S = 1.8;
 const WORD = "The players"; // the next section's name, huge in the halftone
 const WORD_ALPHA = 0.3;
+const WORD_DROP = 100; // px the word sits lower in the water
 const PITCH = 6; // halftone grid, px; a dot of radius PITCH / 2 touches its neighbours
 
 export function AccentWave() {
@@ -130,7 +131,7 @@ export function AccentWave() {
         ctx.font = `500 ${Math.round(w * 0.14)}px ${display}, sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "alphabetic";
-        ctx.fillText(WORD, w / 2, level + BAND * 0.12);
+        ctx.fillText(WORD, w / 2, level + BAND * 0.12 + WORD_DROP);
         ctx.globalCompositeOperation = "source-over";
         ctx.fillStyle = fill;
         // the grain, only where the blue already is
