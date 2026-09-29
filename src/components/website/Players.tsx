@@ -5,7 +5,7 @@
 // over a soft blue glow. Four glass cards along the bottom pick the player (the first is selected).
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { PLAYERS, PLAYERS_FOOTNOTE, PLAYERS_SUBTITLE } from "./players-data";
+import { PLAYERS, PLAYERS_SUBTITLE } from "./players-data";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const glass =
@@ -16,7 +16,7 @@ export function Players() {
   const player = PLAYERS[active];
 
   return (
-    <section id="players" className="w-full max-w-[1400px] mx-auto mt-32">
+    <section id="players" className="w-full max-w-[1400px] mx-auto mt-8">
       <div className="px-8 md:px-16">
         <h2 className="font-display text-[40px] md:text-[52px] font-medium tracking-tight leading-[1.05] text-[#0a1b33]">
           Real player. <span className="text-accent">Their model.</span>
@@ -75,7 +75,7 @@ export function Players() {
 
           <div className="relative flex items-end justify-center">
             <AnimatePresence mode="popLayout">
-              { }
+              {}
               <motion.img
                 key={player.id}
                 src={player.picture}
@@ -122,10 +122,6 @@ export function Players() {
           ))}
         </div>
       </div>
-
-      <p className="mt-8 px-8 md:px-16 font-sans text-[15px] leading-relaxed text-[#64748b]">
-        {PLAYERS_FOOTNOTE}
-      </p>
     </section>
   );
 }

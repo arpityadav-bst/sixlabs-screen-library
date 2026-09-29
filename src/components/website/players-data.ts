@@ -49,5 +49,3 @@ export const PLAYERS: Player[] = [
 export const PLAYERS_SUBTITLE =
   "Left is a real player. Right is their model, playing a second and a half behind. Same habits. Same shortcuts. Same mistakes.";
 
-export const PLAYERS_FOOTNOTE =
-  "A model is built from what the person does, not what they say. Put a thousand models on a new build and you know how it will land before anyone plays it.";
