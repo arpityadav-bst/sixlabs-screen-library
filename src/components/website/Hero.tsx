@@ -13,11 +13,12 @@ export function Hero() {
       {/* The glass tile floor replaces the prompt's background video. It takes pointer events so the
           tiles stay interactive; the text layer above lets them through except on its own block. */}
       <div className="absolute inset-0 z-0 overflow-hidden select-none">
-        <TileFloor className="w-full h-full" onReady={() => setFloorReady(true)} />
+        {/* the logo placeholder fades out over 0.45s, then the tiles fade in */}
+        <TileFloor className="w-full h-full" introDelay={0.5} onReady={() => setFloorReady(true)} />
       </div>
 
       {/* While the floor loads, the logo lies on the floor in the tiles' white glass, toward the bottom right
-          where the tiles will be, and turns very slowly about the floor's vertical axis; it fades away as the
+          where the tiles will be, and turns very slowly about the floor's vertical axis; it fades away just before the
           tiles fade in. One still (27 KB, tools/tiles/floor_logo.py): the render at the tile camera angle,
           contrast-boosted and straightened, which a CSS tilt lays back on the floor (40 degrees up, a
           long lens) and the compositor spins (.floor-spin in globals.css), so it costs almost nothing to
@@ -29,7 +30,7 @@ export function Hero() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition: { duration: 0.4, ease } }}
-            exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.6, ease } }}
+            exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.45, ease } }}
             className="absolute top-[77%] left-[80%] -translate-x-1/2 -translate-y-1/2 z-10 w-[70%] aspect-square pointer-events-none"
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- one small still, served as is */}

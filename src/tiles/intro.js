@@ -15,7 +15,8 @@ const ease = (t) => 1 - Math.pow(1 - t, 3);
 
 // field: the group holding every tile and bust. Resolves once the intro has finished (or was cut short
 // by a resize or dispose, in which case the field snaps to its final place).
-export function playIntro({ renderer, composer, refiner, field, rise, seconds = 0.9 }) {
+// delay: seconds the bare floor holds before the tiles start (room for a page loader to leave first).
+export function playIntro({ renderer, composer, refiner, field, rise, seconds = 0.9, delay = 0 }) {
   const pass = new ShaderPass(IntroShader);
   const size = renderer.getDrawingBufferSize(new THREE.Vector2());
   const base = new THREE.FramebufferTexture(size.x, size.y);
@@ -42,7 +43,7 @@ export function playIntro({ renderer, composer, refiner, field, rise, seconds = 
   };
   const frame = (now) => {
     start ||= now;
-    const t = Math.min(1, (now - start) / 1000 / seconds), e = ease(t);
+    const t = Math.min(1, Math.max(0, (now - start) / 1000 - delay) / seconds), e = ease(t);
     field.position.y = -rise * (1 - e);
     pass.uniforms.uAmt.value = e;
     refiner.moving();

@@ -17,7 +17,7 @@ import { placeCamera, coverage, onSomeScreen } from './viewport.js';
 import { tileGeometry } from './geometry.js';
 import { playIntro } from './intro.js';
 
-export async function createFloor(container, { params, base = '/tiles', isStatic = false, expose = false } = {}) {
+export async function createFloor(container, { params, base = '/tiles', isStatic = false, expose = false, introDelay = 0 } = {}) {
   const RAW = params ?? await fetch(`${base}/floor-params.json`).then((r) => r.json());
   const common = Object.assign({ W: 1920, H: 1080, assetBase: base }, RAW);
   const PF = Object.assign({}, common, RAW.states?.default ?? {}), PA = Object.assign({}, common, RAW.states?.shine ?? {});
@@ -194,7 +194,7 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   }
   draw(true);
   // Live: the tiles fade in and rise out of the floor; a resize mid-way snaps them into place.
-  const intro = isStatic ? null : playIntro({ renderer, composer, refiner, field, rise: tileH });
+  const intro = isStatic ? null : playIntro({ renderer, composer, refiner, field, rise: tileH, delay: introDelay });
   const resize = new ResizeObserver(() => { const w = `${Math.max(1, container.clientWidth)}x${Math.max(1, container.clientHeight)}`; if (w !== size) intro?.cancel(); draw(); });
   resize.observe(container);
 
