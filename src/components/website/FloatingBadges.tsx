@@ -1,20 +1,24 @@
 "use client";
 
-// Small frosted glass badges of the floor's characters floating around the scroll line (ScrubLine.tsx):
-// four humans and two AI copies. Each sits at its own depth and drifts with the cursor by that much (a
-// soft spring, nearer ones further), so they parallax against each other; each also bobs slowly on its
-// own. Touch screens and reduced motion keep them still.
+// Frosted glass badges of the floor's characters floating around the scroll line (ScrubLine.tsx). Each
+// sits at its own depth and drifts with the cursor by that much (a soft spring, nearer ones further), so
+// they parallax against each other, and bobs slowly on its own. Hovering one sweeps a prism band across
+// it (the Try now sweep, prism.ts) that turns the human into their AI copy behind it; leaving eases back.
+// The picture is cropped to head and shoulders, so the pictures' faded bottoms never show. The cast avoids
+// the four characters the players section uses. Touch screens and reduced motion keep them still.
 import { useEffect } from "react";
 import {
+  animate,
   motion,
   useMotionValue,
   useSpring,
   useTransform,
   type MotionValue,
 } from "motion/react";
+import { SPECTRUM_STRIPES } from "./prism";
 
 type Badge = {
-  src: string;
+  name: string;
   x: string;
   y: string;
   size: number;
@@ -25,55 +29,55 @@ type Badge = {
 
 const BADGES: Badge[] = [
   {
-    src: "/tiles/chars/03-braids.webp",
-    x: "11%",
-    y: "20%",
-    size: 84,
+    name: "03-braids",
+    x: "9%",
+    y: "21%",
+    size: 128,
     depth: 1.4,
     tilt: -6,
     delay: 0,
   },
   {
-    src: "/tiles/chars-ai/06-bearded-headphones.webp",
-    x: "84%",
-    y: "17%",
-    size: 72,
+    name: "18-afro-esports",
+    x: "87%",
+    y: "18%",
+    size: 112,
     depth: 0.8,
     tilt: 5,
     delay: 1.2,
   },
   {
-    src: "/tiles/chars/19-ginger-streamer.webp",
-    x: "5%",
-    y: "55%",
-    size: 64,
+    name: "19-ginger-streamer",
+    x: "4.5%",
+    y: "56%",
+    size: 104,
     depth: 0.6,
     tilt: 4,
     delay: 2.1,
   },
   {
-    src: "/tiles/chars/24-pink-hair-rhythm.webp",
-    x: "91%",
-    y: "52%",
-    size: 88,
+    name: "24-pink-hair-rhythm",
+    x: "93%",
+    y: "53%",
+    size: 132,
     depth: 1.6,
     tilt: -4,
     delay: 0.6,
   },
   {
-    src: "/tiles/chars-ai/13-hijab-headset.webp",
-    x: "17%",
-    y: "83%",
-    size: 70,
+    name: "14-silver-bob-cat-ears",
+    x: "15%",
+    y: "84%",
+    size: 110,
     depth: 1,
     tilt: 6,
     delay: 1.7,
   },
   {
-    src: "/tiles/chars/10-cap-cheer.webp",
-    x: "79%",
-    y: "85%",
-    size: 76,
+    name: "10-cap-cheer",
+    x: "82%",
+    y: "86%",
+    size: 118,
     depth: 1.2,
     tilt: -5,
     delay: 0.3,
@@ -81,6 +85,8 @@ const BADGES: Badge[] = [
 ];
 
 const DRIFT = 22; // px a depth-1 badge moves with the cursor at the edge of the screen
+const SWEEP_S = 0.65;
+const BAND = 26; // band width, % of the badge
 
 export function FloatingBadges() {
   // pointer position, -1..1 across the viewport, smoothed
@@ -107,7 +113,7 @@ export function FloatingBadges() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0">
       {BADGES.map((b) => (
-        <FloatingBadge key={b.src} badge={b} sx={sx} sy={sy} />
+        <FloatingBadge key={b.name} badge={b} sx={sx} sy={sy} />
       ))}
     </div>
   );
@@ -124,24 +130,74 @@ function FloatingBadge({
 }) {
   const x = useTransform(sx, (v) => v * DRIFT * b.depth);
   const y = useTransform(sy, (v) => v * DRIFT * b.depth);
+  // sweep progress 0..1: the band's centre runs from just off the left edge to just off the right
+  const p = useMotionValue(0);
+  const centre = useTransform(p, (v) => -BAND / 2 + v * (100 + BAND));
+  const reveal = useTransform(
+    centre,
+    (c) => `inset(0 ${Math.max(0, 100 - c)}% 0 0)`,
+  ); // AI copy, left of the band
+  const bandLeft = useTransform(centre, (c) => `${c - BAND / 2}%`);
+  const bandOpacity = useTransform(p, [0, 0.1, 0.9, 1], [0, 0.55, 0.55, 0]);
+  const ai = useMotionValue(0); // the AI copy's opacity: on while hovered, eases off after
+
+  const enter = () => {
+    ai.stop();
+    ai.set(1);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      return p.set(1);
+    p.set(0);
+    animate(p, 1, { duration: SWEEP_S, ease: [0.45, 0, 0.25, 1] });
+  };
+  const leave = () => animate(ai, 0, { duration: 0.35 });
+
   return (
     <motion.div
       className="absolute -translate-x-1/2 -translate-y-1/2"
       style={{ left: b.x, top: b.y, x, y }}
     >
       <div className="badge-bob" style={{ animationDelay: `${-b.delay}s` }}>
-        <div
-          className="overflow-hidden rounded-[22px] border border-white/80 bg-white/55 p-1.5 shadow-[0_18px_40px_-18px_rgba(10,27,51,0.35)] backdrop-blur-md"
-          style={{ width: b.size, height: b.size, rotate: `${b.tilt}deg` }}
+        <motion.div
+          onHoverStart={enter}
+          onHoverEnd={leave}
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 300, damping: 22 }}
+          className="pointer-events-auto rounded-[24px] border border-white/80 bg-white/55 p-1 shadow-[0_18px_40px_-18px_rgba(10,27,51,0.35)] backdrop-blur-md"
+          style={{ width: b.size, height: b.size, rotate: b.tilt }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element -- the floor's own character art */}
-          <img
-            src={b.src}
-            alt=""
-            className="h-full w-full rounded-[16px] bg-slate-100 object-cover object-top"
-          />
-        </div>
+          <div className="relative h-full w-full overflow-hidden rounded-[20px] bg-slate-100">
+            <Picture src={`/tiles/chars/${b.name}.webp`} />
+            <motion.div
+              className="absolute inset-0"
+              style={{ clipPath: reveal, opacity: ai }}
+            >
+              <Picture src={`/tiles/chars-ai/${b.name}.webp`} />
+            </motion.div>
+            <motion.div
+              className="absolute inset-y-0 blur-[1.5px]"
+              style={{
+                left: bandLeft,
+                width: `${BAND}%`,
+                opacity: bandOpacity,
+                backgroundImage: SPECTRUM_STRIPES,
+              }}
+            />
+          </div>
+        </motion.div>
       </div>
     </motion.div>
+  );
+}
+
+// The character's head and shoulders: the picture scaled up a little and anchored to the top, which
+// leaves its faded bottom outside the badge.
+function Picture({ src }: { src: string }) {
+  // eslint-disable-next-line @next/next/no-img-element -- the floor's own character art
+  return (
+    <img
+      src={src}
+      alt=""
+      className="absolute left-1/2 top-[-2%] w-[128%] max-w-none -translate-x-1/2 select-none"
+    />
   );
 }

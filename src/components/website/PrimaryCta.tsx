@@ -14,21 +14,12 @@ import {
   useTransform,
   useReducedMotion,
 } from "motion/react";
+import { SPECTRUM } from "./prism";
 
 const NAVY = "#0a152d";
 const NAVY_SHIFT = "#0c1e42"; // NAVY moved 10% toward the accent (#1a6dff)
 const SWEEP_S = 0.65;
-// A prism's spread: the spectrum in order across the band (red leads, violet trails), stripes a few px
-// apart and only lightly blurred, so the colours stay separate the way refracted light does.
-const SPECTRUM = [
-  "#ff3b3b",
-  "#ff8a1f",
-  "#ffe14d",
-  "#46f08c",
-  "#2fdcff",
-  "#3d7bff",
-  "#9b5cff",
-];
+
 const GAP = 4.5;
 const STRANDS = SPECTRUM.map((color, k) => ({
   dx: (SPECTRUM.length / 2 - k) * GAP,
