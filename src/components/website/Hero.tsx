@@ -137,7 +137,7 @@ export function Hero() {
               key={s.label[0]}
               className="flex flex-col items-center text-center"
             >
-              <dt className="order-2 mt-2 text-[12px] leading-[1.4] text-slate-500">
+              <dt className="order-2 mt-2 font-sans text-[14px] md:text-[15px] leading-snug text-[#64748b]">
                 {s.label.map((line) => (
                   <span key={line} className="block">
                     {line}
