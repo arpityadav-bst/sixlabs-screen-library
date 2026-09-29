@@ -53,57 +53,50 @@ export function PlayerDoodles({
     })),
   );
   const handDone = useRef<number[]>([]); // when each hand stroke is (or will be) finished, ms
-  const lastMode = useRef<Mode | null>(null); // the mode the doodles last showed, null before they start
+  // what the doodles were last set to show; acting only when it changes keeps React's second effect run
+  // (in development) from undoing the first
+  const applied = useRef<{ start: boolean; mode: Mode } | null>(null);
 
-  // The hand: draws every stroke DELAY_S after the player comes into view; all is wiped when out of view.
   useEffect(() => {
     if (!strokes) return;
+    const prev = applied.current;
+    if (prev && prev.start === start && prev.mode === mode) return;
+    applied.current = { start, mode };
     const still = window.matchMedia(REDUCED).matches;
     const now = performance.now();
-    strokes.forEach((s, i) => {
-      const v = mv[i];
-      if (!start) {
-        // cancel whatever is still booked (a hand line's fade from a copy under way, say), then wipe
+
+    // out of view: cancel whatever is still booked (a hand line's fade from a copy under way), then wipe
+    const wipe = () =>
+      mv.forEach((v) => {
         v.fade.stop();
         v.aiFade.stop();
         for (const m of [v.len, v.show, v.aiLen, v.aiShow])
           animate(m, 0, { duration: 0.2 });
-        return;
-      }
-      // a fresh start: jump() also cancels anything still booked on these
-      v.fade.jump(1);
-      v.aiFade.jump(1);
-      v.aiLen.jump(0);
-      v.aiShow.jump(0);
-      if (still) {
-        v.len.jump(1);
-        v.show.jump(1);
-        handDone.current[i] = now;
-        return;
-      }
-      const at = DELAY_S + s.at * HAND_PACE,
-        dur = s.dur * HAND_PACE;
-      animate(v.len, 1, { delay: at, duration: dur, ease });
-      animate(v.show, 1, { delay: at, duration: 0.01 });
-      handDone.current[i] = now + (at + dur) * 1000;
-    });
-  }, [start, strokes, mv]);
-
-  // The AI's copy, when the portrait turns AI; the hand again, when it turns back.
-  useEffect(() => {
-    if (!strokes) return;
-    if (!start) {
-      lastMode.current = null;
-      return;
-    }
-    const prev = lastMode.current;
-    lastMode.current = mode;
-    const still = window.matchMedia(REDUCED).matches;
-    const now = performance.now();
-    if (mode === "ai" && prev !== "ai") {
+      });
+    // into view: the hand draws every stroke DELAY_S later (jump() also cancels anything still booked)
+    const hand = () =>
       strokes.forEach((s, i) => {
         const v = mv[i];
-        // in the hand's order at twice its pace, but never before the hand has finished that stroke
+        v.fade.jump(1);
+        v.aiFade.jump(1);
+        v.aiLen.jump(0);
+        v.aiShow.jump(0);
+        if (still) {
+          v.len.jump(1);
+          v.show.jump(1);
+          handDone.current[i] = now;
+          return;
+        }
+        const at = DELAY_S + s.at * HAND_PACE,
+          dur = s.dur * HAND_PACE;
+        animate(v.len, 1, { delay: at, duration: dur, ease });
+        animate(v.show, 1, { delay: at, duration: 0.01 });
+        handDone.current[i] = now + (at + dur) * 1000;
+      });
+    // the AI's copy: in the hand's order at twice its pace, never before the hand has finished a stroke
+    const copy = () =>
+      strokes.forEach((s, i) => {
+        const v = mv[i];
         const begin = Math.max(
           now + (AI_LEAD_S + s.at * AI_PACE) * 1000,
           handDone.current[i] ?? now,
@@ -122,7 +115,8 @@ export function PlayerDoodles({
           times: [0, 0.1, 1],
         });
       });
-    } else if (mode === "human" && prev === "ai") {
+    // back to Human: the AI's copy is put away and the hand sketches it all again
+    const again = () =>
       strokes.forEach((s, i) => {
         const v = mv[i];
         animate(v.aiFade, 0, { duration: still ? 0 : 0.3 });
@@ -134,8 +128,14 @@ export function PlayerDoodles({
         animate(v.len, 1, { delay: at, duration: dur, ease });
         handDone.current[i] = now + (at + dur) * 1000;
       });
-    }
-  }, [mode, start, strokes, mv]);
+
+    if (!start) return wipe();
+    if (!prev?.start) {
+      hand();
+      if (mode === "ai") copy();
+    } else if (mode === "ai") copy();
+    else again();
+  }, [start, mode, strokes, mv]);
 
   if (!strokes) return null;
   return (
