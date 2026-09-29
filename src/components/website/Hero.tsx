@@ -126,7 +126,7 @@ export function Hero() {
       </section>
       {/* Outside the container, one row: the scroll cue under its bottom-left corner, the headline numbers
           centred, the wave button under its bottom-right corner. */}
-      <div className="w-full max-w-[1400px] mx-auto mt-6 px-8 md:px-16 grid grid-cols-[1fr_auto_1fr] items-start">
+      <div className="w-full max-w-[1400px] mx-auto mt-10 px-8 md:px-16 grid grid-cols-[1fr_auto_1fr] items-start">
         <div className="-ml-10 flex">
           <ScrollCue />
         </div>
