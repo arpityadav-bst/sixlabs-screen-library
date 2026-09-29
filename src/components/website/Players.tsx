@@ -84,34 +84,50 @@ export function Players() {
           </div>
         </div>
 
+        {/* Selector cards, each read as a model on file: its number, a status (the selected one is the
+            model running), the player type and a one-line read of them. */}
         <div className="relative mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-          {PLAYERS.map((p, k) => (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => setActive(k)}
-              aria-pressed={k === active}
-              className={
-                "flex items-center gap-3 rounded-[24px] p-3 pr-5 text-left transition-all duration-300 " +
-                card +
-                (k === active
-                  ? " ring-2 ring-accent/60"
-                  : " hover:bg-[#e9ebee]")
-              }
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element -- small avatar from the character art */}
-              <img
-                src={p.picture}
-                alt=""
-                width={56}
-                height={56}
-                className="h-14 w-14 rounded-2xl bg-slate-100 object-cover object-top"
-              />
-              <span className="font-display text-[16px] font-medium tracking-tight text-[#0a1b33]">
-                {p.title}
-              </span>
-            </button>
-          ))}
+          {PLAYERS.map((p, k) => {
+            const on = k === active;
+            return (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => setActive(k)}
+                aria-pressed={on}
+                className={
+                  "flex min-h-[176px] flex-col justify-between rounded-[28px] p-6 text-left transition-all duration-300 " +
+                  card +
+                  (on ? " ring-2 ring-accent/60" : " hover:bg-[#e9ebee]")
+                }
+              >
+                <span className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.14em] text-slate-400">
+                  Model {String(k + 1).padStart(2, "0")}
+                  <span
+                    className={
+                      "flex items-center gap-1.5 " + (on ? "text-accent" : "")
+                    }
+                  >
+                    <span
+                      className={
+                        "h-1.5 w-1.5 rounded-full " +
+                        (on ? "bg-accent animate-pulse" : "bg-slate-300")
+                      }
+                    />
+                    {on ? "Running" : "Ready"}
+                  </span>
+                </span>
+                <span>
+                  <span className="block font-display text-[22px] font-medium leading-tight tracking-tight text-[#0a1b33]">
+                    {p.title}
+                  </span>
+                  <span className="mt-2 block font-sans text-[14px] leading-snug text-[#64748b]">
+                    {p.tagline}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </section>
