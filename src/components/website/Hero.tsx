@@ -49,7 +49,7 @@ export function Hero() {
           className="flex-1 flex flex-col items-start pb-10 md:pb-12"
         >
           <h1 className="font-display text-[42px] md:text-[56px] font-medium tracking-tight leading-[1.05] text-[#0a1b33]">
-            Making models of
+            Making <span className="text-accent">models</span> of
             <br />
             human players.
           </h1>
@@ -57,7 +57,7 @@ export function Hero() {
             Our model watched millions of hours of gameplay. Now it understands the game player.{" "}
             <a
               href="#"
-              className="pointer-events-auto font-medium text-[#0a1b33] underline underline-offset-4 decoration-slate-300 hover:decoration-[#0a1b33] transition-colors duration-200"
+              className="pointer-events-auto underline underline-offset-4 decoration-slate-300 hover:decoration-[#64748b] transition-colors duration-200"
             >
               See What It Does
             </a>

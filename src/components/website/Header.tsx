@@ -11,7 +11,7 @@ export function Header() {
         <a href="/website" className="flex items-center gap-2.5">
           {/* eslint-disable-next-line @next/next/no-img-element -- a fixed 32px mark, no optimisation needed */}
           <img src="/brand/sixlabs-mark-3d.png" alt="" width={32} height={32} className="w-8 h-8" />
-          <span className="font-display text-2xl font-medium tracking-tight text-[#0a1b33]">6labs</span>
+          <span className="font-display text-2xl font-medium tracking-tight text-[#0a1b33]"><span className="text-accent">6</span>labs</span>
         </a>
 
         <div className="hidden md:flex items-center gap-8">

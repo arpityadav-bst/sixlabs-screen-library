@@ -5,6 +5,8 @@
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  /* Accent: the bright blue of an activated tile (floor-params.json states.shine actLightCol). */
+  --color-accent: #3f8eec;
 }
 
 body {
