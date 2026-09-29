@@ -8,17 +8,18 @@
 // sits above the scroll line and below the players section and the header. When the view is full it
 // announces it (window event "accentwave", detail { filled }); the players section waits for that.
 import { useEffect, useRef } from "react";
-import { WAVE_VH } from "./ScrubLine";
+import { COMPLETE_AT, WAVE_VH } from "./ScrubLine";
 import { getLenis } from "./SmoothScroll";
 
 const ACCENT = [26, 109, 255];
 const ARC = 90; // how much higher the middle of the edge is than its ends, px
 const BAND = 480; // depth of the halftone above the solid colour, px
 const GRAIN = 0.07; // noise strength on the blue
-// Once the rise has begun (AUTO_AT of it, one scroll's nudge past the finished line), the page glides the
-// rest of the way into the players by itself: slowly (GLIDE_DOWN_S, easing in: a slow start) so "The players" in the
-// water can be read. Going back up out of the players glides back to the line quicker (GLIDE_UP_S).
-const AUTO_AT = 0.03;
+// A nudge (NUDGE px) past where the line in the scroll line section finishes filling, the page glides
+// the rest of the way into the players by itself: slowly (GLIDE_DOWN_S, easing in: a slow start) so "The
+// players" in the water can be read. Going back up out of the players glides back to that point quicker
+// (GLIDE_UP_S).
+const NUDGE = 8;
 const GLIDE_DOWN_S = 3.2;
 const GLIDE_UP_S = 1.8;
 const WORD = "The players"; // the next section's name, huge in the halftone
@@ -241,30 +242,31 @@ export function AccentWave() {
         1,
         Math.max(0, (window.scrollY - (end - WAVE_VH * h)) / (WAVE_VH * h)),
       );
-      // Past AUTO_AT on the way down, the page glides the rest of the way by itself, to where the water
-      // has filled the view and the players are in place; it re-arms once the water has fully drained (a nudge past the finished line is enough).
-      // The same the other way: scrolling back up out of the players glides all the way back to the
-      // scroll line (the water fully drained); it re-arms once the view is full again.
+      // Where the line has just finished filling (ScrubLine.tsx): past it on the way down (a nudge is
+      // enough), the page glides by itself through the rest of the line's track and the whole rise, to
+      // where the water fills the view and the players are in place; it re-arms back at that point.
+      // Scrolling back up out of the players glides back to exactly that point (the line full, the water
+      // drained), so the very next scroll up starts emptying the line; it re-arms once the view is full.
       const y = window.scrollY,
         down = y > lastY,
         now = performance.now();
+      const fillEnd =
+        end -
+        WAVE_VH * h -
+        (1 - COMPLETE_AT) * (line.offsetHeight - h * (1 + WAVE_VH));
       // the visitor's scroll speed, px per ms, for the glide to carry on from
       if (!glideRaf) speed = (y - lastY) / Math.max(8, now - lastT);
       const lastYBefore = lastY;
       lastY = y;
       lastT = now;
-      if (p <= 0) glided = false; // re-armed once the water has fully drained (above AUTO_AT, or it would restart itself)
+      if (y <= fillEnd + 1) glided = false;
       if (p >= 0.995) glidedUp = false;
-      if (down && !glided && p >= AUTO_AT && p < 1) {
+      if (down && !glided && y > fillEnd + NUDGE && p < 1) {
         glided = true;
         glide(end + 4, Math.min(Math.max(speed, 0), 2.5), GLIDE_DOWN_S); // a few px past the end, so it lands full
       } else if (!down && y < lastYBefore && !glidedUp && p < 0.97 && p > 0) {
         glidedUp = true;
-        glide(
-          end - WAVE_VH * h - 4,
-          Math.max(Math.min(speed, 0), -2.5),
-          GLIDE_UP_S,
-        ); // back to the scroll line, drained
+        glide(fillEnd, Math.max(Math.min(speed, 0), -2.5), GLIDE_UP_S); // back to the full line, drained
       }
       if (!raf) raf = requestAnimationFrame(draw);
     };
