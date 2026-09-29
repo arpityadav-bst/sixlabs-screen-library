@@ -23,7 +23,7 @@ const GLIDE_DOWN_S = 3.2;
 const GLIDE_UP_S = 1.8;
 const WORD = "The players"; // the next section's name, huge in the halftone
 const WORD_ALPHA = 0.3;
-const WORD_DROP = 100; // px the word sits lower in the water
+const WORD_DROP = 50; // px the word sits lower in the water
 const PITCH = 6; // halftone grid, px; a dot of radius PITCH / 2 touches its neighbours
 
 export function AccentWave() {
