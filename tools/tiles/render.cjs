@@ -1,6 +1,7 @@
 // Renders a static frame of the SixLabs tile floor headlessly and saves the canvas as PNG.
 // Usage (from the sixlabs folder): node tools/tiles/render.cjs <out.png> [params.json]
-// Without a params file it renders the site's own public/tiles/floor-params.json.
+// Without a params file it renders the site's own public/tiles/floor-params.json. params.page picks another
+// page in this folder (logo.html renders the SixLabs mark in the tile glass, see logo-boot.js).
 const { chromium } = require('playwright');
 const path = require('path');
 const fs = require('fs');
@@ -10,9 +11,9 @@ const out = path.resolve(process.argv[2] || 'floor.png');
 const params = process.argv[3] ? JSON.parse(fs.readFileSync(process.argv[3], 'utf8')) : {};
 // URL prefix -> folder: three.js from node_modules, the engine from src, the assets from public.
 const ROUTES = [['/three/', path.join(APP, 'node_modules', 'three')], ['/src/', path.join(APP, 'src')],
-  ['/tiles/', path.join(APP, 'public', 'tiles')], ['/tools/', __dirname]];
+  ['/tiles/', path.join(APP, 'public', 'tiles')], ['/brand/', path.join(APP, 'public', 'brand')], ['/tools/', __dirname]];
 
-const TYPES = { '.js': 'text/javascript', '.html': 'text/html', '.png': 'image/png', '.json': 'application/json' };
+const TYPES = { '.js': 'text/javascript', '.html': 'text/html', '.png': 'image/png', '.json': 'application/json', '.svg': 'image/svg+xml' };
 
 (async () => {
   const browser = await chromium.launch({
@@ -24,7 +25,7 @@ const TYPES = { '.js': 'text/javascript', '.html': 'text/html', '.png': 'image/p
   await page.route('http://sixlabs.local/**', (route) => {
     const p = decodeURIComponent(new URL(route.request().url()).pathname);
     const hit = ROUTES.find(([prefix]) => p.startsWith(prefix));
-    const file = p === '/' ? path.join(__dirname, 'floor.html') : hit ? path.join(hit[1], p.slice(hit[0].length)) : '';
+    const file = p === '/' ? path.join(__dirname, params.page || 'floor.html') : hit ? path.join(hit[1], p.slice(hit[0].length)) : '';
     if (!fs.existsSync(file)) return route.fulfill({ status: 404, body: 'not found' });
     route.fulfill({ status: 200, contentType: TYPES[path.extname(file)] || 'application/octet-stream', body: fs.readFileSync(file) });
   });
