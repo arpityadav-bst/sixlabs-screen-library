@@ -1,6 +1,6 @@
 // Top header: layout and styling from the Halo prompt's navbar, recoloured to this site's light palette;
 // content from the 6labs.ai header. The mark is a placeholder until the logo file arrives.
-import { Globe } from "lucide-react";
+import { LanguageMenu } from "./LanguageMenu";
 
 const LINKS = ["Product", "The players", "What it does"];
 
@@ -27,11 +27,8 @@ export function Header() {
           ))}
         </div>
 
-        <div className="flex items-center gap-5">
-          <button className="flex items-center gap-1.5 text-slate-500 hover:text-[#0a1b33] transition-colors duration-200" aria-label="Region: US">
-            <Globe className="w-[18px] h-[18px]" />
-            <span className="text-[12px] font-medium">US</span>
-          </button>
+        <div className="flex items-center gap-4">
+          <LanguageMenu />
           <button className="bg-[#0a152d] text-white text-[15px] font-medium px-6 py-3 rounded-full hover:bg-[#1e2b47] transition-colors duration-200">
             Sign in
           </button>
