@@ -76,7 +76,7 @@ export function Players() {
           className="pointer-events-none absolute right-[8%] top-[6%] h-[520px] w-[620px] rounded-full bg-[radial-gradient(closest-side,rgba(26,109,255,0.28),rgba(26,109,255,0.08)_55%,transparent)]"
         />
 
-        <div className="relative grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,520px)_1fr]">
+        <div className="relative grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,480px)_1fr]">
           <motion.div {...enter(0.75)} className="self-center">
             <AnimatePresence mode="wait">
               <motion.div
@@ -89,7 +89,7 @@ export function Players() {
                 <h3 className="font-display text-[42px] md:text-[56px] font-medium leading-[1.05] tracking-tight text-white">
                   {player.title}
                 </h3>
-                <p className="mt-5 max-w-[520px] font-sans text-[16px] md:text-[18px] leading-relaxed text-white/80">
+                <p className="mt-5 max-w-[480px] text-balance font-sans text-[16px] md:text-[18px] leading-relaxed text-white/80">
                   {player.body}
                 </p>
               </motion.div>
