@@ -5,7 +5,7 @@
 // pulled in by, which widens the gaps between blades; the navy core keeps its size), spin (degrees the mark turns in its own plane,
 // for turntable frames), coreDepth (the core's thickness as a share of the blades': thin keeps it reading as a
 // circle once straightened, its wall hidden), accentPath (index of the SVG path drawn in the accent blue,
-// the site's --color-accent), transparent (no floor
+// the site's --color-accent), bareFloor (hide the mark), transparent (no floor
 // or background, for a cut-out PNG). __info.corners gives the screen pixels of the mark's top-face square,
 // so the frame can be straightened into a front view (tools/tiles/flatten_logo.py).
 import * as THREE from 'three';
@@ -83,6 +83,7 @@ pivot.rotation.y = az;
 logo.rotation.y = THREE.MathUtils.degToRad(-opt.spin); // clockwise as seen from above
 pivot.add(logo);
 scene.add(pivot);
+logo.visible = !opt.bareFloor; // bareFloor: the floor alone, for a difference matte
 
 const el = THREE.MathUtils.degToRad(opt.elev), d = opt.size * 1.5 / Math.tan(THREE.MathUtils.degToRad(P.fov / 2)) / 2;
 const camera = new THREE.PerspectiveCamera(P.fov, w / h, 0.1, 400);

@@ -18,10 +18,10 @@ export function Hero() {
 
       {/* While the floor loads, the logo lies on the floor in the tiles' white glass, on the right where
           the tiles will be, and turns very slowly about the floor's vertical axis; it fades away as the
-          tiles fade in. One still render seen from straight above (16 KB), laid on the floor by a CSS
-          tilt matching the tile camera (40 degrees up, a long lens) and spun by the compositor
-          (.floor-spin in globals.css), so it costs almost nothing to load and turns smoothly. Its
-          square is feathered into the floor. It may run past the container's edge. */}
+          tiles fade in. One still (27 KB, tools/tiles/floor_logo.py): the render at the tile camera angle,
+          contrast-boosted and straightened, which a CSS tilt lays back on the floor (40 degrees up, a
+          long lens) and the compositor spins (.floor-spin in globals.css), so it costs almost nothing to
+          load and turns smoothly. Its square is feathered into the floor. It may run past the container's edge. */}
       <AnimatePresence>
         {!floorReady && (
           <motion.div
@@ -34,8 +34,8 @@ export function Hero() {
             <img
               src="/brand/sixlabs-mark-floor.webp"
               alt=""
-              width={1350}
-              height={1350}
+              width={1200}
+              height={1200}
               className="floor-spin w-full h-full [mask-image:radial-gradient(closest-side,#000_72%,transparent_98%)]"
             />
           </motion.div>
