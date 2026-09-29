@@ -19,13 +19,13 @@ export function Hero() {
   const stats = [
     {
       value: "2B",
-      label: ["human players"],
+      label: ["Human players"],
       tone: "text-[#0a1b33]",
       live: false,
     },
     {
       value: copies.toLocaleString("en-US"),
-      label: ["digital copies made"],
+      label: ["Digital copies made"],
       tone: "text-accent",
       live: true,
     },
