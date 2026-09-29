@@ -12,6 +12,7 @@ import { ModeToggle } from "./ModeToggle";
 import { usePlayerMode } from "./usePlayerMode";
 import { PlayerDoodles } from "./PlayerDoodles";
 import { PlayerTraits } from "./PlayerTraits";
+import { useAlphaVideo } from "./useAlphaVideo";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 // On the accent blue (AccentWave.tsx): white cards.
@@ -73,6 +74,8 @@ export function Players() {
   });
   const player = PLAYERS[active];
   // the real player or their AI copy, per player, switching by itself until the visitor picks one
+  // Safari and iPhones draw the clips' transparency black: they get the stills (useAlphaVideo.ts)
+  const clips = useAlphaVideo();
   const [mode, setMode] = usePlayerMode(player.id, shown && !!player.aiVideo);
 
   return (
@@ -141,9 +144,10 @@ export function Players() {
                     mode={mode}
                     label={player.title}
                     load={near}
+                    still={!clips}
                     className="h-[var(--ph)] w-auto max-w-none select-none"
                   />
-                ) : player.video ? (
+                ) : player.video && clips ? (
                   <PlayerPortrait
                     src={player.video.src}
                     straight={player.video.straight}

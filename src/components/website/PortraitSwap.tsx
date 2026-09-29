@@ -12,7 +12,7 @@ import { useEffect, useRef } from "react";
 import { PlayerPortrait } from "./PlayerPortrait";
 import type { Mode } from "./ModeToggle";
 
-type Clip = { src: string; straight: number };
+type Clip = { src: string; straight: number; still: string };
 
 const SWEEP_S = 1.5; // the band's run up the portrait, seconds
 const BAND = 0.6; // the band's depth, a share of the portrait's height
@@ -35,6 +35,7 @@ export function PortraitSwap({
   label,
   className,
   load = true,
+  still = false,
 }: {
   human: Clip;
   ai: Clip;
@@ -42,9 +43,12 @@ export function PortraitSwap({
   label: string;
   className?: string;
   load?: boolean; // false holds both clips back from downloading
+  still?: boolean; // show each copy's still instead of its clip (where see-through clips do not play)
 }) {
   const humanVideo = useRef<HTMLVideoElement>(null);
   const aiVideo = useRef<HTMLVideoElement>(null);
+  const humanStill = useRef<HTMLImageElement>(null);
+  const aiStill = useRef<HTMLImageElement>(null);
   const humanLayer = useRef<HTMLDivElement>(null);
   const aiLayer = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -61,18 +65,27 @@ export function PortraitSwap({
       humanEl.style.clipPath = mode === "ai" ? HIDDEN : "none";
       cv.style.opacity = "0";
     };
-    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const incoming = (mode === "ai" ? aiVideo : humanVideo).current;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // the sweep draws from whatever the new copy is showing: its clip, or its still
+    const incoming = still
+      ? (mode === "ai" ? aiStill : humanStill).current
+      : (mode === "ai" ? aiVideo : humanVideo).current;
     const ctx = cv.getContext("2d");
     // Only a change from the copy on screen sweeps; the first showing (and React running an effect twice
     // in development) just settles.
     const from = onScreen.current;
     onScreen.current = mode;
-    if (from === null || from === mode || still || !incoming || !ctx) {
+    if (from === null || from === mode || reduced || !incoming || !ctx) {
       return settle();
     }
-    const W = incoming.videoWidth || 810,
-      H = incoming.videoHeight || 1080;
+    const W =
+        (incoming instanceof HTMLVideoElement
+          ? incoming.videoWidth
+          : incoming.naturalWidth) || 810,
+      H =
+        (incoming instanceof HTMLVideoElement
+          ? incoming.videoHeight
+          : incoming.naturalHeight) || 1080;
     cv.width = W;
     cv.height = H;
     // one colour channel at a time is built here, then added onto the band
@@ -177,33 +190,57 @@ export function PortraitSwap({
     cv.style.opacity = "1";
     raf = requestAnimationFrame(frame);
     return () => cancelAnimationFrame(raf);
-  }, [mode]);
+  }, [mode, still]);
 
   return (
     <div className="relative">
       <div ref={humanLayer}>
-        <PlayerPortrait
-          src={human.src}
-          straight={human.straight}
-          label={label}
-          className={"block " + (className ?? "")}
-          videoRef={humanVideo}
-          load={load}
-        />
+        {still ? (
+          // eslint-disable-next-line @next/next/no-img-element -- the copy's still, served as is
+          <img
+            ref={humanStill}
+            src={human.still}
+            alt={label}
+            width={810}
+            height={1080}
+            className={"block " + (className ?? "")}
+          />
+        ) : (
+          <PlayerPortrait
+            src={human.src}
+            straight={human.straight}
+            label={label}
+            className={"block " + (className ?? "")}
+            videoRef={humanVideo}
+            load={load}
+          />
+        )}
       </div>
       <div
         ref={aiLayer}
         className="absolute inset-0"
         style={{ clipPath: HIDDEN }}
       >
-        <PlayerPortrait
-          src={ai.src}
-          straight={ai.straight}
-          label={`${label}, AI copy`}
-          className="block h-full w-full"
-          videoRef={aiVideo}
-          load={load}
-        />
+        {still ? (
+          // eslint-disable-next-line @next/next/no-img-element -- the copy's still, served as is
+          <img
+            ref={aiStill}
+            src={ai.still}
+            alt={`${label}, AI copy`}
+            width={810}
+            height={1080}
+            className="block h-full w-full"
+          />
+        ) : (
+          <PlayerPortrait
+            src={ai.src}
+            straight={ai.straight}
+            label={`${label}, AI copy`}
+            className="block h-full w-full"
+            videoRef={aiVideo}
+            load={load}
+          />
+        )}
       </div>
       <canvas
         ref={canvas}
