@@ -7,6 +7,11 @@ import { TileFloor, type FloorHandle } from "@/components/tiles/TileFloor";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
+const STATS = [
+  { value: "2B", label: ["human players", "the 6labs model"] },
+  { value: "1,009,271", label: ["digital copies made"] },
+];
+
 export function Hero() {
   const [floorReady, setFloorReady] = useState(false);
   const floor = useRef<FloorHandle | null>(null);
@@ -103,8 +108,25 @@ export function Hero() {
           </motion.div>
         </div>
       </section>
-      {/* Outside the container, under its bottom-right corner, inset like the text column. */}
-      <div className="w-full max-w-[1400px] mx-auto mt-3 px-8 md:px-16 flex justify-end">
+      {/* Outside the container, in line with the text column: the headline numbers under its bottom-left
+          corner, the wave button under its bottom-right. */}
+      <div className="w-full max-w-[1400px] mx-auto mt-5 px-8 md:px-16 flex items-start justify-between">
+        <dl className="flex gap-12">
+          {STATS.map((s) => (
+            <div key={s.value} className="flex flex-col">
+              <dt className="order-2 mt-1 text-[13px] leading-snug text-slate-500">
+                {s.label.map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
+                ))}
+              </dt>
+              <dd className="order-1 font-display text-[28px] font-medium leading-none tracking-tight text-[#0a1b33]">
+                {s.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
         {/* Sends the flip wave now: every tile back to default, activated or not. Just the icon; its label
             fades in to its left on hover. */}
         <button
