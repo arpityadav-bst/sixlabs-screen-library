@@ -253,7 +253,7 @@ export function AccentWave() {
       const lastYBefore = lastY;
       lastY = y;
       lastT = now;
-      if (p < 0.3) glided = false;
+      if (p <= 0) glided = false; // re-armed once the water has fully drained (above AUTO_AT, or it would restart itself)
       if (p >= 0.995) glidedUp = false;
       if (down && !glided && p >= AUTO_AT && p < 1) {
         glided = true;
