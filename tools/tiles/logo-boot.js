@@ -62,7 +62,9 @@ svg.paths.forEach((path, pi) => {
     // Lie flat with the SVG's first face on top: SVG down becomes toward the camera, so the mark reads
     // upright, and nothing is mirrored (a mirror would turn every face inside out).
     g.rotateX(Math.PI / 2);
-    g.translate(0, depth + P.bevelT, 0);
+    // Every top face sits in one plane (the blades' top), the thin core included, so straightening that
+    // plane keeps the core exactly where the SVG puts it (a lower top would drift off centre by parallax).
+    g.translate(0, P.core * opt.depth + P.bevelT, 0);
     const pos = g.attributes.position, uv = g.attributes.uv;
     for (let n = 0; n < pos.count; n++) uv.setXY(n, pos.getX(n) / span + 0.5, 0.5 - pos.getZ(n) / span);
     const beamU = { uBeam: { value: 2 }, uBeamI: { value: 0 }, uFlare: { value: 0 }, uBackRim: { value: 0 }, uShine: { value: new THREE.Color(0) }, uHotF: { value: new THREE.Color(0) }, uHotR: { value: new THREE.Color(0) } };
@@ -96,7 +98,7 @@ composer.setPixelRatio(devicePixelRatio);
 composer.setSize(w, h);
 await renderer.compileAsync(scene, camera);
 composer.render();
-const top = P.core * opt.depth + P.bevelT, hs = span / 2, dpr = devicePixelRatio;
+const top = P.core * opt.depth + 2 * P.bevelT, hs = span / 2, dpr = devicePixelRatio;
 const corners = [[-hs, -hs], [hs, -hs], [hs, hs], [-hs, hs]].map(([x, z]) => {
   const v = pivot.localToWorld(new THREE.Vector3(x, top, z)).project(camera);
   return [(v.x + 1) / 2 * w * dpr, (1 - v.y) / 2 * h * dpr];
