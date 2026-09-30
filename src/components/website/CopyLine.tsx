@@ -3,8 +3,8 @@
 // header's cobalt glass, cresting from behind it and fading down into it (after the onBlue creators page's
 // foot). Around them, nothing but the copy line (public/footer/copy-line.webp, generated on plain white
 // with no text in it): our players and a crowd behind them walk in from the left toward the mark, and come
-// out on the right as their AI copies, in their own clothes with the white face and the blue lines at the
-// neck, so the brand in the middle is where the copying happens. The picture has no ground and no scene:
+// out on the right as their AI copies, in their own clothes with a plain white face (as in the hero's tiles) and the
+// blue lines at the neck, so the brand in the middle is where the copying happens. The picture has no ground and no scene:
 // it is multiplied into the page, so its white is the page and only the people show, and their legs
 // dissolve into the page before the hairline. From a tablet up it runs the band's full width at its own
 // shape (FIT), so two spec labels in code, on leader lines, can sit in its own coordinates and land on the
@@ -14,8 +14,8 @@ import { SixLabsCobalt } from "./brand-marks";
 
 const LABELS: { text: string; x: number; y: number; strong?: boolean }[] = [
   // x, y: where the leader line lands, in % of the picture
-  { text: "Real players", x: 17.3, y: 15 },
-  { text: "1,000,000+ player models", x: 82.2, y: 19, strong: true },
+  { text: "Real players", x: 16.7, y: 14 },
+  { text: "1,000,000+ player models", x: 74.4, y: 15, strong: true },
 ];
 
 const COPY = "block whitespace-nowrap";
@@ -50,8 +50,8 @@ export function CopyLine() {
         <div className={FIT}>
           {/* eslint-disable-next-line @next/next/no-img-element -- a static, pre-sized image with its own srcset */}
           <img
-            src="/footer/copy-line.webp?v=6"
-            srcSet="/footer/copy-line-1344.webp?v=6 1344w, /footer/copy-line.webp?v=6 2688w"
+            src="/footer/copy-line.webp?v=7"
+            srcSet="/footer/copy-line-1344.webp?v=7 1344w, /footer/copy-line.webp?v=7 2688w"
             sizes="100vw"
             width={2688}
             height={1152}
