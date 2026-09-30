@@ -16,14 +16,14 @@ const ease = [0.22, 1, 0.36, 1] as const;
 // ChatGPT's card in the hero container's look (Hero.tsx); ours in the primary, the Try now button's navy
 // (PrimaryCta.tsx), for the contrast
 const card =
-  "flex min-h-[220px] flex-col justify-between rounded-[36px] max-md:rounded-[28px] border p-7 md:min-h-[260px] md:p-9";
+  "flex flex-col rounded-[36px] max-md:rounded-[28px] border p-7 md:p-9";
 const theirs = card + " border-slate-200/50 bg-[#e3e5e8] text-[#0a1b33]";
 const ours = card + " border-transparent bg-[#0a152d] text-white";
 // the maker's mark and name, side by side, at the top of each card
 const lockup = "flex items-center gap-2.5";
 const name = "font-display text-[18px] font-medium tracking-tight";
 const line =
-  "mt-10 font-display text-[20px] md:text-[26px] font-medium leading-[1.3] tracking-tight";
+  "mt-6 font-display text-[20px] md:text-[26px] font-medium leading-[1.3] tracking-tight";
 const rise = (delay: number) => ({
   initial: { opacity: 0, y: 28 },
   whileInView: { opacity: 1, y: 0 },
