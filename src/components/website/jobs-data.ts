@@ -28,7 +28,7 @@ export const JOBS: Job[] = [
   {
     id: "intelligence",
     title: "Intelligence",
-    body: "Your KPIs say what happened. The model says why.",
+    body: "Your KPIs show what happened. The model tells you why it happened.",
     tags: ["Why, not just what", "Evidence clips", "BI plug-in"],
     run: [
       { t: "cmd", text: 'ask "why are payments abandoned?"' },
@@ -50,7 +50,7 @@ export const JOBS: Job[] = [
   {
     id: "testing",
     title: "Testing",
-    body: "Play the build like your players would.",
+    body: "Play every new build the way your real players would, before launch.",
     tags: ["Functional", "Behavioral", "Large scale", "Localization"],
     run: [
       { t: "cmd", text: "run players --build 4.2.0" },
@@ -68,7 +68,7 @@ export const JOBS: Job[] = [
   {
     id: "creation",
     title: "Game creation",
-    body: "Read any game's core loop, economy and hooks straight from video. Then check every new build against it.",
+    body: "Read any game's loop and hooks from video, then check builds against it.",
     tags: ["Deconstruct", "Verify", "Observe"],
     run: [
       { t: "cmd", text: "read reference-game.mp4" },

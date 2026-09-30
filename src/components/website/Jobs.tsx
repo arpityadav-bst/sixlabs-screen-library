@@ -41,7 +41,7 @@ export function Jobs() {
             <h3 className="font-display text-[26px] font-medium leading-tight tracking-tight text-[#0a1b33]">
               {j.title}
             </h3>
-            <p className="mt-2 font-sans text-[15px] leading-relaxed text-[#64748b] xl:min-h-[4.9em]">
+            <p className="mt-2 font-sans text-[15px] leading-relaxed text-[#64748b] xl:min-h-[3.25em]">
               {j.body}
             </p>
             <div className="mt-7">
