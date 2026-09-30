@@ -2,9 +2,9 @@
 
 // After the players, on the light page again (the accent water drains off it, AccentWave.tsx): one sentence
 // that rewrites itself. First ChatGPT's version fills word by word as the page scrolls, like the scroll
-// line's (ScrubLine.tsx); then the portrait swap's laser (PortraitSwap.tsx) rises through it, a band of
-// dotted, colour-split type with a glowing line along its middle, and behind it the sentence re-prints as
-// ours. Only the three parts that differ change; "Now it understands" holds its place (the text is left
+// line's (ScrubLine.tsx); then the portrait swap's laser (PortraitSwap.tsx) scans up through it: a band of
+// dotted, colour-split type, and a glowing line that lights only the letters it crosses (never the page
+// around them), and behind it the sentence re-prints as ours. Only the three parts that differ change; "Now it understands" holds its place (the text is left
 // aligned, so it never moves), and "the game player." lands in the accent. The whole of it runs on the
 // scroll, both ways, while the stage stays pinned; reduced motion shows ours.
 import { useEffect, useRef, useState } from "react";
@@ -34,7 +34,7 @@ export function Understands() {
   const olds = useRef<(HTMLParagraphElement | null)[]>([]);
   const news = useRef<(HTMLParagraphElement | null)[]>([]);
   const bands = useRef<(HTMLParagraphElement | null)[]>([]);
-  const laser = useRef<SVGPathElement>(null);
+  const lasers = useRef<(HTMLParagraphElement | null)[]>([]);
   const [lit, setLit] = useState(0);
 
   useEffect(() => {
@@ -61,17 +61,20 @@ export function Understands() {
       [0, 1].forEach((r) => {
         const o = olds.current[r],
           n = news.current[r],
-          b = bands.current[r];
-        if (!o || !n || !b) return;
+          b = bands.current[r],
+          l = lasers.current[r];
+        if (!o || !n || !b || !l) return;
+        const sweeping = s > 0 && s < 1;
         // ChatGPT's above the laser's line, ours below it, the dotted band across it
         o.style.clipPath = s <= 0 ? "none" : s >= 1 ? HIDDEN : g.above(o);
         n.style.clipPath = s <= 0 ? HIDDEN : s >= 1 ? "none" : g.below(n);
-        b.style.clipPath = s <= 0 || s >= 1 ? HIDDEN : g.band(b);
+        b.style.clipPath = sweeping ? g.band(b) : HIDDEN;
+        // the laser: a thin bright stripe painted through the letters (the text is its only canvas)
+        const y = g.y(l);
+        l.style.backgroundImage = sweeping
+          ? `linear-gradient(to bottom, transparent ${y - 5}px, #7fb2ff ${y - 2}px, #1a6dff ${y}px, #7fb2ff ${y + 2}px, transparent ${y + 5}px)`
+          : "none";
       });
-      if (laser.current) {
-        laser.current.setAttribute("d", g.line);
-        laser.current.style.opacity = s > 0 && s < 1 ? "1" : "0";
-      }
     };
     const onScroll = () => {
       if (!queued) {
@@ -147,19 +150,17 @@ export function Understands() {
               >
                 <Words row={r} />
               </p>
+              {/* the laser's line, only where it crosses the letters */}
+              <p
+                ref={(e) => {
+                  lasers.current[r] = e;
+                }}
+                className="understands-laser [grid-area:1/1]"
+              >
+                <Words row={r} plain />
+              </p>
             </div>
           ))}
-          <svg className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
-            <path
-              ref={laser}
-              fill="none"
-              stroke="#1a6dff"
-              strokeWidth={2}
-              strokeLinecap="round"
-              className="understands-laser"
-              style={{ opacity: 0 }}
-            />
-          </svg>
         </div>
       </div>
     </section>
@@ -167,13 +168,15 @@ export function Understands() {
 }
 
 // our version of a row, the accent on "the game player."
-function Words({ row }: { row: number }) {
+function Words({ row, plain }: { row: number; plain?: boolean }) {
   return (
     <>
       {NEW[row].map((w, i) => (
         <span
           key={w + i}
-          className={row === 1 && i >= ACCENT_FROM ? "text-accent" : undefined}
+          className={
+            !plain && row === 1 && i >= ACCENT_FROM ? "text-accent" : undefined
+          }
         >
           {w}{" "}
         </span>
