@@ -1,7 +1,7 @@
 "use client";
 
 // "One model. Three jobs.": what the player model does, as three white cards (sized after the onBlue
-// business page's "Every engagement is checked" cards: 20px semibold titles, 14px muted lines) (hairline border, no
+// business page's "Every engagement is checked" cards: 20px medium titles, 14px muted lines) (hairline border, no
 // shadow, the players' cards' family; navy type, the accent on a word). Each job has its title and line, a terminal where the agent visibly does the job (JobTerminal.tsx), and its
 // tags as a small skills list. The cards rise in one after the other when the section comes into view, once; each terminal runs once, the
 // first time its card is pointed at (JobTerminal.tsx). Copy and runs are in jobs-data.ts.
@@ -71,7 +71,7 @@ export function Jobs() {
             }
             className="flex flex-col rounded-[28px] max-md:rounded-[24px] border border-slate-200/80 bg-white px-6 pb-6 pt-7"
           >
-            <h3 className="font-display text-[20px] font-semibold leading-tight tracking-[-0.03em] text-[#0a1b33]">
+            <h3 className="font-display text-[20px] font-medium leading-tight tracking-[-0.03em] text-[#0a1b33]">
               {j.title}
             </h3>
             <p className="mt-[9px] font-sans text-[14px] leading-[1.4] tracking-[-0.01em] text-[#64748b] xl:min-h-[2.8em]">

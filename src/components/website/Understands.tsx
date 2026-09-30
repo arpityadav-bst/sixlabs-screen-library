@@ -22,7 +22,8 @@ const ours = card + " border-transparent bg-[#0a152d] text-white";
 // the maker's mark and name, side by side, at the top of each card
 const lockup = "flex items-center gap-2.5";
 // the names at one visible weight: white on the navy reads heavier than navy on the grey, so 6labs sits a
-// step lighter than ChatGPT (and its line at 90% white) for the two to look the same
+// step lighter than ChatGPT for the two to look the same. The lines sit a step back from the names, both
+// softened (navy at 80%, white at 75%) so neither card's line glares
 const name = "font-display text-[22px] tracking-tight";
 const line =
   "mt-6 font-display text-[20px] md:text-[26px] font-normal leading-[1.3] tracking-tight";
@@ -45,7 +46,7 @@ export function Understands() {
             <ChatGptMark className="h-8 w-8" />
             <span className={name + " font-medium"}>ChatGPT</span>
           </span>
-          <p className={line}>
+          <p className={line + " text-[#0a1b33]/80"}>
             It reads the internet and now it understands facts and how humans
             think.
           </p>
@@ -55,7 +56,7 @@ export function Understands() {
             <SixLabsMark className="h-8 w-8" />
             <span className={name + " font-normal"}>6labs</span>
           </span>
-          <p className={line + " text-white/90"}>
+          <p className={line + " text-white/75"}>
             It watches millions of hours of gameplay and now it understands the
             game player.
           </p>
