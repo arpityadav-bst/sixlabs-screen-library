@@ -58,28 +58,31 @@ export function CopyLine() {
         </div>
       </div>
 
-      <div className={FIT + " pointer-events-none z-[2] max-lg:hidden"}>
-        {LABELS.map(({ text, x, y, strong }) => (
-          <div
-            key={text}
-            className="absolute flex -translate-x-1/2 -translate-y-full flex-col items-center font-sans"
-            style={{ left: `${x}%`, top: `${y}%` }}
-          >
-            <span
-              className={
-                "flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1 text-[12px] tracking-[-0.01em] " +
-                (strong
-                  ? "border-transparent bg-[#0a152d] text-white"
-                  : "border-slate-200/80 bg-white/85 text-[#0a1b33]")
-              }
+      {/* clipped to the band: the picture's box runs past its foot, and unclipped it lengthened the page */}
+      <div className="pointer-events-none absolute inset-0 z-[2] overflow-hidden max-lg:hidden">
+        <div className={FIT}>
+          {LABELS.map(({ text, x, y, strong }) => (
+            <div
+              key={text}
+              className="absolute flex -translate-x-1/2 -translate-y-full flex-col items-center font-sans"
+              style={{ left: `${x}%`, top: `${y}%` }}
             >
-              <i className="h-1.5 w-1.5 rounded-full bg-accent" />
-              {text}
-            </span>
-            <span className="h-7 w-px bg-[#0a1b33]/30" />
-            <span className="-mb-[3.5px] h-[7px] w-[7px] rounded-full border-2 border-white bg-accent" />
-          </div>
-        ))}
+              <span
+                className={
+                  "flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1 text-[12px] tracking-[-0.01em] " +
+                  (strong
+                    ? "border-transparent bg-[#0a152d] text-white"
+                    : "border-slate-200/80 bg-white/85 text-[#0a1b33]")
+                }
+              >
+                <i className="h-1.5 w-1.5 rounded-full bg-accent" />
+                {text}
+              </span>
+              <span className="h-7 w-px bg-[#0a1b33]/30" />
+              <span className="-mb-[3.5px] h-[7px] w-[7px] rounded-full border-2 border-white bg-accent" />
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* the mark cresting from behind the word: the glow on the outer box, the fade on the inner one (one
