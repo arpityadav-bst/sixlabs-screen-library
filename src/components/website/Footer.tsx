@@ -6,15 +6,16 @@
 // mark cresting from behind it and fading down, a faint colour split at the word's two ends only
 // (.foot-word in globals.css); then the tail, the copyright and the legal links. The legal links are stubs.
 import { ArrowUp } from "lucide-react";
-import { easeOut, glideTo } from "./glide";
+import { jumpTo, linkTo, type Spot } from "./jump";
 import { SixLabsSolid } from "./brand-marks";
 
-const EXPLORE = [
-  { label: "Home", href: "/website" },
-  { label: "Product", href: "#" },
-  { label: "The players", href: "#players" },
-  { label: "What it does", href: "#" },
-  { label: "Case Studies", href: "#" },
+// each glides to its section (jump.ts); Case Studies has no section yet, so it is a stub
+const EXPLORE: { label: string; to?: Spot }[] = [
+  { label: "Home", to: "top" },
+  { label: "Product", to: "model-line" },
+  { label: "The players", to: "players" },
+  { label: "What it does", to: "jobs" },
+  { label: "Case Studies" },
 ];
 
 const INNER = "mx-auto w-full max-w-[1400px] px-4 md:px-16";
@@ -39,7 +40,7 @@ export function Footer() {
         }
       >
         <div className="max-md:col-span-2">
-          <a href="/website" className="inline-flex items-center gap-2.5">
+          <a {...linkTo("top")} className="inline-flex items-center gap-2.5">
             {/* eslint-disable-next-line @next/next/no-img-element -- a fixed 32px mark, no optimisation needed */}
             <img
               src="/brand/sixlabs-mark-3d.png"
@@ -65,11 +66,11 @@ export function Footer() {
           <h3 className="mb-[3px] text-[13.5px] font-semibold tracking-[-0.02em] text-[#0a1b33]">
             Explore
           </h3>
-          {EXPLORE.map(({ label, href }) => (
+          {EXPLORE.map(({ label, to }) => (
             <a
               key={label}
-              href={href}
-              className="transition-colors duration-300 hover:text-[#0a1b33]"
+              {...(to ? linkTo(to) : {})}
+              className="cursor-pointer transition-colors duration-300 hover:text-[#0a1b33]"
             >
               {label}
             </a>
@@ -78,9 +79,7 @@ export function Footer() {
 
         <button
           type="button"
-          onClick={() =>
-            glideTo(0, Math.min(2.2, 0.9 + window.scrollY / 4000), easeOut)
-          }
+          onClick={() => jumpTo("top")}
           className="inline-flex items-center gap-[7px] justify-self-end whitespace-nowrap text-[13.5px] text-[#0a1b33] transition-colors duration-300 hover:text-[#64748b] max-md:justify-self-start"
         >
           Back to top <ArrowUp size={14} strokeWidth={2} aria-hidden />

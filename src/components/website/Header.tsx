@@ -5,11 +5,14 @@
 
 import { useEffect, useState } from "react";
 import { LanguageMenu } from "./LanguageMenu";
+import { linkTo, type Spot } from "./jump";
 
-const LINKS = [
-  { label: "Product", href: "#" },
-  { label: "The players", href: "#players" },
-  { label: "What it does", href: "#" },
+// each tab glides to its section (jump.ts), in the page's order
+const LINKS: { label: string; to: Spot }[] = [
+  { label: "Product", to: "model-line" },
+  { label: "The players", to: "players" },
+  { label: "What it does", to: "jobs" },
+  { label: "FAQs", to: "faq" },
 ];
 
 export function Header() {
@@ -30,6 +33,7 @@ export function Header() {
 
   return (
     <nav
+      id="site-head"
       className={
         "fixed top-0 left-0 right-0 z-40 px-6 py-5 max-md:px-4 max-md:py-4 backdrop-blur-md border-b transition-colors duration-300 " +
         (onBlue ? "bg-white " : "bg-[rgb(var(--page-rgb)/0.75)] ") +
@@ -37,7 +41,7 @@ export function Header() {
       }
     >
       <div className="max-w-[1400px] mx-auto flex items-center justify-between">
-        <a href="/website" className="flex items-center gap-2.5">
+        <a {...linkTo("top")} className="flex items-center gap-2.5">
           {/* eslint-disable-next-line @next/next/no-img-element -- a fixed 32px mark, no optimisation needed */}
           <img
             src="/brand/sixlabs-mark-3d.png"
@@ -52,11 +56,14 @@ export function Header() {
         </a>
 
         <div className="hidden md:flex items-center gap-8">
-          {LINKS.map(({ label, href }) => (
+          {/* Ink at the regular weight, as onBlue's tabs: a mid grey at medium weight reads soft, the
+              anti-aliasing smearing its lighter edges, where dark type on the light bar stays crisp. The
+              hover eases to the grey. */}
+          {LINKS.map(({ label, to }) => (
             <a
               key={label}
-              href={href}
-              className="text-base font-medium text-slate-500 hover:text-[#0a1b33] transition-colors duration-200"
+              {...linkTo(to)}
+              className="text-[15px] font-normal tracking-[-0.01em] text-[#0a1b33] hover:text-slate-500 transition-colors duration-300"
             >
               {label}
             </a>

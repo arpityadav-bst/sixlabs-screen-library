@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { TileFloor, type FloorHandle } from "@/components/tiles/TileFloor";
 import { ScrollCue } from "./ScrollCue";
 import { PrimaryCta } from "./PrimaryCta";
+import { linkTo } from "./jump";
 import { TypedWord } from "./TypedWord";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -102,7 +103,7 @@ export function Hero() {
               Our model watched millions of hours of gameplay. Now it
               understands the game player.{" "}
               <a
-                href="#"
+                {...linkTo("jobs")}
                 className="pointer-events-auto underline underline-offset-4 decoration-slate-300 hover:decoration-[#64748b] transition-colors duration-200"
               >
                 See what it does
