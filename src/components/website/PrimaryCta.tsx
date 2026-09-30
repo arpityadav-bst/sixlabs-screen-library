@@ -6,7 +6,7 @@
 // curves like the pill's left end; through the middle it straightens to a vertical line; leaving, it
 // curves like the right end. Seven spectral stripes, blended as light over the navy, make the prism
 // edge. Reduced motion keeps the grow and the fill, not the sweep.
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import {
   animate,
   motion,
@@ -36,6 +36,8 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
   const box = useRef(size); // read by the band's path, which motion calls outside React's render
   const t = useMotionValue(-1); // sweep progress 0..1; -1 idle
   const still = useReducedMotion();
+  // its SVG ids, unique per button: shared ids would point every copy at the first one's mask
+  const uid = useId();
 
   // The band's path at progress p: a quadratic from the top edge to the bottom edge at x, bowed by b.
   // b runs from the left end's curve (+h) through straight (0) to the right end's curve (-h).
@@ -123,7 +125,7 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
         >
           <defs>
             <pattern
-              id="cta-dots"
+              id={`${uid}-dots`}
               width="3.5"
               height="3.5"
               patternUnits="userSpaceOnUse"
@@ -131,7 +133,7 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
               <circle cx="1.75" cy="1.75" r="0.95" fill="#9cc0ff" />
             </pattern>
             <filter
-              id="cta-dot-soft"
+              id={`${uid}-soft`}
               x="-50%"
               y="-20%"
               width="200%"
@@ -140,7 +142,7 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
               <feGaussianBlur stdDeviation="5" />
             </filter>
             <mask
-              id="cta-dot-mask"
+              id={`${uid}-mask`}
               maskUnits="userSpaceOnUse"
               x="-100"
               y="-10"
@@ -150,7 +152,7 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
               <motion.path
                 d={dotBand}
                 fill="#fff"
-                filter="url(#cta-dot-soft)"
+                filter={`url(#${uid}-soft)`}
               />
             </mask>
           </defs>
@@ -159,8 +161,8 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
             y="-10"
             width={size.w + 200}
             height={size.h + 20}
-            fill="url(#cta-dots)"
-            mask="url(#cta-dot-mask)"
+            fill={`url(#${uid}-dots)`}
+            mask={`url(#${uid}-mask)`}
             style={{ opacity }}
           />
         </svg>
@@ -174,7 +176,7 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
         >
           <defs>
             <filter
-              id="cta-sweep-blur"
+              id={`${uid}-blur`}
               x="-50%"
               y="-10%"
               width="200%"
@@ -185,7 +187,7 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
           </defs>
           <motion.g
             style={{ opacity }}
-            filter="url(#cta-sweep-blur)"
+            filter={`url(#${uid}-blur)`}
             fill="none"
             strokeWidth={5}
             strokeLinecap="round"

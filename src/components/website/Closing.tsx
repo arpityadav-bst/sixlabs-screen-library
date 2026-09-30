@@ -20,11 +20,11 @@ export function Closing() {
         className="mb-6 h-11 w-11"
       />
       <h2 className="font-display text-[clamp(38px,5.2vw,74px)] font-medium leading-[1.05] tracking-[-0.045em] text-[#0a1b33]">
-        1 million made.
+        1 million made
         <br />
-        <TypedWord word="2 billion to go." className="text-accent" onView />
+        <TypedWord word="2 billion to go" className="text-accent" onView />
       </h2>
-      <p className="mt-5 max-w-[520px] text-balance font-sans text-[15px] leading-snug text-[#64748b] md:text-[16px]">
+      <p className="mt-5 max-w-[520px] text-balance font-sans text-[15px] leading-[1.5] text-[#64748b] md:text-[16px]">
         Every studio that joins makes the model better for every studio after
         it. Your players are next.
       </p>
