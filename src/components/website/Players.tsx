@@ -182,7 +182,7 @@ export function Players() {
           {/* below lg: previous / next beside the portrait, and the switch on its faded chest */}
           <motion.div
             {...enter(0.15)}
-            className="relative z-10 -mt-7 flex justify-center lg:hidden"
+            className="relative z-10 -mt-[calc(var(--ph)*0.2)] flex justify-center lg:hidden"
           >
             <ModeToggle mode={mode} onChange={setMode} thumbId="mode-thumb-m" />
           </motion.div>
