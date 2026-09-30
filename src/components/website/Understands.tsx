@@ -4,7 +4,7 @@
 // two cards side by side, the same line twice, in the hero's own look (its grey container, rounded corners,
 // hairline border and soft shadow; one text colour, navy, with the accent only on a word). On
 // the left ChatGPT's: it reads the internet and now understands facts and how humans think. On the right ours:
-// watched the gameplay, so it understands the game player (the accent). Each carries its maker's mark at
+// it watches the gameplay and now understands the game player (the accent). Each carries its maker's mark at
 // the top, both in the same line style (brand-marks.tsx), ours in the accent. They rise in one after the
 // other when the section comes into view, once.
 import { motion } from "motion/react";
@@ -40,8 +40,8 @@ export function Understands() {
         <motion.div {...rise(0.15)} className={card}>
           <SixLabsMark className="h-11 w-11 text-accent" />
           <p className={line}>
-            Our model watched millions of hours of gameplay. Now it understands{" "}
-            <span className="text-accent">the game player.</span>
+            Our model watches millions of hours of gameplay and now it
+            understands <span className="text-accent">the game player.</span>
           </p>
         </motion.div>
       </div>
