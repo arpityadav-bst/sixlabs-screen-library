@@ -19,6 +19,11 @@ const GROUPS: { title: string; rows: Row[] }[] = [
         name: "SixLabs Website",
         desc: "The landing page: the top header and the hero in its rounded container over the live glass tile floor.",
       },
+      {
+        href: "/6labs-fullview",
+        name: "6labs fullview",
+        desc: "The same landing page with the glass tile floor filling the whole first screen, edge to edge: the header lies over it, and the numbers, the scroll cue and the wave button sit inside it along its foot.",
+      },
     ],
   },
   {

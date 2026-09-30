@@ -15,7 +15,10 @@ const ease = [0.22, 1, 0.36, 1] as const;
 // becomes their AI copy.
 const COPIES_BASE = 10_956;
 
-export function Hero() {
+// `full` (the 6labs-fullview page): the floor fills the whole first screen, edge to edge, instead of the
+// rounded container; the header lies over it, and the numbers, the scroll cue and the wave button sit
+// inside it along its foot, on a soft fade into the page below.
+export function Hero({ full = false }: { full?: boolean }) {
   const [floorReady, setFloorReady] = useState(false);
   const floor = useRef<FloorHandle | null>(null);
   const [copies, setCopies] = useState(COPIES_BASE);
@@ -33,106 +36,19 @@ export function Hero() {
       live: true,
     },
   ];
-  return (
+  const row = (
     <>
-      <section className="relative w-full max-w-[1400px] mx-auto rounded-[48px] bg-[#e3e5e8] border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)] overflow-hidden h-[664px] max-md:h-[720px] max-md:rounded-[32px] flex flex-col">
-        {/* The glass tile floor replaces the prompt's background video. It takes pointer events so the
-          tiles stay interactive; the text layer above lets them through except on its own block. */}
-        <div className="absolute inset-0 z-0 overflow-hidden select-none">
-          {/* the logo placeholder fades out over 0.45s, then the tiles fade in */}
-          <TileFloor
-            className="w-full h-full"
-            introDelay={0.5}
-            onReady={(f) => {
-              floor.current = f;
-              setFloorReady(true);
-            }}
-            onConvert={() => setCopies((c) => c + 1)}
-          />
-        </div>
-
-        {/* Phones only: the copy covers most of the narrow container, so the floor's upper rows fade under a
-          scrim of the container colour, solid down past the line of social proof so no tile shows through the
-          words, and the tiles show clear in the lower part. */}
-        <div
-          aria-hidden
-          className="md:hidden pointer-events-none absolute inset-x-0 top-0 z-10 h-[70%] bg-gradient-to-b from-[#e3e5e8] from-[76%] to-transparent"
-        />
-
-        {/* While the floor loads, the logo lies on the floor in the tiles' white glass, toward the bottom right
-          where the tiles will be, and turns very slowly about the floor's vertical axis; it fades away just before the
-          tiles fade in. One still (27 KB, tools/tiles/floor_logo.py): the render at the tile camera angle,
-          contrast-boosted and straightened, which a CSS tilt lays back on the floor (40 degrees up, a
-          long lens) and the compositor spins (.floor-spin in globals.css), so it costs almost nothing to
-          load and turns smoothly. Its square is feathered into the floor. Sized and placed so about a fifth of the
-          mark runs past the container's bottom edge and a little (under a tenth) past its right (the mark spans two thirds of its square,
-          and the tilt shortens it to about half its width in height), at 60% opacity. */}
-        <AnimatePresence>
-          {!floorReady && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { duration: 0.4, ease } }}
-              exit={{
-                opacity: 0,
-                scale: 0.96,
-                transition: { duration: 0.45, ease },
-              }}
-              className="absolute top-[77%] left-[80%] -translate-x-1/2 -translate-y-1/2 z-10 w-[70%] aspect-square pointer-events-none"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element -- one small still, served as is */}
-              <img
-                src="/brand/sixlabs-mark-floor.webp"
-                alt=""
-                width={1200}
-                height={1200}
-                className="floor-spin w-full h-full opacity-60 [mask-image:radial-gradient(closest-side,#000_72%,transparent_98%)]"
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="relative z-20 flex-1 px-6 md:px-16 pt-10 md:pt-16 flex flex-col items-start pointer-events-none">
-          {/* Fade only, in CSS (.hero-copy-in), so it runs from first paint rather than once the scripts are
-            up: the block is in its final place from the first frame (a slide-up read as a jerk). */}
-          <div className="hero-copy-in flex-1 flex flex-col items-start pb-10 md:pb-12">
-            <h1 className="font-display text-[34px] md:text-[56px] font-medium tracking-tight leading-[1.05] text-[#0a1b33]">
-              Making <TypedWord word="models" className="text-accent" /> of
-              <br />
-              human players.
-            </h1>
-            <p className="font-sans text-[14px] md:text-[15px] text-[#475569] mt-5 max-w-[440px] leading-relaxed">
-              Our model watched millions of hours of gameplay. Now it
-              understands the game player.{" "}
-              <a
-                {...linkTo("jobs")}
-                className="pointer-events-auto underline underline-offset-4 decoration-slate-300 hover:text-accent hover:decoration-accent transition-colors duration-200"
-              >
-                See what it does
-              </a>
-            </p>
-            {/* The primary CTA, wide; the secondary action is the link that ends the subtitle. The quiet line
-              of social proof sits at the bottom of the container. Only the controls take the pointer, so
-              the tiles under the rest of this column stay interactive. */}
-            <div className="mt-8 pointer-events-auto">
-              <PrimaryCta>Try now</PrimaryCta>
-            </div>
-            {/* The social proof as a live count: a softly pulsing accent dot, the line in the subtitle's
-              slate, and the invitation under it in the accent. */}
-            <div className="mt-8 grid grid-cols-[8px_1fr] items-center gap-x-2.5 font-sans text-[13px] leading-relaxed">
-              <span aria-hidden className="relative flex h-2 w-2">
-                <span className="absolute inset-0 animate-ping rounded-full bg-accent/40" />
-                <span className="relative h-2 w-2 rounded-full bg-accent" />
-              </span>
-              <p className="text-[#475569]">One million players have a copy.</p>
-              <p className="col-start-2 font-medium text-accent">Yours next.</p>
-            </div>
-          </div>
-        </div>
-      </section>
       {/* Outside the container, one row: the scroll cue under its bottom-left corner, the headline numbers
-          centred, the wave button under its bottom-right corner. */}
-      <div className="w-full max-w-[1400px] mx-auto mt-10 max-md:mt-8 px-8 max-md:px-2 md:px-16 grid grid-cols-[1fr_auto_1fr] items-start max-md:relative max-md:flex max-md:justify-center">
-        <div className="-ml-10 max-md:hidden flex">
+            centred, the wave button under its bottom-right corner. */}
+      <div
+        className={
+          "w-full max-w-[1400px] mx-auto grid grid-cols-[1fr_auto_1fr] items-start max-md:relative max-md:flex max-md:justify-center " +
+          (full
+            ? "absolute inset-x-0 bottom-8 z-20 px-6 max-md:bottom-6 max-md:px-4"
+            : "mt-10 max-md:mt-8 px-8 max-md:px-2 md:px-16")
+        }
+      >
+        <div className={"max-md:hidden flex " + (full ? "" : "-ml-10")}>
           <ScrollCue />
         </div>
         {/* The humans in navy, their digital copies in the accent blue (the headline's "models" colour). */}
@@ -178,11 +94,14 @@ export function Hero() {
         </motion.dl>
         <div className="flex justify-end max-md:absolute max-md:right-2 max-md:top-1">
           {/* Sends the flip wave now: every tile back to default, activated or not. Just the icon; its label
-            fades in to its left on hover. */}
+              fades in to its left on hover. */}
           <button
             type="button"
             onClick={() => floor.current?.reset()}
-            className="group -mr-10 max-md:mr-0 p-1 flex items-center gap-1.5 text-slate-400 hover:text-accent transition-colors duration-200"
+            className={
+              "group max-md:mr-0 p-1 flex items-center gap-1.5 text-slate-400 hover:text-accent transition-colors duration-200 " +
+              (full ? "" : "-mr-10")
+            }
           >
             <span className="text-[12px] leading-none opacity-0 translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0">
               Next wave
@@ -191,6 +110,132 @@ export function Hero() {
           </button>
         </div>
       </div>
+    </>
+  );
+  return (
+    <>
+      <section
+        className={
+          "relative bg-[#e3e5e8] overflow-hidden flex flex-col " +
+          (full
+            ? "-mx-4 md:-mx-8 -mt-24 h-svh min-h-[640px]"
+            : "w-full max-w-[1400px] mx-auto rounded-[48px] border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)] h-[664px] max-md:h-[720px] max-md:rounded-[32px]")
+        }
+      >
+        {/* The glass tile floor replaces the prompt's background video. It takes pointer events so the
+          tiles stay interactive; the text layer above lets them through except on its own block. */}
+        <div className="absolute inset-0 z-0 overflow-hidden select-none">
+          {/* the logo placeholder fades out over 0.45s, then the tiles fade in */}
+          <TileFloor
+            className="w-full h-full"
+            introDelay={0.5}
+            onReady={(f) => {
+              floor.current = f;
+              setFloorReady(true);
+            }}
+            onConvert={() => setCopies((c) => c + 1)}
+          />
+        </div>
+
+        {/* Phones only: the copy covers most of the narrow container, so the floor's upper rows fade under a
+          scrim of the container colour, solid down past the line of social proof so no tile shows through the
+          words, and the tiles show clear in the lower part. */}
+        <div
+          aria-hidden
+          className="md:hidden pointer-events-none absolute inset-x-0 top-0 z-10 h-[70%] bg-gradient-to-b from-[#e3e5e8] from-[76%] to-transparent"
+        />
+
+        {/* While the floor loads, the logo lies on the floor in the tiles' white glass, toward the bottom right
+          where the tiles will be, and turns very slowly about the floor's vertical axis; it fades away just before the
+          tiles fade in. One still (27 KB, tools/tiles/floor_logo.py): the render at the tile camera angle,
+          contrast-boosted and straightened, which a CSS tilt lays back on the floor (40 degrees up, a
+          long lens) and the compositor spins (.floor-spin in globals.css), so it costs almost nothing to
+          load and turns smoothly. Its square is feathered into the floor. Sized and placed so about a fifth of the
+          mark runs past the container's bottom edge and a little (under a tenth) past its right (the mark spans two thirds of its square,
+          and the tilt shortens it to about half its width in height), at 60% opacity. */}
+        <AnimatePresence>
+          {!floorReady && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, transition: { duration: 0.4, ease } }}
+              exit={{
+                opacity: 0,
+                scale: 0.96,
+                transition: { duration: 0.45, ease },
+              }}
+              className={
+                "absolute top-[77%] left-[80%] -translate-x-1/2 -translate-y-1/2 z-10 aspect-square pointer-events-none " +
+                (full ? "w-[min(70%,720px)]" : "w-[70%]")
+              }
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element -- one small still, served as is */}
+              <img
+                src="/brand/sixlabs-mark-floor.webp"
+                alt=""
+                width={1200}
+                height={1200}
+                className="floor-spin w-full h-full opacity-60 [mask-image:radial-gradient(closest-side,#000_72%,transparent_98%)]"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div
+          className={
+            "relative z-20 flex-1 flex flex-col items-start pointer-events-none " +
+            (full
+              ? "mx-auto w-full max-w-[1400px] px-6 max-md:px-4 pt-[calc(73px+40px)] md:pt-[calc(89px+clamp(48px,9vh,120px))]"
+              : "px-6 md:px-16 pt-10 md:pt-16")
+          }
+        >
+          {/* Fade only, in CSS (.hero-copy-in), so it runs from first paint rather than once the scripts are
+            up: the block is in its final place from the first frame (a slide-up read as a jerk). */}
+          <div className="hero-copy-in flex-1 flex flex-col items-start pb-10 md:pb-12">
+            <h1 className="font-display text-[34px] md:text-[56px] font-medium tracking-tight leading-[1.05] text-[#0a1b33]">
+              Making <TypedWord word="models" className="text-accent" /> of
+              <br />
+              human players.
+            </h1>
+            <p className="font-sans text-[14px] md:text-[15px] text-[#475569] mt-5 max-w-[440px] leading-relaxed">
+              Our model watched millions of hours of gameplay. Now it
+              understands the game player.{" "}
+              <a
+                {...linkTo("jobs")}
+                className="pointer-events-auto underline underline-offset-4 decoration-slate-300 hover:text-accent hover:decoration-accent transition-colors duration-200"
+              >
+                See what it does
+              </a>
+            </p>
+            {/* The primary CTA, wide; the secondary action is the link that ends the subtitle. The quiet line
+              of social proof sits at the bottom of the container. Only the controls take the pointer, so
+              the tiles under the rest of this column stay interactive. */}
+            <div className="mt-8 pointer-events-auto">
+              <PrimaryCta>Try now</PrimaryCta>
+            </div>
+            {/* The social proof as a live count: a softly pulsing accent dot, the line in the subtitle's
+              slate, and the invitation under it in the accent. */}
+            <div className="mt-8 grid grid-cols-[8px_1fr] items-center gap-x-2.5 font-sans text-[13px] leading-relaxed">
+              <span aria-hidden className="relative flex h-2 w-2">
+                <span className="absolute inset-0 animate-ping rounded-full bg-accent/40" />
+                <span className="relative h-2 w-2 rounded-full bg-accent" />
+              </span>
+              <p className="text-[#475569]">One million players have a copy.</p>
+              <p className="col-start-2 font-medium text-accent">Yours next.</p>
+            </div>
+          </div>
+        </div>
+        {full && (
+          <>
+            {/* the floor's foot fades into the page below, and the row of numbers sits on that fade */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[220px] bg-gradient-to-b from-transparent via-[#e3e5e8]/85 via-55% to-[rgb(var(--page-rgb))]"
+            />
+            {row}
+          </>
+        )}
+      </section>
+      {!full && row}
     </>
   );
 }

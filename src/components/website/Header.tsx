@@ -16,7 +16,9 @@ const LINKS: { label: string; to: Spot }[] = [
   { label: "FAQs", to: "faq" },
 ];
 
-export function Header() {
+// `clear` (the 6labs-fullview page, where the tile floor runs under the bar): no ground and no blur at the
+// top of the page, so the floor reads edge to edge; the usual frosted bar once the page has scrolled.
+export function Header({ clear = false }: { clear?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   // solid white once the accent water has filled the view (AccentWave.tsx), so it stands clear of the blue
   const [onBlue, setOnBlue] = useState(false);
@@ -37,7 +39,11 @@ export function Header() {
       id="site-head"
       className={
         "fixed top-0 left-0 right-0 z-40 px-6 py-5 max-md:px-4 max-md:py-4 backdrop-blur-md border-b transition-colors duration-300 " +
-        (onBlue ? "bg-white " : "bg-[rgb(var(--page-rgb)/0.75)] ") +
+        (onBlue
+          ? "bg-white "
+          : clear && !scrolled
+            ? "bg-transparent backdrop-blur-none "
+            : "bg-[rgb(var(--page-rgb)/0.75)] ") +
         (scrolled ? "border-slate-300/80" : "border-transparent")
       }
     >
