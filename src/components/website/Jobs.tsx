@@ -1,6 +1,6 @@
 "use client";
 
-// "One model. Three jobs.": what the player model does, as three white cards (hairline border, soft
+// "One model. Three jobs.": what the player model does, as three white cards (hairline border, no
 // shadow, the players' cards' family; navy type, the accent on a word). Each job has its title and line, a terminal where the agent visibly does the job (JobTerminal.tsx), and its
 // tags as a small skills list. The cards rise in one after the other when the section comes into view, once; each terminal runs once, the
 // first time its card is pointed at (JobTerminal.tsx). Copy and runs are in jobs-data.ts.
@@ -68,7 +68,7 @@ export function Jobs() {
             onPointerEnter={() =>
               setAsked((a) => (a[j.id] ? a : { ...a, [j.id]: true }))
             }
-            className="flex flex-col rounded-[32px] max-md:rounded-[24px] border border-slate-200/80 bg-white p-7 md:p-8 shadow-[0_1px_2px_rgba(10,27,51,0.04),0_24px_48px_-32px_rgba(10,27,51,0.25)]"
+            className="flex flex-col rounded-[32px] max-md:rounded-[24px] border border-slate-200/80 bg-white p-7 md:p-8"
           >
             <h3 className="font-display text-[26px] md:text-[30px] font-medium leading-tight tracking-tight text-[#0a1b33]">
               {j.title}
