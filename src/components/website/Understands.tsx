@@ -3,7 +3,7 @@
 // After the players, on the light page again (the light rises back over the accent blue, AccentWave.tsx):
 // two cards side by side, the same line twice. On the left, in the hero's own look (its grey container,
 // rounded corners, hairline border, soft shadow; navy type), ChatGPT: it reads the internet and now
-// understands facts and how humans think. On the right, on the accent in white for the contrast, 6labs: it
+// understands facts and how humans think. On the right, in the primary (the CTA's navy) in white for the contrast, 6labs: it
 // watches the gameplay and now understands the game player. Each card opens with its maker's mark and name
 // side by side (brand-marks.tsx, both marks in one line style). They rise in one after the other when the
 // section comes into view, once. The section is only as tall as its cards; above them, below the fixed
@@ -13,7 +13,8 @@ import { motion } from "motion/react";
 import { ChatGptMark, SixLabsMark } from "./brand-marks";
 
 const ease = [0.22, 1, 0.36, 1] as const;
-// ChatGPT's card in the hero container's look (Hero.tsx); ours on the accent, for the contrast
+// ChatGPT's card in the hero container's look (Hero.tsx); ours in the primary, the Try now button's navy
+// (PrimaryCta.tsx), for the contrast
 const card =
   "flex min-h-[300px] flex-col justify-between rounded-[48px] max-md:rounded-[32px] border p-8 md:min-h-[340px] md:p-12";
 const theirs =
@@ -21,7 +22,7 @@ const theirs =
   " border-slate-200/50 bg-[#e3e5e8] text-[#0a1b33] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)]";
 const ours =
   card +
-  " border-transparent bg-accent text-white shadow-[0_28px_56px_-26px_rgba(26,109,255,0.6)]";
+  " border-transparent bg-[#0a152d] text-white shadow-[0_28px_56px_-26px_rgba(10,21,45,0.55)]";
 // the maker's mark and name, side by side, at the top of each card
 const lockup = "flex items-center gap-3";
 const name = "font-display text-[22px] font-medium tracking-tight";
