@@ -16,6 +16,7 @@ export function TileFloor({
   introDelay = 0,
   distScale = 1,
   mixWaves = false,
+  aimIn = false,
 }: {
   className?: string;
   onReady?: (floor: FloorHandle) => void;
@@ -23,6 +24,7 @@ export function TileFloor({
   introDelay?: number;
   distScale?: number;
   mixWaves?: boolean;
+  aimIn?: boolean; // aim the camera into the tile field (a phone's box under the copy, viewport.js)
 }) {
   const convert = useRef(onConvert);
   useEffect(() => {
@@ -39,6 +41,7 @@ export function TileFloor({
         introDelay,
         distScale,
         mixWaves,
+        aimIn,
         onConvert: () => convert.current?.(),
       }).then((h: FloorHandle) => {
         if (alive) {

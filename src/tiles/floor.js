@@ -21,9 +21,9 @@ import { startAutoplay } from './autoplay.js';
 
 // distScale pulls the camera back (smaller tiles, more of them: the grid is built to what it sees); mixWaves
 // casts the second wave's characters on the middle tiles and the first wave's around them (casts.js).
-export async function createFloor(container, { params, base = '/tiles', isStatic = false, expose = false, introDelay = 0, onConvert = () => {}, distScale = 1, mixWaves = false } = {}) {
+export async function createFloor(container, { params, base = '/tiles', isStatic = false, expose = false, introDelay = 0, onConvert = () => {}, distScale = 1, mixWaves = false, aimIn = false } = {}) {
   const RAW0 = params ?? await fetch(`${base}/floor-params.json`).then((r) => r.json());
-  const RAW = distScale === 1 ? RAW0 : { ...RAW0, dist: RAW0.dist * distScale };
+  const RAW = { ...RAW0, dist: RAW0.dist * distScale, aimIn }; // aimIn: viewport.js
   const common = Object.assign({ W: 1920, H: 1080, assetBase: base }, RAW);
   const PF = Object.assign({}, common, RAW.states?.default ?? {}), PA = Object.assign({}, common, RAW.states?.shine ?? {});
   const P = PF;
@@ -43,7 +43,7 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
 
   // Camera on a fixed orbit around the floor origin, laid out at the 16:9 design frame (P.W x P.H).
   const camera = new THREE.PerspectiveCamera(P.fov, P.W / P.H, 0.1, 400);
-  placeCamera(camera, P, P.W / P.H);
+  placeCamera(camera, { ...P, aimIn: false }, P.W / P.H); // the design frame, which places the grid: never aimed in
   const az = THREE.MathUtils.degToRad(P.azim);
   const toCam = new THREE.Vector2(Math.sin(az), Math.cos(az)); // floor direction toward the camera
 
@@ -206,7 +206,7 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
     const w = Math.max(1, container.clientWidth), h = Math.max(1, container.clientHeight);
     if (`${w}x${h}` === size && !force) return;
     size = `${w}x${h}`;
-    placeCamera(camera, P, w / h, scene.fog);
+    placeCamera(camera, P, w / h, scene.fog, h);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(w, h, false);
     composer.setPixelRatio(window.devicePixelRatio);

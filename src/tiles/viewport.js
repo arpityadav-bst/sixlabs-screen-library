@@ -1,17 +1,30 @@
 // Responsive framing. The composition is designed at 16:9 (P.W x P.H). Wider screens keep the same lens
 // and camera, so more floor shows on both sides. Taller screens keep the lens and pull the camera back
 // along its line of sight, so the design's full width stays in view with more floor above and below and
-// no added perspective distortion. The grid and characters are built to cover every aspect in ASPECTS.
+// no added perspective distortion, but never further back than P.maxPull times: on a tall phone that
+// keeps the tiles a readable size (the design's full width would shrink them to a thumbnail), letting the
+// sides of the design fall off screen. A phone's floor box (P.aimIn, Hero.tsx: set below the copy) aims
+// into the tile field instead (P.portraitLook, world x and z), so the field's diagonal edge, which leaves
+// the design's top left empty for its copy, falls off the side and the box is tiles edge to edge. The grid
+// and characters are built to cover every aspect in ASPECTS.
 import * as THREE from 'three';
 
 export const ASPECTS = [16 / 9, 2.6, 0.45]; // design, ultrawide, phone portrait
 
-export function placeCamera(camera, P, aspect, fog) {
+// px (the live draw, floor.js): the box's height in CSS pixels, for aimIn's constant tile size
+export function placeCamera(camera, P, aspect, fog, px) {
   const el = THREE.MathUtils.degToRad(P.elev), az = THREE.MathUtils.degToRad(P.azim);
-  const d = P.dist * Math.max(1, (P.W / P.H) / aspect);
+  // aimIn (a phone's short box under the copy): the pull grows with the box's height (aimPull at aimRefH px),
+  // so a tile keeps one size on every phone and a taller box shows more of them; a short box would otherwise
+  // show the same angle of floor in fewer pixels and shrink every tile. Without px (building the grid,
+  // casting) it takes maxPull, the widest view any phone box gets, so the grid covers them all.
+  const aim = px ? (P.aimPull ?? 1) * (px / (P.aimRefH ?? 380)) : P.maxPull ?? 2.4;
+  const d = P.dist * (P.aimIn ? aim : Math.min(P.maxPull ?? Infinity, Math.max(1, (P.W / P.H) / aspect)));
+  const [lx, lz] = P.aimIn ? P.portraitLook ?? [0, 0] : [0, 0];
+  const tx = lx, tz = lz;
   camera.aspect = aspect;
-  camera.position.set(d * Math.cos(el) * Math.sin(az), d * Math.sin(el), d * Math.cos(el) * Math.cos(az));
-  camera.lookAt(0, 0, 0);
+  camera.position.set(tx + d * Math.cos(el) * Math.sin(az), d * Math.sin(el), tz + d * Math.cos(el) * Math.cos(az));
+  camera.lookAt(tx, 0, tz);
   camera.updateProjectionMatrix();
   camera.updateMatrixWorld();
   if (fog) { fog.near = d + P.fogNear; fog.far = d + P.fogFar; }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { TileFloor, type FloorHandle } from "@/components/tiles/TileFloor";
 import { ScrollCue } from "./ScrollCue";
@@ -32,6 +32,24 @@ const COPIES_BASE = 10_956;
 export function Hero({ full = false }: { full?: boolean }) {
   const [floorReady, setFloorReady] = useState(false);
   const floor = useRef<FloorHandle | null>(null);
+  // Phones: the floor starts under the copy instead of fading beneath it. The section carries where the
+  // copy ends (--copy-b, px from its top), kept current as the copy's size changes.
+  const box = useRef<HTMLElement>(null);
+  const copy = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const s = box.current,
+      k = copy.current;
+    if (!s || !k) return;
+    const set = () =>
+      s.style.setProperty(
+        "--copy-b",
+        `${Math.round(k.getBoundingClientRect().bottom - s.getBoundingClientRect().top)}px`,
+      );
+    const ro = new ResizeObserver(set);
+    ro.observe(k);
+    ro.observe(s);
+    return () => ro.disconnect();
+  }, []);
   const [copies, setCopies] = useState(COPIES_BASE);
   const stats: Stat[] = [
     {
@@ -71,6 +89,7 @@ export function Hero({ full = false }: { full?: boolean }) {
   return (
     <>
       <section
+        ref={box}
         className={
           "relative bg-[#e3e5e8] overflow-hidden flex flex-col " +
           (full
@@ -79,22 +98,29 @@ export function Hero({ full = false }: { full?: boolean }) {
         }
       >
         {/* The glass tile floor replaces the prompt's background video. It takes pointer events so the
-          tiles stay interactive; the text layer above lets them through except on its own block. */}
-        <div className="absolute inset-0 z-0 overflow-hidden select-none">
+          tiles stay interactive; the text layer above lets them through except on its own block. On a phone
+          the copy spans the screen, so the floor's box begins 20px under the copy's last line (--copy-b),
+          its top edge softened over 40px, and the floor aims into its tiles (aimIn), so the box is tiles edge to
+          edge, close up: the tiles lie below the words, never behind them. */}
+        <div className="absolute inset-0 z-0 overflow-hidden select-none max-md:top-[calc(var(--copy-b,60%)+20px)] max-md:[mask-image:linear-gradient(to_bottom,transparent,#000_40px)]">
           {/* the logo placeholder fades out over 0.45s, then the tiles fade in */}
           <TileFloor
             className="w-full h-full"
             introDelay={0.5}
-            // full: the camera pulled back for smaller, more tiles (not on a phone, where the faces would get
+            // full: the camera pulled back for smaller, more tiles (from 1024px wide: on a tablet or phone the faces would get
             // too small to read), the second wave's cast in the middle. Read once, as the floor mounts.
             distScale={
               full &&
               typeof window !== "undefined" &&
-              !window.matchMedia("(max-width: 767px)").matches
+              window.matchMedia("(min-width: 1024px)").matches
                 ? 1.5
                 : 1
             }
             mixWaves={full}
+            aimIn={
+              typeof window !== "undefined" &&
+              window.matchMedia("(max-width: 767px)").matches
+            }
             onReady={(f) => {
               floor.current = f;
               setFloorReady(true);
@@ -102,17 +128,6 @@ export function Hero({ full = false }: { full?: boolean }) {
             onConvert={() => setCopies((c) => c + 1)}
           />
         </div>
-
-        {/* Phones only: the copy covers most of the narrow container, so the floor's upper rows fade under a
-          scrim of the container colour, solid down past the line of social proof so no tile shows through the
-          words, and the tiles show clear in the lower part. */}
-        <div
-          aria-hidden
-          className={
-            "md:hidden pointer-events-none absolute inset-x-0 top-0 z-10 bg-gradient-to-b from-[#e3e5e8] to-transparent " +
-            (full ? "h-[82%] from-[80%]" : "h-[70%] from-[76%]")
-          }
-        />
 
         {/* While the floor loads, the logo lies on the floor in the tiles' white glass, toward the bottom right
           where the tiles will be, and turns very slowly about the floor's vertical axis; it fades away just before the
@@ -162,71 +177,73 @@ export function Hero({ full = false }: { full?: boolean }) {
           {/* Fade only, in CSS (.hero-copy-in), so it runs from first paint rather than once the scripts are
             up: the block is in its final place from the first frame (a slide-up read as a jerk). */}
           <div className="hero-copy-in flex-1 flex flex-col items-start pb-10 md:pb-12">
-            <h1
-              className={
-                "font-display font-medium tracking-tight leading-[1.05] text-[#0a1b33] " +
-                (full ? FULL_TITLE : "text-[34px] md:text-[56px]")
-              }
-            >
-              Making <TypedWord word="models" className="text-accent" /> of
-              <br />
-              human players.
-            </h1>
-            <p
-              className={
-                "font-sans text-[#475569] " +
-                (full
-                  ? FULL_LEDE
-                  : "text-[14px] md:text-[15px] mt-5 max-w-[440px] leading-relaxed")
-              }
-            >
-              Our model watched millions of hours of gameplay. Now it
-              understands the game player.{" "}
-              <a
-                {...linkTo("jobs")}
-                className="pointer-events-auto underline underline-offset-4 decoration-slate-300 hover:text-accent hover:decoration-accent transition-colors duration-200"
+            <div ref={copy} className="relative flex flex-col items-start">
+              <h1
+                className={
+                  "font-display font-medium tracking-tight leading-[1.05] text-[#0a1b33] " +
+                  (full ? FULL_TITLE : "text-[34px] md:text-[56px]")
+                }
               >
-                See what it does
-              </a>
-            </p>
-            {/* full: the numbers come straight after the line, then the call to action, then the scroll cue;
+                Making <TypedWord word="models" className="text-accent" /> of
+                <br />
+                human players.
+              </h1>
+              <p
+                className={
+                  "font-sans text-[#475569] " +
+                  (full
+                    ? FULL_LEDE
+                    : "text-[14px] md:text-[15px] mt-5 max-w-[440px] leading-relaxed")
+                }
+              >
+                Our model watched millions of hours of gameplay. Now it
+                understands the game player.{" "}
+                <a
+                  {...linkTo("jobs")}
+                  className="pointer-events-auto underline underline-offset-4 decoration-slate-300 hover:text-accent hover:decoration-accent transition-colors duration-200"
+                >
+                  See what it does
+                </a>
+              </p>
+              {/* full: the numbers come straight after the line, then the call to action, then the scroll cue;
               no line of social proof (the numbers carry it) */}
-            {full && (
-              <div className="mt-6 min-[1600px]:mt-7">{numbers(true)}</div>
-            )}
-            {/* The primary CTA, wide; the secondary action is the link that ends the subtitle. The quiet line
+              {full && (
+                <div className="mt-6 min-[1600px]:mt-7">{numbers(true)}</div>
+              )}
+              {/* The primary CTA, wide; the secondary action is the link that ends the subtitle. The quiet line
               of social proof sits at the bottom of the container. Only the controls take the pointer, so
               the tiles under the rest of this column stay interactive. */}
-            <div
-              className={
-                "pointer-events-auto " +
-                (full ? "mt-6 min-[1600px]:mt-7" : "mt-8")
-              }
-            >
-              <PrimaryCta>Try now</PrimaryCta>
-            </div>
-            {!full && (
-              // The social proof as a live count: a softly pulsing accent dot, the line in the subtitle's
-              // slate, and the invitation under it in the accent.
-              <div className="mt-8 grid grid-cols-[8px_1fr] items-center gap-x-2.5 font-sans text-[13px] leading-relaxed">
-                <span aria-hidden className="relative flex h-2 w-2">
-                  <span className="absolute inset-0 animate-ping rounded-full bg-accent/40" />
-                  <span className="relative h-2 w-2 rounded-full bg-accent" />
-                </span>
-                <p className="text-[#475569]">
-                  One million players have a copy.
-                </p>
-                <p className="col-start-2 font-medium text-accent">
-                  Yours next.
-                </p>
+              <div
+                className={
+                  "pointer-events-auto " +
+                  (full ? "mt-6 min-[1600px]:mt-7" : "mt-8")
+                }
+              >
+                <PrimaryCta>Try now</PrimaryCta>
               </div>
-            )}
+              {!full && (
+                // The social proof as a live count: a softly pulsing accent dot, the line in the subtitle's
+                // slate, and the invitation under it in the accent.
+                <div className="mt-8 grid grid-cols-[8px_1fr] items-center gap-x-2.5 font-sans text-[13px] leading-relaxed">
+                  <span aria-hidden className="relative flex h-2 w-2">
+                    <span className="absolute inset-0 animate-ping rounded-full bg-accent/40" />
+                    <span className="relative h-2 w-2 rounded-full bg-accent" />
+                  </span>
+                  <p className="text-[#475569]">
+                    One million players have a copy.
+                  </p>
+                  <p className="col-start-2 font-medium text-accent">
+                    Yours next.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         {full && (
           <>
             {/* the scroll cue low at the left, in line with the copy, well clear above where the tiles begin */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-[clamp(96px,16vh,168px)] z-20 max-md:hidden">
+            <div className="pointer-events-none absolute inset-x-0 bottom-[clamp(96px,16vh,168px)] z-20 max-lg:hidden">
               {/* -ml-1 takes back the cue's own 4px padding, so its label starts on the copy's edge */}
               <div className="mx-auto flex w-full max-w-[1448px] px-6 [&>*]:-ml-1">
                 <ScrollCue />
