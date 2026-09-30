@@ -1,6 +1,7 @@
 "use client";
 
-// "One model. Three jobs.": what the player model does, as three white cards (hairline border, no
+// "One model. Three jobs.": what the player model does, as three white cards (sized after the onBlue
+// business page's "Every engagement is checked" cards: 20px semibold titles, 14px muted lines) (hairline border, no
 // shadow, the players' cards' family; navy type, the accent on a word). Each job has its title and line, a terminal where the agent visibly does the job (JobTerminal.tsx), and its
 // tags as a small skills list. The cards rise in one after the other when the section comes into view, once; each terminal runs once, the
 // first time its card is pointed at (JobTerminal.tsx). Copy and runs are in jobs-data.ts.
@@ -68,15 +69,15 @@ export function Jobs() {
             onPointerEnter={() =>
               setAsked((a) => (a[j.id] ? a : { ...a, [j.id]: true }))
             }
-            className="flex flex-col rounded-[32px] max-md:rounded-[24px] border border-slate-200/80 bg-white p-7 md:p-8"
+            className="flex flex-col rounded-[28px] max-md:rounded-[24px] border border-slate-200/80 bg-white px-6 pb-6 pt-7"
           >
-            <h3 className="font-display text-[26px] md:text-[30px] font-medium leading-tight tracking-tight text-[#0a1b33]">
+            <h3 className="font-display text-[20px] font-semibold leading-tight tracking-[-0.03em] text-[#0a1b33]">
               {j.title}
             </h3>
-            <p className="mt-3 font-sans text-[16px] leading-relaxed text-[#475569] xl:min-h-[3.25em]">
+            <p className="mt-[9px] font-sans text-[14px] leading-[1.5] tracking-[-0.01em] text-[#64748b] xl:min-h-[3em]">
               {j.body}
             </p>
-            <div className="mt-7">
+            <div className="mt-[26px]">
               <JobTerminal run={j.run} play={!!asked[j.id]} />
             </div>
             {/* The tags as the onBlue creators page's skills list: one soft panel, a row per tag, an
