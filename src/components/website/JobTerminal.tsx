@@ -2,10 +2,11 @@
 
 // A job's terminal window (Jobs.tsx): the agent doing the job, played step by step from its run
 // (jobs-data.ts). The command types in after the prompt with a caret; each step then lands in turn (a
-// progress bar filling, a line ticked off, a share growing to its bar) until the result, the status pill
-// turns from running to done, it rests, and the run starts again. It plays only while in view, from the
+// progress bar filling, a line ticked off, a share growing to its bar) until the result; it rests, and the
+// run starts again. It plays only while in view, from the
 // top each time it comes back; `lead` staggers the three so they never move in step. A real terminal: a
-// dark navy window with traffic-light dots, light type, the accent brightened (HI) so it reads on the dark
+// dark navy window, flat in its card (no shadow), its bar only the traffic-light dots, light type, the
+// accent brightened (HI) so it reads on the dark
 // (after the onBlue creators page's terminals). Reduced motion shows the finished run.
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
@@ -21,17 +22,15 @@ const HI = "text-[#6ea8ff]";
 const HI_BG = "bg-[#4f8fff]";
 
 export function JobTerminal({
-  id,
   run,
   lead = 0,
 }: {
-  id: string;
   run: Step[];
   lead?: number; // ms before its first run
 }) {
   const box = useRef<HTMLDivElement>(null);
   // steps fully shown, the one in progress (if any), and how much of a command is typed
-  const [at, setAt] = useState({ n: 0, busy: false, typed: 0, done: false });
+  const [at, setAt] = useState({ n: 0, busy: false, typed: 0 });
 
   useEffect(() => {
     const el = box.current;
@@ -42,7 +41,7 @@ export function JobTerminal({
     const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
     const play = async () => {
       while (alive) {
-        setAt({ n: 0, busy: false, typed: 0, done: false });
+        setAt({ n: 0, busy: false, typed: 0 });
         await wait(first ? 500 + lead : 700);
         first = false;
         for (let i = 0; i < run.length; i++) {
@@ -50,26 +49,25 @@ export function JobTerminal({
           const s = run[i];
           if (s.t === "cmd") {
             for (let c = 1; c <= s.text.length && alive; c++) {
-              setAt({ n: i, busy: true, typed: c, done: false });
+              setAt({ n: i, busy: true, typed: c });
               await wait(TYPE_MS);
             }
             await wait(280);
           } else {
-            setAt({ n: i, busy: true, typed: 0, done: false });
+            setAt({ n: i, busy: true, typed: 0 });
             await wait(s.t === "load" ? (s.ms ?? LOAD_MS) : STEP_MS[s.t]);
           }
           if (!alive) return;
-          setAt({ n: i + 1, busy: false, typed: 0, done: false });
+          setAt({ n: i + 1, busy: false, typed: 0 });
         }
-        setAt({ n: run.length, busy: false, typed: 0, done: true });
+        setAt({ n: run.length, busy: false, typed: 0 });
         await wait(HOLD_MS);
       }
     };
     const io = new IntersectionObserver(
       ([e]) => {
         // reduced motion: the finished run, as it is
-        if (still)
-          return setAt({ n: run.length, busy: false, typed: 0, done: true });
+        if (still) return setAt({ n: run.length, busy: false, typed: 0 });
         if (e.isIntersecting && !alive) {
           alive = true;
           play();
@@ -88,33 +86,12 @@ export function JobTerminal({
     <div
       ref={box}
       aria-hidden
-      className="overflow-hidden rounded-[16px] bg-[#0b1526] shadow-[0_24px_48px_-26px_rgba(10,27,51,0.55)] ring-1 ring-[#0a1b33]/10"
+      className="overflow-hidden rounded-[16px] bg-[#0b1526]"
     >
-      <div className="flex items-center justify-between border-b border-white/[0.06] bg-[#111d31] px-4 py-3">
-        <span className="flex items-center gap-3">
-          <span className="flex gap-1.5">
-            <i className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
-            <i className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
-            <i className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
-          </span>
-          <span className="font-mono text-[11px] text-slate-500">
-            6labs · {id}
-          </span>
-        </span>
-        <span
-          className={
-            "flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.12em] " +
-            (at.done ? "text-slate-500" : HI)
-          }
-        >
-          <span
-            className={
-              "h-1.5 w-1.5 rounded-full " +
-              (at.done ? "bg-slate-600" : HI_BG + " animate-pulse")
-            }
-          />
-          {at.done ? "done" : "running"}
-        </span>
+      <div className="flex gap-1.5 border-b border-white/[0.06] bg-[#111d31] px-4 py-3">
+        <i className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+        <i className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+        <i className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
       </div>
       <div className="h-[276px] px-4 py-4 font-mono text-slate-300 text-[12.5px] leading-[22px] max-md:h-[256px] max-md:text-[11.5px] max-md:leading-[20px]">
         {run.map((s, i) =>

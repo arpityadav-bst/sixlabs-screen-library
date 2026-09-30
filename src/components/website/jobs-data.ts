@@ -18,7 +18,6 @@ export type Step =
 
 export type Job = {
   id: string;
-  eyebrow: string;
   title: string;
   body: string;
   tags: string[];
@@ -28,7 +27,6 @@ export type Job = {
 export const JOBS: Job[] = [
   {
     id: "intelligence",
-    eyebrow: "Explains",
     title: "Intelligence",
     body: "Your KPIs say what happened. The model says why.",
     tags: ["Why, not just what", "Evidence clips", "BI plug-in"],
@@ -51,7 +49,6 @@ export const JOBS: Job[] = [
   },
   {
     id: "testing",
-    eyebrow: "Tests",
     title: "Testing",
     body: "Play the build like your players would.",
     tags: ["Functional", "Behavioral", "Large scale", "Localization"],
@@ -70,7 +67,6 @@ export const JOBS: Job[] = [
   },
   {
     id: "creation",
-    eyebrow: "Creates",
     title: "Game creation",
     body: "Read any game's core loop, economy and hooks straight from video. Then check every new build against it.",
     tags: ["Deconstruct", "Verify", "Observe"],

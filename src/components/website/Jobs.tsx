@@ -1,8 +1,7 @@
 "use client";
 
 // "One model. Three jobs.": what the player model does, as three white cards (hairline border, soft
-// shadow, the players' cards' family; navy type, the accent on the eyebrows and a word). Each job has its
-// eyebrow, title and line, a terminal where the agent visibly does the job (JobTerminal.tsx), and its
+// shadow, the players' cards' family; navy type, the accent on a word). Each job has its title and line, a terminal where the agent visibly does the job (JobTerminal.tsx), and its
 // tags. The cards rise in one after the other when the section comes into view, once; the terminals run
 // while they are in view. Copy and runs are in jobs-data.ts.
 import { motion } from "motion/react";
@@ -39,17 +38,14 @@ export function Jobs() {
             {...rise(0.1 + k * 0.12)}
             className="flex flex-col rounded-[32px] max-md:rounded-[24px] border border-slate-200/80 bg-white p-7 md:p-8 shadow-[0_1px_2px_rgba(10,27,51,0.04),0_24px_48px_-32px_rgba(10,27,51,0.25)]"
           >
-            <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent">
-              {j.eyebrow}
-            </span>
-            <h3 className="mt-3 font-display text-[26px] font-medium leading-tight tracking-tight text-[#0a1b33]">
+            <h3 className="font-display text-[26px] font-medium leading-tight tracking-tight text-[#0a1b33]">
               {j.title}
             </h3>
             <p className="mt-2 font-sans text-[15px] leading-relaxed text-[#64748b] xl:min-h-[4.9em]">
               {j.body}
             </p>
             <div className="mt-7">
-              <JobTerminal id={j.id} run={j.run} lead={k * 1100} />
+              <JobTerminal run={j.run} lead={k * 1100} />
             </div>
             <ul className="mt-6 flex flex-wrap gap-2 xl:mt-auto xl:pt-6">
               {j.tags.map((t) => (
