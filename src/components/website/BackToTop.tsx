@@ -48,7 +48,7 @@ export function BackToTop() {
       onClick={toTop}
       tabIndex={on ? 0 : -1}
       className={
-        "fixed bottom-6 right-6 z-40 grid h-11 w-11 place-items-center rounded-full border border-slate-200/80 bg-white text-[#0a1b33] shadow-[0_1px_2px_rgba(10,27,51,0.06),0_12px_28px_-12px_rgba(10,27,51,0.35)] transition-[opacity,transform,background-color] duration-300 hover:-translate-y-0.5 hover:bg-slate-50 max-md:bottom-4 max-md:right-4 max-md:h-10 max-md:w-10 " +
+        "fixed bottom-6 right-6 z-40 grid h-11 w-11 place-items-center rounded-full border border-slate-200/80 bg-white text-[#0a1b33] shadow-[0_1px_2px_rgba(10,27,51,0.06),0_12px_28px_-12px_rgba(10,27,51,0.35)] transition-[opacity,translate,background-color] duration-300 hover:-translate-y-0.5 hover:bg-slate-50 max-md:bottom-4 max-md:right-4 max-md:h-10 max-md:w-10 " +
         (on ? "opacity-100" : "pointer-events-none translate-y-2 opacity-0")
       }
     >
