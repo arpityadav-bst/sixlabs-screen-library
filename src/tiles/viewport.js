@@ -3,28 +3,17 @@
 // along its line of sight, so the design's full width stays in view with more floor above and below and
 // no added perspective distortion, but never further back than P.maxPull times: on a tall phone that
 // keeps the tiles a readable size (the design's full width would shrink them to a thumbnail), letting the
-// sides of the design fall off screen. A phone's floor box (P.aimIn, Hero.tsx: set below the copy) aims
-// into the tile field instead (P.portraitLook, world x and z), so the field's diagonal edge, which leaves
-// the design's top left empty for its copy, falls off the side and the box is tiles edge to edge. The grid
-// and characters are built to cover every aspect in ASPECTS.
+// sides of the design fall off screen. The grid and characters are built to cover every aspect in ASPECTS.
 import * as THREE from 'three';
 
 export const ASPECTS = [16 / 9, 2.6, 0.45]; // design, ultrawide, phone portrait
 
-// px (the live draw, floor.js): the box's height in CSS pixels, for aimIn's constant tile size
-export function placeCamera(camera, P, aspect, fog, px) {
+export function placeCamera(camera, P, aspect, fog) {
   const el = THREE.MathUtils.degToRad(P.elev), az = THREE.MathUtils.degToRad(P.azim);
-  // aimIn (a phone's short box under the copy): the pull grows with the box's height (aimPull at aimRefH px),
-  // so a tile keeps one size on every phone and a taller box shows more of them; a short box would otherwise
-  // show the same angle of floor in fewer pixels and shrink every tile. Without px (building the grid,
-  // casting) it takes maxPull, the widest view any phone box gets, so the grid covers them all.
-  const aim = px ? (P.aimPull ?? 1) * (px / (P.aimRefH ?? 380)) : P.maxPull ?? 2.4;
-  const d = P.dist * (P.aimIn ? aim : Math.min(P.maxPull ?? Infinity, Math.max(1, (P.W / P.H) / aspect)));
-  const [lx, lz] = P.aimIn ? P.portraitLook ?? [0, 0] : [0, 0];
-  const tx = lx, tz = lz;
+  const d = P.dist * Math.min(P.maxPull ?? Infinity, Math.max(1, (P.W / P.H) / aspect));
   camera.aspect = aspect;
-  camera.position.set(tx + d * Math.cos(el) * Math.sin(az), d * Math.sin(el), tz + d * Math.cos(el) * Math.cos(az));
-  camera.lookAt(tx, 0, tz);
+  camera.position.set(d * Math.cos(el) * Math.sin(az), d * Math.sin(el), d * Math.cos(el) * Math.cos(az));
+  camera.lookAt(0, 0, 0);
   camera.updateProjectionMatrix();
   camera.updateMatrixWorld();
   if (fog) { fog.near = d + P.fogNear; fog.far = d + P.fogFar; }
@@ -79,3 +68,35 @@ export function shownShare(camera, x, y, z, half) {
   const [cx, cy] = project(x, z);
   return { x: cx, y: cy, shown: area(clip(quad)) / Math.max(1e-9, area(quad)) };
 }
+
+// The highest point of the tile field on screen, as a share of the height from the top (0..1): the least
+// screen y of any tile's top corner across the screen's width (and a little past it). The field's diagonal edge makes
+// that the top right on a phone.
+export function fieldTop(camera, corners) {
+  const v = new THREE.Vector3();
+  let top = Infinity;
+  for (const p of corners) {
+    v.copy(p).project(camera);
+    if (Math.abs(v.x) <= 1.2) top = Math.min(top, (1 - v.y) / 2); // a little past the sides: a tile the edge cuts peaks there
+  }
+  return top;
+}
+
+// Lowers the picture until the field's highest point sits `clear` px from the top of an `h` px screen: the
+// camera and its aim slide up along the camera's own up axis, by the px needed at the aim's distance, a few
+// passes to settle (the floor tilts, so a slide is not quite a pure shift). A slide, not a view offset: the
+// anti-aliasing pass jitters the camera with view offsets and clears them after each frame (post.js).
+export function lowerView(camera, corners, h, clear) {
+  const up = new THREE.Vector3(), aim = new THREE.Vector3(0, 0, 0), tan = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+  for (let k = 0; k < 4; k++) {
+    const dy = clear - fieldTop(camera, corners) * h;
+    if (dy <= 0.5) return;
+    const s = dy * (2 * camera.position.distanceTo(aim) * tan) / h;
+    up.setFromMatrixColumn(camera.matrixWorld, 1).normalize();
+    camera.position.addScaledVector(up, s);
+    aim.addScaledVector(up, s);
+    camera.lookAt(aim);
+    camera.updateMatrixWorld();
+  }
+}
+

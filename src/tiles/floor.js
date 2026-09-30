@@ -14,16 +14,16 @@ import { addCharacters, preloadCharacters } from './characters.js';
 import { createCasts } from './casts.js';
 import { createFocusRig } from './focus-rig.js';
 import { startInteraction } from './interact.js';
-import { placeCamera, coverage, onSomeScreen, shownShare } from './viewport.js';
+import { placeCamera, coverage, onSomeScreen, shownShare, lowerView } from './viewport.js';
 import { tileGeometry } from './geometry.js';
 import { playIntro } from './intro.js';
 import { startAutoplay } from './autoplay.js';
 
 // distScale pulls the camera back (smaller tiles, more of them: the grid is built to what it sees); mixWaves
 // casts the second wave's characters on the middle tiles and the first wave's around them (casts.js).
-export async function createFloor(container, { params, base = '/tiles', isStatic = false, expose = false, introDelay = 0, onConvert = () => {}, distScale = 1, mixWaves = false, aimIn = false } = {}) {
+export async function createFloor(container, { params, base = '/tiles', isStatic = false, expose = false, introDelay = 0, onConvert = () => {}, distScale = 1, mixWaves = false } = {}) {
   const RAW0 = params ?? await fetch(`${base}/floor-params.json`).then((r) => r.json());
-  const RAW = { ...RAW0, dist: RAW0.dist * distScale, aimIn }; // aimIn: viewport.js
+  const RAW = distScale === 1 ? RAW0 : { ...RAW0, dist: RAW0.dist * distScale };
   const common = Object.assign({ W: 1920, H: 1080, assetBase: base }, RAW);
   const PF = Object.assign({}, common, RAW.states?.default ?? {}), PA = Object.assign({}, common, RAW.states?.shine ?? {});
   const P = PF;
@@ -43,7 +43,7 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
 
   // Camera on a fixed orbit around the floor origin, laid out at the 16:9 design frame (P.W x P.H).
   const camera = new THREE.PerspectiveCamera(P.fov, P.W / P.H, 0.1, 400);
-  placeCamera(camera, { ...P, aimIn: false }, P.W / P.H); // the design frame, which places the grid: never aimed in
+  placeCamera(camera, P, P.W / P.H);
   const az = THREE.MathUtils.degToRad(P.azim);
   const toCam = new THREE.Vector2(Math.sin(az), Math.cos(az)); // floor direction toward the camera
 
@@ -201,12 +201,18 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   // Live: a one-sample frame straight away, then progressive smoothing (post.js). Static renders take
   // the full supersampled frame in one go. Resizes re-run it; an unchanged size is skipped (the
   // observer also fires once when it starts).
-  let size = '';
+  let size = '', clearTop = 0, tops = null;
   const draw = (force = false) => {
     const w = Math.max(1, container.clientWidth), h = Math.max(1, container.clientHeight);
     if (`${w}x${h}` === size && !force) return;
     size = `${w}x${h}`;
-    placeCamera(camera, P, w / h, scene.fog, h);
+    placeCamera(camera, P, w / h, scene.fog);
+    // clearTop (setClearTop, a phone's copy above the floor): the view lowers until the field's highest tile
+    // sits that many px down, the floor's own ground filling the space above it (viewport.js)
+    if (clearTop) {
+      tops ??= cells.flatMap(([i, j]) => [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([a, b]) => new THREE.Vector3(cx(i) + a * half, tileH, cz(j) + b * half)));
+      lowerView(camera, tops, h, clearTop);
+    }
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(w, h, false);
     composer.setPixelRatio(window.devicePixelRatio);
@@ -268,6 +274,7 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
 
   return {
     reset: () => reset(), // the reset wave, on demand (autoplay.js)
+    setClearTop: (px) => { if (px === clearTop) return; clearTop = px; draw(true); },
     dispose() {
       disposed = true;
       resize.disconnect();

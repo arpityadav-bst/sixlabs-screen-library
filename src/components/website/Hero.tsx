@@ -23,6 +23,8 @@ const FULL_LEDE =
 // Digital copies start from the published figure and count up by one each time a character on the floor
 // becomes their AI copy.
 const COPIES_BASE = 10_956;
+// on a phone, the gap between the copy's last line and the highest tile, px
+const CLEAR = 32;
 
 // `full` (the 6labs-fullview page): the floor fills the whole first screen, edge to edge, instead of the
 // rounded container; the header lies over it, and the numbers, the scroll cue and the wave button sit
@@ -32,19 +34,27 @@ const COPIES_BASE = 10_956;
 export function Hero({ full = false }: { full?: boolean }) {
   const [floorReady, setFloorReady] = useState(false);
   const floor = useRef<FloorHandle | null>(null);
-  // Phones: the floor starts under the copy instead of fading beneath it. The section carries where the
-  // copy ends (--copy-b, px from its top), kept current as the copy's size changes.
+  // Phones: the copy spans the screen, so rather than fade the tiles under it, the floor's view is lowered
+  // until the field's highest tile (its diagonal edge rises to the top right) sits CLEAR px under the copy's
+  // last line; the floor keeps its own shape and the empty ground above it. Kept current as sizes change.
   const box = useRef<HTMLElement>(null);
   const copy = useRef<HTMLDivElement>(null);
+  const clear = useRef(0);
   useEffect(() => {
     const s = box.current,
       k = copy.current;
     if (!s || !k) return;
-    const set = () =>
-      s.style.setProperty(
-        "--copy-b",
-        `${Math.round(k.getBoundingClientRect().bottom - s.getBoundingClientRect().top)}px`,
-      );
+    const phone = window.matchMedia("(max-width: 767px)");
+    const set = () => {
+      clear.current = phone.matches
+        ? Math.round(
+            k.getBoundingClientRect().bottom -
+              s.getBoundingClientRect().top +
+              CLEAR,
+          )
+        : 0;
+      floor.current?.setClearTop(clear.current);
+    };
     const ro = new ResizeObserver(set);
     ro.observe(k);
     ro.observe(s);
@@ -98,11 +108,8 @@ export function Hero({ full = false }: { full?: boolean }) {
         }
       >
         {/* The glass tile floor replaces the prompt's background video. It takes pointer events so the
-          tiles stay interactive; the text layer above lets them through except on its own block. On a phone
-          the copy spans the screen, so the floor's box begins 20px under the copy's last line (--copy-b),
-          its top edge softened over 40px, and the floor aims into its tiles (aimIn), so the box is tiles edge to
-          edge, close up: the tiles lie below the words, never behind them. */}
-        <div className="absolute inset-0 z-0 overflow-hidden select-none max-md:top-[calc(var(--copy-b,60%)+20px)] max-md:[mask-image:linear-gradient(to_bottom,transparent,#000_40px)]">
+          tiles stay interactive; the text layer above lets them through except on its own block. */}
+        <div className="absolute inset-0 z-0 overflow-hidden select-none">
           {/* the logo placeholder fades out over 0.45s, then the tiles fade in */}
           <TileFloor
             className="w-full h-full"
@@ -117,12 +124,9 @@ export function Hero({ full = false }: { full?: boolean }) {
                 : 1
             }
             mixWaves={full}
-            aimIn={
-              typeof window !== "undefined" &&
-              window.matchMedia("(max-width: 767px)").matches
-            }
             onReady={(f) => {
               floor.current = f;
+              f.setClearTop(clear.current);
               setFloorReady(true);
             }}
             onConvert={() => setCopies((c) => c + 1)}
