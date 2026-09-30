@@ -24,7 +24,7 @@ const FULL_LEDE =
 // becomes their AI copy.
 const COPIES_BASE = 10_956;
 // on a phone, the gap between the copy's last line and the highest tile, px
-const CLEAR = 8; // the field top is measured a little past the screen edges, so the gap reads a touch wider
+const CLEAR = -12; // below zero: the field top is measured a little past the screen edges, so the gap on screen is wider than this
 
 // `full` (the 6labs-fullview page): the floor fills the whole first screen, edge to edge, instead of the
 // rounded container; the header lies over it, and the numbers, the scroll cue and the wave button sit
