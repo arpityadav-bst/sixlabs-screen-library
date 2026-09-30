@@ -12,8 +12,9 @@
 // it; one grid for all output (a glyph or label column, then the text); a blank line between a command's
 // working and its result; commands white, working grey, results light, and the accent on the run's answer
 // alone. While it waits, the window is not an empty dark box: the page's ASCII field (ascii-field.js) runs
-// in it, sparse light glyphs twinkling, held in a radial fall-off over a faint glow of the accent rising
-// from its foot; both fade out as the run begins, and the field then stops drawing. Reduced motion shows the finished
+// in it as it looks under the cursor, a bed of churning glyphs brightest at the middle and falling off to
+// the edges, held there with no pointer, faint, over a glow of the accent rising from the window's foot;
+// both fade out as the run begins, and the field then stops drawing. Reduced motion shows the finished
 // run the moment it is asked for.
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
@@ -28,7 +29,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 const HI = "text-[#6ea8ff]";
 const CURSOR =
   "inline-block h-[14px] w-[7px] translate-y-[2px] animate-pulse bg-slate-300";
-// the idle field's glyphs: slate at rest (the accent under a pointer, unused here), half strength
+// the idle field's glyphs: slate, warming to the lifted accent toward the pool's middle, half strength
 const FIELD_TINT = {
   "--ascii-a": "148, 163, 184",
   "--ascii-b": "110, 168, 255",
@@ -50,7 +51,14 @@ export function JobTerminal({ run, play }: { run: Step[]; play: boolean }) {
   useEffect(() => {
     const host = field.current;
     if (!host || host.firstChild) return;
-    mountAsciiField({ host, pointer: false, ambient: 0.2 });
+    // the pool, held a little below the middle and wide enough to reach the corners
+    mountAsciiField({
+      host,
+      pointer: false,
+      pool: { x: 0.5, y: 0.6 },
+      reach: 420,
+      lens: 0.5,
+    });
   }, []);
   useEffect(() => {
     if (!started) return;
@@ -128,11 +136,7 @@ export function JobTerminal({ run, play }: { run: Step[]; play: boolean }) {
           }
         >
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_65%_at_50%_100%,rgba(110,168,255,0.11),transparent)]" />
-          <div
-            ref={field}
-            style={FIELD_TINT}
-            className="absolute inset-0 [mask-image:radial-gradient(ellipse_90%_85%_at_50%_100%,#000,transparent)]"
-          />
+          <div ref={field} style={FIELD_TINT} className="absolute inset-0" />
         </div>
         <div className="relative">
           {!started ? (

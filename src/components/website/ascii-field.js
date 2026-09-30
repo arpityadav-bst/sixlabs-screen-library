@@ -9,7 +9,8 @@
      spec.track    what to listen to for the pointer when it is not the host (a host painted behind the
                    content never sees a pointermove over it)
      spec.pointer  false to leave the pointer pool unwired (touch screens have no hover)
-     spec.expose   called with { sweep } once the field is live */
+     spec.expose   called with { sweep } once the field is live
+     spec.pool     { x, y } in fractions of the host: a pool held there with no pointer (the idle terminals) */
 export function mountAsciiField(spec) {
   {
     var host = spec.host;
@@ -73,6 +74,7 @@ export function mountAsciiField(spec) {
       ctx.font = '11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
       ctx.textBaseline = 'middle';
       ctx.textAlign = 'center';
+      if (spec.pool) { px = spec.pool.x * w; py = spec.pool.y * h; tracking = true; }
     }
 
     /* resting tint and lens tint, both from the theme tokens: a canvas cannot
@@ -221,9 +223,7 @@ export function mountAsciiField(spec) {
     }
     function wake() { if (onScreen && !frame) { frame = requestAnimationFrame(tick); } }
 
-    /* 0.85s, not the hero's 4. That one is an ambient scan nobody is waiting on;
-       this one sits between a click and the thing the click asked for, and four
-       seconds of it would be the interface taking its time with someone else's. */
+    /* 0.85s, not the hero's 4: this one sits between a click and what it asked for. */
     /* ONE DEFINITION OF WHERE THE HEAD IS, in canvas fractions, read by the
        shader that paints the band and by the onStep that drives whatever the
        caller is masking. Two copies of this expression is how the glyphs and the
