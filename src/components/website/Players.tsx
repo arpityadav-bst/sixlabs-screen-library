@@ -74,7 +74,7 @@ export function Players() {
   const enter = (delay: number, to = 1) => ({
     initial: { opacity: 0, y: 24 },
     animate: revealed ? { opacity: to, y: 0 } : { opacity: 0, y: 24 },
-    transition: { duration: 0.6, ease, delay },
+    transition: { duration: 0.5, ease, delay },
   });
   const player = PLAYERS[active];
   // the real player or their AI copy, per player, switching by itself until the visitor picks one
@@ -100,7 +100,7 @@ export function Players() {
         />
 
         <div className="relative grid grid-cols-1 gap-8 max-lg:gap-4 lg:grid-cols-[minmax(0,480px)_1fr]">
-          <motion.div {...enter(0.75)} className="self-center">
+          <motion.div {...enter(0.2)} className="self-center">
             <AnimatePresence mode="wait">
               <motion.div
                 key={player.id}
@@ -127,7 +127,7 @@ export function Players() {
           </motion.div>
 
           <motion.div
-            {...enter(0.45)}
+            {...enter(0.1)}
             className="pointer-events-none relative mb-[calc(var(--ph)*-0.244)] flex items-end justify-center"
           >
             <AnimatePresence mode="popLayout">
@@ -183,7 +183,7 @@ export function Players() {
             return (
               <motion.button
                 key={p.id}
-                {...enter(k * 0.08, on ? 1 : UNSELECTED)}
+                {...enter(k * 0.05, on ? 1 : UNSELECTED)}
                 // always set (the selected card's is a no-op): removing it mid-hover strands the card lit at 0.85
                 whileHover={{ opacity: on ? 1 : 0.85 }}
                 type="button"
@@ -245,7 +245,7 @@ export function Players() {
           })}
         </div>
         {/* phones and tablets (the stacked layout): the selected player's traits, after the cards */}
-        <motion.div {...enter(0.3)} className="lg:hidden">
+        <motion.div {...enter(0.2)} className="lg:hidden">
           <PlayerTraits traits={player.traits} className="mt-8" />
         </motion.div>
       </div>

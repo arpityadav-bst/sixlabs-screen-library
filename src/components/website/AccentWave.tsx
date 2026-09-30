@@ -24,6 +24,7 @@ const GRAIN = 0.07; // noise strength on the blue
 // section after the players. Every one of those four glides is the same: GLIDE_S long, moving the moment
 // it starts and settling at the end (easeOut), so each one scroll is answered at once.
 const NUDGE = 8;
+const FULL_AT = 0.9; // how full the view is when it announces full (it counts as drained below 0.8)
 const GLIDE_S = 1.8;
 const DRAIN_VH = 1; // the way out past the players: a screen, as the next section comes up
 const PITCH = 6; // halftone grid, px; a dot of radius PITCH / 2 touches its neighbours
@@ -145,7 +146,8 @@ export function AccentWave() {
         }
         ctx.globalAlpha = 1;
       }
-      if (f >= 0.995) announce(true); // a hair of slack: a scroll can land a fraction short
+      // full enough to call it (FULL_AT): the players start coming in while the last of the blue settles
+      if (f >= FULL_AT) announce(true);
     };
     const glide = (to: number, v0: number, seconds: number) =>
       glideTo(to, seconds, easeOut, v0);
