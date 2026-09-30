@@ -46,7 +46,7 @@ export function Jobs() {
   return (
     <section
       id="jobs"
-      className="relative mx-auto w-full max-w-[1400px] px-4 pt-20 pb-24 md:px-16"
+      className="relative mx-auto w-full max-w-[1400px] px-4 pt-[clamp(96px,9vw,144px)] pb-24 md:px-16"
     >
       <motion.div {...rise(0)}>
         <h2 className="font-display text-[34px] md:text-[56px] font-medium leading-[1.05] tracking-tight text-[#0a1b33]">

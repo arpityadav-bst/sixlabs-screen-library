@@ -7,7 +7,7 @@
 // it watches the gameplay and now understands the game player (the accent). Each carries its maker's mark at
 // the top, both in the same line style (brand-marks.tsx), ours in the accent. They rise in one after the
 // other when the section comes into view, once. The section is only as tall as its cards, so the next
-// one (Jobs.tsx) follows close under them: nothing separates the two.
+// one (Jobs.tsx) follows under them at a block's distance (about 144px), not a whole section's.
 import { motion } from "motion/react";
 import { ChatGptMark, SixLabsMark } from "./brand-marks";
 
