@@ -170,10 +170,11 @@ export function Jobs() {
             <div className="mt-[26px]">
               <JobTerminal run={j.run} play={!!asked[j.id]} />
             </div>
-            {/* The tags as the onBlue creators page's skills list: one soft panel, a row per tag, an
-                accent line icon then the label, filling a column three rows deep before starting the next
-                (Testing's fourth sits beside its first), so every panel is three rows tall and they line up. */}
-            <ul className="mt-6 grid auto-cols-max grid-flow-col grid-rows-3 justify-start gap-x-8 gap-y-3 max-md:grid-flow-row max-md:grid-rows-none rounded-[12px] border border-slate-200/80 bg-[#f6f7f9] px-4 py-3.5">
+            {/* The tags as the onBlue creators page's skills list: one soft panel, an accent line icon then
+                the label, in two columns that share the panel's width (a single column left most of it
+                empty), two rows deep: the three-tag panels 2 + 1, Testing's four 2 x 2, so every panel is two
+                rows tall and they line up. On a phone, where the card is narrow, one column. */}
+            <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-3 max-md:grid-cols-1 rounded-[12px] border border-slate-200/80 bg-[#f6f7f9] px-4 py-3.5">
               {j.tags.map((t) => {
                 const Icon = TAG_ICON[t];
                 return (

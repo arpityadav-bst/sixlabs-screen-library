@@ -148,8 +148,8 @@ body {
   .logo-arc-0, .logo-arc-1, .logo-arc-2 { animation: none; }
 }
 
-/* The scroll line's "People lie" (ScrubLine.tsx) where the liquid is off (below a desktop): once the whole
-   line is lit it glitches as Canvas UI's Glitch does, a burst every 3s, 0.6s in, 0.36s long. A red copy
+/* The scroll line's "People lie" (ScrubLine.tsx) where the liquid is off (below a desktop): once those words
+   are lit they glitch as Canvas UI's Glitch does, a burst every 3s, 0.6s in, 0.36s long. A red copy
    and a cyan one, multiplied over the words, snap between torn slices shifted sideways. */
 .glitch-word { position: relative; }
 .glitch-word::before,

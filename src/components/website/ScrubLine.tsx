@@ -6,8 +6,8 @@
 // COMPLETE_AT of the track, so the finished line holds for a beat before the section leaves. Going
 // back up it empties faster (BACK), and once empty the page glides on up to the hero (TOP_S). The phrase
 // in ACCENT fills to the accent blue. Reduced motion shows it filled. On desktops the words show through a
-// liquid the cursor stirs (LiquidLine.tsx). Once the whole line is lit, its first GLITCH words ("People lie")
-// glitch now and then: in the liquid's shader on desktops, elsewhere as .glitch-word (globals.css).
+// liquid the cursor stirs (LiquidLine.tsx). Its first GLITCH words ("People lie") glitch now and then from
+// the moment they are lit: in the liquid's shader on desktops, elsewhere as .glitch-word (globals.css).
 import { useEffect, useRef, useState } from "react";
 import { FloatingBadges } from "./FloatingBadges";
 import { easeOut, glideTo, gliding } from "./glide";
@@ -53,7 +53,7 @@ export function ScrubLine() {
     return () => ro.disconnect();
   }, []);
   const [lit, setLit] = useState(0);
-  const full = lit >= WORDS.length; // the whole line lit: the glitch's cue
+  const glitching = lit >= GLITCH; // "People lie" lit: the glitch's cue
   // desktops: the words show through the liquid (LiquidLine.tsx), their own ink made transparent under it
   const [liquid, setLiquid] = useState(false);
 
@@ -142,7 +142,7 @@ export function ScrubLine() {
                       ? "text-accent"
                       : "text-[#0a1b33]"
                     : "text-[#0a1b33]/15") +
-                  (GLITCHES[k] && full && !liquid ? " glitch-word" : "")
+                  (GLITCHES[k] && glitching && !liquid ? " glitch-word" : "")
                 }
               >
                 {w}{" "}
@@ -154,7 +154,7 @@ export function ScrubLine() {
             lit={lit}
             accents={ACCENTS}
             glitches={GLITCHES}
-            glitch={full}
+            glitch={glitching}
             onLive={setLiquid}
           />
         </p>

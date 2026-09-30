@@ -107,10 +107,10 @@ export const PLAYERS: Player[] = [
       still: "/players/spender-ai-still.webp",
     },
     holoVideo: {
-      src: "/players-holo/spender-ai.webm?v=1",
+      src: "/players-holo/spender-ai.webm?v=2",
       straight: 0.48,
-      stacked: "/players-holo/spender-ai-stacked.mp4?v=1",
-      still: "/players-holo/spender-ai-still.webp",
+      stacked: "/players-holo/spender-ai-stacked.mp4?v=2",
+      still: "/players-holo/spender-ai-still.webp?v=2",
     },
     traits: traits(0.5, 0.35, 0.18, 0.45),
   },
