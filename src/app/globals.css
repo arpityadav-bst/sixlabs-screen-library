@@ -103,8 +103,13 @@ body {
 @keyframes tw-in {
   to { opacity: 1; }
 }
+/* The caret ends on 0, not 1. These run on the compositor, and while the page is busy at load (the tile
+   floor starting up) a finished caret can be held at its last keyframe until the main thread catches up:
+   ending on 1 left a spent caret lit behind the new one, two carets at once. Ending on 0, a held caret is
+   an unlit one. */
 @keyframes tw-turn {
-  from, to { opacity: 1; }
+  0%, 99% { opacity: 1; }
+  100% { opacity: 0; }
 }
 @keyframes tw-linger {
   0%, 34% { opacity: 1; }
