@@ -13,18 +13,35 @@
 import { SixLabsLogo } from "./brand-marks";
 
 // The picture is drawn as two halves pushed apart by SPREAD (% of its width): the players a little further
-// left, the copies a little further right, the empty white middle between them simply wider. Its halves
-// meet in that white, so the split never shows.
+// left, the copies a little further right, the empty white middle between them simply wider. Each half is
+// also drawn at SCALE, shrinking toward its own outer edge about the line of the feet (FEET, % of the
+// picture's height), so the people stand smaller on the same ground. The halves meet in the white, so the
+// split never shows.
 const SPREAD = 3;
+const SCALE = 0.85;
+const FEET = 88;
 const HALVES = [
-  "[clip-path:inset(0_50%_0_0)] -translate-x-[3%]",
-  "[clip-path:inset(0_0_0_50%)] translate-x-[3%]",
+  "[clip-path:inset(0_50%_0_0)] -translate-x-[3%] scale-[0.85] origin-[0%_88%]",
+  "[clip-path:inset(0_0_0_50%)] translate-x-[3%] scale-[0.85] origin-[100%_88%]",
 ];
 
-const LABELS: { text: string; x: number; y: number; strong?: boolean }[] = [
-  // x, y: where the leader line lands, in % of the picture
-  { text: "Real players", x: 16.7 - SPREAD, y: 14 },
-  { text: "1,000,000+ player models", x: 74.4 + SPREAD, y: 15, strong: true },
+// where a point of the picture lands once its half is moved and scaled (the translate, then the scale
+// about the half's origin, as CSS applies them)
+const place = (x: number, y: number, side: "l" | "r") => ({
+  left: side === "l" ? SCALE * x - SPREAD : 100 + SPREAD + SCALE * (x - 100),
+  top: FEET + SCALE * (y - FEET),
+});
+
+const LABELS: {
+  text: string;
+  x: number;
+  y: number;
+  side: "l" | "r";
+  strong?: boolean;
+}[] = [
+  // x, y: where the leader line lands, in % of the picture as generated
+  { text: "Real players", x: 16.7, y: 14, side: "l" },
+  { text: "1,000,000+ player models", x: 74.4, y: 15, side: "r", strong: true },
 ];
 
 const COPY = "block whitespace-nowrap";
@@ -78,27 +95,30 @@ export function CopyLine() {
       {/* clipped to the band: the picture's box runs past its foot, and unclipped it lengthened the page */}
       <div className="pointer-events-none absolute inset-0 z-[2] overflow-hidden max-lg:hidden">
         <div className={FIT}>
-          {LABELS.map(({ text, x, y, strong }) => (
-            <div
-              key={text}
-              className="absolute flex -translate-x-1/2 -translate-y-full flex-col items-center font-sans"
-              style={{ left: `${x}%`, top: `${y}%` }}
-            >
-              <span
-                className={
-                  "flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1 text-[12px] tracking-[-0.01em] " +
-                  (strong
-                    ? "border-transparent bg-[#0a152d] text-white"
-                    : "border-slate-200/80 bg-white/85 text-[#0a1b33]")
-                }
+          {LABELS.map(({ text, x, y, side, strong }) => {
+            const at = place(x, y, side);
+            return (
+              <div
+                key={text}
+                className="absolute flex -translate-x-1/2 -translate-y-full flex-col items-center font-sans"
+                style={{ left: `${at.left}%`, top: `${at.top}%` }}
               >
-                <i className="h-1.5 w-1.5 rounded-full bg-accent" />
-                {text}
-              </span>
-              <span className="h-7 w-px bg-[#0a1b33]/30" />
-              <span className="-mb-[3.5px] h-[7px] w-[7px] rounded-full border-2 border-white bg-accent" />
-            </div>
-          ))}
+                <span
+                  className={
+                    "flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1 text-[12px] tracking-[-0.01em] " +
+                    (strong
+                      ? "border-transparent bg-[#0a152d] text-white"
+                      : "border-slate-200/80 bg-white/85 text-[#0a1b33]")
+                  }
+                >
+                  <i className="h-1.5 w-1.5 rounded-full bg-accent" />
+                  {text}
+                </span>
+                <span className="h-7 w-px bg-[#0a1b33]/30" />
+                <span className="-mb-[3.5px] h-[7px] w-[7px] rounded-full border-2 border-white bg-accent" />
+              </div>
+            );
+          })}
         </div>
       </div>
 
