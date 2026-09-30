@@ -56,12 +56,12 @@ export function HeroNumbers({
               s.tone
             }
           >
-            {/* the live figure settles in from just above each time it counts up */}
+            {/* the live figure brightens in place each time it counts up (no drop in: it never moves) */}
             <motion.span
               key={s.value}
               className="inline-block"
-              initial={s.live ? { opacity: 0.35, y: -5 } : false}
-              animate={{ opacity: 1, y: 0 }}
+              initial={s.live ? { opacity: 0.4 } : false}
+              animate={{ opacity: 1 }}
               transition={{ duration: 0.45, ease }}
             >
               {s.value}

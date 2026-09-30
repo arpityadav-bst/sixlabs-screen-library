@@ -8,7 +8,6 @@
 // Otherwise (the container): the same as before, except the scroll cue and the wave button come in last,
 // once the tiles are in.
 import { useEffect, useState } from "react";
-import { getLenis } from "./SmoothScroll";
 
 export const FULL_TILES_AT = 1; // s after ready: the full view's tiles start rising (its floor's introDelay)
 const FULL = { copy: 0.35, floor: 0.85, header: 1.9, extras: 2.6 }; // s after ready
@@ -33,18 +32,32 @@ export function useHeroIntro(full: boolean, ready: boolean) {
     return () => window.clearTimeout(id);
   }, [full]);
 
-  // the page holds still at its top while the full view loads
+  // The page holds still at its top while the full view loads. The scroll input is caught before the page
+  // or the smooth scroll (Lenis) sees it; the page's overflow is left alone, since hiding the scrollbar
+  // would shift everything sideways by half its width, and back again as loading ends.
   useEffect(() => {
     if (!full || go) return;
-    const html = document.documentElement,
-      prev = html.style.overflow,
-      lenis = getLenis();
+    const KEYS = [
+      " ",
+      "ArrowDown",
+      "ArrowUp",
+      "PageDown",
+      "PageUp",
+      "Home",
+      "End",
+    ];
+    const hold = (e: Event) => {
+      if (e instanceof KeyboardEvent && !KEYS.includes(e.key)) return;
+      e.preventDefault();
+      e.stopPropagation();
+    };
+    const opts = { capture: true, passive: false };
     window.scrollTo(0, 0);
-    html.style.overflow = "hidden";
-    lenis?.stop();
+    for (const t of ["wheel", "touchmove", "keydown"])
+      window.addEventListener(t, hold, opts);
     return () => {
-      html.style.overflow = prev;
-      lenis?.start();
+      for (const t of ["wheel", "touchmove", "keydown"])
+        window.removeEventListener(t, hold, opts);
     };
   }, [full, go]);
 

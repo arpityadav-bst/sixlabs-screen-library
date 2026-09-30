@@ -129,20 +129,25 @@ body {
 @keyframes hero-copy-in {
   from { opacity: 0; }
 }
-/* The full view's loader (HeroLoader.tsx): each arc of the mark hops a little out from the core and back,
-   one after the other (their delays), round and round until the floor is ready. */
-.logo-hop {
-  animation: logo-hop 1.2s cubic-bezier(0.45, 0, 0.25, 1) infinite both;
+/* The full view's loader (HeroLoader.tsx): each arc of the mark breathes 3px out from the core, toward its
+   own middle, and back, easing all the way with no rest, a third of a turn after the one before (their
+   delays), so the wave runs round without a break. Transform only, on its own layer: the compositor runs it,
+   smooth even while the page is busy building the floor. */
+.logo-arc-0, .logo-arc-1, .logo-arc-2 {
+  animation: 1.2s ease-in-out infinite both;
+  will-change: transform;
 }
-@keyframes logo-hop {
-  0%, 36%, 100% { transform: translate(0, 0); }
-  16% { transform: translate(var(--hx), var(--hy)); }
-}
+.logo-arc-0 { animation-name: logo-arc-0; }
+.logo-arc-1 { animation-name: logo-arc-1; }
+.logo-arc-2 { animation-name: logo-arc-2; }
+@keyframes logo-arc-0 { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(-1.6px, -2.5px, 0); } }
+@keyframes logo-arc-1 { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(3px, 0, 0); } }
+@keyframes logo-arc-2 { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(-1.7px, 2.5px, 0); } }
 @media (prefers-reduced-motion: reduce) {
   .tw-letter { animation: none; opacity: 1; }
   .tw-letter::after { display: none; }
   .hero-copy-in { animation: none; }
-  .logo-hop { animation: none; }
+  .logo-arc-0, .logo-arc-1, .logo-arc-2 { animation: none; }
 }
 
 /* The footer's wordmark (CopyLine.tsx), after the onBlue creators page's: huge, cropped by the tail's
