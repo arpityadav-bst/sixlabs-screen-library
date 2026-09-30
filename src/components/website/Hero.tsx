@@ -17,7 +17,7 @@ const COPIES_BASE = 10_956;
 
 // `full` (the 6labs-fullview page): the floor fills the whole first screen, edge to edge, instead of the
 // rounded container; the header lies over it, and the numbers, the scroll cue and the wave button sit
-// inside it along its foot, on a soft fade into the page below.
+// inside it along its foot; a faint hairline divides it from the page below.
 export function Hero({ full = false }: { full?: boolean }) {
   const [floorReady, setFloorReady] = useState(false);
   const floor = useRef<FloorHandle | null>(null);
@@ -118,7 +118,7 @@ export function Hero({ full = false }: { full?: boolean }) {
         className={
           "relative bg-[#e3e5e8] overflow-hidden flex flex-col " +
           (full
-            ? "-mx-4 md:-mx-8 -mt-24 h-svh min-h-[640px]"
+            ? "-mx-4 md:-mx-8 -mt-24 h-svh min-h-[640px] border-b border-[#0a1b33]/[0.08]"
             : "w-full max-w-[1400px] mx-auto rounded-[48px] border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)] h-[664px] max-md:h-[720px] max-md:rounded-[32px]")
         }
       >
@@ -224,16 +224,7 @@ export function Hero({ full = false }: { full?: boolean }) {
             </div>
           </div>
         </div>
-        {full && (
-          <>
-            {/* the floor's foot fades into the page below, and the row of numbers sits on that fade */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[220px] bg-gradient-to-b from-transparent via-[#e3e5e8]/85 via-55% to-[rgb(var(--page-rgb))]"
-            />
-            {row}
-          </>
-        )}
+        {full && <>{row}</>}
       </section>
       {!full && row}
     </>
