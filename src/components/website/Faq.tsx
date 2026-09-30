@@ -23,7 +23,7 @@ export function Faq() {
             Questions, <span className="text-accent">answered.</span>
           </h2>
         </div>
-        <ul className="grid gap-2.5">
+        <ul className="grid gap-2.5 max-md:gap-2">
           {QUESTIONS.map(({ q, a }) => {
             const on = !!open[q];
             return (
@@ -40,9 +40,9 @@ export function Faq() {
                   type="button"
                   aria-expanded={on}
                   onClick={() => setOpen((o) => ({ ...o, [q]: !o[q] }))}
-                  className="flex w-full items-center justify-between gap-6 px-6 py-5 text-left"
+                  className="flex w-full items-center justify-between gap-6 px-6 py-5 text-left max-md:gap-4 max-md:px-5 max-md:py-4"
                 >
-                  <span className="font-display text-[17px] md:text-[18px] font-medium tracking-[-0.02em] text-[#0a1b33]">
+                  <span className="font-display text-[16px] md:text-[18px] font-medium leading-snug tracking-[-0.02em] text-[#0a1b33]">
                     {q}
                   </span>
                   {/* plus, turning to minus */}
@@ -65,7 +65,7 @@ export function Faq() {
                       transition={{ duration: 0.35, ease }}
                       className="overflow-hidden"
                     >
-                      <p className="max-w-[680px] px-6 pb-6 font-sans text-[15px] leading-[1.6] text-[#475569]">
+                      <p className="max-w-[680px] px-6 pb-6 font-sans text-[15px] leading-[1.6] text-[#475569] max-md:px-5 max-md:pb-5 max-md:text-[14px]">
                         {a}
                       </p>
                     </motion.div>

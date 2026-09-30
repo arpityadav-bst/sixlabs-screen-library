@@ -1,8 +1,11 @@
 "use client";
 
-// Third section, the players: straight on the page, no heading or panel. The selected player's title,
-// description and trait bars sit straight on the blue on the left, in white; their portrait fills the rest, large, its
-// chest fading out behind the four cards (it runs under them), over a soft blue glow. Four cards along the bottom pick the player (the first is selected).
+// Third section, the players: straight on the page, no heading or panel. From lg up, the selected player's
+// title, description and trait bars sit straight on the blue on the left, in white; their portrait fills the
+// rest, large, its chest fading out behind the four cards (it runs under them), over a soft blue glow. Four
+// cards along the bottom pick the player (the first is selected). Below lg the section is one view: the
+// portrait, the Human / AI switch on its faded chest, then the players as a carousel (PlayerCarousel.tsx)
+// of name, description and traits, so picking a player and seeing them never needs a scroll.
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { PLAYERS } from "./players-data";
@@ -12,6 +15,7 @@ import { ModeToggle } from "./ModeToggle";
 import { usePlayerMode } from "./usePlayerMode";
 import { PlayerDoodles } from "./PlayerDoodles";
 import { PlayerTraits } from "./PlayerTraits";
+import { PlayerArrows, PlayerCarousel } from "./PlayerCarousel";
 import { useClipFormat } from "./useClipFormat";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -88,7 +92,7 @@ export function Players() {
       id="players"
       style={fit}
       className={
-        "relative z-30 w-full max-w-[1400px] mx-auto -mt-[100vh] flex min-h-screen flex-col justify-center pt-24 pb-10 max-lg:justify-start max-md:pt-20 md:max-lg:pt-28 max-lg:pb-16 max-lg:[--ph:min(560px,120vw)]! lg:max-xl:[--ph:min(720px,calc((100svh-344px)/0.756),calc((100vw-640px)/0.75))]! " +
+        "relative z-30 w-full max-w-[1400px] mx-auto -mt-[100vh] flex min-h-screen flex-col justify-center pt-24 pb-10 max-lg:justify-start max-md:pt-20 md:max-lg:pt-28 max-lg:pb-16 max-lg:[--ph:clamp(240px,calc(100svh-500px),520px)]! lg:max-xl:[--ph:min(720px,calc((100svh-344px)/0.756),calc((100vw-640px)/0.75))]! " +
         (shown ? "" : "pointer-events-none") // hidden, it must not block the floating tiles under it
       }
     >
@@ -100,7 +104,7 @@ export function Players() {
         />
 
         <div className="relative grid grid-cols-1 gap-8 max-lg:gap-4 lg:grid-cols-[minmax(0,480px)_1fr]">
-          <motion.div {...enter(0.2)} className="self-center">
+          <motion.div {...enter(0.2)} className="self-center max-lg:hidden">
             <AnimatePresence mode="wait">
               <motion.div
                 key={player.id}
@@ -128,7 +132,7 @@ export function Players() {
 
           <motion.div
             {...enter(0.1)}
-            className="pointer-events-none relative mb-[calc(var(--ph)*-0.244)] flex items-end justify-center"
+            className="pointer-events-none relative flex items-end justify-center lg:mb-[calc(var(--ph)*-0.244)]"
           >
             <AnimatePresence mode="popLayout">
               <motion.div
@@ -171,13 +175,23 @@ export function Players() {
                 )}
               </motion.div>
             </AnimatePresence>
+            <div className="pointer-events-auto lg:hidden">
+              <PlayerArrows active={active} onChange={setActive} />
+            </div>
+          </motion.div>
+          {/* below lg: previous / next beside the portrait, and the switch on its faded chest */}
+          <motion.div
+            {...enter(0.15)}
+            className="relative z-10 -mt-7 flex justify-center lg:hidden"
+          >
+            <ModeToggle mode={mode} onChange={setMode} thumbId="mode-thumb-m" />
           </motion.div>
         </div>
 
         {/* Selector cards, each read as a model on file: the player type and a one-line read of them on top,
             its number and a status along the bottom under a hairline. The selected one, the model running,
             is pure white; the others are the same white at lower opacity, all on the page's accent blue. */}
-        <div className="relative z-10 mt-8 grid grid-cols-2 gap-4 max-md:gap-3 lg:grid-cols-4">
+        <div className="relative z-10 mt-8 grid grid-cols-4 gap-4 max-lg:hidden">
           {PLAYERS.map((p, k) => {
             const on = k === active;
             return (
@@ -244,9 +258,9 @@ export function Players() {
             );
           })}
         </div>
-        {/* phones and tablets (the stacked layout): the selected player's traits, after the cards */}
-        <motion.div {...enter(0.2)} className="lg:hidden">
-          <PlayerTraits traits={player.traits} className="mt-8" />
+        {/* phones and tablets: the players as a carousel under the switch */}
+        <motion.div {...enter(0.2)} className="relative z-10 mt-6 lg:hidden">
+          <PlayerCarousel active={active} onChange={setActive} />
         </motion.div>
       </div>
     </section>

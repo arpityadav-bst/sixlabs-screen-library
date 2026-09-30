@@ -8,7 +8,8 @@
 // it is multiplied into the page, so its white is the page and only the people show; those nearest the
 // word fade into the page around it. From a tablet up it runs the band's full width at its own
 // shape (FIT), so two spec labels in code, on leader lines, can sit in its own coordinates and land on the
-// same heads at any width (desktop only); on a phone it covers the band. Colour split on the word's two
+// same heads at any width (desktop only). A phone has no room for it: there the band is just the mark and
+// the word. Colour split on the word's two
 // ends only (.foot-word in globals.css).
 import { SixLabsLogo } from "./brand-marks";
 
@@ -72,7 +73,8 @@ export function CopyLine() {
     >
       <div
         className={
-          "absolute inset-0 overflow-hidden mix-blend-multiply " + RISE
+          "absolute inset-0 overflow-hidden mix-blend-multiply max-md:hidden " +
+          RISE
         }
       >
         {HALVES.map((half) => (

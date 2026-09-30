@@ -14,9 +14,11 @@ const OPTIONS: { id: Mode; label: string }[] = [
 export function ModeToggle({
   mode,
   onChange,
+  thumbId = "mode-thumb",
 }: {
   mode: Mode;
   onChange: (m: Mode) => void;
+  thumbId?: string; // each mounted switch its own, so two (desktop and phone placements) never trade thumbs
 }) {
   return (
     <div
@@ -40,7 +42,7 @@ export function ModeToggle({
           >
             {on && (
               <motion.span
-                layoutId="mode-thumb"
+                layoutId={thumbId}
                 className="absolute inset-0 rounded-full bg-white shadow-[0_6px_16px_-8px_rgba(10,27,51,0.45)]"
                 transition={{ type: "spring", stiffness: 500, damping: 40 }}
               />

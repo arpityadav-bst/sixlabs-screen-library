@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { LanguageMenu } from "./LanguageMenu";
+import { MobileMenu } from "./MobileMenu";
 import { linkTo, type Spot } from "./jump";
 
 // each tab glides to its section (jump.ts), in the page's order
@@ -70,12 +71,16 @@ export function Header() {
           ))}
         </div>
 
-        <div className="flex items-center gap-4 max-md:gap-2">
-          <LanguageMenu />
+        <div className="flex items-center gap-4 max-md:gap-1.5">
+          {/* on a phone the language moves into the menu, which takes the tabs too (MobileMenu.tsx) */}
+          <div className="max-md:hidden">
+            <LanguageMenu />
+          </div>
           {/* Secondary: outlined, so Try now in the hero stays the one solid CTA on the page. */}
           <button className="border border-slate-300 text-[#0a1b33] text-[15px] px-6 py-3 max-md:px-4 max-md:py-2 max-md:text-[14px] rounded-full hover:bg-white/70 hover:border-[#b7c0cb] transition-colors duration-200">
             Sign in
           </button>
+          <MobileMenu links={LINKS} />
         </div>
       </div>
     </nav>

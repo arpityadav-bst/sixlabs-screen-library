@@ -52,10 +52,11 @@ export function Hero() {
         </div>
 
         {/* Phones only: the copy covers most of the narrow container, so the floor's upper rows fade under a
-          scrim of the container colour and the tiles show clear in the lower part. */}
+          scrim of the container colour, solid down past the line of social proof so no tile shows through the
+          words, and the tiles show clear in the lower part. */}
         <div
           aria-hidden
-          className="md:hidden pointer-events-none absolute inset-x-0 top-0 z-10 h-[66%] bg-gradient-to-b from-[#e3e5e8] from-60% to-transparent"
+          className="md:hidden pointer-events-none absolute inset-x-0 top-0 z-10 h-[70%] bg-gradient-to-b from-[#e3e5e8] from-[76%] to-transparent"
         />
 
         {/* While the floor loads, the logo lies on the floor in the tiles' white glass, toward the bottom right

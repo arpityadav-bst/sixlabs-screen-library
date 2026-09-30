@@ -4,8 +4,11 @@
 // business page's "Every engagement is checked" cards: 20px medium titles, 14px muted lines) (hairline border, no
 // shadow, the players' cards' family; navy type, the accent on a word). Each job has its title and line, a terminal where the agent visibly does the job (JobTerminal.tsx), and its
 // tags as a small skills list. The cards rise in one after the other when the section comes into view, once; each terminal runs once, the
-// first time its card is pointed at (JobTerminal.tsx). Copy and runs are in jobs-data.ts.
-import { useState } from "react";
+// first time its card is pointed at (JobTerminal.tsx). Copy and runs are in jobs-data.ts. Below xl, where
+// three columns do not fit, the cards become one swipeable row (it scroll-snaps, a card a stop, the next one
+// peeking in) under a switch of the three jobs, so the section is one view instead of three tall cards in
+// a stack; on a touch screen each terminal runs as its card comes into view.
+import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import {
   CircleCheck,
@@ -47,6 +50,50 @@ const rise = (delay: number) => ({
 export function Jobs() {
   // which jobs have been pointed at: each terminal runs the first time its card is
   const [asked, setAsked] = useState<Record<string, true>>({});
+  // below xl: the row of cards and the job it rests on
+  const row = useRef<HTMLDivElement>(null);
+  const [shown, setShown] = useState(0);
+  // the cards rise in once the row itself is in view: a card waiting off to the side in the swipeable
+  // row is never in view on its own, and would stay hidden where it should peek in
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    const el = row.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setSeen(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.15 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const rest = useRef(0);
+  useEffect(() => () => window.clearTimeout(rest.current), []);
+  const cards = () => Array.from(row.current?.children ?? []) as HTMLElement[];
+  // a card's scroll position: its left edge at the row's padding
+  const stop = (el: HTMLElement, card: HTMLElement) =>
+    card.offsetLeft - (parseFloat(getComputedStyle(el).paddingLeft) || 0);
+  // the card nearest the row's start, once the row has come to rest
+  const onScroll = () => {
+    window.clearTimeout(rest.current);
+    rest.current = window.setTimeout(() => {
+      const el = row.current;
+      if (!el) return;
+      const d = cards().map((c) => Math.abs(stop(el, c) - el.scrollLeft));
+      setShown(d.indexOf(Math.min(...d)));
+    }, 120);
+  };
+  const show = (k: number) => {
+    const el = row.current,
+      card = cards()[k];
+    if (!el || !card) return;
+    setShown(k);
+    el.scrollTo({ left: stop(el, card), behavior: "smooth" });
+  };
   return (
     <section
       id="jobs"
@@ -61,11 +108,42 @@ export function Jobs() {
         </p>
       </motion.div>
 
-      <div className="mt-12 grid grid-cols-1 gap-6 xl:grid-cols-3">
+      {/* below xl: the switch of the three jobs */}
+      <div
+        role="tablist"
+        aria-label="The three jobs"
+        className="mt-8 inline-flex rounded-full border border-slate-200/80 bg-white p-1 xl:hidden"
+      >
+        {JOBS.map((j, k) => (
+          <button
+            key={j.id}
+            type="button"
+            role="tab"
+            aria-selected={k === shown}
+            onClick={() => show(k)}
+            className={
+              "rounded-full px-3.5 py-1.5 font-sans text-[13px] font-medium transition-colors duration-200 " +
+              (k === shown
+                ? "bg-[#0a152d] text-white"
+                : "text-[#64748b] hover:text-accent")
+            }
+          >
+            {j.title}
+          </button>
+        ))}
+      </div>
+
+      <div
+        ref={row}
+        onScroll={onScroll}
+        className="relative mt-12 grid grid-cols-1 gap-6 xl:grid-cols-3 max-xl:mt-5 max-xl:-mx-4 max-xl:flex max-xl:snap-x max-xl:snap-mandatory max-xl:gap-4 max-xl:overflow-x-auto max-xl:overscroll-x-contain max-xl:scroll-px-4 max-xl:px-4 max-xl:[scrollbar-width:none] max-xl:[&::-webkit-scrollbar]:hidden md:max-xl:-mx-16 md:max-xl:scroll-px-16 md:max-xl:px-16"
+      >
         {JOBS.map((j, k) => (
           <motion.article
             key={j.id}
-            {...rise(0.1 + k * 0.12)}
+            initial={{ opacity: 0, y: 28 }}
+            animate={seen ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+            transition={{ duration: 0.7, ease, delay: 0.1 + k * 0.12 }}
             onPointerEnter={() =>
               setAsked((a) => (a[j.id] ? a : { ...a, [j.id]: true }))
             }
@@ -81,7 +159,7 @@ export function Jobs() {
                 `${e.clientY - r.top}px`,
               );
             }}
-            className="sheen relative flex flex-col rounded-[28px] max-md:rounded-[24px] max-md:[--sheen-r:24px] border border-slate-200/80 bg-white px-6 pb-6 pt-7"
+            className="sheen relative flex flex-col rounded-[28px] max-md:rounded-[24px] max-md:[--sheen-r:24px] border border-slate-200/80 bg-white px-6 pb-6 pt-7 max-xl:w-[min(86%,560px)] max-xl:shrink-0 max-xl:snap-start max-md:px-5"
           >
             <h3 className="font-display text-[20px] font-medium leading-tight tracking-[-0.03em] text-[#0a1b33]">
               {j.title}
@@ -95,7 +173,7 @@ export function Jobs() {
             {/* The tags as the onBlue creators page's skills list: one soft panel, a row per tag, an
                 accent line icon then the label, filling a column three rows deep before starting the next
                 (Testing's fourth sits beside its first), so every panel is three rows tall and they line up. */}
-            <ul className="mt-6 grid auto-cols-max grid-flow-col grid-rows-3 justify-start gap-x-8 gap-y-3 rounded-[12px] border border-slate-200/80 bg-[#f6f7f9] px-4 py-3.5">
+            <ul className="mt-6 grid auto-cols-max grid-flow-col grid-rows-3 justify-start gap-x-8 gap-y-3 max-md:grid-flow-row max-md:grid-rows-none rounded-[12px] border border-slate-200/80 bg-[#f6f7f9] px-4 py-3.5">
               {j.tags.map((t) => {
                 const Icon = TAG_ICON[t];
                 return (
