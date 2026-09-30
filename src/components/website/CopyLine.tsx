@@ -106,7 +106,7 @@ export function CopyLine() {
           core (.mark-spin); a slight colour split at its edges, as the word's: a pale red copy a hair to the
           left and a pale cyan one a hair to the right, behind it and multiplied into the page, so they show
           only where they slip past its edge */}
-      <span className="absolute left-1/2 top-[calc(52px+0.2em)] h-[0.8em] w-[0.8em] -translate-x-1/2 md:top-[calc(100px+0.2em)]">
+      <span className="absolute left-1/2 top-[calc(72px+0.05em)] h-[0.8em] w-[0.8em] -translate-x-1/2 md:top-[calc(150px+0.05em)]">
         <SixLabsSilhouette
           spin
           className="absolute inset-0 h-full w-full -translate-x-[0.008em] text-[#f7a9ad] mix-blend-multiply"
@@ -119,7 +119,7 @@ export function CopyLine() {
       </span>
 
       {/* the clear air and the crest, then the word, standing whole a little up off the tail's hairline */}
-      <div className="relative z-[1] pt-[calc(52px+0.5em)] md:pt-[calc(100px+0.5em)]">
+      <div className="relative z-[1] pt-[calc(72px+0.5em)] md:pt-[calc(150px+0.5em)]">
         <span className="block h-[1em] overflow-hidden text-center">
           <span className="foot-word font-semibold tracking-[-0.055em] text-[#0a1b33]">
             <span className={COPY + " relative z-[1]"}>
