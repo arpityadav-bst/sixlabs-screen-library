@@ -16,14 +16,14 @@ const ease = [0.22, 1, 0.36, 1] as const;
 // ChatGPT's card in the hero container's look (Hero.tsx); ours in the primary, the Try now button's navy
 // (PrimaryCta.tsx), for the contrast
 const card =
-  "flex min-h-[300px] flex-col justify-between rounded-[48px] max-md:rounded-[32px] border p-8 md:min-h-[340px] md:p-12";
+  "flex min-h-[220px] flex-col justify-between rounded-[36px] max-md:rounded-[28px] border p-7 md:min-h-[260px] md:p-9";
 const theirs = card + " border-slate-200/50 bg-[#e3e5e8] text-[#0a1b33]";
 const ours = card + " border-transparent bg-[#0a152d] text-white";
 // the maker's mark and name, side by side, at the top of each card
-const lockup = "flex items-center gap-3";
-const name = "font-display text-[22px] font-medium tracking-tight";
+const lockup = "flex items-center gap-2.5";
+const name = "font-display text-[18px] font-medium tracking-tight";
 const line =
-  "mt-12 font-display text-[24px] md:text-[32px] font-medium leading-[1.25] tracking-tight";
+  "mt-10 font-display text-[20px] md:text-[26px] font-medium leading-[1.3] tracking-tight";
 const rise = (delay: number) => ({
   initial: { opacity: 0, y: 28 },
   whileInView: { opacity: 1, y: 0 },
@@ -40,7 +40,7 @@ export function Understands() {
       <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2">
         <motion.div {...rise(0)} className={theirs}>
           <span className={lockup}>
-            <ChatGptMark className="h-11 w-11" />
+            <ChatGptMark className="h-8 w-8" />
             <span className={name}>ChatGPT</span>
           </span>
           <p className={line}>
@@ -50,7 +50,7 @@ export function Understands() {
         </motion.div>
         <motion.div {...rise(0.15)} className={ours}>
           <span className={lockup}>
-            <SixLabsMark className="h-11 w-11" />
+            <SixLabsMark className="h-8 w-8" />
             <span className={name}>6labs</span>
           </span>
           <p className={line}>

@@ -53,10 +53,10 @@ export function Jobs() {
       className="relative mx-auto w-full max-w-[1400px] px-4 pt-[clamp(96px,9vw,144px)] pb-24 md:px-16"
     >
       <motion.div {...rise(0)}>
-        <h2 className="font-display text-[34px] md:text-[56px] font-medium leading-[1.05] tracking-tight text-[#0a1b33]">
+        <h2 className="font-display text-[30px] md:text-[44px] font-medium leading-[1.1] tracking-tight text-[#0a1b33]">
           One model. <span className="text-accent">Three jobs.</span>
         </h2>
-        <p className="mt-5 max-w-[520px] font-sans text-[16px] md:text-[18px] leading-relaxed text-[#64748b]">
+        <p className="mt-4 max-w-[520px] font-sans text-[15px] md:text-[16px] leading-relaxed text-[#64748b]">
           Everything comes from the model of your players.
         </p>
       </motion.div>
