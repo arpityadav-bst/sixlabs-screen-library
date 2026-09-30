@@ -74,9 +74,9 @@ export function Jobs() {
               <JobTerminal run={j.run} lead={k * 1100} />
             </div>
             {/* The tags as the onBlue creators page's skills list: one soft panel, a row per tag, an
-                accent line icon then the label, every label on the full width. The panel holds four rows in
-                every card, so the three line up whichever job has fewer. */}
-            <ul className="mt-6 space-y-3 rounded-[12px] border border-slate-200/80 bg-[#f6f7f9] px-4 py-3.5 xl:min-h-[146px]">
+                accent line icon then the label, filling a column three rows deep before starting the next
+                (Testing's fourth sits beside its first), so every panel is three rows tall and they line up. */}
+            <ul className="mt-6 grid auto-cols-max grid-flow-col grid-rows-3 justify-start gap-x-8 gap-y-3 rounded-[12px] border border-slate-200/80 bg-[#f6f7f9] px-4 py-3.5">
               {j.tags.map((t) => {
                 const Icon = TAG_ICON[t];
                 return (
