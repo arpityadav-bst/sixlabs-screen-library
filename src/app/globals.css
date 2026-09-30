@@ -130,8 +130,8 @@ body {
   .hero-copy-in { animation: none; }
 }
 
-/* The footer's wordmark (Footer.tsx), after the onBlue creators page's: huge, cropped by the page's foot,
-   the mark cresting from behind it, and its colour split only at the word's two ends (a pale red copy
+/* The footer's wordmark (CopyLine.tsx), after the onBlue creators page's: huge, cropped by the tail's
+   hairline in front of the landscape, and its colour split only at the word's two ends (a pale red copy
    nudged left, a pale cyan one nudged right, each masked to its own end and multiplied over the navy, so
    the fringe shows only where a copy slips past a letter's edge), so the middle stays clean. */
 .foot-word {
@@ -161,12 +161,6 @@ body {
   -webkit-mask-image: linear-gradient(270deg, #000 0%, transparent 16%);
   mask-image: linear-gradient(270deg, #000 0%, transparent 16%);
 }
-/* the mark cresting from behind the word: solid through its top half, then a long fall to nothing */
-.foot-sun {
-  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 38%, rgba(0, 0, 0, 0.34) 66%, transparent 92%);
-  mask-image: linear-gradient(180deg, #000 0%, #000 38%, rgba(0, 0, 0, 0.34) 66%, transparent 92%);
-}
-
 /* The noise from the fourth section to the foot (page.tsx), as the onBlue creators page's bands carry it:
    a fractal-noise tile multiplied faintly into the page's white, under the content. Its ground covers the
    ASCII field from here down (the hero has its own texture, the line the field, the players their grain),
