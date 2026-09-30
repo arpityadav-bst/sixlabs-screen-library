@@ -6,7 +6,7 @@
 // tags as a small skills list. The cards rise in one after the other when the section comes into view, once; each terminal runs once, the
 // first time its card is pointed at (JobTerminal.tsx). Copy and runs are in jobs-data.ts. Below xl, where
 // three columns do not fit, the cards become one swipeable row (it scroll-snaps, a card a stop, the next one
-// peeking in) under a switch of the three jobs, so the section is one view instead of three tall cards in
+// peeking in by 20px past the content's edge, so a card is as wide as the switch above it or wider) under a switch of the three jobs, so the section is one view instead of three tall cards in
 // a stack; on a touch screen each terminal runs as its card comes into view.
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
@@ -159,7 +159,7 @@ export function Jobs() {
                 `${e.clientY - r.top}px`,
               );
             }}
-            className="sheen relative flex flex-col rounded-[28px] max-md:rounded-[24px] max-md:[--sheen-r:24px] border border-slate-200/80 bg-white px-6 pb-6 pt-7 max-xl:w-[min(86%,560px)] max-xl:shrink-0 max-xl:snap-start max-md:px-5"
+            className="sheen relative flex flex-col rounded-[28px] max-md:rounded-[24px] max-md:[--sheen-r:24px] border border-slate-200/80 bg-white px-6 pb-6 pt-7 max-xl:w-[min(calc(100%-20px),560px)] max-xl:shrink-0 max-xl:snap-start max-md:px-5"
           >
             <h3 className="font-display text-[20px] font-medium leading-tight tracking-[-0.03em] text-[#0a1b33]">
               {j.title}

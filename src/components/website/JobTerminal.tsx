@@ -128,7 +128,7 @@ export function JobTerminal({ run, play }: { run: Step[]; play: boolean }) {
         <i className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
         <i className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
       </div>
-      <div className="relative h-[300px] px-4 py-4 font-[family-name:var(--font-jbmono)] text-[12.5px] leading-[22px] text-slate-400 max-md:h-[272px] max-md:text-[11.5px] max-md:leading-[20px]">
+      <div className="relative h-[300px] px-4 py-4 font-[family-name:var(--font-jbmono)] text-[12.5px] leading-[22px] text-slate-400 max-md:h-[292px] max-md:text-[11.5px] max-md:leading-[20px]">
         <div
           className={
             "pointer-events-none absolute inset-0 transition-opacity duration-700 " +
