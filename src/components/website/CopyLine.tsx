@@ -5,8 +5,8 @@
 // with no text in it): our players and a crowd behind them walk in from the left toward the mark, and come
 // out on the right as their AI copies, in their own clothes with a plain white face (as in the hero's tiles) and the
 // blue lines at the neck, so the brand in the middle is where the copying happens. The picture has no ground and no scene:
-// it is multiplied into the page, so its white is the page and only the people show, and their legs
-// dissolve into the page before the hairline. From a tablet up it runs the band's full width at its own
+// it is multiplied into the page, so its white is the page and only the people show; those nearest the
+// word fade into the page around it. From a tablet up it runs the band's full width at its own
 // shape (FIT), so two spec labels in code, on leader lines, can sit in its own coordinates and land on the
 // same heads at any width (desktop only); on a phone it covers the band. Colour split on the word's two
 // ends only (.foot-word in globals.css).
@@ -36,9 +36,10 @@ export const Word = ({ plain }: { plain?: boolean }) => (
   </>
 );
 
-// the picture's edges: a hair at the top, and a long dissolve of the legs into the page at the foot
+// the picture fades only near the wordmark: an ellipse on the band's foot, about the word's width and
+// height, clear at its middle and whole by its rim; everywhere else the picture runs to the band's edges
 const RISE =
-  "[mask-image:linear-gradient(to_bottom,transparent_0%,#000_4%,#000_58%,rgba(0,0,0,0.72)_70%,rgba(0,0,0,0.38)_82%,rgba(0,0,0,0.12)_92%,transparent_100%)]";
+  "[mask-image:radial-gradient(ellipse_32%_58%_at_50%_100%,transparent_0%,transparent_45%,#000_100%)]";
 // the picture's box: on a phone it covers the band; from a tablet up it is the band's width at the
 // picture's own shape (2688 x 1152, so 42.857% of the width tall), set so a twentieth of its extra height is cropped from the top
 const FIT =
