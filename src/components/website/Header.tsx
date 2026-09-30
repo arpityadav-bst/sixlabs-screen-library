@@ -93,10 +93,11 @@ export function Header({ clear = false }: { clear?: boolean }) {
           <div className="max-md:hidden">
             <LanguageMenu />
           </div>
-          {/* Secondary: outlined, so Try now in the hero stays the one solid CTA on the page. */}
+          {/* Secondary: outlined, so Try now in the hero stays the one solid CTA on the page; and medium
+              (14px, about 38px tall; 13px and 32px on a phone), the large size being the hero's. */}
           <button
             data-cta
-            className="border border-slate-300 text-[#0a1b33] text-[15px] px-6 py-3 max-md:px-4 max-md:py-2 max-md:text-[14px] rounded-full hover:bg-white/70 hover:border-[#b7c0cb] transition-colors duration-200"
+            className="border border-slate-300 text-[#0a1b33] text-[14px] px-5 py-2 max-md:px-3.5 max-md:py-1.5 max-md:text-[13px] rounded-full hover:bg-white/70 hover:border-[#b7c0cb] transition-colors duration-200"
           >
             Sign in
           </button>
