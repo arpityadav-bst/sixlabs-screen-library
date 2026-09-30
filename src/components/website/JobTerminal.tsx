@@ -11,12 +11,14 @@
 // Set clean: JetBrains Mono; a command at the left after its prompt and everything it prints indented under
 // it; one grid for all output (a glyph or label column, then the text); a blank line between a command's
 // working and its result; commands white, working grey, results light, and the accent on the run's answer
-// alone. While it waits, a faint glow of the accent rises from the window's foot (a radial gradient), so
-// the window is not an empty dark box; it fades out as the run begins. Reduced motion shows the finished
+// alone. While it waits, the window is not an empty dark box: the page's ASCII field (ascii-field.js) runs
+// in it, sparse light glyphs twinkling, held in a radial fall-off over a faint glow of the accent rising
+// from its foot; both fade out as the run begins, and the field then stops drawing. Reduced motion shows the finished
 // run the moment it is asked for.
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import type { Step } from "./jobs-data";
+import { mountAsciiField } from "./ascii-field";
 
 const TYPE_MS = 34; // per typed character
 const STEP_MS = { out: 420, kv: 420, check: 200, bar: 360 } as const;
@@ -26,6 +28,12 @@ const ease = [0.22, 1, 0.36, 1] as const;
 const HI = "text-[#6ea8ff]";
 const CURSOR =
   "inline-block h-[14px] w-[7px] translate-y-[2px] animate-pulse bg-slate-300";
+// the idle field's glyphs: slate at rest (the accent under a pointer, unused here), half strength
+const FIELD_TINT = {
+  "--ascii-a": "148, 163, 184",
+  "--ascii-b": "110, 168, 255",
+  "--ascii": 0.5,
+} as React.CSSProperties;
 
 export function JobTerminal({ run, play }: { run: Step[]; play: boolean }) {
   const box = useRef<HTMLDivElement>(null);
@@ -36,6 +44,21 @@ export function JobTerminal({ run, play }: { run: Step[]; play: boolean }) {
   const began = useRef(false); // the run, once begun, is never begun again (nor stopped by its own start)
   // touch screens have no hover: there the terminal runs when it comes into view
   const [seen, setSeen] = useState(false);
+  const field = useRef<HTMLDivElement>(null);
+
+  // the idle field: mounted once; hidden once the run has faded it, which stops its drawing
+  useEffect(() => {
+    const host = field.current;
+    if (!host || host.firstChild) return;
+    mountAsciiField({ host, pointer: false, ambient: 0.2 });
+  }, []);
+  useEffect(() => {
+    if (!started) return;
+    const t = setTimeout(() => {
+      if (field.current) field.current.style.display = "none";
+    }, 800);
+    return () => clearTimeout(t);
+  }, [started]);
 
   useEffect(() => {
     const el = box.current;
@@ -100,10 +123,17 @@ export function JobTerminal({ run, play }: { run: Step[]; play: boolean }) {
       <div className="relative h-[300px] px-4 py-4 font-[family-name:var(--font-jbmono)] text-[12.5px] leading-[22px] text-slate-400 max-md:h-[272px] max-md:text-[11.5px] max-md:leading-[20px]">
         <div
           className={
-            "pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_75%_65%_at_50%_100%,rgba(110,168,255,0.11),transparent)] transition-opacity duration-700 " +
+            "pointer-events-none absolute inset-0 transition-opacity duration-700 " +
             (started ? "opacity-0" : "opacity-100")
           }
-        />
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_65%_at_50%_100%,rgba(110,168,255,0.11),transparent)]" />
+          <div
+            ref={field}
+            style={FIELD_TINT}
+            className="absolute inset-0 [mask-image:radial-gradient(ellipse_90%_85%_at_50%_100%,#000,transparent)]"
+          />
+        </div>
         <div className="relative">
           {!started ? (
             // waiting: an empty prompt, the cursor blinking
