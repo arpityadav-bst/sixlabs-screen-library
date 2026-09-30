@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { TileFloor, type FloorHandle } from "@/components/tiles/TileFloor";
 import { ScrollCue } from "./ScrollCue";
 import { PrimaryCta } from "./PrimaryCta";
+import { TypedWord } from "./TypedWord";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -97,7 +98,7 @@ export function Hero() {
             className="flex-1 flex flex-col items-start pb-10 md:pb-12"
           >
             <h1 className="font-display text-[34px] md:text-[56px] font-medium tracking-tight leading-[1.05] text-[#0a1b33]">
-              Making <span className="text-accent">models</span> of
+              Making <TypedWord word="models" className="text-accent" /> of
               <br />
               human players.
             </h1>
