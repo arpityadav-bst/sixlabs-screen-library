@@ -23,7 +23,7 @@ const ours = card + " border-transparent bg-[#0a152d] text-white";
 const lockup = "flex items-center gap-2.5";
 // the names at one visible weight: white on the navy reads heavier than navy on the grey, so 6labs sits a
 // step lighter than ChatGPT for the two to look the same. The lines sit a step back from the names, both
-// softened (navy at 80%, white at 75%) so neither card's line glares
+// softened (navy at 65%, white at 75%, which read as one weight on their grounds) so neither glares
 const name = "font-display text-[22px] tracking-tight";
 const line =
   "mt-6 font-display text-[20px] md:text-[26px] font-normal leading-[1.3] tracking-tight";
@@ -46,7 +46,7 @@ export function Understands() {
             <ChatGptMark className="h-8 w-8" />
             <span className={name + " font-medium"}>ChatGPT</span>
           </span>
-          <p className={line + " text-[#0a1b33]/80"}>
+          <p className={line + " text-[#0a1b33]/65"}>
             It reads the internet and now it understands facts and how humans
             think.
           </p>
