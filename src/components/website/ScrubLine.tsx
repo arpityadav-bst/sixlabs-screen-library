@@ -5,10 +5,12 @@
 // so you scroll through the sentence while each word fills from faint to full ink. The fill completes at
 // COMPLETE_AT of the track, so the finished line holds for a beat before the section leaves. Going
 // back up it empties faster (BACK), and once empty the page glides on up to the hero (TOP_S). The phrase
-// in ACCENT fills to the accent blue. Reduced motion shows it filled.
+// in ACCENT fills to the accent blue. Reduced motion shows it filled. On desktops the words show through a
+// liquid the cursor stirs (LiquidLine.tsx).
 import { useEffect, useRef, useState } from "react";
 import { FloatingBadges } from "./FloatingBadges";
 import { easeOut, glideTo, gliding } from "./glide";
+import { LiquidLine } from "./LiquidLine";
 
 const LINE =
   "A model is built from what the person does, not what they say. Put a thousand models on a new build and you know how it will land before anyone plays it.";
@@ -28,6 +30,9 @@ const WORDS = LINE.split(" ");
 const accentAt = WORDS.findIndex(
   (w, k) => w === "a" && WORDS[k + 1] === "thousand",
 );
+const ACCENTS = WORDS.map(
+  (_, k) => k >= accentAt && k < accentAt + ACCENT.length,
+);
 
 export function ScrubLine() {
   const track = useRef<HTMLElement>(null);
@@ -45,6 +50,8 @@ export function ScrubLine() {
     return () => ro.disconnect();
   }, []);
   const [lit, setLit] = useState(0);
+  // desktops: the words show through the liquid (LiquidLine.tsx), their own ink made transparent under it
+  const [liquid, setLiquid] = useState(false);
 
   useEffect(() => {
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -112,10 +119,13 @@ export function ScrubLine() {
         <p
           ref={words}
           aria-hidden
-          className="relative max-w-[980px] text-center font-display text-[26px] md:text-[44px] font-medium leading-[1.3] tracking-tight"
+          className={
+            "relative max-w-[980px] text-center font-display text-[26px] md:text-[44px] font-medium leading-[1.3] tracking-tight" +
+            (liquid ? " [&>span]:text-transparent!" : "")
+          }
         >
           {WORDS.map((w, k) => {
-            const accent = k >= accentAt && k < accentAt + ACCENT.length;
+            const accent = ACCENTS[k];
             const on = k < lit;
             return (
               <span
@@ -133,6 +143,12 @@ export function ScrubLine() {
               </span>
             );
           })}
+          <LiquidLine
+            para={words}
+            lit={lit}
+            accents={ACCENTS}
+            onLive={setLiquid}
+          />
         </p>
       </div>
     </section>
