@@ -65,7 +65,13 @@ export function SixLabsMark({ className }: { className?: string }) {
 // blades, deep at the top left and lit toward the bottom right, a faint light line just inside each edge
 // for the bevel, and a navy core with a soft highlight. The footer's mark cresting behind the wordmark
 // (CopyLine.tsx).
-export function SixLabsCobalt({ className }: { className?: string }) {
+export function SixLabsCobalt({
+  className,
+  spin,
+}: {
+  className?: string;
+  spin?: boolean; // the three blades turn slowly about the core (.mark-spin in globals.css)
+}) {
   const id = useId();
   return (
     <svg viewBox="18 12.99 95.04 105.54" className={className} aria-hidden>
@@ -86,18 +92,20 @@ export function SixLabsCobalt({ className }: { className?: string }) {
         ))}
       </defs>
       <circle cx="65.52" cy="65.76" r="15.41" fill={`url(#${id}-c)`} />
-      {ARCS.map((d, k) => (
-        <g key={k}>
-          <path d={d} fill={`url(#${id}-b)`} />
-          <path
-            d={d}
-            fill="none"
-            stroke="rgba(160,190,255,0.35)"
-            strokeWidth={1.6}
-            clipPath={`url(#${id}-${k})`}
-          />
-        </g>
-      ))}
+      <g className={spin ? "mark-spin" : undefined}>
+        {ARCS.map((d, k) => (
+          <g key={k}>
+            <path d={d} fill={`url(#${id}-b)`} />
+            <path
+              d={d}
+              fill="none"
+              stroke="rgba(160,190,255,0.35)"
+              strokeWidth={1.6}
+              clipPath={`url(#${id}-${k})`}
+            />
+          </g>
+        ))}
+      </g>
     </svg>
   );
 }
