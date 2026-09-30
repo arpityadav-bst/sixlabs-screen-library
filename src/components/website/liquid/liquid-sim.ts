@@ -2,12 +2,15 @@
 // fluid simulation, and its flow drags the picture, splits its colours in a lens round the cursor, and lights
 // it with a sheen and a rainbow shimmer where it runs; a click splashes. The picture is a canvas the caller
 // draws (the sentence); frame() is called before every frame, returning true when it has redrawn it.
-// Settings are the Liquid Object demo's (the ones pasted in): distortion 2, aberration 0.75, grain 1, sheen
-// 1.6, cursor size 1, persistence 0.6, swirl 0.5, iridescence 1.5, splash 1.2, ambient 1.
+// Settings start from the Liquid Object demo's (distortion 2, aberration 0.75, grain 1, sheen 1.6, cursor size
+// 1, persistence 0.6, swirl 0.5, iridescence 1.5, splash 1.2, ambient 1), then: no idle drift (ambient 0) and
+// no grain away from the cursor, so the words hold still until the cursor comes; and what the cursor does is
+// HOVER (0.3) of the demo's, 70% less: its drag, colour split, sheen, shimmer, grain and splash.
 import * as THREE from "three";
 import * as S from "./shaders";
 
-const OPT = { distortion: 2, aberration: 0.75, grain: 1, sheen: 1.6, cursorSize: 1, cursorForce: 1, persistence: 0.6, swirl: 0.5, iridescence: 1.5, splash: 1.2, ambient: 1 };
+const HOVER = 0.3;
+const OPT = { distortion: 2 * HOVER, aberration: 0.75 * HOVER, grain: 1 * HOVER, sheen: 1.6 * HOVER, cursorSize: 1, cursorForce: 1, persistence: 0.6, swirl: 0.5, iridescence: 1.5 * HOVER, splash: 1.2 * HOVER, ambient: 0 };
 const SIM_RES = 128, FIELD_RES = 256, PRESSURE_STEPS = 4, SIM_STEP = 1 / 60;
 
 export function createLiquid(canvas: HTMLCanvasElement, picture: HTMLCanvasElement, frame: () => boolean) {

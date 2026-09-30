@@ -3,7 +3,7 @@
 // chromatic lens at the cursor, a sheen and a rainbow shimmer where it flows, and film grain. Only the
 // composite differs from the original: it drags a flat picture (the sentence, drawn to a canvas) rather than
 // a rendered 3D scene, adds only the light the flow makes (none at rest, so the words keep their colours
-// exactly while still), and skips the scene's tone mapping.
+// exactly while still), keeps its grain to the cursor's lens, and skips the scene's tone mapping.
 
 export const QUAD_VERT = `
 out vec2 vUv;
@@ -189,6 +189,6 @@ void main() {
 
   color = toSrgb(clamp(color, 0.0, 1.0));
   float grainN = fract(sin(dot(gl_FragCoord.xy + vec2(uTime * 127.1, uTime * 311.7), vec2(12.9898, 78.233))) * 43758.5453);
-  vec3 blended = color * alpha + (grainN - 0.5) * uGrain * (0.35 + 0.65 * lens) * 0.14 * alpha;
+  vec3 blended = color * alpha + (grainN - 0.5) * uGrain * lens * 0.14 * alpha; // grain only in the cursor's lens
   fragColor = vec4(max(blended, 0.0), alpha);
 }`;
