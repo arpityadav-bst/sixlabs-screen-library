@@ -89,7 +89,7 @@ export function Hero({ full = false }: { full?: boolean }) {
   const row = (
     <>
       {/* Outside the container, one row: the scroll cue under its bottom-left corner, the headline numbers
-            centred, the wave button under its bottom-right corner. */}
+            centred, the wave button under its bottom-right corner (on a phone it sits in the container). */}
       <div className="w-full max-w-[1400px] mx-auto mt-10 max-md:mt-8 px-8 max-md:px-2 md:px-16 grid grid-cols-[1fr_auto_1fr] items-start max-md:relative max-md:flex max-md:justify-center">
         <div className={"-ml-10 max-md:hidden flex " + fade(intro.extras)}>
           <ScrollCue />
@@ -97,10 +97,7 @@ export function Hero({ full = false }: { full?: boolean }) {
         {numbers(false)}
         <div
           inert={!intro.extras}
-          className={
-            "flex justify-end max-md:absolute max-md:right-2 max-md:top-1 " +
-            fade(intro.extras)
-          }
+          className={"flex justify-end max-md:hidden " + fade(intro.extras)}
         >
           {wave}
         </div>
@@ -245,6 +242,18 @@ export function Hero({ full = false }: { full?: boolean }) {
             </div>
           </div>
         </div>
+        {/* the container on a phone: the wave button inside, in its bottom right corner, as far from the right
+            edge as from the bottom, filled as the full view's */}
+        {!full && (
+          <div
+            inert={!intro.extras}
+            className={
+              "absolute bottom-5 right-5 z-20 md:hidden " + fade(intro.extras)
+            }
+          >
+            <WaveButton full onClick={() => floor.current?.reset()} />
+          </div>
+        )}
         {full && (
           <>
             {/* the scroll cue low at the left, in line with the copy, well clear above where the tiles begin */}
