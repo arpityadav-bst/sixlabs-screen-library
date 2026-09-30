@@ -11,6 +11,15 @@ import { TypedWord } from "./TypedWord";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
+// The full view's headline and its line, on the onBlue creators hero's scale (onblue-vesper/onblue.css,
+// --h1 and --lede by width): the title 34 / 36 / 42 / 54 / 64 / 76 / 88px from phones to 2560px screens,
+// the line 16 / 16.5 / 15 / 16 / 18 / 20 / 22px at a 1.55 leading, its measure widening with them. Only a
+// screen under 720px tall caps the title at 48px, so the copy, numbers and scroll cue still fit it.
+const FULL_TITLE =
+  "text-[34px] min-[561px]:text-[36px] min-[901px]:text-[42px] min-[1280px]:text-[54px] min-[1600px]:text-[64px] min-[1920px]:text-[76px] min-[2560px]:text-[88px] [@media(min-width:1280px)_and_(max-height:720px)]:text-[48px]!";
+const FULL_LEDE =
+  "text-[16px] min-[561px]:text-[16.5px] min-[901px]:text-[15px] min-[1280px]:text-[16px] min-[1600px]:text-[18px] min-[1920px]:text-[20px] min-[2560px]:text-[22px] leading-[1.55] tracking-[-0.015em] mt-[18px] min-[901px]:mt-[14px] min-[1600px]:mt-[22px] max-w-[470px] min-[901px]:max-w-[440px] min-[1600px]:max-w-[540px] min-[1920px]:max-w-[620px] min-[2560px]:max-w-[680px]";
+
 // Digital copies start from the published figure and count up by one each time a character on the floor
 // becomes their AI copy.
 const COPIES_BASE = 10_956;
@@ -200,12 +209,24 @@ export function Hero({ full = false }: { full?: boolean }) {
           {/* Fade only, in CSS (.hero-copy-in), so it runs from first paint rather than once the scripts are
             up: the block is in its final place from the first frame (a slide-up read as a jerk). */}
           <div className="hero-copy-in flex-1 flex flex-col items-start pb-10 md:pb-12">
-            <h1 className="font-display text-[34px] md:text-[56px] font-medium tracking-tight leading-[1.05] text-[#0a1b33]">
+            <h1
+              className={
+                "font-display font-medium tracking-tight leading-[1.05] text-[#0a1b33] " +
+                (full ? FULL_TITLE : "text-[34px] md:text-[56px]")
+              }
+            >
               Making <TypedWord word="models" className="text-accent" /> of
               <br />
               human players.
             </h1>
-            <p className="font-sans text-[14px] md:text-[15px] text-[#475569] mt-5 max-w-[440px] leading-relaxed">
+            <p
+              className={
+                "font-sans text-[#475569] " +
+                (full
+                  ? FULL_LEDE
+                  : "text-[14px] md:text-[15px] mt-5 max-w-[440px] leading-relaxed")
+              }
+            >
               Our model watched millions of hours of gameplay. Now it
               understands the game player.{" "}
               <a
