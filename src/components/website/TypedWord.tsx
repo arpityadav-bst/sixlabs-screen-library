@@ -6,17 +6,20 @@
 // glowing accent caret stands against it for its turn, and after the last letter the caret blinks a moment
 // and fades. In the hero it starts the moment the page is painted, never waiting for the scripts or the
 // tile floor. With `onView` (the closing line) it waits, paused, until the words come into view, then types
-// once. Reduced motion shows the words as they are.
+// once. With `hold` it waits, paused, for as long as that is true (the full view's hero, whose copy comes in
+// only after its loader), then types. Reduced motion shows the words as they are.
 import { useEffect, useRef, useState } from "react";
 
 export function TypedWord({
   word,
   className,
   onView,
+  hold = false,
 }: {
   word: string;
   className?: string;
   onView?: boolean;
+  hold?: boolean;
 }) {
   const box = useRef<HTMLSpanElement>(null);
   const [seen, setSeen] = useState(!onView);
@@ -39,7 +42,7 @@ export function TypedWord({
 
   const last = word.length - 1;
   return (
-    <span ref={box} className={(className ?? "") + (seen ? "" : " tw-wait")}>
+    <span ref={box} className={(className ?? "") + (seen && !hold ? "" : " tw-wait")}>
       {[...word].map((ch, i) => (
         <span
           key={i}

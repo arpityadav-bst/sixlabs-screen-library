@@ -5,7 +5,8 @@
 // a rendered 3D scene, adds only the light the flow makes (none at rest, so the words keep their colours
 // exactly while still), keeps its grain to the cursor's lens, and skips the scene's tone mapping. It also
 // carries Canvas UI's Glitch, cut to a box of words (uGlitchRect): in a burst (uGlitchAmp over 0) slices of
-// the box tear sideways, its colours split, blocks of it jump and it flickers with noise and scan lines.
+// the box tear sideways, its colours split, blocks of it jump and it flickers with noise and scan lines,
+// and a red copy of the words slips out to their left (its fringe only shows past the ink).
 
 export const QUAD_VERT = `
 out vec2 vUv;
@@ -153,6 +154,8 @@ out vec4 fragColor;
 
 // the Glitch's settings: slices across the box, their sideways tear and the colour split (CSS px), blocks, noise
 const float G_SLICES = 7.0, G_SHIFT = 30.0, G_RGB = 4.0, G_BLOCKS = 0.5, G_NOISE = 0.35;
+const float G_RED = 7.0; // the red copy's slip, CSS px
+const vec3 RED = vec3(1.0, 0.024, 0.07); // #ff2a4d, linear
 
 float hash12(vec2 p) {
   vec3 p3 = fract(vec3(p.xyx) * 0.1031);
@@ -216,6 +219,12 @@ void main() {
   vec4 sb = unpremultiply(scene(at + spread - vec2(split, 0.0), cut));
   float alpha = (sr.a + sg.a + sb.a) / 3.0;
   vec3 color = vec3(sr.r, sg.g, sb.b);
+  if (cut) {
+    float ghost = scene(at + vec2(G_RED * e / uSize.x, 0.0), cut).a * min(e, 1.0);
+    float both = max(alpha, ghost);
+    color = mix(RED, color, alpha / max(both, 1e-4));
+    alpha = both;
+  }
 
   // the sheen: only what the flow's slope adds over a still surface
   vec3 light = normalize(vec3(-0.4, 0.55, 0.73));

@@ -183,7 +183,13 @@ export function Hero({ full = false }: { full?: boolean }) {
                   (full ? FULL_TITLE : "text-[34px] md:text-[56px]")
                 }
               >
-                Making <TypedWord word="models" className="text-accent" /> of
+                Making{" "}
+                <TypedWord
+                  word="models"
+                  className="text-accent"
+                  hold={full && !intro.copy}
+                />{" "}
+                of
                 <br />
                 human players.
               </h1>
