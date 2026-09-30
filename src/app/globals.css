@@ -148,6 +148,42 @@ body {
   .logo-arc-0, .logo-arc-1, .logo-arc-2 { animation: none; }
 }
 
+/* The scroll line's "People lie" (ScrubLine.tsx) where the liquid is off (below a desktop): once the whole
+   line is lit it glitches as Canvas UI's Glitch does, a burst every 3s, 0.6s in, 0.36s long. A red copy
+   and a cyan one, multiplied over the words, snap between torn slices shifted sideways. */
+.glitch-word { position: relative; }
+.glitch-word::before,
+.glitch-word::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0;
+}
+/* each copy's full shorthand, as the arcs' above */
+.glitch-word::before { color: #ff2a6d; animation: glitch-a 3s steps(1, end) 0.6s infinite; }
+.glitch-word::after { color: #00c2ff; animation: glitch-b 3s steps(1, end) 0.6s infinite; }
+@keyframes glitch-a {
+  0% { opacity: 1; clip-path: inset(8% 0 62% 0); transform: translateX(-7px); }
+  3% { clip-path: inset(52% 0 22% 0); transform: translateX(5px); }
+  6% { clip-path: inset(28% 0 48% 0); transform: translateX(-10px); }
+  9% { clip-path: inset(72% 0 4% 0); transform: translateX(3px); }
+  12%, 100% { opacity: 0; clip-path: inset(0); transform: none; }
+}
+@keyframes glitch-b {
+  0% { opacity: 1; clip-path: inset(60% 0 12% 0); transform: translateX(6px); }
+  3% { clip-path: inset(18% 0 58% 0); transform: translateX(-4px); }
+  6% { clip-path: inset(44% 0 30% 0); transform: translateX(9px); }
+  9% { clip-path: inset(4% 0 76% 0); transform: translateX(-3px); }
+  12%, 100% { opacity: 0; clip-path: inset(0); transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glitch-word::before, .glitch-word::after { display: none; }
+}
+
 /* The footer's wordmark (CopyLine.tsx), after the onBlue creators page's: huge, cropped by the tail's
    hairline in front of the landscape, and its colour split only at the word's two ends (a pale red copy
    nudged left, a pale cyan one nudged right, each masked to its own end and multiplied over the navy, so

@@ -6,14 +6,20 @@
 // 1, persistence 0.6, swirl 0.5, iridescence 1.5, splash 1.2, ambient 1), then: no idle drift (ambient 0) and
 // no grain away from the cursor, so the words hold still until the cursor comes; and what the cursor does is
 // HOVER (0.3) of the demo's, 70% less: its drag, colour split, sheen, shimmer, grain and splash.
+// glitch(), when given, is read every frame: while it returns a box (in uv), that box glitches in bursts, on
+// Canvas UI's Glitch timeline (GLITCH): the first 0.6s in, then every interval (give or take a quarter).
 import * as THREE from "three";
 import * as S from "./shaders";
 
 const HOVER = 0.3;
 const OPT = { distortion: 2 * HOVER, aberration: 0.75 * HOVER, grain: 1 * HOVER, sheen: 1.6 * HOVER, cursorSize: 1, cursorForce: 1, persistence: 0.6, swirl: 0.5, iridescence: 1.5 * HOVER, splash: 1.2 * HOVER, ambient: 0 };
+const GLITCH = { interval: 3, duration: 0.4, intensity: 1 };
+const hash = (n: number) => { const s = Math.sin(n * 127.1) * 43758.5453; return s - Math.floor(s); };
 const SIM_RES = 128, FIELD_RES = 256, PRESSURE_STEPS = 4, SIM_STEP = 1 / 60;
 
-export function createLiquid(canvas: HTMLCanvasElement, picture: HTMLCanvasElement, frame: () => boolean) {
+type Box = [number, number, number, number];
+
+export function createLiquid(canvas: HTMLCanvasElement, picture: HTMLCanvasElement, frame: () => boolean, glitch?: () => Box | null) {
   let renderer: THREE.WebGLRenderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: "high-performance" });
@@ -58,6 +64,7 @@ export function createLiquid(canvas: HTMLCanvasElement, picture: HTMLCanvasEleme
     tScene: v(tex), tField: v(field[0].texture), uFieldTexel: v(fieldTexel), uDistortion: v(OPT.distortion), uAberration: v(OPT.aberration),
     uGrain: v(OPT.grain), uCursor: v(new THREE.Vector2(0.5, 0.5)), uLensRadius: v(0.12 + OPT.cursorSize * 0.45), uGlow: v(0), uAspect: v(1),
     uSheen: v(OPT.sheen), uIridescence: v(OPT.iridescence), uAmbient: v(OPT.ambient), uTime: v(0),
+    uGlitchRect: v(new THREE.Vector4()), uGlitchAmp: v(0), uGlitchSeed: v(1), uSize: v(new THREE.Vector2(1, 1)),
   });
   const passes = [splatP, curlP, vortP, divP, presP, gradP, advP, fadeP, comp];
 
@@ -137,10 +144,26 @@ export function createLiquid(canvas: HTMLCanvasElement, picture: HTMLCanvasEleme
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(w, h, false);
     aspect = w / h;
+    comp.uniforms.uSize.value.set(w, h);
   }
   const ro = new ResizeObserver(resize);
   ro.observe(canvas);
   resize();
+
+  // the glitch's timeline: reset while there is no box, so each time the box comes the first burst is 0.6s in
+  let gT = 0, burstAt = 0.6, burstSeed = 1;
+  function glitchAmp(dt: number, on: boolean) {
+    if (!on) { gT = 0; burstAt = 0.6; return 0; }
+    gT += dt;
+    const since = gT - burstAt;
+    if (since >= 0 && since < GLITCH.duration)
+      return (1 - (since / GLITCH.duration) ** 2) * (0.7 + 0.3 * hash(burstSeed + Math.floor(gT * 24))) * GLITCH.intensity;
+    if (since >= GLITCH.duration) {
+      burstAt = gT + GLITCH.interval * (0.75 + 0.5 * Math.random());
+      burstSeed = Math.floor(Math.random() * 1000);
+    }
+    return 0;
+  }
 
   let lastT = 0;
   function tick(time: number) {
@@ -154,6 +177,10 @@ export function createLiquid(canvas: HTMLCanvasElement, picture: HTMLCanvasEleme
     comp.uniforms.uGlow.value = glow;
     comp.uniforms.uCursor.value.copy(cursor);
     comp.uniforms.uAspect.value = aspect;
+    const box = glitch?.() ?? null;
+    if (box) comp.uniforms.uGlitchRect.value.set(...box);
+    comp.uniforms.uGlitchAmp.value = glitchAmp(dt, !!box);
+    comp.uniforms.uGlitchSeed.value = Math.floor(gT * 24) + burstSeed;
     run(comp, null);
   }
   // runs only while the canvas is on screen

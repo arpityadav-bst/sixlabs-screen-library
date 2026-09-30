@@ -6,12 +6,15 @@
 // over them shows that picture through Canvas UI's liquid (liquid/liquid-sim.ts): the cursor drags the words
 // about, splits their colours round it and lights them where it flows. Once the canvas is live, onLive(true)
 // tells the line to make its own words transparent; they stay in place for layout, selection and reading.
+// While `glitch` is on, the words marked in `glitches` glitch in bursts (Canvas UI's Glitch, in the liquid's
+// own shader), in a box round them with room on its left for the torn slices (the first words of the line).
 import { useEffect, useRef, type RefObject } from "react";
 
 const M = 56; // px of room round the words for the liquid to drag them into
 const FILL_S = 0.2; // a word's fill from faint to full, as the words' own transition (200ms)
 const INK = [10, 27, 51],
   ACCENT = [26, 109, 255];
+const GLITCH_ROOM = 32; // px of the glitch's box left of its words
 const FAINT = 0.15; // an unlit word's opacity, as text-[#0a1b33]/15
 const DESKTOP =
   "(min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
@@ -22,18 +25,24 @@ export function LiquidLine({
   para,
   lit,
   accents,
+  glitches,
+  glitch,
   onLive,
 }: {
   para: RefObject<HTMLParagraphElement | null>;
   lit: number;
   accents: boolean[];
+  glitches: boolean[];
+  glitch: boolean;
   onLive: (live: boolean) => void;
 }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const litNow = useRef(lit);
+  const glitchNow = useRef(glitch);
   useEffect(() => {
     litNow.current = lit;
-  }, [lit]);
+    glitchNow.current = glitch;
+  }, [lit, glitch]);
 
   useEffect(() => {
     const p = para.current,
@@ -45,6 +54,7 @@ export function LiquidLine({
     if (!ctx) return;
     let words: Word[] = [],
       level: number[] = [],
+      box: [number, number, number, number] | null = null,
       dpr = 1,
       dirty = true,
       ready = false,
@@ -61,8 +71,10 @@ export function LiquidLine({
       ctx.letterSpacing =
         cs.letterSpacing === "normal" ? "0px" : cs.letterSpacing;
       const ascent = ctx.measureText("Hg").fontBoundingBoxAscent;
-      words = Array.from(p.querySelectorAll(":scope > span"), (s, k) => {
-        const r = s.getClientRects()[0];
+      const spans = Array.from(p.querySelectorAll(":scope > span")),
+        rects = spans.map((s) => s.getClientRects()[0]);
+      words = spans.map((s, k) => {
+        const r = rects[k];
         return {
           text: (s.textContent ?? "").trim(),
           x: r.left - pr.left + M,
@@ -70,6 +82,18 @@ export function LiquidLine({
           accent: accents[k],
         };
       });
+      // the glitch's box, in the canvas's uv (y up)
+      const g = rects.filter((_, k) => glitches[k]),
+        W = pr.width + 2 * M,
+        H = pr.height + 2 * M;
+      box = g.length
+        ? [
+            (Math.min(...g.map((r) => r.left)) - pr.left + M - GLITCH_ROOM) / W,
+            1 - (Math.max(...g.map((r) => r.bottom)) - pr.top + M) / H,
+            (Math.max(...g.map((r) => r.right)) - pr.left + M) / W,
+            1 - (Math.min(...g.map((r) => r.top)) - pr.top + M) / H,
+          ]
+        : null;
       if (level.length !== words.length)
         level = words.map((_, k) => (k < litNow.current ? 1 : 0));
       dirty = true;
@@ -113,7 +137,9 @@ export function LiquidLine({
         if (gone) return;
         layout();
         ro.observe(p);
-        sim = createLiquid(c, pic, frame);
+        sim = createLiquid(c, pic, frame, () =>
+          glitchNow.current ? box : null,
+        );
         if (!sim) return;
         ready = true;
         onLive(true);
@@ -129,7 +155,7 @@ export function LiquidLine({
       sim?.destroy();
       onLive(false);
     };
-  }, [para, accents, onLive]);
+  }, [para, accents, glitches, onLive]);
 
   return (
     <canvas

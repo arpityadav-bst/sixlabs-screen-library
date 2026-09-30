@@ -3,7 +3,9 @@
 // chromatic lens at the cursor, a sheen and a rainbow shimmer where it flows, and film grain. Only the
 // composite differs from the original: it drags a flat picture (the sentence, drawn to a canvas) rather than
 // a rendered 3D scene, adds only the light the flow makes (none at rest, so the words keep their colours
-// exactly while still), keeps its grain to the cursor's lens, and skips the scene's tone mapping.
+// exactly while still), keeps its grain to the cursor's lens, and skips the scene's tone mapping. It also
+// carries Canvas UI's Glitch, cut to a box of words (uGlitchRect): in a burst (uGlitchAmp over 0) slices of
+// the box tear sideways, its colours split, blocks of it jump and it flickers with noise and scan lines.
 
 export const QUAD_VERT = `
 out vec2 vUv;
@@ -142,8 +144,28 @@ uniform float uSheen;
 uniform float uIridescence;
 uniform float uAmbient;
 uniform float uTime;
+uniform vec4 uGlitchRect; // the glitch's box, in uv (x0, y0, x1, y1)
+uniform float uGlitchAmp;
+uniform float uGlitchSeed;
+uniform vec2 uSize; // the canvas, in CSS px
 in vec2 vUv;
 out vec4 fragColor;
+
+// the Glitch's settings: slices across the box, their sideways tear and the colour split (CSS px), blocks, noise
+const float G_SLICES = 7.0, G_SHIFT = 30.0, G_RGB = 4.0, G_BLOCKS = 0.5, G_NOISE = 0.35;
+
+float hash12(vec2 p) {
+  vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+bool inBox(vec2 p) {
+  return all(greaterThanEqual(p, uGlitchRect.xy)) && all(lessThanEqual(p, uGlitchRect.zw));
+}
+// the picture; while the box glitches, what it tears in is cut to the box, so no neighbouring word comes too
+vec4 scene(vec2 p, bool cut) {
+  return cut && !inBox(p) ? vec4(0.0) : texture(tScene, p);
+}
 
 vec3 toSrgb(vec3 c) {
   vec3 lo = c * 12.92;
@@ -169,9 +191,29 @@ void main() {
   vec2 toCursor = (vUv - uCursor) * vec2(uAspect, 1.0);
   float lens = smoothstep(uLensRadius, uLensRadius * 0.15, length(toCursor)) * uGlow;
   vec2 spread = normalize(toCursor + 1e-5) * (lens * uAberration * 0.006) / vec2(uAspect, 1.0);
-  vec4 sr = unpremultiply(texture(tScene, vUv - push - spread));
-  vec4 sg = unpremultiply(texture(tScene, vUv - push));
-  vec4 sb = unpremultiply(texture(tScene, vUv - push + spread));
+
+  // the glitch, as Canvas UI's: torn slices, a jitter, jumping blocks, and a split of red from blue
+  float e = uGlitchAmp;
+  bool cut = e > 0.001 && inBox(vUv);
+  vec2 tear = vec2(0.0);
+  float split = 0.0;
+  if (cut) {
+    vec2 lo = uGlitchRect.xy, size = uGlitchRect.zw - uGlitchRect.xy;
+    vec2 q = (vUv - lo) / size;
+    float band = floor(q.y * G_SLICES);
+    float torn = step(1.0 - 0.3 * min(e, 1.0), hash12(vec2(band, uGlitchSeed)));
+    float dir = hash12(vec2(band, uGlitchSeed + 13.0)) * 2.0 - 1.0;
+    tear.x = torn * dir * e * G_SHIFT / uSize.x;
+    tear.x += (hash12(vec2(floor(q.y * G_SLICES * 7.0), uGlitchSeed + 29.0)) - 0.5) * e * G_NOISE * 3.0 / uSize.x;
+    vec2 cell = floor((q + tear / size) * vec2(10.0, G_SLICES * 0.5));
+    if (hash12(cell + uGlitchSeed * 0.0173) > 1.0 - 0.14 * G_BLOCKS * min(e, 1.0))
+      tear += (vec2(hash12(cell + uGlitchSeed + 3.1), hash12(cell + uGlitchSeed + 7.7)) - 0.5) * vec2(0.08, 0.02) * size * e;
+    split = G_RGB * e / uSize.x;
+  }
+  vec2 at = vUv + tear - push;
+  vec4 sr = unpremultiply(scene(at - spread + vec2(split, 0.0), cut));
+  vec4 sg = unpremultiply(scene(at, cut));
+  vec4 sb = unpremultiply(scene(at + spread - vec2(split, 0.0), cut));
   float alpha = (sr.a + sg.a + sb.a) / 3.0;
   vec3 color = vec3(sr.r, sg.g, sb.b);
 
@@ -188,6 +230,11 @@ void main() {
   color += shimmer * wave * uIridescence * 0.5;
 
   color = toSrgb(clamp(color, 0.0, 1.0));
+  if (cut) {
+    float g = hash12(vUv * uSize + uGlitchSeed * 5.3) - 0.5;
+    float lines = step(0.985 - 0.01 * G_NOISE * e, hash12(vec2(floor(vUv.y * uSize.y), uGlitchSeed + 41.0)));
+    color = clamp(color + (g * 0.22 + lines * 0.35) * G_NOISE * min(e, 1.0), 0.0, 1.0);
+  }
   float grainN = fract(sin(dot(gl_FragCoord.xy + vec2(uTime * 127.1, uTime * 311.7), vec2(12.9898, 78.233))) * 43758.5453);
   vec3 blended = color * alpha + (grainN - 0.5) * uGrain * lens * 0.14 * alpha; // grain only in the cursor's lens
   fragColor = vec4(max(blended, 0.0), alpha);
