@@ -1,6 +1,6 @@
 // The footer's wordmark band (Footer.tsx), between its links and its tail, at the height it had before the
-// picture: the huge wordmark cropped by the tail's hairline, the SixLabs mark cresting from behind it and
-// fading down into it (after the onBlue creators page's foot). Behind the band, filling it and nothing
+// picture: the huge wordmark cropped by the tail's hairline, the SixLabs mark, in the header's cobalt glass, cresting from behind
+// it and fading down into it (after the onBlue creators page's foot). Behind the band, filling it and nothing
 // more, the copy line (public/footer/copy-line.webp, generated with no text in it): our players walk in
 // from the left toward the mark and come out on the right as their AI copies, so the brand in the middle
 // is where the copying happens. The picture rises out of the page on a long, eased fade that is complete
@@ -8,7 +8,7 @@
 // cropped (FIT), so two spec labels in code, on leader lines, can sit in its own coordinates and land on
 // the same heads at any width (desktop only); on a phone it covers the band. The word sits a little up
 // off the hairline, whole. Colour split on the word's two ends only (.foot-word in globals.css).
-import { SixLabsSolid } from "./brand-marks";
+import { SixLabsCobalt } from "./brand-marks";
 
 const LABELS: { text: string; x: number; y: number; strong?: boolean }[] = [
   // x, y: where the leader line lands, in % of the picture
@@ -58,7 +58,7 @@ export function CopyLine() {
         </div>
       </div>
 
-      <div className={FIT + " z-[2] max-lg:hidden"}>
+      <div className={FIT + " pointer-events-none z-[2] max-lg:hidden"}>
         {LABELS.map(({ text, x, y, strong }) => (
           <div
             key={text}
@@ -84,9 +84,9 @@ export function CopyLine() {
 
       {/* the mark cresting from behind the word: the glow on the outer box, the fade on the inner one (one
           element carrying both tiles the fade across the glow's box and shows it as a square) */}
-      <span className="absolute left-1/2 top-[calc(52px+0.05em)] z-0 h-[1.05em] w-[1.05em] -translate-x-1/2 text-accent drop-shadow-[0_0_0.3em_rgba(26,109,255,0.35)] md:top-[calc(100px+0.05em)]">
+      <span className="absolute left-1/2 top-[calc(52px+0.05em)] z-0 h-[1.05em] w-[1.05em] -translate-x-1/2 drop-shadow-[0_0_0.3em_rgba(35,80,170,0.3)] md:top-[calc(100px+0.05em)]">
         <span className="block h-full w-full [mask-image:linear-gradient(180deg,#000_0%,#000_38%,rgba(0,0,0,0.34)_66%,transparent_92%)]">
-          <SixLabsSolid className="block h-full w-full" />
+          <SixLabsCobalt className="block h-full w-full" />
         </span>
       </span>
 
