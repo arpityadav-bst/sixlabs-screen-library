@@ -1,16 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
 import { TileFloor, type FloorHandle } from "@/components/tiles/TileFloor";
 import { ScrollCue } from "./ScrollCue";
 import { PrimaryCta } from "./PrimaryCta";
 import { linkTo } from "./jump";
 import { TypedWord } from "./TypedWord";
-import { HeroNumbers, WaveButton, type Stat } from "./HeroBits";
+import { FloorLogo, HeroNumbers, WaveButton, type Stat } from "./HeroBits";
 import { useArt } from "./art";
-
-const ease = [0.22, 1, 0.36, 1] as const;
+import { HeroLoader } from "./HeroLoader";
+import { FULL_TILES_AT, useHeroIntro } from "./hero-intro";
 
 // The full view's headline and its line, on the onBlue creators hero's scale (onblue-vesper/onblue.css,
 // --h1 and --lede by width): the title 34 / 36 / 42 / 54 / 64 / 76 / 88px from phones to 2560px screens,
@@ -35,6 +34,10 @@ const CLEAR = -12; // below zero: the field top is measured a little past the sc
 export function Hero({ full = false }: { full?: boolean }) {
   const [floorReady, setFloorReady] = useState(false);
   const art = useArt(); // the hologram pages read the AI copies from /tiles-holo
+  const intro = useHeroIntro(full, floorReady); // what has come in yet (hero-intro.ts)
+  const fade = (on: boolean) =>
+    "transition-opacity duration-700 ease-out " +
+    (on ? "opacity-100" : "opacity-0");
   const floor = useRef<FloorHandle | null>(null);
   // Phones: the copy spans the screen, so rather than fade the tiles under it, the floor's view is lowered
   // until the field's highest tile (its diagonal edge rises to the top right) sits CLEAR px under the copy's
@@ -88,11 +91,17 @@ export function Hero({ full = false }: { full?: boolean }) {
       {/* Outside the container, one row: the scroll cue under its bottom-left corner, the headline numbers
             centred, the wave button under its bottom-right corner. */}
       <div className="w-full max-w-[1400px] mx-auto mt-10 max-md:mt-8 px-8 max-md:px-2 md:px-16 grid grid-cols-[1fr_auto_1fr] items-start max-md:relative max-md:flex max-md:justify-center">
-        <div className="-ml-10 max-md:hidden flex">
+        <div className={"-ml-10 max-md:hidden flex " + fade(intro.extras)}>
           <ScrollCue />
         </div>
         {numbers(false)}
-        <div className="flex justify-end max-md:absolute max-md:right-2 max-md:top-1">
+        <div
+          inert={!intro.extras}
+          className={
+            "flex justify-end max-md:absolute max-md:right-2 max-md:top-1 " +
+            fade(intro.extras)
+          }
+        >
           {wave}
         </div>
       </div>
@@ -111,11 +120,16 @@ export function Hero({ full = false }: { full?: boolean }) {
       >
         {/* The glass tile floor replaces the prompt's background video. It takes pointer events so the
           tiles stay interactive; the text layer above lets them through except on its own block. */}
-        <div className="absolute inset-0 z-0 overflow-hidden select-none">
+        <div
+          className={
+            "absolute inset-0 z-0 overflow-hidden select-none " +
+            (full ? fade(intro.floor) : "")
+          }
+        >
           {/* the logo placeholder fades out over 0.45s, then the tiles fade in */}
           <TileFloor
             className="w-full h-full"
-            introDelay={0.5}
+            introDelay={full ? FULL_TILES_AT : 0.5}
             // full: the camera pulled back for smaller, more tiles (from 1024px wide: on a tablet or phone the faces would get
             // too small to read), the second wave's cast in the middle. Read once, as the floor mounts.
             distScale={
@@ -136,40 +150,9 @@ export function Hero({ full = false }: { full?: boolean }) {
           />
         </div>
 
-        {/* While the floor loads, the logo lies on the floor in the tiles' white glass, toward the bottom right
-          where the tiles will be, and turns very slowly about the floor's vertical axis; it fades away just before the
-          tiles fade in. One still (27 KB, tools/tiles/floor_logo.py): the render at the tile camera angle,
-          contrast-boosted and straightened, which a CSS tilt lays back on the floor (40 degrees up, a
-          long lens) and the compositor spins (.floor-spin in globals.css), so it costs almost nothing to
-          load and turns smoothly. Its square is feathered into the floor. Sized and placed so about a fifth of the
-          mark runs past the container's bottom edge and a little (under a tenth) past its right (the mark spans two thirds of its square,
-          and the tilt shortens it to about half its width in height), at 60% opacity. */}
-        <AnimatePresence>
-          {!floorReady && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { duration: 0.4, ease } }}
-              exit={{
-                opacity: 0,
-                scale: 0.96,
-                transition: { duration: 0.45, ease },
-              }}
-              className={
-                "absolute top-[77%] left-[80%] -translate-x-1/2 -translate-y-1/2 z-10 aspect-square pointer-events-none " +
-                (full ? "w-[min(70%,720px)]" : "w-[70%]")
-              }
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element -- one small still, served as is */}
-              <img
-                src="/brand/sixlabs-mark-floor.webp"
-                alt=""
-                width={1200}
-                height={1200}
-                className="floor-spin w-full h-full opacity-60 [mask-image:radial-gradient(closest-side,#000_72%,transparent_98%)]"
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <FloorLogo show={!full && !floorReady} />
+        {/* the full view has its own loader: the mark's arcs taking turns (HeroLoader.tsx) */}
+        {full && <HeroLoader show={intro.loading} />}
 
         <div
           // full: the copy, the scroll cue and the wave button on the header's own grid (its 1400px content
@@ -183,7 +166,14 @@ export function Hero({ full = false }: { full?: boolean }) {
         >
           {/* Fade only, in CSS (.hero-copy-in), so it runs from first paint rather than once the scripts are
             up: the block is in its final place from the first frame (a slide-up read as a jerk). */}
-          <div className="hero-copy-in flex-1 flex flex-col items-start pb-10 md:pb-12">
+          {/* the full view: the copy comes in after its loader (hero-intro.ts), the tiles after it */}
+          <div
+            inert={full && !intro.copy}
+            className={
+              "flex-1 flex flex-col items-start pb-10 md:pb-12 " +
+              (full ? fade(intro.copy) : "hero-copy-in")
+            }
+          >
             <div ref={copy} className="relative flex flex-col items-start">
               <h1
                 className={
@@ -250,16 +240,26 @@ export function Hero({ full = false }: { full?: boolean }) {
         {full && (
           <>
             {/* the scroll cue low at the left, in line with the copy, well clear above where the tiles begin */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-[clamp(96px,16vh,168px)] z-20 max-lg:hidden">
+            <div
+              className={
+                "pointer-events-none absolute inset-x-0 bottom-[clamp(96px,16vh,168px)] z-20 max-lg:hidden " +
+                fade(intro.extras)
+              }
+            >
               {/* -ml-1 takes back the cue's own 4px padding, so its label starts on the copy's edge */}
               <div className="mx-auto flex w-full max-w-[1448px] px-6 [&>*]:-ml-1">
                 <ScrollCue />
               </div>
             </div>
-            <div className="pointer-events-none absolute inset-x-0 bottom-8 z-20 max-md:bottom-5">
-              <div className="mx-auto flex w-full max-w-[1448px] justify-end px-6 max-md:px-4">
-                <div className="pointer-events-auto">{wave}</div>
-              </div>
+            {/* the wave button in the bottom right corner, as far from the right edge as from the bottom */}
+            <div
+              inert={!intro.extras}
+              className={
+                "absolute bottom-8 right-8 z-20 max-md:bottom-5 max-md:right-5 " +
+                fade(intro.extras)
+              }
+            >
+              {wave}
             </div>
           </>
         )}

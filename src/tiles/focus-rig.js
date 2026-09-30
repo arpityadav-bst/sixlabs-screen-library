@@ -66,6 +66,8 @@ export function createFocusRig({ renderer, scene, PF, PA, geo, tileH, cx, cz, to
     matsF.forEach((m) => { m.opacity = Math.min(1, L * 1.25); });
     sweepU.uHead.value = v.brightHead; sweepU.uFade.value = v.fade;
     beamU.uBeam.value = v.beamHead; beamU.uBeamI.value = v.fade; beamU.uFlare.value = v.flare;
+    // activating, the glint also spreads a little to its left and right (along its length), by glintSpread
+    glintF.scale.x = glintA.scale.x = PF.glintW * (1 + (PA.glintSpread ?? 0) * v.amount);
     glintF.material.opacity = Math.min(1, L * 1.25) * (1 - v.amount);
     glintA.material.opacity = v.amount;
     setTileLift(...st.cell, y, L > 0.999); // the glass tile rides up under the slab, then hides once covered

@@ -88,6 +88,7 @@
  "glintTop": 0.6,
  "glintTopQ": 0.55,
  "glintW": 0.06,
+ "glintSpread": 0.22,
  "glowCol": "#2a8ff2",
  "glowFar": 0.9,
  "glowNear": 0.14,

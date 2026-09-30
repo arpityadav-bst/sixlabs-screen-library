@@ -27,7 +27,7 @@ export default function HologramPage() {
         <AsciiBackdrop />
         <AccentWave />
         <SmoothScroll />
-        <Header clear />
+        <Header clear intro />
         <Hero full />
         <ScrubLine />
         <Players />

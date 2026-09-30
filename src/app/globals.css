@@ -129,10 +129,20 @@ body {
 @keyframes hero-copy-in {
   from { opacity: 0; }
 }
+/* The full view's loader (HeroLoader.tsx): each arc of the mark hops a little out from the core and back,
+   one after the other (their delays), round and round until the floor is ready. */
+.logo-hop {
+  animation: logo-hop 1.2s cubic-bezier(0.45, 0, 0.25, 1) infinite both;
+}
+@keyframes logo-hop {
+  0%, 36%, 100% { transform: translate(0, 0); }
+  16% { transform: translate(var(--hx), var(--hy)); }
+}
 @media (prefers-reduced-motion: reduce) {
   .tw-letter { animation: none; opacity: 1; }
   .tw-letter::after { display: none; }
   .hero-copy-in { animation: none; }
+  .logo-hop { animation: none; }
 }
 
 /* The footer's wordmark (CopyLine.tsx), after the onBlue creators page's: huge, cropped by the tail's

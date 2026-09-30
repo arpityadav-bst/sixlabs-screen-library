@@ -26,7 +26,7 @@ export default function FullviewPage() {
       <AsciiBackdrop />
       <AccentWave />
       <SmoothScroll />
-      <Header clear />
+      <Header clear intro />
       <Hero full />
       <ScrubLine />
       <Players />

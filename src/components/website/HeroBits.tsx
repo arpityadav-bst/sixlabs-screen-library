@@ -1,8 +1,8 @@
 "use client";
 
-// Two pieces of the hero (Hero.tsx): the headline numbers and the wave button.
+// Pieces of the hero (Hero.tsx): the container's loading logo, the headline numbers and the wave button.
 import { Waves } from "lucide-react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -108,5 +108,42 @@ export function WaveButton({
         <Waves className="w-4 h-4" strokeWidth={1.75} />
       </button>
     </>
+  );
+}
+
+// While the floor loads, the logo lies on the floor in the tiles' white glass, toward the bottom right where
+// the tiles will be, and turns very slowly about the floor's vertical axis; it fades away just before the
+// tiles fade in. One still (27 KB, tools/tiles/floor_logo.py): the render at the tile camera angle,
+// contrast-boosted and straightened, which a CSS tilt lays back on the floor (40 degrees up, a long lens)
+// and the compositor spins (.floor-spin in globals.css), so it costs almost nothing to load and turns
+// smoothly. Its square is feathered into the floor. Sized and placed so about a fifth of the mark runs past
+// the container's bottom edge and a little (under a tenth) past its right (the mark spans two thirds of its
+// square, and the tilt shortens it to about half its width in height), at 60% opacity. The container only:
+// the full view has its own loader (HeroLoader.tsx).
+export function FloorLogo({ show }: { show: boolean }) {
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, transition: { duration: 0.4, ease } }}
+          exit={{
+            opacity: 0,
+            scale: 0.96,
+            transition: { duration: 0.45, ease },
+          }}
+          className="absolute top-[77%] left-[80%] -translate-x-1/2 -translate-y-1/2 z-10 aspect-square w-[70%] pointer-events-none"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element -- one small still, served as is */}
+          <img
+            src="/brand/sixlabs-mark-floor.webp"
+            alt=""
+            width={1200}
+            height={1200}
+            className="floor-spin w-full h-full opacity-60 [mask-image:radial-gradient(closest-side,#000_72%,transparent_98%)]"
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
