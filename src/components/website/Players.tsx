@@ -184,7 +184,12 @@ export function Players() {
             {...enter(0.15)}
             className="relative z-10 -mt-[calc(var(--ph)*0.2)] flex justify-center lg:hidden"
           >
-            <ModeToggle mode={mode} onChange={setMode} thumbId="mode-thumb-m" />
+            <ModeToggle
+              mode={mode}
+              onChange={setMode}
+              thumbId="mode-thumb-m"
+              slim
+            />
           </motion.div>
         </div>
 

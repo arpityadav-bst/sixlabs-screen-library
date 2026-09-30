@@ -15,10 +15,12 @@ export function ModeToggle({
   mode,
   onChange,
   thumbId = "mode-thumb",
+  slim,
 }: {
   mode: Mode;
   onChange: (m: Mode) => void;
   thumbId?: string; // each mounted switch its own, so two (desktop and phone placements) never trade thumbs
+  slim?: boolean; // the phone and tablet placement: narrower, lower, smaller type
 }) {
   return (
     <div
@@ -36,7 +38,8 @@ export function ModeToggle({
             aria-checked={on}
             onClick={() => onChange(o.id)}
             className={
-              "relative w-28 rounded-full py-2 text-center font-sans text-[14px] font-medium transition-colors duration-200 " +
+              "relative rounded-full text-center font-sans font-medium transition-colors duration-200 " +
+              (slim ? "w-20 py-1.5 text-[13px] " : "w-28 py-2 text-[14px] ") +
               (on ? "text-[#0a1b33]" : "text-white/80 hover:text-white")
             }
           >
