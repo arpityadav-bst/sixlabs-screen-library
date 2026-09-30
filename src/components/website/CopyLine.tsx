@@ -13,10 +13,19 @@
 // ends only (.foot-word in globals.css).
 import { SixLabsCobalt, SixLabsSilhouette } from "./brand-marks";
 
+// The picture is drawn as two halves pushed apart by SPREAD (% of its width): the players a little further
+// left, the copies a little further right, the empty white middle between them simply wider. Its halves
+// meet in that white, so the split never shows.
+const SPREAD = 3;
+const HALVES = [
+  "[clip-path:inset(0_50%_0_0)] -translate-x-[3%]",
+  "[clip-path:inset(0_0_0_50%)] translate-x-[3%]",
+];
+
 const LABELS: { text: string; x: number; y: number; strong?: boolean }[] = [
   // x, y: where the leader line lands, in % of the picture
-  { text: "Real players", x: 16.7, y: 14 },
-  { text: "1,000,000+ player models", x: 74.4, y: 15, strong: true },
+  { text: "Real players", x: 16.7 - SPREAD, y: 14 },
+  { text: "1,000,000+ player models", x: 74.4 + SPREAD, y: 15, strong: true },
 ];
 
 const COPY = "block whitespace-nowrap";
@@ -48,20 +57,22 @@ export function CopyLine() {
           "absolute inset-0 overflow-hidden mix-blend-multiply " + RISE
         }
       >
-        <div className={FIT}>
-          {/* eslint-disable-next-line @next/next/no-img-element -- a static, pre-sized image with its own srcset */}
-          <img
-            src="/footer/copy-line.webp?v=7"
-            srcSet="/footer/copy-line-1344.webp?v=7 1344w, /footer/copy-line.webp?v=7 2688w"
-            sizes="100vw"
-            width={2688}
-            height={1152}
-            loading="lazy"
-            decoding="async"
-            alt=""
-            className="h-full w-full object-cover object-[50%_20%]"
-          />
-        </div>
+        {HALVES.map((half) => (
+          <div key={half} className={FIT + " " + half}>
+            {/* eslint-disable-next-line @next/next/no-img-element -- a static, pre-sized image with its own srcset */}
+            <img
+              src="/footer/copy-line.webp?v=7"
+              srcSet="/footer/copy-line-1344.webp?v=7 1344w, /footer/copy-line.webp?v=7 2688w"
+              sizes="100vw"
+              width={2688}
+              height={1152}
+              loading="lazy"
+              decoding="async"
+              alt=""
+              className="h-full w-full object-cover object-[50%_20%]"
+            />
+          </div>
+        ))}
       </div>
 
       {/* clipped to the band: the picture's box runs past its foot, and unclipped it lengthened the page */}
