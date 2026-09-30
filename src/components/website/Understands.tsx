@@ -3,7 +3,7 @@
 // After the players, on the light page again (the light rises back over the accent blue, AccentWave.tsx):
 // two cards side by side, the same line twice, in the hero's own look (its grey container, rounded corners,
 // hairline border and soft shadow; one text colour, navy, with the accent only on a word). On
-// the left ChatGPT's: read the internet, so it understands facts and how humans think. On the right ours:
+// the left ChatGPT's: it reads the internet and now understands facts and how humans think. On the right ours:
 // watched the gameplay, so it understands the game player (the accent). Each carries its maker's mark at
 // the top, both in the same line style (brand-marks.tsx), ours in the accent. They rise in one after the
 // other when the section comes into view, once.
@@ -33,8 +33,8 @@ export function Understands() {
         <motion.div {...rise(0)} className={card}>
           <ChatGptMark className="h-11 w-11 text-[#0a1b33]" />
           <p className={line}>
-            ChatGPT read the internet. Now it understands facts and how humans
-            think.
+            ChatGPT reads the internet and now it understands facts and how
+            humans think.
           </p>
         </motion.div>
         <motion.div {...rise(0.15)} className={card}>
