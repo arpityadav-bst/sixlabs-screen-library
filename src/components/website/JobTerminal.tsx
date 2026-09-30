@@ -142,9 +142,9 @@ export function JobTerminal({ run, play }: { run: Step[]; play: boolean }) {
           <div ref={field} style={FIELD_TINT} className="absolute inset-0" />
           <div className="absolute inset-0 hidden items-center justify-center [@media(hover:hover)_and_(pointer:fine)]:flex">
             <span className="term-hint relative block">
-              <span className="term-hint-ring absolute left-[4px] top-[4px] h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border-[1.5px] border-white/70 bg-white/[0.06]" />
+              <span className="term-hint-ring absolute left-[3.5px] top-[3.5px] h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/55" />
               <MousePointer2
-                className="h-7 w-7 fill-white/45 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]"
+                className="h-6 w-6 fill-white/35 text-white/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
                 strokeWidth={1.5}
               />
             </span>
