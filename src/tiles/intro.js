@@ -30,7 +30,7 @@ export function playIntro({ renderer, composer, refiner, field, rise, seconds = 
   pass.uniforms.tBase.value = base;
   composer.addPass(pass);
 
-  let raf = 0, start = 0, over = false, finish;
+  let raf = 0, start = 0, over = false, drawn = false, finish;
   const end = () => {
     if (over) return;
     over = true;
@@ -43,6 +43,11 @@ export function playIntro({ renderer, composer, refiner, field, rise, seconds = 
   };
   const frame = (now) => {
     start ||= now;
+    // While the bare floor holds (the delay) nothing on screen changes: it is drawn once and then no frame
+    // is, which keeps the page's main thread free for what comes in meanwhile (on a phone, drawing the
+    // whole floor every frame here stuttered the full view's typed title word).
+    if (drawn && (now - start) / 1000 < delay) { raf = requestAnimationFrame(frame); return; }
+    drawn = true;
     const t = Math.min(1, Math.max(0, (now - start) / 1000 - delay) / seconds), e = ease(t);
     field.position.y = -rise * (1 - e);
     pass.uniforms.uAmt.value = e;

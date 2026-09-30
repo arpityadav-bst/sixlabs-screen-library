@@ -67,6 +67,14 @@ export function ScrubLine() {
       queued = false;
       const el = track.current;
       if (!el) return;
+      // Once the track has run out the accent water covers the stage completely (AccentWave.tsx), and the
+      // stage is hidden from then on: past the players the light page rises back faster than the page
+      // scrolls, and would otherwise show this section's last screen, under the players, for a moment.
+      if (stage.current)
+        stage.current.style.visibility =
+          el.getBoundingClientRect().bottom <= window.innerHeight + 1
+            ? "hidden"
+            : "";
       if (still) return setLit(WORDS.length);
       const scrollable = el.offsetHeight - window.innerHeight * (1 + WAVE_VH);
       const p =
