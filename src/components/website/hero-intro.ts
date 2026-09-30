@@ -11,8 +11,10 @@
 import { useEffect, useState } from "react";
 
 export const HERO_LOADED = "heroloaded"; // sent on window as the full view's loading ends
-export const FULL_TILES_AT = 1; // s after ready: the full view's tiles start rising (its floor's introDelay)
-const FULL = { copy: 0.35, floor: 0.85, extras: 2.6 }; // s after ready
+// s after ready: the full view's tiles start rising (its floor's introDelay), 1.5s after the copy, so the
+// title has the view to itself for a moment
+export const FULL_TILES_AT = 1.85;
+const FULL = { copy: 0.35, floor: 1.7, extras: 3.45 }; // s after ready
 const BOX_EXTRAS = 1.8; // the container's introDelay (0.5s) and rise (0.9s), then a breath
 const GIVE_UP = 12; // s: a floor that never comes (no WebGL) does not keep the page behind the loader
 
