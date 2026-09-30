@@ -133,13 +133,11 @@ body {
    own middle, and back, easing all the way with no rest, a third of a turn after the one before (their
    delays), so the wave runs round without a break. Transform only, on its own layer: the compositor runs it,
    smooth even while the page is busy building the floor. */
-.logo-arc-0, .logo-arc-1, .logo-arc-2 {
-  animation: 1.2s ease-in-out infinite both;
-  will-change: transform;
-}
-.logo-arc-0 { animation-name: logo-arc-0; }
-.logo-arc-1 { animation-name: logo-arc-1; }
-.logo-arc-2 { animation-name: logo-arc-2; }
+.logo-arc-0, .logo-arc-1, .logo-arc-2 { will-change: transform; }
+/* each arc's full shorthand: a shared one without a name is minified to "animation: none" */
+.logo-arc-0 { animation: logo-arc-0 1.2s ease-in-out infinite both; }
+.logo-arc-1 { animation: logo-arc-1 1.2s ease-in-out infinite both; }
+.logo-arc-2 { animation: logo-arc-2 1.2s ease-in-out infinite both; }
 @keyframes logo-arc-0 { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(-1.6px, -2.5px, 0); } }
 @keyframes logo-arc-1 { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(3px, 0, 0); } }
 @keyframes logo-arc-2 { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(-1.7px, 2.5px, 0); } }
