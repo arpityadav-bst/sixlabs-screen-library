@@ -17,7 +17,8 @@ const COPIES_BASE = 10_956;
 
 // `full` (the 6labs-fullview page): the floor fills the whole first screen, edge to edge, instead of the
 // rounded container; the header lies over it, and the numbers, the scroll cue and the wave button sit
-// inside it along its foot; a faint hairline divides it from the page below.
+// inside it: the numbers and the scroll cue left under the copy, the wave button in its bottom right
+// corner; a faint hairline divides it from the page below.
 export function Hero({ full = false }: { full?: boolean }) {
   const [floorReady, setFloorReady] = useState(false);
   const floor = useRef<FloorHandle | null>(null);
@@ -36,78 +37,83 @@ export function Hero({ full = false }: { full?: boolean }) {
       live: true,
     },
   ];
+  // The headline numbers, centred under the container or (full) left under the copy: the humans in navy,
+  // their digital copies in the accent blue (the headline's "models" colour).
+  const numbers = (left: boolean) => (
+    <motion.dl
+      // Comes in once the tiles are in: the floor is ready, the placeholder logo leaves (0.5s), then the
+      // tiles fade in (0.9s).
+      initial={{ opacity: 0, y: 6 }}
+      animate={floorReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+      transition={{ duration: 0.6, ease, delay: floorReady ? 1.2 : 0 }}
+      className={"flex items-start gap-14 max-md:gap-8"}
+    >
+      {stats.map((s) => (
+        <div
+          key={s.label[0]}
+          className={
+            "flex flex-col " +
+            (left ? "items-start text-left" : "items-center text-center")
+          }
+        >
+          <dt className="order-2 mt-2 font-sans text-[14px] md:text-[15px] leading-snug text-[#64748b] max-md:whitespace-nowrap">
+            {s.label.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
+          </dt>
+          <dd
+            className={
+              "order-1 font-display text-[30px] font-medium leading-none tracking-tight tabular-nums " +
+              s.tone
+            }
+          >
+            {/* the live figure settles in from just above each time it counts up */}
+            <motion.span
+              key={s.value}
+              className="inline-block"
+              initial={s.live ? { opacity: 0.35, y: -5 } : false}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, ease }}
+            >
+              {s.value}
+            </motion.span>
+          </dd>
+        </div>
+      ))}
+    </motion.dl>
+  );
+  const wave = (
+    <>
+      {/* Sends the flip wave now: every tile back to default, activated or not. Just the icon; its label
+            fades in to its left on hover. */}
+      <button
+        type="button"
+        onClick={() => floor.current?.reset()}
+        className={
+          "group max-md:mr-0 p-1 flex items-center gap-1.5 text-slate-400 hover:text-accent transition-colors duration-200 " +
+          (full ? "" : "-mr-10")
+        }
+      >
+        <span className="text-[12px] leading-none opacity-0 translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0">
+          Next wave
+        </span>
+        <Waves className="w-4 h-4" strokeWidth={1.75} />
+      </button>
+    </>
+  );
   const row = (
     <>
       {/* Outside the container, one row: the scroll cue under its bottom-left corner, the headline numbers
             centred, the wave button under its bottom-right corner. */}
-      <div
-        className={
-          "w-full max-w-[1400px] mx-auto grid grid-cols-[1fr_auto_1fr] items-start max-md:relative max-md:flex max-md:justify-center " +
-          (full
-            ? "absolute inset-x-0 bottom-8 z-20 px-6 max-md:bottom-6 max-md:px-4"
-            : "mt-10 max-md:mt-8 px-8 max-md:px-2 md:px-16")
-        }
-      >
-        <div className={"max-md:hidden flex " + (full ? "" : "-ml-10")}>
+      <div className="w-full max-w-[1400px] mx-auto mt-10 max-md:mt-8 px-8 max-md:px-2 md:px-16 grid grid-cols-[1fr_auto_1fr] items-start max-md:relative max-md:flex max-md:justify-center">
+        <div className="-ml-10 max-md:hidden flex">
           <ScrollCue />
         </div>
-        {/* The humans in navy, their digital copies in the accent blue (the headline's "models" colour). */}
-        <motion.dl
-          // Comes in once the tiles are in: the floor is ready, the placeholder logo leaves (0.5s), then the
-          // tiles fade in (0.9s).
-          initial={{ opacity: 0, y: 6 }}
-          animate={floorReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
-          transition={{ duration: 0.6, ease, delay: floorReady ? 1.2 : 0 }}
-          className="flex items-start gap-14 max-md:gap-8"
-        >
-          {stats.map((s) => (
-            <div
-              key={s.label[0]}
-              className="flex flex-col items-center text-center"
-            >
-              <dt className="order-2 mt-2 font-sans text-[14px] md:text-[15px] leading-snug text-[#64748b] max-md:whitespace-nowrap">
-                {s.label.map((line) => (
-                  <span key={line} className="block">
-                    {line}
-                  </span>
-                ))}
-              </dt>
-              <dd
-                className={
-                  "order-1 font-display text-[30px] font-medium leading-none tracking-tight tabular-nums " +
-                  s.tone
-                }
-              >
-                {/* the live figure settles in from just above each time it counts up */}
-                <motion.span
-                  key={s.value}
-                  className="inline-block"
-                  initial={s.live ? { opacity: 0.35, y: -5 } : false}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.45, ease }}
-                >
-                  {s.value}
-                </motion.span>
-              </dd>
-            </div>
-          ))}
-        </motion.dl>
+        {numbers(false)}
         <div className="flex justify-end max-md:absolute max-md:right-2 max-md:top-1">
-          {/* Sends the flip wave now: every tile back to default, activated or not. Just the icon; its label
-              fades in to its left on hover. */}
-          <button
-            type="button"
-            onClick={() => floor.current?.reset()}
-            className={
-              "group max-md:mr-0 p-1 flex items-center gap-1.5 text-slate-400 hover:text-accent transition-colors duration-200 " +
-              (full ? "" : "-mr-10")
-            }
-          >
-            <span className="text-[12px] leading-none opacity-0 translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0">
-              Next wave
-            </span>
-            <Waves className="w-4 h-4" strokeWidth={1.75} />
-          </button>
+          {wave}
         </div>
       </div>
     </>
@@ -142,7 +148,10 @@ export function Hero({ full = false }: { full?: boolean }) {
           words, and the tiles show clear in the lower part. */}
         <div
           aria-hidden
-          className="md:hidden pointer-events-none absolute inset-x-0 top-0 z-10 h-[70%] bg-gradient-to-b from-[#e3e5e8] from-[76%] to-transparent"
+          className={
+            "md:hidden pointer-events-none absolute inset-x-0 top-0 z-10 bg-gradient-to-b from-[#e3e5e8] to-transparent " +
+            (full ? "h-[82%] from-[80%]" : "h-[70%] from-[76%]")
+          }
         />
 
         {/* While the floor loads, the logo lies on the floor in the tiles' white glass, toward the bottom right
@@ -222,9 +231,22 @@ export function Hero({ full = false }: { full?: boolean }) {
               <p className="text-[#475569]">One million players have a copy.</p>
               <p className="col-start-2 font-medium text-accent">Yours next.</p>
             </div>
+            {/* full: the numbers, then the scroll cue, left under the copy */}
+            {full && (
+              <div className="mt-12 md:mt-14 flex flex-col items-start gap-10">
+                {numbers(true)}
+                <div className="max-md:hidden">
+                  <ScrollCue />
+                </div>
+              </div>
+            )}
           </div>
         </div>
-        {full && <>{row}</>}
+        {full && (
+          <div className="pointer-events-auto absolute bottom-8 right-6 z-20 max-md:bottom-5 max-md:right-4">
+            {wave}
+          </div>
+        )}
       </section>
       {!full && row}
     </>
