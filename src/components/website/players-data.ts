@@ -133,10 +133,10 @@ export const PLAYERS: Player[] = [
       still: "/players/lost-ai-still.webp",
     },
     holoVideo: {
-      src: "/players-holo/lost-ai.webm?v=1",
+      src: "/players-holo/lost-ai.webm?v=2",
       straight: 0.48,
-      stacked: "/players-holo/lost-ai-stacked.mp4?v=1",
-      still: "/players-holo/lost-ai-still.webp",
+      stacked: "/players-holo/lost-ai-stacked.mp4?v=2",
+      still: "/players-holo/lost-ai-still.webp?v=2",
     },
     traits: traits(0.4, 0.15, 0.7, 0.3),
   },
