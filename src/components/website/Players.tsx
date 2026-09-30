@@ -92,7 +92,7 @@ export function Players() {
       id="players"
       style={fit}
       className={
-        "relative z-30 w-full max-w-[1400px] mx-auto -mt-[100vh] flex min-h-screen flex-col justify-center pt-24 pb-10 max-lg:justify-start max-md:pt-20 md:max-lg:pt-28 max-lg:pb-16 max-lg:[--ph:clamp(240px,calc(100svh-500px),520px)]! lg:max-xl:[--ph:min(720px,calc((100svh-344px)/0.756),calc((100vw-640px)/0.75))]! " +
+        "relative z-30 w-full max-w-[1400px] mx-auto -mt-[100vh] flex min-h-screen flex-col justify-center pt-24 pb-10 max-md:pt-[72px] md:max-lg:pt-[88px] max-lg:pb-3 max-lg:[--ph:clamp(240px,calc(100svh-500px),520px)]! lg:max-xl:[--ph:min(720px,calc((100svh-344px)/0.756),calc((100vw-640px)/0.75))]! " +
         (shown ? "" : "pointer-events-none") // hidden, it must not block the floating tiles under it
       }
     >
