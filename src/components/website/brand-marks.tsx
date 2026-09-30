@@ -1,7 +1,9 @@
+import { useId } from "react";
+
 // Line marks for the comparison cards (Understands.tsx), both drawn in currentColor at one line weight: the
 // ChatGPT (OpenAI) mark, from Simple Icons, and the SixLabs mark (public/brand/sixlabs-mark.svg) redrawn as
-// outlines at that same weight, so the two read as one icon set. Its middle ring is drawn smaller than the
-// filled logo's dot (r 12, not 15.4) so the outline keeps a clear gap from the arcs.
+// outlines at that same weight, so the two read as one icon set. The arcs' lines run inside their shapes,
+// so the gaps between them stay the logo's own; the middle ring is set to keep a clear gap from them.
 
 export function ChatGptMark({ className }: { className?: string }) {
   return (
@@ -16,21 +18,45 @@ export function ChatGptMark({ className }: { className?: string }) {
   );
 }
 
+// the mark's three arc shapes, as in public/brand/sixlabs-mark.svg
+const ARCS = [
+  "M41.85 56.42C41.85 54.38 42.89 52.49 44.59 51.39L83.77 22.84C84 22.67 83.99 22.33 83.75 22.18L71.84 14.8C67.97 12.4 63.07 12.4 59.2 14.8L23.68 36.8C20.15 38.99 18 42.85 18 47V51.63C18 51.96 18.16 52.27 18.43 52.45L41.22 68.22C41.49 68.4 41.85 68.22 41.85 67.89V56.42Z",
+  "M107.36 94.71C110.89 92.52 113.04 88.66 113.04 84.51V47C113.04 42.85 110.89 38.99 107.36 36.8L92.1099 27.35C91.7599 27.13 91.3199 27.15 90.9899 27.4L71.7699 41.64C71.5399 41.81 71.5599 42.15 71.7999 42.3L86.3599 51.32C88.1299 52.41 89.1999 54.34 89.1999 56.42V75.08C89.1999 77.16 88.1299 79.09 86.3599 80.18L72.1799 88.96C71.9299 89.11 71.9299 89.46 72.1599 89.63L92.1099 103.44C92.4399 103.67 92.8699 103.68 93.2099 103.47L107.36 94.7V94.71Z",
+  "M71.84 116.71C67.97 119.11 63.07 119.11 59.2 116.71L23.68 94.71C20.15 92.52 18 88.66 18 84.51V62.22C18 61.9 18.37 61.71 18.63 61.89L84.46 108.24C84.69 108.41 84.68 108.76 84.44 108.91L71.83 116.72L71.84 116.71Z",
+];
+const LINE = 5.5; // the visible line weight, matched to the ChatGPT mark
+
 export function SixLabsMark({ className }: { className?: string }) {
+  const id = useId();
   return (
     <svg
       viewBox="14.5 9.5 102 112.5"
       fill="none"
       stroke="currentColor"
-      strokeWidth={5.5}
       strokeLinejoin="round"
       className={className}
       aria-hidden
     >
-      <circle cx="65.52" cy="65.76" r="12" />
-      <path d="M41.85 56.42C41.85 54.38 42.89 52.49 44.59 51.39L83.77 22.84C84 22.67 83.99 22.33 83.75 22.18L71.84 14.8C67.97 12.4 63.07 12.4 59.2 14.8L23.68 36.8C20.15 38.99 18 42.85 18 47V51.63C18 51.96 18.16 52.27 18.43 52.45L41.22 68.22C41.49 68.4 41.85 68.22 41.85 67.89V56.42Z" />
-      <path d="M107.36 94.71C110.89 92.52 113.04 88.66 113.04 84.51V47C113.04 42.85 110.89 38.99 107.36 36.8L92.1099 27.35C91.7599 27.13 91.3199 27.15 90.9899 27.4L71.7699 41.64C71.5399 41.81 71.5599 42.15 71.7999 42.3L86.3599 51.32C88.1299 52.41 89.1999 54.34 89.1999 56.42V75.08C89.1999 77.16 88.1299 79.09 86.3599 80.18L72.1799 88.96C71.9299 89.11 71.9299 89.46 72.1599 89.63L92.1099 103.44C92.4399 103.67 92.8699 103.68 93.2099 103.47L107.36 94.7V94.71Z" />
-      <path d="M71.84 116.71C67.97 119.11 63.07 119.11 59.2 116.71L23.68 94.71C20.15 92.52 18 88.66 18 84.51V62.22C18 61.9 18.37 61.71 18.63 61.89L84.46 108.24C84.69 108.41 84.68 108.76 84.44 108.91L71.83 116.72L71.84 116.71Z" />
+      {/* Each arc's line is drawn inside its own shape (a stroke twice the weight, clipped to the shape), so
+          the arcs keep the logo's outer edges and the gaps between them stay the logo's own, a full line
+          wider than an outline drawn on the edge would leave. The ring is grown by the same half-line, so
+          its gap to the arcs is as it was. */}
+      <defs>
+        {ARCS.map((d, k) => (
+          <clipPath key={k} id={`${id}-${k}`}>
+            <path d={d} />
+          </clipPath>
+        ))}
+      </defs>
+      <circle cx="65.52" cy="65.76" r={12 + LINE / 2} strokeWidth={LINE} />
+      {ARCS.map((d, k) => (
+        <path
+          key={k}
+          d={d}
+          strokeWidth={LINE * 2}
+          clipPath={`url(#${id}-${k})`}
+        />
+      ))}
     </svg>
   );
 }
