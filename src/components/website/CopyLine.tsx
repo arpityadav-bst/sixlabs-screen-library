@@ -93,7 +93,7 @@ export function CopyLine() {
       {/* the mark cresting from behind the word: the glow on the outer box, the fade on the inner one (one
           element carrying both tiles the fade across the glow's box and shows it as a square) */}
       <span className="absolute left-1/2 top-[calc(52px+0.05em)] z-0 h-[1.05em] w-[1.05em] -translate-x-1/2 drop-shadow-[0_0_0.3em_rgba(35,80,170,0.3)] md:top-[calc(100px+0.05em)]">
-        <span className="block h-full w-full [mask-image:linear-gradient(180deg,#000_0%,#000_38%,rgba(0,0,0,0.34)_66%,transparent_92%)]">
+        <span className="block h-full w-full [mask-image:linear-gradient(180deg,#000_0%,#000_75%,transparent_100%)]">
           <SixLabsCobalt className="block h-full w-full" />
         </span>
       </span>
