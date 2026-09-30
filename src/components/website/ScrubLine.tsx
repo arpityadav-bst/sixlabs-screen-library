@@ -31,6 +31,19 @@ const accentAt = WORDS.findIndex(
 
 export function ScrubLine() {
   const track = useRef<HTMLElement>(null);
+  // the stage carries the line's height (--line-h), so the badges can keep clear of it (FloatingBadges.tsx)
+  const stage = useRef<HTMLDivElement>(null);
+  const words = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    const s = stage.current,
+      w = words.current;
+    if (!s || !w) return;
+    const ro = new ResizeObserver(() =>
+      s.style.setProperty("--line-h", `${w.offsetHeight}px`),
+    );
+    ro.observe(w);
+    return () => ro.disconnect();
+  }, []);
   const [lit, setLit] = useState(0);
 
   useEffect(() => {
@@ -91,9 +104,13 @@ export function ScrubLine() {
       aria-label={LINE}
       className="relative h-[390vh]"
     >
-      <div className="sticky top-0 flex h-screen items-center justify-center px-6">
+      <div
+        ref={stage}
+        className="sticky top-0 flex h-screen items-center justify-center px-6"
+      >
         <FloatingBadges />
         <p
+          ref={words}
           aria-hidden
           className="relative max-w-[980px] text-center font-display text-[26px] md:text-[44px] font-medium leading-[1.3] tracking-tight"
         >

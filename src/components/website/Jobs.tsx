@@ -122,7 +122,7 @@ export function Jobs() {
             aria-selected={k === shown}
             onClick={() => show(k)}
             className={
-              "rounded-full px-3.5 py-1.5 font-sans text-[13px] font-medium transition-colors duration-200 " +
+              "whitespace-nowrap rounded-full px-3.5 py-1.5 font-sans text-[13px] font-medium transition-colors duration-200 max-[380px]:px-3 " +
               (k === shown
                 ? "bg-[#0a152d] text-white"
                 : "text-[#64748b] hover:text-accent")

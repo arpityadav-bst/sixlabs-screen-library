@@ -26,7 +26,9 @@ type Badge = {
   x: string;
   y: string;
   mx: string; // below 1600px the line reaches the middle tiles: three tiles above it, three below
-  my: string; // (phones)
+  my: string; // (phones) off the line's own top or bottom (--line-h, set by ScrubLine.tsx), about half a
+  // badge and a gap, so the rows keep clear of the words however many lines they wrap to and however tall
+  // the screen; a share of the height closed in on them on short or narrow phones
   ty: string; // (tablets and laptops)
   size: number;
   depth: number;
@@ -45,7 +47,7 @@ const BADGES: Badge[] = [
     x: "15%",
     y: "27%",
     mx: "17%",
-    my: "26.5%",
+    my: "calc(50% - var(--line-h, 200px) / 2 - 74px)",
     ty: "24%",
     size: 220,
     depth: 1.4,
@@ -62,7 +64,7 @@ const BADGES: Badge[] = [
     x: "82%",
     y: "25%",
     mx: "83%",
-    my: "26%",
+    my: "calc(50% - var(--line-h, 200px) / 2 - 71px)",
     ty: "23%",
     size: 196,
     depth: 0.8,
@@ -79,7 +81,7 @@ const BADGES: Badge[] = [
     x: "10%",
     y: "56%",
     mx: "50%",
-    my: "21.5%",
+    my: "calc(50% - var(--line-h, 200px) / 2 - 102px)",
     ty: "22%",
     size: 180,
     depth: 0.6,
@@ -96,7 +98,7 @@ const BADGES: Badge[] = [
     x: "88%",
     y: "53%",
     mx: "50%",
-    my: "79%",
+    my: "calc(50% + var(--line-h, 200px) / 2 + 122px)",
     ty: "78%",
     size: 232,
     depth: 1.6,
@@ -113,7 +115,7 @@ const BADGES: Badge[] = [
     x: "20%",
     y: "77%",
     mx: "17%",
-    my: "71%",
+    my: "calc(50% + var(--line-h, 200px) / 2 + 71px)",
     ty: "76%",
     size: 188,
     depth: 1,
@@ -130,7 +132,7 @@ const BADGES: Badge[] = [
     x: "77%",
     y: "79%",
     mx: "83%",
-    my: "72%",
+    my: "calc(50% + var(--line-h, 200px) / 2 + 73px)",
     ty: "77%",
     size: 204,
     depth: 1.2,

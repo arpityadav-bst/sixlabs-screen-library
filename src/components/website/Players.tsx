@@ -264,7 +264,7 @@ export function Players() {
           })}
         </div>
         {/* phones and tablets: the players as a carousel under the switch */}
-        <motion.div {...enter(0.2)} className="relative z-10 mt-1 lg:hidden">
+        <motion.div {...enter(0.2)} className="relative z-10 mt-[calc(66px-var(--ph)*0.2)] lg:hidden">
           <PlayerCarousel active={active} onChange={setActive} />
         </motion.div>
       </div>
