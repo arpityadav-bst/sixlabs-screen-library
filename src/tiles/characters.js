@@ -33,18 +33,35 @@ diffuseColor.a *= clip * ${role === 'ai' ? 'uScan' : '(1.0 - uScan)'};`);
   return mat;
 }
 
-// Starts downloading every human and AI picture of `names` at once: a Map "dir/name" -> Promise<Texture>.
-export function loadPictures(P, names) {
-  const loader = new THREE.TextureLoader(), cache = new Map();
-  for (const name of names) for (const dir of ['chars', 'chars-ai']) {
-    const base = dir === 'chars-ai' ? (P.aiAssetBase ?? P.assetBase) : P.assetBase;
-    cache.set(`${dir}/${name}`, loader.loadAsync(`${base ?? ''}/${dir}/${name}`).then((t) => {
-      t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 16; return t;
-    }));
+// Downloads pictures in turns (load-plan.js): each group of keys ("chars/name", "chars-ai/name") starts once
+// the one before it is in, so what the floor waits for is not slowed by what it does not need yet. A key in
+// more than one group goes with its first. Pictures come from P.picDir under their base (/512 on phones).
+// Returns { get: Map key -> Promise<Texture>, now: Map key -> Texture, for those already in }.
+export function planPictures(P, groups) {
+  const loader = new THREE.TextureLoader(), get = new Map(), now = new Map(), go = new Map();
+  for (const g of groups) for (const k of g) {
+    if (get.has(k)) continue;
+    const [dir, name] = k.split('/'), base = dir === 'chars-ai' ? (P.aiAssetBase ?? P.assetBase) : P.assetBase;
+    get.set(k, new Promise((r) => go.set(k, r))
+      .then(() => loader.loadAsync(`${base ?? ''}${P.picDir ?? ''}/${dir}/${name}`))
+      .then((t) => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 16; now.set(k, t); return t; }));
   }
-  return cache;
+  (async () => {
+    for (const g of groups) {
+      const mine = g.filter((k) => go.has(k));
+      mine.forEach((k) => { go.get(k)(); go.delete(k); });
+      await Promise.allSettled(mine.map((k) => get.get(k)));
+    }
+  })();
+  return { get, now };
 }
-export const preloadCharacters = (P) => loadPictures(P, P.chars ?? []);
+// Every human and AI picture of `names`, all at once: a Map "dir/name" -> Promise<Texture>.
+export const loadPictures = (P, names) => planPictures(P, [names.flatMap((n) => [`chars/${n}`, `chars-ai/${n}`])]).get;
+
+// What a bust shows until its own picture is in (transparent), swapped for it then (addCharacters).
+const BLANK = new THREE.DataTexture(new Uint8Array(4), 1, 1);
+BLANK.colorSpace = THREE.SRGBColorSpace;
+BLANK.needsUpdate = true;
 
 // Casts a set of characters onto the tiles: a Map "i,j" -> file name. Tiles go most visible first (their
 // `shown` share of the screen), each taking the least recently used character that no tile within two
@@ -74,21 +91,23 @@ export function castTiles(tiles, names, active, fill = null) {
   return cast;
 }
 
-// Returns a Map "i,j" -> { name, meshes, converted, at, setScan(s), setLift(y), setPictures(human, ai) }.
-export async function addCharacters(scene, P, tiles, cache = preloadCharacters(P)) {
+// Returns a Map "i,j" -> { name, meshes, converted, at, aiIn, aiReady, setScan(s), setLift(y),
+// setPictures(human, ai) }. It waits for the pictures in `wait` only (all by default); a bust whose picture
+// is not in yet shows BLANK and takes its picture once it has arrived and warm(texture) has put it on the
+// GPU. Until its AI copy is in (aiIn; aiReady resolves then, false if it failed), a tile stays human.
+export async function addCharacters(scene, P, tiles, pics = planPictures(P, [(P.chars ?? []).flatMap((n) => [`chars/${n}`, `chars-ai/${n}`])]),
+  cast = castTiles(tiles, P.chars ?? [], P.charActive), wait = [...pics.get.keys()], warm = async (t) => t) {
   const out = new Map();
   if (!P.chars?.length) return out;
-  await Promise.all(cache.values());
-  const load = (dir, name) => cache.get(`${dir}/${name}`);
+  await Promise.all(wait.map((k) => pics.get.get(k)));
   const geo = new THREE.PlaneGeometry(1, 1);
-  const cast = castTiles(tiles, P.chars, P.charActive);
   const fwd = P.charForward * Math.SQRT1_2; // along the diagonal toward the (+x, +z) corner, nearest the camera
   for (const t of tiles) {
     const name = cast.get(`${t.i},${t.j}`);
     const scanU = { value: 0 };
     const meshes = [];
     for (const [role, dir, order] of [['human', 'chars', 3], ['ai', 'chars-ai', 4]]) {
-      const bust = new THREE.Mesh(geo, charMaterial(await load(dir, name), t, P, role, scanU));
+      const bust = new THREE.Mesh(geo, charMaterial(pics.now.get(`${dir}/${name}`) ?? BLANK, t, P, role, scanU));
       bust.rotation.set(-Math.PI / 2, 0, Math.PI / 4); // flat on the tile, picture up = toward the back corner
       bust.scale.set(P.charSize, P.charSize * P.charStretch, 1);
       bust.position.set(t.x + fwd, t.y + 0.002, t.z + fwd);
@@ -96,12 +115,18 @@ export async function addCharacters(scene, P, tiles, cache = preloadCharacters(P
       scene.add(bust);
       meshes.push(bust);
     }
-    out.set(`${t.i},${t.j}`, {
-      name, meshes, converted: false, at: [t.x, t.y, t.z],
-      setScan: (s) => { scanU.value = s; },
+    const entry = {
+      name, meshes, converted: false, at: [t.x, t.y, t.z], aiIn: pics.now.has(`chars-ai/${name}`),
+      setScan: (s) => { scanU.value = entry.aiIn ? s : 0; },
       setLift: (y) => meshes.forEach((m) => { m.position.y = t.y + 0.002 + y; }),
-      setPictures: (human, ai) => { meshes[0].material.map = human; meshes[1].material.map = ai; },
-    });
+      setPictures: (human, ai) => { meshes[0].material.map = human; meshes[1].material.map = ai; entry.aiIn = true; entry.aiReady = Promise.resolve(true); },
+    };
+    // a picture still on its way: in once it has arrived and is on the GPU (unless a wave swapped it first)
+    const later = (m, k) => (m.material.map !== BLANK ? Promise.resolve(true)
+      : pics.get.get(k).then(warm).then((tex) => { if (m.material.map === BLANK) m.material.map = tex; return true; }, () => false));
+    later(meshes[0], `chars/${name}`);
+    entry.aiReady = later(meshes[1], `chars-ai/${name}`).then((ok) => { if (ok) entry.aiIn = true; return ok; });
+    out.set(`${t.i},${t.j}`, entry);
   }
   return out;
 }

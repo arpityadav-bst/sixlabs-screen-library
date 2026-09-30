@@ -99,6 +99,10 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner,
       const next = first
         ? todo.reduce((a, b) => (Math.hypot(a.x, a.y) <= Math.hypot(b.x, b.y) ? a : b)) // nearest the middle
         : todo[Math.floor(Math.random() * todo.length)];
+      // its AI copy still on its way (characters.js): wait for it, then pick again; a failed one plays human
+      const ch = chars.get(next.key);
+      if (!ch.aiIn && (await ch.aiReady)) continue;
+      if (stopped) break;
       first = false;
       const cell = cellOf(next.key);
       ctl.hover(cell);

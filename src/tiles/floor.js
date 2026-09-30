@@ -10,7 +10,9 @@ import { studioEnvironment, glassMaterials } from './materials.js';
 import { nearShadeUniforms, applyNearShade } from './near-shade.js';
 import { floorMaterial, floorUniforms } from './floor-material.js';
 import { buildComposer, createRefiner } from './post.js';
-import { addCharacters, preloadCharacters } from './characters.js';
+import { addCharacters } from './characters.js';
+import { planLoad } from './load-plan.js';
+import { idleUploader } from './upload.js';
 import { createCasts } from './casts.js';
 import { createFocusRig } from './focus-rig.js';
 import { startInteraction } from './interact.js';
@@ -21,13 +23,12 @@ import { startAutoplay } from './autoplay.js';
 
 // distScale pulls the camera back (smaller tiles, more of them: the grid is built to what it sees); mixWaves
 // casts the second wave's characters on the middle tiles and the first wave's around them (casts.js).
-export async function createFloor(container, { params, base = '/tiles', aiBase = base, isStatic = false, expose = false, introDelay = 0, onConvert = () => {}, distScale = 1, mixWaves = false, spentTint = '' } = {}) {
+export async function createFloor(container, { params, base = '/tiles', aiBase = base, res = 768, isStatic = false, expose = false, introDelay = 0, onConvert = () => {}, distScale = 1, mixWaves = false, spentTint = '' } = {}) {
   const RAW0 = params ?? await fetch(`${base}/floor-params.json`).then((r) => r.json());
   const RAW = distScale === 1 ? RAW0 : { ...RAW0, dist: RAW0.dist * distScale };
-  const common = Object.assign({ W: 1920, H: 1080, assetBase: base, aiAssetBase: aiBase }, RAW, spentTint && { spentTint }); // aiBase: where chars-ai/ is read from (the hologram copies live in /tiles-holo)
+  const common = Object.assign({ W: 1920, H: 1080, assetBase: base, aiAssetBase: aiBase, picDir: res === 768 ? '' : `/${res}` }, RAW, spentTint && { spentTint }); // aiBase: where chars-ai/ is read from (the hologram copies live in /tiles-holo)
   const PF = Object.assign({}, common, RAW.states?.default ?? {}), PA = Object.assign({}, common, RAW.states?.shine ?? {});
   const P = PF;
-  const pictures = preloadCharacters(P); // downloads while the scene is built
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
   renderer.toneMapping = THREE.NeutralToneMapping;
@@ -87,6 +88,20 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   scene.add(field);
   const cells = [];
   for (let i = 0; i <= iMax; i++) for (let j = jMin; j <= jMax; j++) cells.push([i, j]);
+  // Characters go on every tile whose bust would be on screen (the tile's centre, inside the frame plus a
+  // margin) at any supported screen shape.
+  const inDesign = ([i, j]) => { const v = new THREE.Vector3(cx(i), tileH, cz(j)).project(camera); return Math.abs(v.x) < 1.12 && Math.abs(v.y) < 1.2; };
+  const busted = cells.filter(([i, j]) => inDesign([i, j]) || onSomeScreen(camera, P, new THREE.Vector3(cx(i), tileH, cz(j))));
+  // Casting order (characters.js): by how much of each tile this screen shows, most first, so every
+  // character lands on a well-visible tile before any repeats, and repeats go to the most cut-off tiles.
+  const nowCam = camera.clone();
+  placeCamera(nowCam, P, Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight));
+  const bustTiles = busted.map(([i, j]) => (
+    { i, j, x: cx(i), y: tileH, z: cz(j), active: i === ia && j === ja, screen: toScreen(cx(i), cz(j)), ...(({ x, y, shown }) => ({ shown, mid: Math.hypot(x, y) }))(shownShare(nowCam, cx(i), tileH, cz(j), half)) }));
+  // The first cast's pictures, in the order they are needed (load-plan.js); started here, ahead of building
+  // the materials, so they download while those are made. warm puts each late one on the GPU in idle time.
+  const { cast: cast0, pictures, wait } = planLoad(P, bustTiles, isStatic);
+  const warm = idleUploader(renderer, () => !renderer.domElement.isConnected);
   // Every tile carries an instance colour from the start (white = untouched), so tinting one later is a
   // buffer update, not a shader recompile.
   const m4 = new THREE.Matrix4(), slot = new Map(), WHITE = new THREE.Color('#ffffff'), SPENT = new THREE.Color(P.spentTint ?? '#b8bbc1');
@@ -148,17 +163,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   key.position.set(-4, 10, -7);
   scene.add(key);
 
-  // Characters go on every tile whose bust would be on screen (the tile's centre, inside the frame plus a
-  // margin) at any supported screen shape.
-  const inDesign = ([i, j]) => { const v = new THREE.Vector3(cx(i), tileH, cz(j)).project(camera); return Math.abs(v.x) < 1.12 && Math.abs(v.y) < 1.2; };
-  const busted = cells.filter(([i, j]) => inDesign([i, j]) || onSomeScreen(camera, P, new THREE.Vector3(cx(i), tileH, cz(j))));
-  // Casting order (characters.js): by how much of each tile this screen shows, most first, so every
-  // character lands on a well-visible tile before any repeats, and repeats go to the most cut-off tiles.
-  const nowCam = camera.clone();
-  placeCamera(nowCam, P, Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight));
-  const bustTiles = busted.map(([i, j]) => (
-    { i, j, x: cx(i), y: tileH, z: cz(j), active: i === ia && j === ja, screen: toScreen(cx(i), cz(j)), ...(({ x, y, shown }) => ({ shown, mid: Math.hypot(x, y) }))(shownShare(nowCam, cx(i), tileH, cz(j), half)) }));
-  const chars = await addCharacters(field, P, bustTiles, pictures);
+  const chars = await addCharacters(field, P, bustTiles, pictures, cast0, wait, warm);
 
   // Capture the reflection from the activeAt tile, with that tile and its busts out of the way.
   if (P.actSideMirror > 0) {
@@ -253,7 +258,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   if (!isStatic) intro.done.then(() => {
     if (disposed) return;
     const ctl = startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU: U, nearU, P, expose, onConvert });
-    const cast = createCasts({ P, renderer, chars, bustTiles, pictures, gone: () => disposed, mixWaves });
+    const cast = createCasts({ P, renderer, chars, bustTiles, pictures: pictures.get, gone: () => disposed, mixWaves, warm });
     const auto = startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, cast, half });
     // Off screen (scrolled past) or in a hidden tab, the auto-play holds, so the floor draws nothing
     // while the visitor is elsewhere on the page; it carries on when they come back.
