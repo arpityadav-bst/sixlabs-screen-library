@@ -35,7 +35,7 @@ export function Closing() {
         Already have an account?{" "}
         <a
           href="#"
-          className="text-[#0a1b33] underline decoration-slate-300 decoration-1 underline-offset-[3px] transition-colors duration-300 hover:decoration-[#0a1b33]"
+          className="text-[#0a1b33] underline decoration-slate-300 decoration-1 underline-offset-[3px] transition-colors duration-300 hover:text-accent hover:decoration-accent"
         >
           Sign in
         </a>

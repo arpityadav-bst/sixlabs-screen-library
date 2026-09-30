@@ -104,7 +104,7 @@ export function Hero() {
               understands the game player.{" "}
               <a
                 {...linkTo("jobs")}
-                className="pointer-events-auto underline underline-offset-4 decoration-slate-300 hover:decoration-[#64748b] transition-colors duration-200"
+                className="pointer-events-auto underline underline-offset-4 decoration-slate-300 hover:text-accent hover:decoration-accent transition-colors duration-200"
               >
                 See what it does
               </a>
@@ -176,7 +176,7 @@ export function Hero() {
           <button
             type="button"
             onClick={() => floor.current?.reset()}
-            className="group -mr-10 max-md:mr-0 p-1 flex items-center gap-1.5 text-slate-400 hover:text-[#0a1b33] transition-colors duration-200"
+            className="group -mr-10 max-md:mr-0 p-1 flex items-center gap-1.5 text-slate-400 hover:text-accent transition-colors duration-200"
           >
             <span className="text-[12px] leading-none opacity-0 translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0">
               Next wave

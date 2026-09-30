@@ -56,7 +56,7 @@ export function LanguageMenu() {
         onClick={() => { setActive(selected); setOpen((o) => !o); }}
         className={
           "flex items-center gap-1.5 rounded-full px-2.5 py-1.5 transition-colors duration-200 " +
-          (open ? "bg-slate-200/60 text-[#0a1b33]" : "text-slate-500 hover:text-[#0a1b33]")
+          (open ? "bg-slate-200/60 text-[#0a1b33]" : "text-slate-500 hover:text-accent")
         }
       >
         <motion.span animate={{ rotate: open ? 20 : 0 }} transition={spring} className="flex">

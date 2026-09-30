@@ -58,12 +58,12 @@ export function Header() {
         <div className="hidden md:flex items-center gap-8">
           {/* Ink at the regular weight, as onBlue's tabs: a mid grey at medium weight reads soft, the
               anti-aliasing smearing its lighter edges, where dark type on the light bar stays crisp. The
-              hover eases to the grey. */}
+              hover turns to the accent. */}
           {LINKS.map(({ label, to }) => (
             <a
               key={label}
               {...linkTo(to)}
-              className="text-[15px] font-normal tracking-[-0.01em] text-[#0a1b33] hover:text-slate-500 transition-colors duration-300"
+              className="text-[15px] font-normal tracking-[-0.01em] text-[#0a1b33] hover:text-accent transition-colors duration-300"
             >
               {label}
             </a>

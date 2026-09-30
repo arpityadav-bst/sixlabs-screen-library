@@ -20,7 +20,7 @@ const EXPLORE: { label: string; to?: Spot }[] = [
 
 const INNER = "mx-auto w-full max-w-[1400px] px-4 md:px-16";
 const LEGAL =
-  "cursor-pointer underline decoration-slate-300 decoration-1 underline-offset-[3px] transition-colors duration-300 hover:text-[#0a1b33] hover:decoration-[#0a1b33]";
+  "cursor-pointer underline decoration-slate-300 decoration-1 underline-offset-[3px] transition-colors duration-300 hover:text-accent hover:decoration-accent";
 export function Footer() {
   return (
     <footer className="relative -mx-4 border-t border-slate-200/80 bg-black/[0.04] font-sans text-[13px] tracking-[-0.01em] text-[#64748b] md:-mx-8">
@@ -61,7 +61,7 @@ export function Footer() {
             <a
               key={label}
               {...(to ? linkTo(to) : {})}
-              className="cursor-pointer transition-colors duration-300 hover:text-[#0a1b33]"
+              className="cursor-pointer transition-colors duration-300 hover:text-accent"
             >
               {label}
             </a>
@@ -71,7 +71,7 @@ export function Footer() {
         <button
           type="button"
           onClick={() => jumpTo("top")}
-          className="inline-flex items-center gap-[7px] justify-self-end whitespace-nowrap text-[13.5px] text-[#0a1b33] transition-colors duration-300 hover:text-[#64748b] max-md:justify-self-start"
+          className="inline-flex items-center gap-[7px] justify-self-end whitespace-nowrap text-[13.5px] text-[#0a1b33] transition-colors duration-300 hover:text-accent max-md:justify-self-start"
         >
           Back to top <ArrowUp size={14} strokeWidth={2} aria-hidden />
         </button>
@@ -79,7 +79,8 @@ export function Footer() {
 
       <CopyLine />
 
-      <div className="border-t border-slate-200/80 pb-[env(safe-area-inset-bottom)]">
+      {/* the tail, a shade (4%) darker again than the rest of the footer */}
+      <div className="border-t border-slate-200/80 bg-black/[0.04] pb-[env(safe-area-inset-bottom)]">
         <div
           className={
             INNER +
