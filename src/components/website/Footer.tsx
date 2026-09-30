@@ -1,7 +1,8 @@
 "use client";
 
 // The footer, after the onBlue creators page's (blueai/public/experiments/onblue-vesper, .site-foot) in the
-// page's own light look. Full width under a hairline: the logo and its line, the Explore links, and Back to
+// page's own light look, a shade (4%) darker than the closing call above it, the noise still showing
+// through. Full width under a hairline: the logo and its line, the Explore links, and Back to
 // top at the right; then the copy line, the landscape with the huge wordmark in front of it (CopyLine.tsx);
 // then the tail, the copyright and the legal links. The legal links are stubs.
 import { ArrowUp } from "lucide-react";
@@ -22,7 +23,7 @@ const LEGAL =
   "cursor-pointer underline decoration-slate-300 decoration-1 underline-offset-[3px] transition-colors duration-300 hover:text-[#0a1b33] hover:decoration-[#0a1b33]";
 export function Footer() {
   return (
-    <footer className="relative -mx-4 border-t border-slate-200/80 font-sans text-[13px] tracking-[-0.01em] text-[#64748b] md:-mx-8">
+    <footer className="relative -mx-4 border-t border-slate-200/80 bg-black/[0.04] font-sans text-[13px] tracking-[-0.01em] text-[#64748b] md:-mx-8">
       <div
         className={
           INNER +
