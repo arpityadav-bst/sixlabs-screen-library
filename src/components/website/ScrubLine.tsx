@@ -13,8 +13,8 @@ import { easeOut, glideTo, gliding } from "./glide";
 import { LiquidLine } from "./LiquidLine";
 
 const LINE =
-  "A model is built from what the person does, not what they say. Put a million models on a new build and you know how it will land before anyone plays it.";
-const ACCENT = ["a", "million", "models"]; // "Put a million models": the words after "Put"
+  "People lie in surveys. Their play never does. We model what they do, run a million of those models on your new build, and you see how it lands before a single player touches it.";
+const ACCENT = ["a", "million", "of", "those", "models"]; // "run a million of those models": the words after "run"
 export const COMPLETE_AT = 0.82;
 // Scrolling back up empties the line BACK times faster than scrolling down fills it; scrolling down
 // again refills at that pace too, until it has caught up with where the scroll is.

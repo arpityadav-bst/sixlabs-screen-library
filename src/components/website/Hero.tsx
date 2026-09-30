@@ -131,7 +131,8 @@ export function Hero({ full = false }: { full?: boolean }) {
             className="w-full h-full"
             introDelay={full ? FULL_TILES_AT : 0.5}
             // full: the camera pulled back for smaller, more tiles (from 1024px wide: on a tablet or phone the faces would get
-            // too small to read), the second wave's cast in the middle. Read once, as the floor mounts.
+            // too small to read). Each wave has its own 37 faces, enough to fill the view with no repeats. Read once, as the
+            // floor mounts.
             distScale={
               full &&
               typeof window !== "undefined" &&
@@ -139,7 +140,6 @@ export function Hero({ full = false }: { full?: boolean }) {
                 ? 1.5
                 : 1
             }
-            mixWaves={full}
             aiBase={art === "hologram" ? "/tiles-holo" : undefined}
             // a used tile rests a little darker; on the hologram pages, a very light wash of the holograms' sky blue
             spentTint={art === "hologram" ? "#e3f3ff" : undefined}
