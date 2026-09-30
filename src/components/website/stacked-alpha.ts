@@ -1,5 +1,6 @@
-// Draws one frame of a "stacked alpha" clip (PlayerPortrait.tsx): the frame holds the colour picture in its
-// top half and the picture's transparency, as grey, in its bottom half; WebGL puts the two back together as
+// Draws one frame of a "stacked alpha" clip (PlayerPortrait.tsx): the frame holds the colour picture, already
+// premultiplied by its transparency (tools/stack-alpha.sh), in its top half and the transparency, as grey,
+// in its bottom half; WebGL puts the two back together as
 // one see-through image on the canvas. This is how the players' clips play in Safari and on iPhones, which
 // show a WebM clip's transparency as black (useClipFormat.ts). The drawing buffer is kept between frames so
 // the portrait swap's sweep (PortraitSwap.tsx) can read the canvas like a video. Null without WebGL.
@@ -12,7 +13,8 @@ void main() {
   gl_Position = vec4(p, 0.0, 1.0);
 }`;
 
-// colour from the top half, transparency from the bottom half's grey; out premultiplied
+// colour from the top half (premultiplied, held to the transparency so compression cannot push an edge
+// brighter than it is), transparency from the bottom half's grey
 const FRAGMENT = `
 precision mediump float;
 uniform sampler2D frame;
@@ -20,7 +22,7 @@ varying vec2 uv;
 void main() {
   vec3 colour = texture2D(frame, vec2(uv.x, uv.y * 0.5)).rgb;
   float alpha = texture2D(frame, vec2(uv.x, 0.5 + uv.y * 0.5)).r;
-  gl_FragColor = vec4(colour * alpha, alpha);
+  gl_FragColor = vec4(min(colour, vec3(alpha)), alpha);
 }`;
 
 export function stackedAlpha(canvas: HTMLCanvasElement) {

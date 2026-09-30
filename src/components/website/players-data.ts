@@ -44,13 +44,13 @@ export const PLAYERS: Player[] = [
     video: {
       src: "/players/explorer.webm?v=3",
       straight: 0.49,
-      stacked: "/players/explorer-stacked.mp4?v=1",
+      stacked: "/players/explorer-stacked.mp4?v=2",
       still: "/players/explorer-still.webp",
     },
     aiVideo: {
       src: "/players/explorer-ai.webm?v=1",
       straight: 0.49,
-      stacked: "/players/explorer-ai-stacked.mp4?v=1",
+      stacked: "/players/explorer-ai-stacked.mp4?v=2",
       still: "/players/explorer-ai-still.webp",
     },
     traits: traits(0.95, 0.72, 0.55, 0.6),
@@ -64,13 +64,13 @@ export const PLAYERS: Player[] = [
     video: {
       src: "/players/grinder.webm?v=1",
       straight: 0.5,
-      stacked: "/players/grinder-stacked.mp4?v=1",
+      stacked: "/players/grinder-stacked.mp4?v=2",
       still: "/players/grinder-still.webp",
     },
     aiVideo: {
       src: "/players/grinder-ai.webm?v=1",
       straight: 0.5,
-      stacked: "/players/grinder-ai-stacked.mp4?v=1",
+      stacked: "/players/grinder-ai-stacked.mp4?v=2",
       still: "/players/grinder-ai-still.webp",
     },
     traits: traits(0.2, 0.96, 0.8, 0.82),
@@ -84,13 +84,13 @@ export const PLAYERS: Player[] = [
     video: {
       src: "/players/spender.webm?v=1",
       straight: 0.54,
-      stacked: "/players/spender-stacked.mp4?v=1",
+      stacked: "/players/spender-stacked.mp4?v=2",
       still: "/players/spender-still.webp",
     },
     aiVideo: {
       src: "/players/spender-ai.webm?v=1",
       straight: 0.52,
-      stacked: "/players/spender-ai-stacked.mp4?v=1",
+      stacked: "/players/spender-ai-stacked.mp4?v=2",
       still: "/players/spender-ai-still.webp",
     },
     traits: traits(0.5, 0.35, 0.18, 0.45),
@@ -104,13 +104,13 @@ export const PLAYERS: Player[] = [
     video: {
       src: "/players/lost.webm?v=1",
       straight: 0.52,
-      stacked: "/players/lost-stacked.mp4?v=1",
+      stacked: "/players/lost-stacked.mp4?v=2",
       still: "/players/lost-still.webp",
     },
     aiVideo: {
       src: "/players/lost-ai.webm?v=1",
       straight: 0.52,
-      stacked: "/players/lost-ai-stacked.mp4?v=1",
+      stacked: "/players/lost-ai-stacked.mp4?v=2",
       still: "/players/lost-ai-still.webp",
     },
     traits: traits(0.4, 0.15, 0.7, 0.3),
