@@ -78,11 +78,11 @@ export function Footer() {
 
       <CopyLine />
 
-      <div className="border-t border-slate-200/80 pb-[max(30px,env(safe-area-inset-bottom))]">
+      <div className="border-t border-slate-200/80 pb-[env(safe-area-inset-bottom)]">
         <div
           className={
             INNER +
-            " flex flex-wrap justify-between gap-4 pt-[22px] pb-2 max-md:justify-center max-md:text-center"
+            " flex flex-wrap justify-between gap-4 py-[22px] max-md:justify-center max-md:text-center"
           }
         >
           <span>© 2026 6labs.ai · All rights reserved.</span>
