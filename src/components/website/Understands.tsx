@@ -6,7 +6,8 @@
 // the left ChatGPT's: it reads the internet and now understands facts and how humans think. On the right ours:
 // it watches the gameplay and now understands the game player (the accent). Each carries its maker's mark at
 // the top, both in the same line style (brand-marks.tsx), ours in the accent. They rise in one after the
-// other when the section comes into view, once.
+// other when the section comes into view, once. The section is only as tall as its cards, so the next
+// one (Jobs.tsx) follows close under them: nothing separates the two.
 import { motion } from "motion/react";
 import { ChatGptMark, SixLabsMark } from "./brand-marks";
 
@@ -27,7 +28,7 @@ export function Understands() {
   return (
     <section
       id="understands"
-      className="relative mx-auto flex min-h-screen w-full max-w-[1400px] items-center px-4 py-24 md:px-16"
+      className="relative mx-auto w-full max-w-[1400px] px-4 pt-28 md:px-16"
     >
       <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2">
         <motion.div {...rise(0)} className={card}>
