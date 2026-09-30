@@ -4,7 +4,8 @@
 // directly ("webm"). Safari, and every browser on iPhone and iPad (all WebKit underneath), plays WebM but
 // draws its transparency black, so there the clips are the "stacked" MP4s (colour above, transparency
 // below, put together by stacked-alpha.ts), or the stills if WebGL is missing ("still"). The server and the
-// first render assume WebM; the check runs in the browser.
+// first render assume WebM; the check runs in the browser. For a check without a Mac or an iPhone, ?clips=stacked
+// in the address makes any browser take the stacked MP4s (and ?clips=still the stills), as Safari does.
 import { useSyncExternalStore } from "react";
 
 export type ClipFormat = "webm" | "stacked" | "still";
@@ -14,6 +15,13 @@ let cached: ClipFormat | null = null;
 
 function clipFormat(): ClipFormat {
   if (cached) return cached;
+  const forced = new URLSearchParams(location.search).get("clips");
+  if (forced === "stacked" || forced === "still")
+    return (cached =
+      forced === "stacked" &&
+      document.createElement("canvas").getContext("webgl")
+        ? "stacked"
+        : "still");
   const ua = navigator.userAgent;
   const apple =
     /iP(hone|ad|od)/.test(ua) ||
