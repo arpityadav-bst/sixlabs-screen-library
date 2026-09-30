@@ -20,133 +20,18 @@ import {
   type MotionStyle,
   type MotionValue,
 } from "motion/react";
+import {
+  BADGES,
+  sizesOf,
+  src,
+  srcSet,
+  type Badge,
+} from "./floating-badges-data";
 
-type Badge = {
-  cast: string[];
-  x: string;
-  y: string;
-  mx: string; // below 1600px the line reaches the middle tiles: three tiles above it, three below
-  my: string; // (phones) off the line's own top or bottom (--line-h, set by ScrubLine.tsx), about half a
-  // badge and a gap, so the rows keep clear of the words however many lines they wrap to and however tall
-  // the screen; a share of the height closed in on them on short or narrow phones
-  ty: string; // (tablets and laptops)
-  size: number;
-  depth: number;
-  tilt: number;
-  delay: number;
-};
-
-const BADGES: Badge[] = [
-  {
-    cast: [
-      "03-braids",
-      "02-pink-buns",
-      "21-purple-braids-fighter",
-      "16-top-knot",
-    ],
-    x: "15%",
-    y: "27%",
-    mx: "17%",
-    my: "calc(50% - var(--line-h, 200px) / 2 - 74px)",
-    ty: "24%",
-    size: 242,
-    depth: 1.4,
-    tilt: -6,
-    delay: 0,
-  },
-  {
-    cast: [
-      "18-afro-esports",
-      "01-snapback",
-      "23-mohawk-speedrunner",
-      "20-turban-simracer",
-    ],
-    x: "82%",
-    y: "25%",
-    mx: "83%",
-    my: "calc(50% - var(--line-h, 200px) / 2 - 71px)",
-    ty: "23%",
-    size: 216,
-    depth: 0.8,
-    tilt: 5,
-    delay: 1.2,
-  },
-  {
-    cast: [
-      "19-ginger-streamer",
-      "11-blue-hair",
-      "07-curls-glasses",
-      "28-pixie-cozy",
-    ],
-    x: "10%",
-    y: "56%",
-    mx: "50%",
-    my: "calc(50% - var(--line-h, 200px) / 2 - 102px)",
-    ty: "22%",
-    size: 198,
-    depth: 0.6,
-    tilt: 4,
-    delay: 2.1,
-  },
-  {
-    cast: [
-      "24-pink-hair-rhythm",
-      "04-silver-shades",
-      "29-longhair-retro",
-      "08-bucket-hat",
-    ],
-    x: "88%",
-    y: "53%",
-    mx: "50%",
-    my: "calc(50% + var(--line-h, 200px) / 2 + 122px)",
-    ty: "78%",
-    size: 255,
-    depth: 1.6,
-    tilt: -4,
-    delay: 0.6,
-  },
-  {
-    cast: [
-      "14-silver-bob-cat-ears",
-      "05-ponytail-headset",
-      "25-braid-strategist",
-      "17-platinum-crop",
-    ],
-    x: "20%",
-    y: "77%",
-    mx: "17%",
-    my: "calc(50% + var(--line-h, 200px) / 2 + 71px)",
-    ty: "76%",
-    size: 207,
-    depth: 1,
-    tilt: 6,
-    delay: 1.7,
-  },
-  {
-    cast: [
-      "10-cap-cheer",
-      "09-beanie-wink",
-      "13-hijab-headset",
-      "30-holo-cosplay",
-    ],
-    x: "77%",
-    y: "79%",
-    mx: "83%",
-    my: "calc(50% + var(--line-h, 200px) / 2 + 73px)",
-    ty: "77%",
-    size: 224,
-    depth: 1.2,
-    tilt: -5,
-    delay: 0.3,
-  },
-];
 
 const DRIFT = 22; // px a depth-1 badge moves with the cursor at the edge of the screen
 const FLIP_EVERY: [number, number] = [3.5, 6.5]; // s between flips, picked at random in this range
 const FLIP_S = 0.8; // one flip, seconds
-// bump when the tile renders change, so browsers fetch the new ones instead of their cached copies
-const TILES_V = 6;
-const src = (name: string) => `/tiles/float/${name}.webp?v=${TILES_V}`;
 
 export function FloatingBadges() {
   // pointer position, -1..1 across the viewport, smoothed
@@ -187,7 +72,9 @@ export function FloatingBadges() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     BADGES.forEach((b) =>
       b.cast.forEach((n) => {
-        new Image().src = src(n);
+        const im = new Image();
+        im.sizes = sizesOf(b.size);
+        im.srcset = srcSet(n); // the same pick as the tile's own
       }),
     ); // ready before their turn
     let last = -1,
@@ -288,6 +175,8 @@ function FloatingBadge({
             {/* eslint-disable-next-line @next/next/no-img-element -- pre-rendered tile art */}
             <img
               src={src(face)}
+              srcSet={srcSet(face)}
+              sizes={sizesOf(b.size)}
               alt=""
               className="block h-auto w-full select-none"
             />
