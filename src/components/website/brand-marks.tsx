@@ -60,3 +60,21 @@ export function SixLabsMark({ className }: { className?: string }) {
     </svg>
   );
 }
+
+// The SixLabs mark filled, as the logo itself (public/brand/sixlabs-mark.svg) but in currentColor: the
+// footer's mark standing in the copy line's valley (CopyLine.tsx).
+export function SixLabsSolid({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="18 12.99 95.04 105.54"
+      fill="currentColor"
+      className={className}
+      aria-hidden
+    >
+      <circle cx="65.52" cy="65.76" r="15.41" />
+      {ARCS.map((d, k) => (
+        <path key={k} d={d} />
+      ))}
+    </svg>
+  );
+}
