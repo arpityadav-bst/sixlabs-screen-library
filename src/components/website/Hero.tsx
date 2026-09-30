@@ -141,6 +141,8 @@ export function Hero({ full = false }: { full?: boolean }) {
             }
             mixWaves={full}
             aiBase={art === "hologram" ? "/tiles-holo" : undefined}
+            // a used tile rests a little darker; on the hologram pages, a little dark blue, after the focus cobalt
+            spentTint={art === "hologram" ? "#cbd8f2" : undefined}
             onReady={(f) => {
               floor.current = f;
               f.setClearTop(clear.current);

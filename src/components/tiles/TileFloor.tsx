@@ -5,7 +5,8 @@
 // is ready; the tiles then wait introDelay seconds before fading in (so a loader can leave first).
 // onConvert fires each time a character on the floor becomes their AI copy. distScale and mixWaves pass to
 // the engine (floor.js): the camera pulled back for smaller, more tiles; the second wave's cast in the middle.
-// aiBase is where the AI copies' pictures are read from (chars-ai/ under it), the humans staying in /tiles.
+// aiBase is where the AI copies' pictures are read from (chars-ai/ under it), the humans staying in /tiles;
+// spentTint, the colour a used tile rests in (floor-params.json's own otherwise).
 import { useEffect, useRef } from "react";
 
 export type FloorHandle = {
@@ -22,6 +23,7 @@ export function TileFloor({
   distScale = 1,
   mixWaves = false,
   aiBase,
+  spentTint,
 }: {
   className?: string;
   onReady?: (floor: FloorHandle) => void;
@@ -30,6 +32,7 @@ export function TileFloor({
   distScale?: number;
   mixWaves?: boolean;
   aiBase?: string;
+  spentTint?: string;
 }) {
   const convert = useRef(onConvert);
   useEffect(() => {
@@ -44,6 +47,7 @@ export function TileFloor({
       createFloor(ref.current, {
         base: "/tiles",
         aiBase: aiBase ?? "/tiles",
+        spentTint,
         introDelay,
         distScale,
         mixWaves,

@@ -15,7 +15,7 @@ import { SmoothScroll } from "@/components/website/SmoothScroll";
 import { ArtProvider } from "@/components/website/art";
 
 export const metadata: Metadata = {
-  title: "SixLabs hologram",
+  title: "6labs hologram",
   description: "Making models of human players.",
 };
 

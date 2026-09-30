@@ -23,9 +23,9 @@ const jbmono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SixLabs Screen Library",
+  title: "6labs Screen Library",
   description:
-    "Design handoff for SixLabs: the website and its design libraries.",
+    "Design handoff for 6labs: the website and its design libraries.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

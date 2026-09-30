@@ -14,7 +14,7 @@ import { AccentWave } from "@/components/website/AccentWave";
 import { SmoothScroll } from "@/components/website/SmoothScroll";
 
 export const metadata: Metadata = {
-  title: "SixLabs",
+  title: "6labs",
   description: "Making models of human players.",
 };
 

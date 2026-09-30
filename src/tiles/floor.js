@@ -21,10 +21,10 @@ import { startAutoplay } from './autoplay.js';
 
 // distScale pulls the camera back (smaller tiles, more of them: the grid is built to what it sees); mixWaves
 // casts the second wave's characters on the middle tiles and the first wave's around them (casts.js).
-export async function createFloor(container, { params, base = '/tiles', aiBase = base, isStatic = false, expose = false, introDelay = 0, onConvert = () => {}, distScale = 1, mixWaves = false } = {}) {
+export async function createFloor(container, { params, base = '/tiles', aiBase = base, isStatic = false, expose = false, introDelay = 0, onConvert = () => {}, distScale = 1, mixWaves = false, spentTint = '' } = {}) {
   const RAW0 = params ?? await fetch(`${base}/floor-params.json`).then((r) => r.json());
   const RAW = distScale === 1 ? RAW0 : { ...RAW0, dist: RAW0.dist * distScale };
-  const common = Object.assign({ W: 1920, H: 1080, assetBase: base, aiAssetBase: aiBase }, RAW); // aiBase: where chars-ai/ is read from (the hologram copies live in /tiles-holo)
+  const common = Object.assign({ W: 1920, H: 1080, assetBase: base, aiAssetBase: aiBase }, RAW, spentTint && { spentTint }); // aiBase: where chars-ai/ is read from (the hologram copies live in /tiles-holo)
   const PF = Object.assign({}, common, RAW.states?.default ?? {}), PA = Object.assign({}, common, RAW.states?.shine ?? {});
   const P = PF;
   const pictures = preloadCharacters(P); // downloads while the scene is built

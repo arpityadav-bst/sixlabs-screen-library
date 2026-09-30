@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { TileFloor } from "@/components/tiles/TileFloor";
 
 export const metadata: Metadata = {
-  title: "SixLabs Tiles",
+  title: "6labs tiles",
   description: "The live glass tile floor: default, focused and activated tile states.",
 };
 
