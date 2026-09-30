@@ -24,7 +24,7 @@ const FULL_LEDE =
 // becomes their AI copy.
 const COPIES_BASE = 10_956;
 // on a phone, the gap between the copy's last line and the highest tile, px
-const CLEAR = 32;
+const CLEAR = 20; // the field top is measured a little past the screen edges, so the gap reads a touch wider
 
 // `full` (the 6labs-fullview page): the floor fills the whole first screen, edge to edge, instead of the
 // rounded container; the header lies over it, and the numbers, the scroll cue and the wave button sit
@@ -220,7 +220,7 @@ export function Hero({ full = false }: { full?: boolean }) {
               <div
                 className={
                   "pointer-events-auto " +
-                  (full ? "mt-6 min-[1600px]:mt-7" : "mt-8")
+                  (full ? "mt-6 min-[1600px]:mt-7" : "mt-8 max-md:mt-6")
                 }
               >
                 <PrimaryCta>Try now</PrimaryCta>
@@ -228,7 +228,7 @@ export function Hero({ full = false }: { full?: boolean }) {
               {!full && (
                 // The social proof as a live count: a softly pulsing accent dot, the line in the subtitle's
                 // slate, and the invitation under it in the accent.
-                <div className="mt-8 grid grid-cols-[8px_1fr] items-center gap-x-2.5 font-sans text-[13px] leading-relaxed">
+                <div className="mt-8 max-md:mt-6 grid grid-cols-[8px_1fr] items-center gap-x-2.5 font-sans text-[13px] leading-relaxed">
                   <span aria-hidden className="relative flex h-2 w-2">
                     <span className="absolute inset-0 animate-ping rounded-full bg-accent/40" />
                     <span className="relative h-2 w-2 rounded-full bg-accent" />
