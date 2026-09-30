@@ -27,6 +27,9 @@ const card =
 const UNSELECTED = 0.6;
 // The portrait's height (--ph): 720px, or less on a short screen so the whole section (header clearance,
 // portrait, cards) fits one view. The cards cover its bottom PORTRAIT_UNDER of it, where its fade runs.
+// Below lg the switch and the carousel both ride up over its faded chest (a fifth of it each), so only 0.6
+// of it adds to the section: it fills the view less the header clearance, switch and carousel (about
+// 490px), up to the content's width (the page's and the section's side padding, 72px) and 520px.
 const PORTRAIT_UNDER = 0.244;
 const fit = {
   "--ph": `min(720px, calc((100svh - 344px) / ${1 - PORTRAIT_UNDER}))`,
@@ -94,7 +97,7 @@ export function Players() {
       id="players"
       style={fit}
       className={
-        "relative z-30 w-full max-w-[1400px] mx-auto -mt-[100vh] flex min-h-screen flex-col justify-center pt-24 pb-10 max-md:pt-[72px] md:max-lg:pt-[88px] max-lg:pb-3 max-lg:[--ph:clamp(240px,calc(100svh-500px),520px)]! lg:max-xl:[--ph:min(720px,calc((100svh-344px)/0.756),calc((100vw-640px)/0.75))]! " +
+        "relative z-30 w-full max-w-[1400px] mx-auto -mt-[100vh] flex min-h-screen flex-col justify-center pt-24 pb-10 max-md:pt-[72px] md:max-lg:pt-[88px] max-lg:pb-3 max-lg:[--ph:clamp(240px,min(calc((100svh-490px)/0.6),calc((100vw-72px)/0.75)),520px)]! lg:max-xl:[--ph:min(720px,calc((100svh-344px)/0.756),calc((100vw-640px)/0.75))]! " +
         (shown ? "" : "pointer-events-none") // hidden, it must not block the floating tiles under it
       }
     >
