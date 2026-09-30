@@ -14,7 +14,9 @@ export type Stat = {
 };
 
 // The headline numbers, centred under the container or (left, the full view) left under the copy: the
-// humans in navy, their digital copies in the accent blue (the headline's "models" colour).
+// humans in navy, their digital copies in the accent blue (the headline's "models" colour). Under the
+// container they come in once the tiles are in; in the full view (left) they are part of the copy and show
+// with it from the first paint (its fade, .hero-copy-in), the copies count rising only as the tiles run.
 export function HeroNumbers({
   stats,
   ready,
@@ -28,8 +30,8 @@ export function HeroNumbers({
     <motion.dl
       // Comes in once the tiles are in: the floor is ready, the placeholder logo leaves (0.5s), then the
       // tiles fade in (0.9s).
-      initial={{ opacity: 0, y: 6 }}
-      animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+      initial={left ? false : { opacity: 0, y: 6 }}
+      animate={left || ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
       transition={{ duration: 0.6, ease, delay: ready ? 1.2 : 0 }}
       className={"flex items-start gap-14 max-md:gap-8"}
     >
