@@ -104,7 +104,7 @@ export function CopyLine() {
 
       {/* the mark cresting from behind the word, solid through its top three quarters and fading, eased,
           over its last quarter into the word */}
-      <span className="absolute left-1/2 top-[calc(72px+0.11em)] h-[1.05em] w-[1.05em] -translate-x-1/2 md:top-[calc(150px+0.11em)]">
+      <span className="absolute left-1/2 top-[calc(72px+0.03em)] h-[0.95em] w-[0.95em] -translate-x-1/2 md:top-[calc(150px+0.03em)]">
         <span className="block h-full w-full [mask-image:linear-gradient(180deg,#000_0%,#000_72%,rgba(0,0,0,0.88)_77%,rgba(0,0,0,0.66)_82%,rgba(0,0,0,0.4)_87%,rgba(0,0,0,0.18)_92%,rgba(0,0,0,0.05)_96%,transparent_100%)]">
           <SixLabsLogo className="block h-full w-full" />
         </span>
