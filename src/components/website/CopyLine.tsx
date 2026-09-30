@@ -45,8 +45,8 @@ export function CopyLine() {
         <div className={FIT}>
           {/* eslint-disable-next-line @next/next/no-img-element -- a static, pre-sized image with its own srcset */}
           <img
-            src="/footer/copy-line.webp?v=3"
-            srcSet="/footer/copy-line-1344.webp?v=3 1344w, /footer/copy-line.webp?v=3 2688w"
+            src="/footer/copy-line.webp?v=4"
+            srcSet="/footer/copy-line-1344.webp?v=4 1344w, /footer/copy-line.webp?v=4 2688w"
             sizes="100vw"
             width={2688}
             height={1152}
