@@ -7,8 +7,9 @@
 // nearer it they grow and strengthen, continuously, until they touch and merge into the solid colour. It
 // sits above the scroll line and below the players section and the header. When the view is full it
 // announces it (window event "accentwave", detail { filled }); the players section waits for that. Past
-// the players it drains again, the same water sinking over DRAIN_VH of a screen as the next section
-// (Understands.tsx) comes up under it; one scroll down from the players glides through that, and one
+// the players the light page rises back from the bottom over DRAIN_VH of a screen, pushing the blue up and
+// off (its edge the mirror of the entry arc), as the next section (Understands.tsx) comes up; one scroll
+// down from the players glides through that, and one
 // scroll up from the next section glides back into the players.
 import { useEffect, useRef } from "react";
 import { COMPLETE_AT, WAVE_VH } from "./ScrubLine";
@@ -83,44 +84,53 @@ export function AccentWave() {
         new CustomEvent("accentwave", { detail: { filled: on } }),
       );
     };
-    // the edge's height at x for a given level: an arc, highest in the middle
-    const edge = (x: number, level: number) =>
-      level + ARC * ((2 * x) / w - 1) ** 2;
+    // The edge's height at x for a given level. On the way in (dir 1) the blue is below it and the edge is
+    // an arc highest in the middle; on the way out (dir -1) the light page rises under the blue, which is
+    // above the edge, and the arc is the mirror: lowest in the middle.
+    const edge = (x: number, level: number, dir: number) =>
+      level + dir * ARC * ((2 * x) / w - 1) ** 2;
 
     const draw = () => {
       raf = 0;
       // some slack before it counts as drained, so scrolling back a step does not undo the players
-      const f = Math.min(p, 1 - q); // how full the view is: risen, less drained
+      const f = Math.min(p, 1 - q); // how full the view is: risen, less pushed out
       if (f < 0.8) announce(false);
       ctx.clearRect(0, 0, w, h);
-      // the level runs from below the view, halftone included (p 0), up until the solid covers it (p 1)
-      // p 1 is the moment the solid colour covers the view (its lowest points, the arc's ends, reach the
-      // top): that is when it reads as full, so that is when it announces it
-      // eased, so the water starts gently and settles gently
-      const pe = f * f * (3 - 2 * f);
-      const level = h + BAND - pe * (h + BAND + ARC + PITCH * 3);
+      // Both ways the edge travels up the view, eased so it starts and settles gently. In, it runs from
+      // below the view (halftone included) until the solid covers it (p 1, which is when it announces
+      // full); out (q), from the solid covering the view until the blue and its halftone have left the top.
+      const out = q > 0,
+        dir = out ? -1 : 1;
+      const k = out ? q : p,
+        ke = k * k * (3 - 2 * k);
+      const level = out
+        ? h + ARC + PITCH * 2 - ke * (h + ARC + BAND + PITCH * 5)
+        : h + BAND - ke * (h + BAND + ARC + PITCH * 3);
       if (f > 0) {
         ctx.fillStyle = fill;
         ctx.beginPath();
-        ctx.moveTo(0, h);
-        // the solid colour starts a little under the edge; the grown dots cover the seam between
+        // the solid colour stops a little short of the edge; the grown dots cover the seam between
+        const from = out ? 0 : h;
+        ctx.moveTo(0, from);
         for (let x = 0; x <= w; x += 12)
-          ctx.lineTo(x, edge(x, level) + PITCH * 2);
-        ctx.lineTo(w, edge(w, level) + PITCH * 2);
-        ctx.lineTo(w, h);
+          ctx.lineTo(x, edge(x, level, dir) + dir * PITCH * 2);
+        ctx.lineTo(w, edge(w, level, dir) + dir * PITCH * 2);
+        ctx.lineTo(w, from);
         ctx.closePath();
         ctx.fill();
-        // halftone above the edge: s runs 0 (top of the band) to 1 (at the edge). The dots keep growing
-        // past touching (radius PITCH / 2) to covering their whole cell (PITCH * 0.72, over half the
-        // diagonal) and carry on a few rows under the edge, so they melt into the solid with no seam.
+        // the halftone on the far side of the edge: s runs 0 (the band's outer side) to 1 (at the edge).
+        // The dots keep growing past touching (radius PITCH / 2) to covering their whole cell (PITCH *
+        // 0.72, over half the diagonal) and carry on a few rows into the solid, so it melts in, no seam.
         for (let gx = PITCH / 2; gx < w; gx += PITCH) {
-          const e = edge(gx, level);
+          const e = edge(gx, level, dir);
+          const a = e - dir * BAND,
+            b = e + dir * PITCH * 3;
           for (
-            let gy = Math.floor((e - BAND) / PITCH) * PITCH + PITCH / 2;
-            gy < e + PITCH * 3;
+            let gy = Math.floor(Math.min(a, b) / PITCH) * PITCH + PITCH / 2;
+            gy < Math.max(a, b);
             gy += PITCH
           ) {
-            const s = Math.min(1, 1 - (e - gy) / BAND);
+            const s = Math.min(1, 1 - (dir * (e - gy)) / BAND);
             if (s <= 0 || gy < -PITCH || gy > h + PITCH) continue;
             ctx.globalAlpha = Math.min(1, 0.15 + s * 0.95);
             ctx.beginPath();
