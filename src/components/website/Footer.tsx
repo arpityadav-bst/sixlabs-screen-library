@@ -79,8 +79,9 @@ export function Footer() {
 
       <CopyLine />
 
-      {/* the tail, a shade (4%) darker again than the rest of the footer */}
-      <div className="border-t border-slate-200/80 bg-black/[0.04] pb-[env(safe-area-inset-bottom)]">
+      {/* the tail, a shade (4%) darker again than the rest of the footer, under a faint navy hairline (the
+          page's slate hairline disappears on the tinted ground) */}
+      <div className="border-t border-[#0a1b33]/[0.08] bg-black/[0.04] pb-[env(safe-area-inset-bottom)]">
         <div
           className={
             INNER +
