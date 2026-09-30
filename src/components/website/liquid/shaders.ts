@@ -4,7 +4,8 @@
 // composite differs from the original: it drags a flat picture (the sentence, drawn to a canvas) rather than
 // a rendered 3D scene, adds only the light the flow makes (none at rest, so the words keep their colours
 // exactly while still), keeps its grain to the cursor's lens, and skips the scene's tone mapping. It also
-// carries Canvas UI's Glitch, cut to a box of words (uGlitchRect): in a burst (uGlitchAmp over 0) slices of
+// carries Canvas UI's Glitch, cut to a box round its words (uGlitchRect, and uGlitchRect2 for the rest of
+// them where they wrap onto the next line): in a burst (uGlitchAmp over 0) slices of
 // the box tear sideways, its colours split, blocks of it jump and it flickers with noise and scan lines,
 // and a red copy of the words slips out to their left (its fringe only shows past the ink).
 
@@ -146,6 +147,7 @@ uniform float uIridescence;
 uniform float uAmbient;
 uniform float uTime;
 uniform vec4 uGlitchRect; // the glitch's box, in uv (x0, y0, x1, y1)
+uniform vec4 uGlitchRect2; // its second line's box, if its words wrap (else off the canvas)
 uniform float uGlitchAmp;
 uniform float uGlitchSeed;
 uniform vec2 uSize; // the canvas, in CSS px
@@ -162,12 +164,12 @@ float hash12(vec2 p) {
   p3 += dot(p3, p3.yzx + 33.33);
   return fract((p3.x + p3.y) * p3.z);
 }
-bool inBox(vec2 p) {
-  return all(greaterThanEqual(p, uGlitchRect.xy)) && all(lessThanEqual(p, uGlitchRect.zw));
+bool inBox(vec2 p, vec4 r) {
+  return all(greaterThanEqual(p, r.xy)) && all(lessThanEqual(p, r.zw));
 }
-// the picture; while the box glitches, what it tears in is cut to the box, so no neighbouring word comes too
-vec4 scene(vec2 p, bool cut) {
-  return cut && !inBox(p) ? vec4(0.0) : texture(tScene, p);
+// the picture; while a box glitches, what it tears in is cut to that box, so no neighbouring word comes too
+vec4 scene(vec2 p, bool cut, vec4 r) {
+  return cut && !inBox(p, r) ? vec4(0.0) : texture(tScene, p);
 }
 
 vec3 toSrgb(vec3 c) {
@@ -197,11 +199,13 @@ void main() {
 
   // the glitch, as Canvas UI's: torn slices, a jitter, jumping blocks, and a split of red from blue
   float e = uGlitchAmp;
-  bool cut = e > 0.001 && inBox(vUv);
+  bool inA = inBox(vUv, uGlitchRect);
+  bool cut = e > 0.001 && (inA || inBox(vUv, uGlitchRect2));
+  vec4 box = inA ? uGlitchRect : uGlitchRect2;
   vec2 tear = vec2(0.0);
   float split = 0.0;
   if (cut) {
-    vec2 lo = uGlitchRect.xy, size = uGlitchRect.zw - uGlitchRect.xy;
+    vec2 lo = box.xy, size = box.zw - box.xy;
     vec2 q = (vUv - lo) / size;
     float band = floor(q.y * G_SLICES);
     float torn = step(1.0 - 0.3 * min(e, 1.0), hash12(vec2(band, uGlitchSeed)));
@@ -214,13 +218,13 @@ void main() {
     split = G_RGB * e / uSize.x;
   }
   vec2 at = vUv + tear - push;
-  vec4 sr = unpremultiply(scene(at - spread + vec2(split, 0.0), cut));
-  vec4 sg = unpremultiply(scene(at, cut));
-  vec4 sb = unpremultiply(scene(at + spread - vec2(split, 0.0), cut));
+  vec4 sr = unpremultiply(scene(at - spread + vec2(split, 0.0), cut, box));
+  vec4 sg = unpremultiply(scene(at, cut, box));
+  vec4 sb = unpremultiply(scene(at + spread - vec2(split, 0.0), cut, box));
   float alpha = (sr.a + sg.a + sb.a) / 3.0;
   vec3 color = vec3(sr.r, sg.g, sb.b);
   if (cut) {
-    float ghost = scene(at + vec2(G_RED * e / uSize.x, 0.0), cut).a * min(e, 1.0);
+    float ghost = scene(at + vec2(G_RED * e / uSize.x, 0.0), cut, box).a * min(e, 1.0);
     float both = max(alpha, ghost);
     color = mix(RED, color, alpha / max(both, 1e-4));
     alpha = both;

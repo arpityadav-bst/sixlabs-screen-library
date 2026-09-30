@@ -7,14 +7,14 @@
 // about, splits their colours round it and lights them where it flows. Once the canvas is live, onLive(true)
 // tells the line to make its own words transparent; they stay in place for layout, selection and reading.
 // While `glitch` is on, the words marked in `glitches` glitch in bursts (Canvas UI's Glitch, in the liquid's
-// own shader), in a box round them with room on its left for the torn slices (the first words of the line).
+// own shader), in a box round them, one per line where they wrap.
 import { useEffect, useRef, type RefObject } from "react";
 
 const M = 56; // px of room round the words for the liquid to drag them into
 const FILL_S = 0.2; // a word's fill from faint to full, as the words' own transition (200ms)
 const INK = [10, 27, 51],
   ACCENT = [26, 109, 255];
-const GLITCH_ROOM = 32; // px of the glitch's box left of its words
+const GLITCH_PAD = 2; // px round the glitch's words, so their edges are inside its box
 const FAINT = 0.15; // an unlit word's opacity, as text-[#0a1b33]/15
 const DESKTOP =
   "(min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)";
@@ -54,7 +54,7 @@ export function LiquidLine({
     if (!ctx) return;
     let words: Word[] = [],
       level: number[] = [],
-      box: [number, number, number, number] | null = null,
+      boxes: [number, number, number, number][] = [],
       dpr = 1,
       dirty = true,
       ready = false,
@@ -82,18 +82,26 @@ export function LiquidLine({
           accent: accents[k],
         };
       });
-      // the glitch's box, in the canvas's uv (y up)
-      const g = rects.filter((_, k) => glitches[k]),
-        W = pr.width + 2 * M,
-        H = pr.height + 2 * M;
-      box = g.length
-        ? [
-            (Math.min(...g.map((r) => r.left)) - pr.left + M - GLITCH_ROOM) / W,
-            1 - (Math.max(...g.map((r) => r.bottom)) - pr.top + M) / H,
-            (Math.max(...g.map((r) => r.right)) - pr.left + M) / W,
-            1 - (Math.min(...g.map((r) => r.top)) - pr.top + M) / H,
-          ]
-        : null;
+      // the glitch's boxes, one per line its words sit on (at most two), in the canvas's uv (y up)
+      const W = pr.width + 2 * M,
+        H = pr.height + 2 * M,
+        lines: DOMRect[][] = [];
+      for (const r of rects.filter((_, k) => glitches[k])) {
+        const line = lines.find(
+          (l) => Math.abs(l[0].top - r.top) < r.height / 2,
+        );
+        if (line) line.push(r);
+        else lines.push([r]);
+      }
+      boxes = lines
+        .slice(0, 2)
+        .map((g) => [
+          (Math.min(...g.map((r) => r.left)) - pr.left + M - GLITCH_PAD) / W,
+          1 -
+            (Math.max(...g.map((r) => r.bottom)) - pr.top + M + GLITCH_PAD) / H,
+          (Math.max(...g.map((r) => r.right)) - pr.left + M + GLITCH_PAD) / W,
+          1 - (Math.min(...g.map((r) => r.top)) - pr.top + M - GLITCH_PAD) / H,
+        ]);
       if (level.length !== words.length)
         level = words.map((_, k) => (k < litNow.current ? 1 : 0));
       dirty = true;
@@ -138,7 +146,7 @@ export function LiquidLine({
         layout();
         ro.observe(p);
         sim = createLiquid(c, pic, frame, () =>
-          glitchNow.current ? box : null,
+          glitchNow.current && boxes.length ? boxes : null,
         );
         if (!sim) return;
         ready = true;

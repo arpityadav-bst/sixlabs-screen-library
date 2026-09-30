@@ -6,7 +6,7 @@
 // COMPLETE_AT of the track, so the finished line holds for a beat before the section leaves. Going
 // back up it empties faster (BACK), and once empty the page glides on up to the hero (TOP_S). The phrase
 // in ACCENT fills to the accent blue. Reduced motion shows it filled. On desktops the words show through a
-// liquid the cursor stirs (LiquidLine.tsx). The words in GLITCH (none at the moment) glitch now and then
+// liquid the cursor stirs (LiquidLine.tsx). The words in GLITCH ("not what they say") glitch now and then
 // from the moment they are lit: in the liquid's shader on desktops, elsewhere as .glitch-word (globals.css).
 import { useEffect, useRef, useState } from "react";
 import { FloatingBadges } from "./FloatingBadges";
@@ -16,8 +16,8 @@ import { LiquidLine } from "./LiquidLine";
 const LINE =
   "A model is built from what the person does, not what they say. Put a million models on a new build and you know how it will land before anyone plays it.";
 const ACCENT = ["a", "million", "models"]; // "Put a million models": the words after "Put"
-// the words that glitch once lit, as they read in the line (punctuation aside); none for now
-const GLITCH: string[] = [];
+// the words that glitch once lit, as they read in the line (punctuation aside)
+const GLITCH = ["not", "what", "they", "say"];
 export const COMPLETE_AT = 0.82;
 // Scrolling back up empties the line BACK times faster than scrolling down fills it; scrolling down
 // again refills at that pace too, until it has caught up with where the scroll is.

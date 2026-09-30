@@ -6,7 +6,8 @@
 // 1, persistence 0.6, swirl 0.5, iridescence 1.5, splash 1.2, ambient 1), then: no idle drift (ambient 0) and
 // no grain away from the cursor, so the words hold still until the cursor comes; and what the cursor does is
 // HOVER (0.3) of the demo's, 70% less: its drag, colour split, sheen, shimmer, grain and splash.
-// glitch(), when given, is read every frame: while it returns a box (in uv), that box glitches in bursts, on
+// glitch(), when given, is read every frame: while it returns boxes (in uv; one per line of its words, up to
+// two), they glitch in bursts, on
 // Canvas UI's Glitch timeline (GLITCH): the first 0.6s in, then every interval (give or take a quarter).
 import * as THREE from "three";
 import * as S from "./shaders";
@@ -19,7 +20,7 @@ const SIM_RES = 128, FIELD_RES = 256, PRESSURE_STEPS = 4, SIM_STEP = 1 / 60;
 
 type Box = [number, number, number, number];
 
-export function createLiquid(canvas: HTMLCanvasElement, picture: HTMLCanvasElement, frame: () => boolean, glitch?: () => Box | null) {
+export function createLiquid(canvas: HTMLCanvasElement, picture: HTMLCanvasElement, frame: () => boolean, glitch?: () => Box[] | null) {
   let renderer: THREE.WebGLRenderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: "high-performance" });
@@ -64,7 +65,7 @@ export function createLiquid(canvas: HTMLCanvasElement, picture: HTMLCanvasEleme
     tScene: v(tex), tField: v(field[0].texture), uFieldTexel: v(fieldTexel), uDistortion: v(OPT.distortion), uAberration: v(OPT.aberration),
     uGrain: v(OPT.grain), uCursor: v(new THREE.Vector2(0.5, 0.5)), uLensRadius: v(0.12 + OPT.cursorSize * 0.45), uGlow: v(0), uAspect: v(1),
     uSheen: v(OPT.sheen), uIridescence: v(OPT.iridescence), uAmbient: v(OPT.ambient), uTime: v(0),
-    uGlitchRect: v(new THREE.Vector4()), uGlitchAmp: v(0), uGlitchSeed: v(1), uSize: v(new THREE.Vector2(1, 1)),
+    uGlitchRect: v(new THREE.Vector4()), uGlitchRect2: v(new THREE.Vector4(-1, -1, -1, -1)), uGlitchAmp: v(0), uGlitchSeed: v(1), uSize: v(new THREE.Vector2(1, 1)),
   });
   const passes = [splatP, curlP, vortP, divP, presP, gradP, advP, fadeP, comp];
 
@@ -177,9 +178,12 @@ export function createLiquid(canvas: HTMLCanvasElement, picture: HTMLCanvasEleme
     comp.uniforms.uGlow.value = glow;
     comp.uniforms.uCursor.value.copy(cursor);
     comp.uniforms.uAspect.value = aspect;
-    const box = glitch?.() ?? null;
-    if (box) comp.uniforms.uGlitchRect.value.set(...box);
-    comp.uniforms.uGlitchAmp.value = glitchAmp(dt, !!box);
+    const boxes = glitch?.() ?? null;
+    if (boxes?.length) {
+      comp.uniforms.uGlitchRect.value.set(...boxes[0]);
+      comp.uniforms.uGlitchRect2.value.set(...(boxes[1] ?? ([-1, -1, -1, -1] as Box)));
+    }
+    comp.uniforms.uGlitchAmp.value = glitchAmp(dt, !!boxes?.length);
     comp.uniforms.uGlitchSeed.value = Math.floor(gT * 24) + burstSeed;
     run(comp, null);
   }
