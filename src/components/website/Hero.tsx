@@ -26,8 +26,8 @@ const COPIES_BASE = 10_956;
 
 // `full` (the 6labs-fullview page): the floor fills the whole first screen, edge to edge, instead of the
 // rounded container; the header lies over it, and the numbers, the scroll cue and the wave button sit
-// inside it: the numbers and the scroll cue left under the copy, the wave button in its bottom right
-// corner; a faint hairline divides it from the page below.
+// inside it: the numbers between the line and the call to action (in place of the social proof line),
+// the scroll cue under them, the wave button in its bottom right corner; a faint hairline divides it from the page below.
 export function Hero({ full = false }: { full?: boolean }) {
   const [floorReady, setFloorReady] = useState(false);
   const floor = useRef<FloorHandle | null>(null);
@@ -236,29 +236,41 @@ export function Hero({ full = false }: { full?: boolean }) {
                 See what it does
               </a>
             </p>
+            {/* full: the numbers come straight after the line, then the call to action, then the scroll cue;
+              no line of social proof (the numbers carry it) */}
+            {full && (
+              <div className="mt-10 min-[1600px]:mt-12">{numbers(true)}</div>
+            )}
             {/* The primary CTA, wide; the secondary action is the link that ends the subtitle. The quiet line
               of social proof sits at the bottom of the container. Only the controls take the pointer, so
               the tiles under the rest of this column stay interactive. */}
-            <div className="mt-8 pointer-events-auto">
+            <div
+              className={
+                "pointer-events-auto " +
+                (full ? "mt-10 min-[1600px]:mt-12" : "mt-8")
+              }
+            >
               <PrimaryCta>Try now</PrimaryCta>
             </div>
-            {/* The social proof as a live count: a softly pulsing accent dot, the line in the subtitle's
-              slate, and the invitation under it in the accent. */}
-            <div className="mt-8 grid grid-cols-[8px_1fr] items-center gap-x-2.5 font-sans text-[13px] leading-relaxed">
-              <span aria-hidden className="relative flex h-2 w-2">
-                <span className="absolute inset-0 animate-ping rounded-full bg-accent/40" />
-                <span className="relative h-2 w-2 rounded-full bg-accent" />
-              </span>
-              <p className="text-[#475569]">One million players have a copy.</p>
-              <p className="col-start-2 font-medium text-accent">Yours next.</p>
-            </div>
-            {/* full: the numbers, then the scroll cue, left under the copy */}
+            {!full && (
+              // The social proof as a live count: a softly pulsing accent dot, the line in the subtitle's
+              // slate, and the invitation under it in the accent.
+              <div className="mt-8 grid grid-cols-[8px_1fr] items-center gap-x-2.5 font-sans text-[13px] leading-relaxed">
+                <span aria-hidden className="relative flex h-2 w-2">
+                  <span className="absolute inset-0 animate-ping rounded-full bg-accent/40" />
+                  <span className="relative h-2 w-2 rounded-full bg-accent" />
+                </span>
+                <p className="text-[#475569]">
+                  One million players have a copy.
+                </p>
+                <p className="col-start-2 font-medium text-accent">
+                  Yours next.
+                </p>
+              </div>
+            )}
             {full && (
-              <div className="mt-12 md:mt-14 flex flex-col items-start gap-10">
-                {numbers(true)}
-                <div className="max-md:hidden">
-                  <ScrollCue />
-                </div>
+              <div className="mt-12 max-md:hidden">
+                <ScrollCue />
               </div>
             )}
           </div>
