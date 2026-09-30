@@ -164,7 +164,7 @@ export function Jobs() {
             <h3 className="font-display text-[20px] font-medium leading-tight tracking-[-0.03em] text-[#0a1b33]">
               {j.title}
             </h3>
-            <p className="mt-[9px] font-sans text-[14px] leading-[1.4] tracking-[-0.01em] text-[#64748b] xl:min-h-[2.8em]">
+            <p className="mt-[9px] font-sans text-[14px] leading-[1.4] tracking-[-0.01em] text-[#64748b] min-h-[2.8em]">
               {j.body}
             </p>
             <div className="mt-[26px]">
@@ -173,8 +173,10 @@ export function Jobs() {
             {/* The tags as the onBlue creators page's skills list: one soft panel, an accent line icon then
                 the label, in two columns that share the panel's width (a single column left most of it
                 empty), two rows deep: the three-tag panels 2 + 1, Testing's four 2 x 2, so every panel is two
-                rows tall and they line up. On a phone, where the card is narrow, one column. */}
-            <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-3 max-md:grid-cols-1 rounded-[12px] border border-slate-200/80 bg-[#f6f7f9] px-4 py-3.5">
+                rows tall and they line up. On a phone, where the card is narrow, one column, four rows
+                deep in every panel (a three-tag panel keeps its fourth row empty), so the three cards of the
+                swipe row are one height, spaced alike, with the line above held to two lines as well. */}
+            <ul className="mt-6 grid grid-cols-2 gap-x-4 gap-y-3 max-md:grid-cols-1 max-md:grid-rows-[repeat(4,minmax(20px,auto))] rounded-[12px] border border-slate-200/80 bg-[#f6f7f9] px-4 py-3.5">
               {j.tags.map((t) => {
                 const Icon = TAG_ICON[t];
                 return (
