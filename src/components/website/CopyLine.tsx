@@ -102,10 +102,10 @@ export function CopyLine() {
         </div>
       </div>
 
-      {/* the mark cresting from behind the word, solid through its top three quarters and fading, eased,
-          over its last quarter into the word */}
+      {/* the mark cresting from behind the word, solid through its top 60% and fading over its last 40%
+          into the word on a smoothstep curve (soft at both ends) */}
       <span className="absolute left-1/2 top-[calc(72px+0.03em)] h-[0.95em] w-[0.95em] -translate-x-1/2 md:top-[calc(150px+0.03em)]">
-        <span className="block h-full w-full [mask-image:linear-gradient(180deg,#000_0%,#000_72%,rgba(0,0,0,0.88)_77%,rgba(0,0,0,0.66)_82%,rgba(0,0,0,0.4)_87%,rgba(0,0,0,0.18)_92%,rgba(0,0,0,0.05)_96%,transparent_100%)]">
+        <span className="block h-full w-full [mask-image:linear-gradient(180deg,#000_0%,#000_60%,rgba(0,0,0,0.96)_65%,rgba(0,0,0,0.84)_70%,rgba(0,0,0,0.68)_75%,rgba(0,0,0,0.5)_80%,rgba(0,0,0,0.32)_85%,rgba(0,0,0,0.16)_90%,rgba(0,0,0,0.04)_95%,transparent_100%)]">
           <SixLabsLogo className="block h-full w-full" />
         </span>
       </span>
