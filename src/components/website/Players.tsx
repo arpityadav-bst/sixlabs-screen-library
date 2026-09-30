@@ -17,6 +17,7 @@ import { PlayerDoodles } from "./PlayerDoodles";
 import { PlayerTraits } from "./PlayerTraits";
 import { PlayerArrows, PlayerCarousel } from "./PlayerCarousel";
 import { useClipFormat } from "./useClipFormat";
+import { useArt } from "./art";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 // On the accent blue (AccentWave.tsx): white cards.
@@ -81,6 +82,7 @@ export function Players() {
     transition: { duration: 0.5, ease, delay },
   });
   const player = PLAYERS[active];
+  const holo = useArt() === "hologram"; // the hologram pages swap to the hologram AI clips
   // the real player or their AI copy, per player, switching by itself until the visitor picks one
   // Safari and iPhones draw a WebM's transparency black: they get the stacked clips (useClipFormat.ts)
   const format = useClipFormat();
@@ -148,7 +150,7 @@ export function Players() {
                 {player.video && player.aiVideo ? (
                   <PortraitSwap
                     human={player.video}
-                    ai={player.aiVideo}
+                    ai={(holo && player.holoVideo) || player.aiVideo}
                     mode={mode}
                     label={player.title}
                     load={near}
@@ -264,7 +266,10 @@ export function Players() {
           })}
         </div>
         {/* phones and tablets: the players as a carousel under the switch */}
-        <motion.div {...enter(0.2)} className="relative z-10 mt-[calc(66px-var(--ph)*0.2)] lg:hidden">
+        <motion.div
+          {...enter(0.2)}
+          className="relative z-10 mt-[calc(66px-var(--ph)*0.2)] lg:hidden"
+        >
           <PlayerCarousel active={active} onChange={setActive} />
         </motion.div>
       </div>

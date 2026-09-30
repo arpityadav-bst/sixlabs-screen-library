@@ -37,7 +37,8 @@ diffuseColor.a *= clip * ${role === 'ai' ? 'uScan' : '(1.0 - uScan)'};`);
 export function loadPictures(P, names) {
   const loader = new THREE.TextureLoader(), cache = new Map();
   for (const name of names) for (const dir of ['chars', 'chars-ai']) {
-    cache.set(`${dir}/${name}`, loader.loadAsync(`${P.assetBase ?? ''}/${dir}/${name}`).then((t) => {
+    const base = dir === 'chars-ai' ? (P.aiAssetBase ?? P.assetBase) : P.assetBase;
+    cache.set(`${dir}/${name}`, loader.loadAsync(`${base ?? ''}/${dir}/${name}`).then((t) => {
       t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 16; return t;
     }));
   }

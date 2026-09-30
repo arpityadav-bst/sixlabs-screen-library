@@ -8,6 +8,7 @@ import { PrimaryCta } from "./PrimaryCta";
 import { linkTo } from "./jump";
 import { TypedWord } from "./TypedWord";
 import { HeroNumbers, WaveButton, type Stat } from "./HeroBits";
+import { useArt } from "./art";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -33,6 +34,7 @@ const CLEAR = -12; // below zero: the field top is measured a little past the sc
 // smaller and more of them, the next wave's new faces in the middle and the first wave's round them; a faint hairline divides it from the page below.
 export function Hero({ full = false }: { full?: boolean }) {
   const [floorReady, setFloorReady] = useState(false);
+  const art = useArt(); // the hologram pages read the AI copies from /tiles-holo
   const floor = useRef<FloorHandle | null>(null);
   // Phones: the copy spans the screen, so rather than fade the tiles under it, the floor's view is lowered
   // until the field's highest tile (its diagonal edge rises to the top right) sits CLEAR px under the copy's
@@ -124,6 +126,7 @@ export function Hero({ full = false }: { full?: boolean }) {
                 : 1
             }
             mixWaves={full}
+            aiBase={art === "hologram" ? "/tiles-holo" : undefined}
             onReady={(f) => {
               floor.current = f;
               f.setClearTop(clear.current);

@@ -10,8 +10,10 @@
 // shape (FIT), so two spec labels in code, on leader lines, can sit in its own coordinates and land on the
 // same heads at any width (desktop only). A phone has no room for it: there the band is just the mark and
 // the word. Colour split on the word's two
-// ends only (.foot-word in globals.css).
+// ends only (.foot-word in globals.css). The hologram pages (art.tsx) use copy-line-holo.webp, the same
+// picture with the copies redrawn as the blue hologram.
 import { SixLabsLogo } from "./brand-marks";
+import { useArt } from "./art";
 
 // The picture is drawn as two halves pushed apart by SPREAD (% of its width): the players a little further
 // left, the copies a little further right, the empty white middle between them simply wider. Each half is
@@ -65,6 +67,8 @@ const FIT =
   "absolute max-md:inset-0 md:inset-x-0 md:top-[calc((100%-42.857cqw)*0.05)] md:aspect-[2688/1152]";
 
 export function CopyLine() {
+  const pic =
+    useArt() === "hologram" ? "copy-line-holo.webp?v=1" : "copy-line.webp?v=7";
   return (
     // the band: the clear air, the mark's crest above the word, then the word (1em)
     <div
@@ -81,8 +85,8 @@ export function CopyLine() {
           <div key={half} className={FIT + " " + half}>
             {/* eslint-disable-next-line @next/next/no-img-element -- a static, pre-sized image with its own srcset */}
             <img
-              src="/footer/copy-line.webp?v=7"
-              srcSet="/footer/copy-line-1344.webp?v=7 1344w, /footer/copy-line.webp?v=7 2688w"
+              src={`/footer/${pic}`}
+              srcSet={`/footer/${pic.replace(".webp", "-1344.webp")} 1344w, /footer/${pic} 2688w`}
               sizes="100vw"
               width={2688}
               height={1152}
