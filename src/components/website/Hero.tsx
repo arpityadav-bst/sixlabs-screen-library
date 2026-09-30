@@ -150,10 +150,12 @@ export function Hero({ full = false }: { full?: boolean }) {
         </AnimatePresence>
 
         <div
+          // full: the copy, the scroll cue and the wave button on the header's own grid (its 1400px content
+          // box inside a 24px edge, 16px on a phone), so their edges line up with the logo and the Sign in
           className={
             "relative z-20 flex-1 flex flex-col items-start pointer-events-none " +
             (full
-              ? "mx-auto w-full max-w-[1400px] px-6 max-md:px-4 pt-[calc(73px+40px)] md:pt-[calc(89px+clamp(48px,9vh,120px))]"
+              ? "mx-auto w-full max-w-[1448px] px-6 max-md:px-4 pt-[calc(73px+40px)] md:pt-[calc(89px+clamp(48px,9vh,120px))]"
               : "px-6 md:px-16 pt-10 md:pt-16")
           }
         >
@@ -225,12 +227,15 @@ export function Hero({ full = false }: { full?: boolean }) {
           <>
             {/* the scroll cue low at the left, in line with the copy, well clear above where the tiles begin */}
             <div className="pointer-events-none absolute inset-x-0 bottom-[clamp(96px,16vh,168px)] z-20 max-md:hidden">
-              <div className="mx-auto flex w-full max-w-[1400px] px-6">
+              {/* -ml-1 takes back the cue's own 4px padding, so its label starts on the copy's edge */}
+              <div className="mx-auto flex w-full max-w-[1448px] px-6 [&>*]:-ml-1">
                 <ScrollCue />
               </div>
             </div>
-            <div className="pointer-events-auto absolute bottom-8 right-6 z-20 max-md:bottom-5 max-md:right-4">
-              {wave}
+            <div className="pointer-events-none absolute inset-x-0 bottom-8 z-20 max-md:bottom-5">
+              <div className="mx-auto flex w-full max-w-[1448px] justify-end px-6 max-md:px-4">
+                <div className="pointer-events-auto">{wave}</div>
+              </div>
             </div>
           </>
         )}
