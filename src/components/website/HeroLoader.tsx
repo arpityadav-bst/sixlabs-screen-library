@@ -2,9 +2,9 @@
 
 // The full view's loader (Hero.tsx, full): until the tile floor is ready, the hero shows only its grey and,
 // in the middle, the SixLabs mark (the header's logo art, flat as its logo file) with "Loading" under it.
-// It is there from the first paint (in the server's HTML, no fade in) and moves at once: its three arcs
-// breathe out from the core and back in one continuous wave that runs round clockwise, starting from the arc
-// that reaches up to the top right, like a round spinner (.logo-arc-* in globals.css). Each arc is its own
+// It is there from the first paint (in the server's HTML, no fade in) and moves at once: its three arcs,
+// one at a time, ease a little out from the core and back, round clockwise from the arc that reaches up to
+// the top right, each starting as the one before settles (.logo-arc-* in globals.css). Each arc is its own
 // layer, so the browser moves them off the main thread and they stay smooth while the floor is being built.
 // When the floor is ready, it fades.
 import { AnimatePresence, motion } from "motion/react";
@@ -12,8 +12,8 @@ import { ARCS } from "./brand-marks";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 const VIEW = "12 7 107 117"; // the mark with room round it for the arcs' travel
-// the right arc (up to the top right), then clockwise: the bottom left one, the top left one; their phases a
-// third of a turn apart, negative so the wave is already under way at the first frame
+// the right arc (up to the top right), then clockwise: the bottom left one, the top left one; their turns a
+// third of the cycle apart, the delays negative so the first hop is under way at the first frame
 const ORDER = [1, 2, 0];
 
 export function HeroLoader({ show }: { show: boolean }) {
@@ -35,7 +35,7 @@ export function HeroLoader({ show }: { show: boolean }) {
               <div
                 key={k}
                 className={`logo-arc-${k} absolute inset-0`}
-                style={{ animationDelay: `${i * 0.4 - 1.2}s` }}
+                style={{ animationDelay: `${i * 0.5 - 1.5}s` }}
               >
                 <svg viewBox={VIEW} className="h-full w-full">
                   <path d={ARCS[k]} fill="#1770EF" />
