@@ -1,19 +1,21 @@
 // The footer's wordmark band (Footer.tsx), between its links and its tail, at the height it had before the
-// picture: the huge wordmark cropped by the tail's hairline, the SixLabs mark, in the header's cobalt glass, cresting from behind
-// it and fading down into it (after the onBlue creators page's foot). Behind the band, filling it and nothing
-// more, the copy line (public/footer/copy-line.webp, generated with no text in it): our players walk in
-// from the left toward the mark and come out on the right as their AI copies, so the brand in the middle
-// is where the copying happens. The picture rises out of the page on a long, eased fade that is complete
-// by the players' heads. From a tablet up it runs the band's full width at its own shape, its top fifth
-// cropped (FIT), so two spec labels in code, on leader lines, can sit in its own coordinates and land on
-// the same heads at any width (desktop only); on a phone it covers the band. The word sits a little up
-// off the hairline, whole. Colour split on the word's two ends only (.foot-word in globals.css).
+// picture: the huge wordmark sitting a little up off the tail's hairline, and the SixLabs mark, in the
+// header's cobalt glass, cresting from behind it and fading down into it (after the onBlue creators page's
+// foot). Around them, nothing but the copy line (public/footer/copy-line.webp, generated on plain white
+// with no text in it): our players and a crowd behind them walk in from the left toward the mark, and come
+// out on the right as their AI copies, in their own clothes with the white face and the blue lines at the
+// neck, so the brand in the middle is where the copying happens. The picture has no ground and no scene:
+// it is multiplied into the page, so its white is the page and only the people show, and their legs
+// dissolve into the page before the hairline. From a tablet up it runs the band's full width at its own
+// shape (FIT), so two spec labels in code, on leader lines, can sit in its own coordinates and land on the
+// same heads at any width (desktop only); on a phone it covers the band. Colour split on the word's two
+// ends only (.foot-word in globals.css).
 import { SixLabsCobalt } from "./brand-marks";
 
 const LABELS: { text: string; x: number; y: number; strong?: boolean }[] = [
   // x, y: where the leader line lands, in % of the picture
-  { text: "Real players", x: 14.1, y: 27 },
-  { text: "1,000,000+ player models", x: 86.7, y: 37, strong: true },
+  { text: "Real players", x: 17.3, y: 15 },
+  { text: "1,000,000+ player models", x: 82.2, y: 19, strong: true },
 ];
 
 const COPY = "block whitespace-nowrap";
@@ -25,14 +27,13 @@ export const Word = ({ plain }: { plain?: boolean }) => (
   </>
 );
 
-// the picture's rise out of the page: eased in and out, so no edge shows where it begins, and whole by
-// the players' heads
+// the picture's edges: a hair at the top, and a long dissolve of the legs into the page at the foot
 const RISE =
-  "[mask-image:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.05)_6%,rgba(0,0,0,0.18)_12%,rgba(0,0,0,0.4)_18%,rgba(0,0,0,0.66)_24%,rgba(0,0,0,0.88)_30%,#000_36%)]";
+  "[mask-image:linear-gradient(to_bottom,transparent_0%,#000_4%,#000_58%,rgba(0,0,0,0.72)_70%,rgba(0,0,0,0.38)_82%,rgba(0,0,0,0.12)_92%,transparent_100%)]";
 // the picture's box: on a phone it covers the band; from a tablet up it is the band's width at the
-// picture's own shape (2688 x 1152, so 42.857% of the width tall), set down so its top fifth is cropped
+// picture's own shape (2688 x 1152, so 42.857% of the width tall), set so a twentieth of its extra height is cropped from the top
 const FIT =
-  "absolute max-md:inset-0 md:inset-x-0 md:top-[calc((100%-42.857cqw)*0.2)] md:aspect-[2688/1152]";
+  "absolute max-md:inset-0 md:inset-x-0 md:top-[calc((100%-42.857cqw)*0.05)] md:aspect-[2688/1152]";
 
 export function CopyLine() {
   return (
@@ -41,12 +42,16 @@ export function CopyLine() {
       aria-hidden
       className="@container relative font-display text-[clamp(84px,19vw,300px)]"
     >
-      <div className={"absolute inset-0 overflow-hidden " + RISE}>
+      <div
+        className={
+          "absolute inset-0 overflow-hidden mix-blend-multiply " + RISE
+        }
+      >
         <div className={FIT}>
           {/* eslint-disable-next-line @next/next/no-img-element -- a static, pre-sized image with its own srcset */}
           <img
-            src="/footer/copy-line.webp?v=4"
-            srcSet="/footer/copy-line-1344.webp?v=4 1344w, /footer/copy-line.webp?v=4 2688w"
+            src="/footer/copy-line.webp?v=6"
+            srcSet="/footer/copy-line-1344.webp?v=6 1344w, /footer/copy-line.webp?v=6 2688w"
             sizes="100vw"
             width={2688}
             height={1152}
