@@ -21,9 +21,11 @@ const theirs = card + " border-slate-200/50 bg-[#e3e5e8] text-[#0a1b33]";
 const ours = card + " border-transparent bg-[#0a152d] text-white";
 // the maker's mark and name, side by side, at the top of each card
 const lockup = "flex items-center gap-2.5";
-const name = "font-display text-[18px] font-medium tracking-tight";
+// the names at one visible weight: white on the navy reads heavier than navy on the grey, so 6labs sits a
+// step lighter than ChatGPT (and its line at 90% white) for the two to look the same
+const name = "font-display text-[22px] tracking-tight";
 const line =
-  "mt-6 font-display text-[20px] md:text-[26px] font-medium leading-[1.3] tracking-tight";
+  "mt-6 font-display text-[20px] md:text-[26px] font-normal leading-[1.3] tracking-tight";
 const rise = (delay: number) => ({
   initial: { opacity: 0, y: 28 },
   whileInView: { opacity: 1, y: 0 },
@@ -41,7 +43,7 @@ export function Understands() {
         <motion.div {...rise(0)} className={theirs}>
           <span className={lockup}>
             <ChatGptMark className="h-8 w-8" />
-            <span className={name}>ChatGPT</span>
+            <span className={name + " font-medium"}>ChatGPT</span>
           </span>
           <p className={line}>
             It reads the internet and now it understands facts and how humans
@@ -51,9 +53,9 @@ export function Understands() {
         <motion.div {...rise(0.15)} className={ours}>
           <span className={lockup}>
             <SixLabsMark className="h-8 w-8" />
-            <span className={name}>6labs</span>
+            <span className={name + " font-normal"}>6labs</span>
           </span>
-          <p className={line}>
+          <p className={line + " text-white/90"}>
             It watches millions of hours of gameplay and now it understands the
             game player.
           </p>
