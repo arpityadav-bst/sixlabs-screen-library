@@ -70,6 +70,7 @@ export function Footer() {
 
         <button
           type="button"
+          data-cta
           onClick={() => jumpTo("top")}
           className="inline-flex items-center gap-[7px] justify-self-end whitespace-nowrap text-[13.5px] text-[#0a1b33] transition-colors duration-300 hover:text-accent max-md:justify-self-start"
         >

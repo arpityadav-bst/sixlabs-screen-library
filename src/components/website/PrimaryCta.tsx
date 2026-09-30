@@ -100,6 +100,7 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
     <motion.button
       ref={ref}
       type="button"
+      data-cta
       onHoverStart={sweep}
       onHoverEnd={leave}
       whileHover={{ scale: 1.04 }}

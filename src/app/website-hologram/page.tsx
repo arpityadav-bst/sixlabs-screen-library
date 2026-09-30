@@ -12,6 +12,7 @@ import { Footer } from "@/components/website/Footer";
 import { AsciiBackdrop } from "@/components/website/AsciiBackdrop";
 import { AccentWave } from "@/components/website/AccentWave";
 import { SmoothScroll } from "@/components/website/SmoothScroll";
+import { ClickLock } from "@/components/website/ClickLock";
 import { ArtProvider } from "@/components/website/art";
 
 export const metadata: Metadata = {
@@ -28,6 +29,8 @@ export default function HologramPage() {
         <AsciiBackdrop />
         <AccentWave />
         <SmoothScroll />
+        {/* for now, links and calls to action do nothing when clicked (ClickLock.tsx) */}
+        <ClickLock />
         <Header />
         <Hero />
         <ScrubLine />

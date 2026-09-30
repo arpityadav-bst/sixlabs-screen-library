@@ -12,6 +12,7 @@ import { Footer } from "@/components/website/Footer";
 import { AsciiBackdrop } from "@/components/website/AsciiBackdrop";
 import { AccentWave } from "@/components/website/AccentWave";
 import { SmoothScroll } from "@/components/website/SmoothScroll";
+import { ClickLock } from "@/components/website/ClickLock";
 
 export const metadata: Metadata = {
   title: "6labs fullview",
@@ -26,6 +27,8 @@ export default function FullviewPage() {
       <AsciiBackdrop />
       <AccentWave />
       <SmoothScroll />
+      {/* for now, links and calls to action do nothing when clicked (ClickLock.tsx) */}
+      <ClickLock />
       <Header clear intro />
       <Hero full />
       <ScrubLine />

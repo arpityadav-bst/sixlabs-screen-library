@@ -110,7 +110,10 @@ export function Header({
             <LanguageMenu />
           </div>
           {/* Secondary: outlined, so Try now in the hero stays the one solid CTA on the page. */}
-          <button className="border border-slate-300 text-[#0a1b33] text-[15px] px-6 py-3 max-md:px-4 max-md:py-2 max-md:text-[14px] rounded-full hover:bg-white/70 hover:border-[#b7c0cb] transition-colors duration-200">
+          <button
+            data-cta
+            className="border border-slate-300 text-[#0a1b33] text-[15px] px-6 py-3 max-md:px-4 max-md:py-2 max-md:text-[14px] rounded-full hover:bg-white/70 hover:border-[#b7c0cb] transition-colors duration-200"
+          >
             Sign in
           </button>
           <MobileMenu links={LINKS} />
