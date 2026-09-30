@@ -6,10 +6,13 @@
 // is one arc (higher in the middle) of wide halftone: far from the blue the dots are tiny and faint, and
 // nearer it they grow and strengthen, continuously, until they touch and merge into the solid colour. It
 // sits above the scroll line and below the players section and the header. When the view is full it
-// announces it (window event "accentwave", detail { filled }); the players section waits for that.
+// announces it (window event "accentwave", detail { filled }); the players section waits for that. Past
+// the players it drains again, the same water sinking over DRAIN_VH of a screen as the next section
+// (Understands.tsx) comes up under it; one scroll down from the players glides through that, and one
+// scroll up from the next section glides back into the players.
 import { useEffect, useRef } from "react";
 import { COMPLETE_AT, WAVE_VH } from "./ScrubLine";
-import { getLenis } from "./SmoothScroll";
+import { easeIn, easeOut, glideTo, gliding, stopGlide } from "./glide";
 
 const ACCENT = [26, 109, 255];
 const ARC = 90; // how much higher the middle of the edge is than its ends, px
@@ -22,6 +25,8 @@ const GRAIN = 0.07; // noise strength on the blue
 const NUDGE = 8;
 const GLIDE_DOWN_S = 3.2;
 const GLIDE_UP_S = 1.8;
+const DRAIN_VH = 1; // the drain past the players: a screen, as the next section comes up under the water
+const GLIDE_DRAIN_S = 2.4;
 const WORD = "The players"; // the next section's name, huge in the halftone
 const WORD_ALPHA = 0.3;
 const WORD_DROP = 50; // px the word sits lower in the water
@@ -32,15 +37,19 @@ export function AccentWave() {
 
   useEffect(() => {
     const canvas = ref.current,
-      line = document.getElementById("model-line");
+      line = document.getElementById("model-line"),
+      players = document.getElementById("players");
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx || !line) return;
     let lastY = window.scrollY,
       lastT = performance.now(),
       speed = 0,
       glided = false,
-      glidedUp = true; // disarmed until the view has been full once
-    let p = 0,
+      glidedUp = true, // disarmed until the view has been full once
+      drainGlided = false,
+      drainUpGlided = true; // disarmed until the drain has run once
+    let p = 0, // the rise, 0..1
+      q = 0, // the drain past the players, 0..1
       raf = 0,
       filled = false,
       w = 0,
@@ -81,15 +90,16 @@ export function AccentWave() {
     const draw = () => {
       raf = 0;
       // some slack before it counts as drained, so scrolling back a step does not undo the players
-      if (p < 0.8) announce(false);
+      const f = Math.min(p, 1 - q); // how full the view is: risen, less drained
+      if (f < 0.8) announce(false);
       ctx.clearRect(0, 0, w, h);
       // the level runs from below the view, halftone included (p 0), up until the solid covers it (p 1)
       // p 1 is the moment the solid colour covers the view (its lowest points, the arc's ends, reach the
       // top): that is when it reads as full, so that is when it announces it
       // eased, so the water starts gently and settles gently
-      const pe = p * p * (3 - 2 * p);
+      const pe = f * f * (3 - 2 * f);
       const level = h + BAND - pe * (h + BAND + ARC + PITCH * 3);
-      if (p > 0) {
+      if (f > 0) {
         ctx.fillStyle = fill;
         ctx.beginPath();
         ctx.moveTo(0, h);
@@ -132,7 +142,7 @@ export function AccentWave() {
         ctx.font = `500 ${Math.round(w * 0.14)}px ${display}, sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "alphabetic";
-        ctx.fillText(WORD, w / 2, level + BAND * 0.12 + WORD_DROP);
+        if (!q) ctx.fillText(WORD, w / 2, level + BAND * 0.12 + WORD_DROP); // only on the way in
         ctx.globalCompositeOperation = "source-over";
         ctx.fillStyle = fill;
         // the grain, only where the blue already is
@@ -146,83 +156,10 @@ export function AccentWave() {
         }
         ctx.globalAlpha = 1;
       }
-      if (p >= 0.995) announce(true); // a hair of slack: a scroll can land a fraction short
+      if (f >= 0.995) announce(true); // a hair of slack: a scroll can land a fraction short
     };
-    // A slow eased glide to `to` (GLIDE_DOWN_S or GLIDE_UP_S), ours rather than the browser's quick smooth scroll. It runs
-    // to the end, and while it runs the page's own scrolling (wheel, touch, keys) is held, so the two
-    // never fight and the transition is always seen whole.
-    let glideRaf = 0;
-    const stopGlide = () => {
-      cancelAnimationFrame(glideRaf);
-      glideRaf = 0;
-    };
-    const hold = (e: Event) => {
-      if (glideRaf) e.preventDefault();
-    };
-    const holdKeys = (e: KeyboardEvent) => {
-      if (
-        glideRaf &&
-        [
-          " ",
-          "ArrowDown",
-          "ArrowUp",
-          "PageDown",
-          "PageUp",
-          "Home",
-          "End",
-        ].includes(e.key)
-      )
-        e.preventDefault();
-    };
-    window.addEventListener("wheel", hold, { passive: false });
-    window.addEventListener("touchmove", hold, { passive: false });
-    window.addEventListener("keydown", holdKeys);
-    // It picks up where the page really is on its first frame (a wheel scroll may still be animating when
-    // it triggers) and at the speed the visitor was already scrolling, then eases to a stop at `to`: a
-    // cubic that starts on the visitor's velocity and ends at rest, so mouse and glide are one motion.
-    const glide = (to: number, v0: number, seconds: number) => {
-      stopGlide();
-      // with the site's smooth scrolling (SmoothScroll.tsx) the glide runs on it: it carries on from the
-      // scroll's own motion and eases out to `to`, holding the visitor's input meanwhile
-      const lenis = getLenis();
-      if (lenis) {
-        lenis.scrollTo(to, {
-          duration: seconds,
-          // down, a slow start that gathers pace to the players; up, a quicker settle
-          easing:
-            to > window.scrollY
-              ? (k) => 1 - Math.cos((k * Math.PI) / 2) // down: eases in, a slow start that gathers pace
-              : (k) => 1 - (1 - k) ** 3,
-          lock: true,
-          force: true,
-        });
-        return;
-      }
-      let from = 0,
-        t0 = 0,
-        v = 0;
-      const T = seconds * 1000;
-      const step = (now: number) => {
-        if (!t0) {
-          t0 = now;
-          from = window.scrollY;
-          // capped so the curve only ever moves forward (a cubic like this overshoots past 3x the distance)
-          const reach = (1.5 * (to - from)) / T;
-          v =
-            reach >= 0
-              ? Math.min(Math.max(v0, 0), reach)
-              : Math.max(Math.min(v0, 0), reach);
-        }
-        const k = Math.min(1, (now - t0) / T);
-        const pos =
-          from +
-          (to - from) * (3 * k * k - 2 * k * k * k) +
-          v * T * (k * k * k - 2 * k * k + k);
-        window.scrollTo({ top: pos, behavior: "instant" });
-        glideRaf = k < 1 ? requestAnimationFrame(step) : 0;
-      };
-      glideRaf = requestAnimationFrame(step);
-    };
+    const glide = (to: number, v0: number, seconds: number) =>
+      glideTo(to, seconds, to > window.scrollY ? easeIn : easeOut, v0);
     const measure = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       if (w !== window.innerWidth || h !== window.innerHeight) {
@@ -255,10 +192,17 @@ export function AccentWave() {
         WAVE_VH * h -
         (1 - COMPLETE_AT) * (line.offsetHeight - h * (1 + WAVE_VH));
       // the visitor's scroll speed, px per ms, for the glide to carry on from
-      if (!glideRaf) speed = (y - lastY) / Math.max(8, now - lastT);
+      if (!gliding()) speed = (y - lastY) / Math.max(8, now - lastT);
       const lastYBefore = lastY;
       lastY = y;
       lastT = now;
+      // the drain: from where the players section's foot meets the view's (on a phone it runs longer)
+      const drainStart = players
+        ? players.getBoundingClientRect().bottom + y - h
+        : Infinity;
+      q = Math.min(1, Math.max(0, (y - drainStart) / (DRAIN_VH * h)));
+      if (y <= drainStart + 1) drainGlided = false;
+      if (q >= 0.995) drainUpGlided = false;
       if (y <= fillEnd + 1) glided = false;
       if (p >= 0.995) glidedUp = false;
       if (down && !glided && y > fillEnd + NUDGE && p < 1) {
@@ -267,6 +211,28 @@ export function AccentWave() {
       } else if (!down && y < lastYBefore && !glidedUp && p < 0.97 && p > 0) {
         glidedUp = true;
         glide(fillEnd, Math.max(Math.min(speed, 0), -2.5), GLIDE_UP_S); // back to the full line, drained
+      } else if (
+        down &&
+        !drainGlided &&
+        p >= 1 &&
+        y > drainStart + NUDGE &&
+        q < 1
+      ) {
+        drainGlided = true;
+        glide(
+          drainStart + DRAIN_VH * h + 2,
+          Math.min(Math.max(speed, 0), 2.5),
+          GLIDE_DRAIN_S,
+        ); // on to the next section
+      } else if (
+        !down &&
+        y < lastYBefore &&
+        !drainUpGlided &&
+        q < 0.97 &&
+        q > 0
+      ) {
+        drainUpGlided = true;
+        glide(drainStart, Math.max(Math.min(speed, 0), -2.5), GLIDE_UP_S); // back into the players, full
       }
       if (!raf) raf = requestAnimationFrame(draw);
     };
