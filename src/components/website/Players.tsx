@@ -182,7 +182,7 @@ export function Players() {
           {/* below lg: previous / next beside the portrait, and the switch on its faded chest */}
           <motion.div
             {...enter(0.15)}
-            className="relative z-10 -mt-[calc(var(--ph)*0.2)] flex justify-center lg:hidden"
+            className="relative z-10 -mt-[calc(var(--ph)*0.2)] flex items-center justify-center self-start lg:hidden"
           >
             <ModeToggle
               mode={mode}
@@ -264,7 +264,7 @@ export function Players() {
           })}
         </div>
         {/* phones and tablets: the players as a carousel under the switch */}
-        <motion.div {...enter(0.2)} className="relative z-10 mt-6 lg:hidden">
+        <motion.div {...enter(0.2)} className="relative z-10 mt-1 lg:hidden">
           <PlayerCarousel active={active} onChange={setActive} />
         </motion.div>
       </div>

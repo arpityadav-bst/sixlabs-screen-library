@@ -20,7 +20,7 @@ export function ModeToggle({
   mode: Mode;
   onChange: (m: Mode) => void;
   thumbId?: string; // each mounted switch its own, so two (desktop and phone placements) never trade thumbs
-  slim?: boolean; // the phone and tablet placement: narrower, lower, smaller type
+  slim?: boolean; // the phone and tablet placement: a little narrower and lower
 }) {
   return (
     <div
@@ -39,7 +39,7 @@ export function ModeToggle({
             onClick={() => onChange(o.id)}
             className={
               "relative rounded-full text-center font-sans font-medium transition-colors duration-200 " +
-              (slim ? "w-20 py-1.5 text-[13px] " : "w-28 py-2 text-[14px] ") +
+              (slim ? "w-24 py-[7px] text-[14px] " : "w-28 py-2 text-[14px] ") +
               (on ? "text-[#0a1b33]" : "text-white/80 hover:text-white")
             }
           >
