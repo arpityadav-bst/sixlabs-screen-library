@@ -17,18 +17,19 @@ import { SixLabsLogo } from "./brand-marks";
 // also drawn at SCALE, shrinking toward its own outer edge about the line of the feet (FEET, % of the
 // picture's height), so the people stand smaller on the same ground. The halves meet in the white, so the
 // split never shows.
-const SPREAD = 3;
+const SPREAD = { l: 3, r: 6 }; // the copies' half pushed further
 const SCALE = 0.85;
 const FEET = 88;
 const HALVES = [
   "[clip-path:inset(0_50%_0_0)] -translate-x-[3%] scale-[0.85] origin-[0%_88%]",
-  "[clip-path:inset(0_0_0_50%)] translate-x-[3%] scale-[0.85] origin-[100%_88%]",
+  "[clip-path:inset(0_0_0_50%)] translate-x-[6%] scale-[0.85] origin-[100%_88%]",
 ];
 
 // where a point of the picture lands once its half is moved and scaled (the translate, then the scale
 // about the half's origin, as CSS applies them)
 const place = (x: number, y: number, side: "l" | "r") => ({
-  left: side === "l" ? SCALE * x - SPREAD : 100 + SPREAD + SCALE * (x - 100),
+  left:
+    side === "l" ? SCALE * x - SPREAD.l : 100 + SPREAD.r + SCALE * (x - 100),
   top: FEET + SCALE * (y - FEET),
 });
 
