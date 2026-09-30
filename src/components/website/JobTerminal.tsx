@@ -14,10 +14,13 @@
 // alone. While it waits, the window is not an empty dark box: the page's ASCII field (ascii-field.js) runs
 // in it as it looks under the cursor, a bed of churning glyphs brightest at the middle and falling off to
 // the edges, held there with no pointer, faint, over a glow of the accent rising from the window's foot;
-// both fade out as the run begins, and the field then stops drawing. Reduced motion shows the finished
+// both fade out as the run begins, and the field then stops drawing. Where there is a mouse, a faint cursor
+// breathes in the middle of the waiting window, a ring spreading from its tip (.term-hint, globals.css):
+// the hint that pointing at the card runs it; it goes with the field. Reduced motion shows the finished
 // run the moment it is asked for.
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
+import { MousePointer2 } from "lucide-react";
 import type { Step } from "./jobs-data";
 import { mountAsciiField } from "./ascii-field";
 
@@ -137,6 +140,15 @@ export function JobTerminal({ run, play }: { run: Step[]; play: boolean }) {
         >
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_65%_at_50%_100%,rgba(110,168,255,0.11),transparent)]" />
           <div ref={field} style={FIELD_TINT} className="absolute inset-0" />
+          <div className="absolute inset-0 hidden items-center justify-center [@media(hover:hover)_and_(pointer:fine)]:flex">
+            <span className="term-hint relative block">
+              <span className="term-hint-ring absolute left-[3px] top-[3px] h-7 w-7 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/40" />
+              <MousePointer2
+                className="h-5 w-5 fill-white/25 text-white/80 drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]"
+                strokeWidth={1.5}
+              />
+            </span>
+          </div>
         </div>
         <div className="relative">
           {!started ? (

@@ -7,7 +7,8 @@
 // first time its card is pointed at (JobTerminal.tsx). Copy and runs are in jobs-data.ts. Below xl, where
 // three columns do not fit, the cards become one swipeable row (it scroll-snaps, a card a stop, the next one
 // peeking in by 20px past the content's edge, so a card is as wide as the switch above it or wider) under a switch of the three jobs, so the section is one view instead of three tall cards in
-// a stack; on a touch screen each terminal runs as its card comes into view.
+// a stack; on a touch screen each terminal runs as its card comes into view. The row moves sideways only:
+// held to no vertical scroll of its own, so a vertical drag on it always scrolls the page.
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import {
@@ -136,7 +137,7 @@ export function Jobs() {
       <div
         ref={row}
         onScroll={onScroll}
-        className="relative mt-12 grid grid-cols-1 gap-6 xl:grid-cols-3 max-xl:mt-5 max-xl:-mx-4 max-xl:flex max-xl:snap-x max-xl:snap-mandatory max-xl:gap-4 max-xl:overflow-x-auto max-xl:overscroll-x-contain max-xl:scroll-px-4 max-xl:px-4 max-xl:[scrollbar-width:none] max-xl:[&::-webkit-scrollbar]:hidden md:max-xl:-mx-16 md:max-xl:scroll-px-16 md:max-xl:px-16"
+        className="relative mt-12 grid grid-cols-1 gap-6 xl:grid-cols-3 max-xl:mt-5 max-xl:-mx-4 max-xl:flex max-xl:snap-x max-xl:snap-mandatory max-xl:gap-4 max-xl:overflow-x-auto max-xl:overflow-y-hidden max-xl:overscroll-x-contain max-xl:scroll-px-4 max-xl:px-4 max-xl:[scrollbar-width:none] max-xl:[&::-webkit-scrollbar]:hidden md:max-xl:-mx-16 md:max-xl:scroll-px-16 md:max-xl:px-16"
       >
         {JOBS.map((j, k) => (
           <motion.article

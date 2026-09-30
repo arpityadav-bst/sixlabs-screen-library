@@ -184,6 +184,24 @@ body {
   .glitch-word::before, .glitch-word::after { display: none; }
 }
 
+/* The jobs' waiting terminals, where there is a mouse (JobTerminal.tsx): a faint cursor in the middle
+   breathes (0.45 to 0.8 opacity, a touch larger and back) and a ring spreads from its tip and fades, on one
+   2.4s beat, until the card is pointed at. */
+.term-hint { animation: term-hint 2.4s ease-in-out infinite; }
+.term-hint-ring { animation: term-hint-ring 2.4s ease-out infinite; }
+@keyframes term-hint {
+  0%, 100% { opacity: 0.45; transform: scale(0.96); }
+  50% { opacity: 0.8; transform: scale(1.04); }
+}
+@keyframes term-hint-ring {
+  0% { opacity: 0.5; transform: scale(0.4); }
+  70%, 100% { opacity: 0; transform: scale(1.8); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .term-hint, .term-hint-ring { animation: none; }
+  .term-hint-ring { opacity: 0; }
+}
+
 /* The footer's wordmark (CopyLine.tsx), after the onBlue creators page's: huge, cropped by the tail's
    hairline in front of the landscape, and its colour split only at the word's two ends (a pale red copy
    nudged left, a pale cyan one nudged right, each masked to its own end and multiplied over the navy, so
