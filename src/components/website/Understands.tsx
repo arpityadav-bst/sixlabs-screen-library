@@ -37,7 +37,7 @@ export function Understands() {
       id="understands"
       className="relative mx-auto w-full max-w-[1400px] px-4 pt-[calc(70px+96px)] md:px-16 md:pt-[calc(89px+clamp(96px,9vw,144px))]"
     >
-      <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 md:gap-10">
+      <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 md:gap-16">
         <motion.div {...rise(0)} className={theirs}>
           <span className={lockup}>
             <ChatGptMark className="h-8 w-8" />
