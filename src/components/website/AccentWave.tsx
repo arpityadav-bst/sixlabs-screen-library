@@ -13,21 +13,19 @@
 // scroll up from the next section glides back into the players.
 import { useEffect, useRef } from "react";
 import { COMPLETE_AT, WAVE_VH } from "./ScrubLine";
-import { easeIn, easeOut, glideTo, gliding, stopGlide } from "./glide";
+import { easeOut, glideTo, gliding, stopGlide } from "./glide";
 
 const ACCENT = [26, 109, 255];
 const ARC = 90; // how much higher the middle of the edge is than its ends, px
 const BAND = 480; // depth of the halftone above the solid colour, px
 const GRAIN = 0.07; // noise strength on the blue
 // A nudge (NUDGE px) past where the line in the scroll line section finishes filling, the page glides
-// the rest of the way into the players by itself: slowly (GLIDE_DOWN_S, easing in: a slow start) so "The
-// players" in the water can be read. Going back up out of the players glides back to that point quicker
-// (GLIDE_UP_S).
+// the rest of the way into the players by itself; the same the other way, and into and out of the
+// section after the players. Every one of those four glides is the same: GLIDE_S long, moving the moment
+// it starts and settling at the end (easeOut), so each one scroll is answered at once.
 const NUDGE = 8;
-const GLIDE_DOWN_S = 3.2;
-const GLIDE_UP_S = 1.8;
-const DRAIN_VH = 1; // the drain past the players: a screen, as the next section comes up under the water
-const GLIDE_DRAIN_S = 2.4;
+const GLIDE_S = 1.8;
+const DRAIN_VH = 1; // the way out past the players: a screen, as the next section comes up
 const WORD = "The players"; // the next section's name, huge in the halftone
 const WORD_ALPHA = 0.3;
 const WORD_DROP = 50; // px the word sits lower in the water
@@ -169,7 +167,7 @@ export function AccentWave() {
       if (f >= 0.995) announce(true); // a hair of slack: a scroll can land a fraction short
     };
     const glide = (to: number, v0: number, seconds: number) =>
-      glideTo(to, seconds, to > window.scrollY ? easeIn : easeOut, v0);
+      glideTo(to, seconds, easeOut, v0);
     const measure = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       if (w !== window.innerWidth || h !== window.innerHeight) {
@@ -217,10 +215,10 @@ export function AccentWave() {
       if (p >= 0.995) glidedUp = false;
       if (down && !glided && y > fillEnd + NUDGE && p < 1) {
         glided = true;
-        glide(end + 4, Math.min(Math.max(speed, 0), 2.5), GLIDE_DOWN_S); // a few px past the end, so it lands full
+        glide(end + 4, Math.min(Math.max(speed, 0), 2.5), GLIDE_S); // a few px past the end, so it lands full
       } else if (!down && y < lastYBefore && !glidedUp && p < 0.97 && p > 0) {
         glidedUp = true;
-        glide(fillEnd, Math.max(Math.min(speed, 0), -2.5), GLIDE_UP_S); // back to the full line, drained
+        glide(fillEnd, Math.max(Math.min(speed, 0), -2.5), GLIDE_S); // back to the full line, drained
       } else if (
         down &&
         !drainGlided &&
@@ -232,7 +230,7 @@ export function AccentWave() {
         glide(
           drainStart + DRAIN_VH * h + 2,
           Math.min(Math.max(speed, 0), 2.5),
-          GLIDE_DRAIN_S,
+          GLIDE_S,
         ); // on to the next section
       } else if (
         !down &&
@@ -242,7 +240,7 @@ export function AccentWave() {
         q > 0
       ) {
         drainUpGlided = true;
-        glide(drainStart, Math.max(Math.min(speed, 0), -2.5), GLIDE_UP_S); // back into the players, full
+        glide(drainStart, Math.max(Math.min(speed, 0), -2.5), GLIDE_S); // back into the players, full
       }
       if (!raf) raf = requestAnimationFrame(draw);
     };

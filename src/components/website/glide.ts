@@ -7,7 +7,6 @@
 // per ms) and eases to rest at the point, holding the wheel, touch and keys meanwhile.
 import { getLenis } from "./SmoothScroll";
 
-export const easeIn = (k: number) => 1 - Math.cos((k * Math.PI) / 2); // a slow start that gathers pace
 export const easeOut = (k: number) => 1 - (1 - k) ** 3; // a quick start that settles
 
 let raf = 0;

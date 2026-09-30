@@ -66,11 +66,15 @@ export function Players() {
     };
   }, []);
   const shown = filled && inView;
+  // Once the section has come in it stays: leaving does not fade it out, coming back does not fade it in
+  // again (nor redraw the doodles). `shown` still pauses the auto Human / AI switching out of view.
+  const [revealed, setRevealed] = useState(false);
+  if (shown && !revealed) setRevealed(true);
   // `to` is the opacity it settles at: the unselected player cards rest at UNSELECTED
   const enter = (delay: number, to = 1) => ({
     initial: { opacity: 0, y: 24 },
-    animate: shown ? { opacity: to, y: 0 } : { opacity: 0, y: 24 },
-    transition: shown ? { duration: 0.6, ease, delay } : { duration: 0.25 },
+    animate: revealed ? { opacity: to, y: 0 } : { opacity: 0, y: 24 },
+    transition: { duration: 0.6, ease, delay },
   });
   const player = PLAYERS[active];
   // the real player or their AI copy, per player, switching by itself until the visitor picks one
@@ -135,7 +139,7 @@ export function Players() {
                 exit={{ opacity: 0, scale: 1.02 }}
                 transition={{ duration: 0.5, ease }}
               >
-                <PlayerDoodles id={player.id} start={shown} mode={mode} />
+                <PlayerDoodles id={player.id} start={revealed} mode={mode} />
                 {/* a player with a clip turns with the cursor (PlayerPortrait), switching to their AI copy's clip with the toggle (PortraitSwap); the others are stills */}
                 {player.video && player.aiVideo ? (
                   <PortraitSwap

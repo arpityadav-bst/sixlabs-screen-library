@@ -14,7 +14,7 @@ export const getLenis = () => instance;
 export function SmoothScroll() {
   useEffect(() => {
     instance = new Lenis({
-      lerp: 0.09,
+      lerp: 0.15, // how much of the way to the wheel's target each frame covers: smooth, but close behind it
       smoothWheel: true,
       autoRaf: true,
       anchors: true,
