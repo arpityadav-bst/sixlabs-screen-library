@@ -90,13 +90,9 @@ export function Hero() {
         </AnimatePresence>
 
         <div className="relative z-20 flex-1 px-6 md:px-16 pt-10 md:pt-16 flex flex-col items-start pointer-events-none">
-          <motion.div
-            // Fade only: the block is in its final place from the first frame (a slide-up read as a jerk).
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, ease }}
-            className="flex-1 flex flex-col items-start pb-10 md:pb-12"
-          >
+          {/* Fade only, in CSS (.hero-copy-in), so it runs from first paint rather than once the scripts are
+            up: the block is in its final place from the first frame (a slide-up read as a jerk). */}
+          <div className="hero-copy-in flex-1 flex flex-col items-start pb-10 md:pb-12">
             <h1 className="font-display text-[34px] md:text-[56px] font-medium tracking-tight leading-[1.05] text-[#0a1b33]">
               Making <TypedWord word="models" className="text-accent" /> of
               <br />
@@ -123,7 +119,7 @@ export function Hero() {
               <br />
               <span className="text-slate-600">Yours next.</span>
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
       {/* Outside the container, one row: the scroll cue under its bottom-left corner, the headline numbers

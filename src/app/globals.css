@@ -70,19 +70,57 @@ body {
   .badge-bob { animation: none; }
 }
 
-/* The hero's typed accent word (TypedWord.tsx): its caret blinks while it types, with a soft accent glow,
-   after the onBlue creators hero. */
-.type-caret {
+/* The hero's typed accent word (TypedWord.tsx), pure CSS so it runs from first paint. Letter i appears at
+   --tw-start + i x --tw-step; its caret (a thin glowing accent bar at the letter's right edge) shows for
+   its turn only; the last letter's caret blinks a moment, then fades. */
+.tw-letter {
+  --tw-start: 0.5s;
+  --tw-step: 90ms;
+  position: relative;
+  opacity: 0;
+  animation: tw-in 1ms linear forwards;
+  animation-delay: calc(var(--tw-start) + var(--i) * var(--tw-step));
+}
+.tw-letter::after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  top: 15%;
+  height: 70%;
+  width: 2px;
+  border-radius: 1px;
+  background: #1a6dff;
   box-shadow: 0 0 10px rgba(26, 109, 255, 0.55);
-  animation: caret-blink 0.9s linear infinite;
+  opacity: 0;
+  pointer-events: none;
+  animation: tw-turn var(--tw-step) linear;
+  animation-delay: calc(var(--tw-start) + var(--i) * var(--tw-step));
 }
-@keyframes caret-blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
+.tw-last::after {
+  animation: tw-linger 1s linear;
+  animation-delay: calc(var(--tw-start) + var(--i) * var(--tw-step));
 }
-.type-caret.is-done {
-  animation: caret-hide 260ms ease forwards;
+@keyframes tw-in {
+  to { opacity: 1; }
 }
-@keyframes caret-hide {
-  to { opacity: 0; }
+@keyframes tw-turn {
+  from, to { opacity: 1; }
+}
+@keyframes tw-linger {
+  0%, 34% { opacity: 1; }
+  35%, 59% { opacity: 0; }
+  60%, 80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+/* the hero copy fades in at first paint too, not once the scripts are up */
+.hero-copy-in {
+  animation: hero-copy-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes hero-copy-in {
+  from { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tw-letter { animation: none; opacity: 1; }
+  .tw-letter::after { display: none; }
+  .hero-copy-in { animation: none; }
 }
