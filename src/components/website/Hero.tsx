@@ -99,7 +99,7 @@ export function Hero() {
               <br />
               human players.
             </h1>
-            <p className="font-sans text-[14px] md:text-[15px] text-[#64748b] mt-5 max-w-[440px] leading-relaxed">
+            <p className="font-sans text-[14px] md:text-[15px] text-[#475569] mt-5 max-w-[440px] leading-relaxed">
               Our model watched millions of hours of gameplay. Now it
               understands the game player.{" "}
               <a
@@ -115,11 +115,19 @@ export function Hero() {
             <div className="mt-8 pointer-events-auto">
               <PrimaryCta>Try now</PrimaryCta>
             </div>
-            <p className="mt-8 font-sans text-[13px] leading-relaxed text-slate-400">
-              One million players have a copy.
-              <br />
-              <span className="text-slate-600">Yours next.</span>
-            </p>
+            {/* The social proof as a live count: a softly pulsing accent dot, the number in ink, and the
+              invitation under it in the accent. */}
+            <div className="mt-8 grid grid-cols-[8px_1fr] items-center gap-x-2.5 font-sans text-[13px] leading-relaxed">
+              <span aria-hidden className="relative flex h-2 w-2">
+                <span className="absolute inset-0 animate-ping rounded-full bg-accent/40" />
+                <span className="relative h-2 w-2 rounded-full bg-accent" />
+              </span>
+              <p className="text-slate-400">
+                <span className="font-medium text-[#0a1b33]">One million</span>{" "}
+                players have a copy.
+              </p>
+              <p className="col-start-2 font-medium text-accent">Yours next.</p>
+            </div>
           </div>
         </div>
       </section>
