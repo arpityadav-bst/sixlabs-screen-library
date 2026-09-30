@@ -69,7 +69,19 @@ export function Jobs() {
             onPointerEnter={() =>
               setAsked((a) => (a[j.id] ? a : { ...a, [j.id]: true }))
             }
-            className="flex flex-col rounded-[28px] max-md:rounded-[24px] border border-slate-200/80 bg-white px-6 pb-6 pt-7"
+            // the stroke light follows the pointer (.sheen in globals.css)
+            onPointerMove={(e) => {
+              const r = e.currentTarget.getBoundingClientRect();
+              e.currentTarget.style.setProperty(
+                "--gx",
+                `${e.clientX - r.left}px`,
+              );
+              e.currentTarget.style.setProperty(
+                "--gy",
+                `${e.clientY - r.top}px`,
+              );
+            }}
+            className="sheen relative flex flex-col rounded-[28px] max-md:rounded-[24px] max-md:[--sheen-r:24px] border border-slate-200/80 bg-white px-6 pb-6 pt-7"
           >
             <h3 className="font-display text-[20px] font-medium leading-tight tracking-[-0.03em] text-[#0a1b33]">
               {j.title}
