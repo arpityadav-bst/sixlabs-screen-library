@@ -30,7 +30,7 @@ export default function HologramPage() {
         <SmoothScroll />
         {/* for now, links and calls to action do nothing when clicked (ClickLock.tsx) */}
         <ClickLock />
-        <Header clear intro />
+        <Header clear />
         <Hero full />
         <ScrubLine />
         <Players />

@@ -22,7 +22,7 @@ const FULL_LEDE =
 
 // Digital copies start from the published figure and count up by one each time a character on the floor
 // becomes their AI copy.
-const COPIES_BASE = 10_956;
+const COPIES_BASE = 1_009_271;
 // on a phone, the gap between the copy's last line and the highest tile, px
 const CLEAR = -12; // below zero: the field top is measured a little past the screen edges, so the gap on screen is wider than this
 
@@ -141,8 +141,8 @@ export function Hero({ full = false }: { full?: boolean }) {
             }
             mixWaves={full}
             aiBase={art === "hologram" ? "/tiles-holo" : undefined}
-            // a used tile rests a little darker; on the hologram pages, a light bright blue, after the focus cobalt
-            spentTint={art === "hologram" ? "#d0e0ff" : undefined}
+            // a used tile rests a little darker; on the hologram pages, a very light wash of the holograms' sky blue
+            spentTint={art === "hologram" ? "#e3f3ff" : undefined}
             onReady={(f) => {
               floor.current = f;
               f.setClearTop(clear.current);

@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { LanguageMenu } from "./LanguageMenu";
 import { MobileMenu } from "./MobileMenu";
 import { linkTo, type Spot } from "./jump";
-import { HEADER_IN } from "./hero-intro";
 
 // each tab glides to its section (jump.ts), in the page's order
 const LINKS: { label: string; to: Spot }[] = [
@@ -19,23 +18,7 @@ const LINKS: { label: string; to: Spot }[] = [
 
 // `clear` (the 6labs-fullview page, where the tile floor runs under the bar): no ground and no blur at the
 // top of the page, so the floor reads edge to edge; the usual frosted bar once the page has scrolled.
-// `intro` (the full view too): hidden until the hero's entrance calls it in (hero-intro.ts), then it fades in
-// very slowly.
-export function Header({
-  clear = false,
-  intro = false,
-}: {
-  clear?: boolean;
-  intro?: boolean;
-}) {
-  const [shown, setShown] = useState(!intro);
-  useEffect(() => {
-    if (!intro) return;
-    const on = () => setShown(true);
-    if (document.documentElement.dataset.heroHeader === "in") on();
-    window.addEventListener(HEADER_IN, on);
-    return () => window.removeEventListener(HEADER_IN, on);
-  }, [intro]);
+export function Header({ clear = false }: { clear?: boolean }) {
   const [scrolled, setScrolled] = useState(false);
   // solid white once the accent water has filled the view (AccentWave.tsx), so it stands clear of the blue
   const [onBlue, setOnBlue] = useState(false);
@@ -54,16 +37,6 @@ export function Header({
   return (
     <nav
       id="site-head"
-      inert={!shown}
-      style={
-        intro
-          ? {
-              opacity: shown ? 1 : 0,
-              transition:
-                "opacity 1.4s cubic-bezier(0.25, 0.1, 0.25, 1), background-color 0.3s, border-color 0.3s",
-            }
-          : undefined
-      }
       className={
         "fixed top-0 left-0 right-0 z-40 px-6 py-5 max-md:px-4 max-md:py-4 backdrop-blur-md border-b transition-colors duration-300 " +
         (onBlue

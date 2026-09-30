@@ -13,8 +13,8 @@ import { easeOut, glideTo, gliding } from "./glide";
 import { LiquidLine } from "./LiquidLine";
 
 const LINE =
-  "A model is built from what the person does, not what they say. Put a thousand models on a new build and you know how it will land before anyone plays it.";
-const ACCENT = ["a", "thousand", "models"]; // "Put a thousand models": the words after "Put"
+  "A model is built from what the person does, not what they say. Put a million models on a new build and you know how it will land before anyone plays it.";
+const ACCENT = ["a", "million", "models"]; // "Put a million models": the words after "Put"
 export const COMPLETE_AT = 0.82;
 // Scrolling back up empties the line BACK times faster than scrolling down fills it; scrolling down
 // again refills at that pace too, until it has caught up with where the scroll is.
@@ -28,7 +28,7 @@ export const WAVE_VH = 1.3;
 
 const WORDS = LINE.split(" ");
 const accentAt = WORDS.findIndex(
-  (w, k) => w === "a" && WORDS[k + 1] === "thousand",
+  (w, k) => w === "a" && WORDS[k + 1] === "million",
 );
 const ACCENTS = WORDS.map(
   (_, k) => k >= accentAt && k < accentAt + ACCENT.length,

@@ -49,7 +49,7 @@ const BADGES: Badge[] = [
     mx: "17%",
     my: "calc(50% - var(--line-h, 200px) / 2 - 74px)",
     ty: "24%",
-    size: 220,
+    size: 275,
     depth: 1.4,
     tilt: -6,
     delay: 0,
@@ -66,7 +66,7 @@ const BADGES: Badge[] = [
     mx: "83%",
     my: "calc(50% - var(--line-h, 200px) / 2 - 71px)",
     ty: "23%",
-    size: 196,
+    size: 245,
     depth: 0.8,
     tilt: 5,
     delay: 1.2,
@@ -83,7 +83,7 @@ const BADGES: Badge[] = [
     mx: "50%",
     my: "calc(50% - var(--line-h, 200px) / 2 - 102px)",
     ty: "22%",
-    size: 180,
+    size: 225,
     depth: 0.6,
     tilt: 4,
     delay: 2.1,
@@ -100,7 +100,7 @@ const BADGES: Badge[] = [
     mx: "50%",
     my: "calc(50% + var(--line-h, 200px) / 2 + 122px)",
     ty: "78%",
-    size: 232,
+    size: 290,
     depth: 1.6,
     tilt: -4,
     delay: 0.6,
@@ -117,7 +117,7 @@ const BADGES: Badge[] = [
     mx: "17%",
     my: "calc(50% + var(--line-h, 200px) / 2 + 71px)",
     ty: "76%",
-    size: 188,
+    size: 235,
     depth: 1,
     tilt: 6,
     delay: 1.7,
@@ -134,7 +134,7 @@ const BADGES: Badge[] = [
     mx: "83%",
     my: "calc(50% + var(--line-h, 200px) / 2 + 73px)",
     ty: "77%",
-    size: 204,
+    size: 255,
     depth: 1.2,
     tilt: -5,
     delay: 0.3,
@@ -145,7 +145,7 @@ const DRIFT = 22; // px a depth-1 badge moves with the cursor at the edge of the
 const FLIP_EVERY: [number, number] = [3.5, 6.5]; // s between flips, picked at random in this range
 const FLIP_S = 0.8; // one flip, seconds
 // bump when the tile renders change, so browsers fetch the new ones instead of their cached copies
-const TILES_V = 5;
+const TILES_V = 6;
 const src = (name: string) => `/tiles/float/${name}.webp?v=${TILES_V}`;
 
 export function FloatingBadges() {
