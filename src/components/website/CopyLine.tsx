@@ -1,7 +1,6 @@
 // The footer's wordmark band (Footer.tsx), between its links and its tail, at the height it had before the
 // picture: the huge wordmark sitting a little up off the tail's hairline, and the SixLabs mark, in the
-// header's cobalt glass, over it with its blades slowly turning and a
-// slight colour split at its edges (after the onBlue creators page's
+// header's cobalt glass, over it with its blades slowly turning (after the onBlue creators page's
 // foot). Around them, nothing but the copy line (public/footer/copy-line.webp, generated on plain white
 // with no text in it): our players and a crowd behind them walk in from the left toward the mark, and come
 // out on the right as their AI copies, in their own clothes with a plain white face (as in the hero's tiles) and the
@@ -11,7 +10,7 @@
 // shape (FIT), so two spec labels in code, on leader lines, can sit in its own coordinates and land on the
 // same heads at any width (desktop only); on a phone it covers the band. Colour split on the word's two
 // ends only (.foot-word in globals.css).
-import { SixLabsCobalt, SixLabsSilhouette } from "./brand-marks";
+import { SixLabsCobalt } from "./brand-marks";
 
 // The picture is drawn as two halves pushed apart by SPREAD (% of its width): the players a little further
 // left, the copies a little further right, the empty white middle between them simply wider. Its halves
@@ -103,18 +102,8 @@ export function CopyLine() {
       </div>
 
       {/* the mark over the word, its lower edge tucked behind it, its three blades turning slowly about the
-          core (.mark-spin); a slight colour split at its edges, as the word's: a pale red copy a hair to the
-          left and a pale cyan one a hair to the right, behind it and multiplied into the page, so they show
-          only where they slip past its edge */}
+          core (.mark-spin) */}
       <span className="absolute left-1/2 top-[calc(72px-0.12em)] h-[0.8em] w-[0.8em] -translate-x-1/2 md:top-[calc(150px-0.12em)]">
-        <SixLabsSilhouette
-          spin
-          className="absolute inset-0 h-full w-full -translate-x-[0.008em] text-[#f7a9ad] mix-blend-multiply"
-        />
-        <SixLabsSilhouette
-          spin
-          className="absolute inset-0 h-full w-full translate-x-[0.008em] text-[#a8e2ea] mix-blend-multiply"
-        />
         <SixLabsCobalt spin className="relative block h-full w-full" />
       </span>
 
