@@ -55,7 +55,6 @@ export function BackToTop() {
   return (
     <button
       type="button"
-      data-cta
       aria-label="Back to top"
       onClick={toTop}
       tabIndex={on ? 0 : -1}
