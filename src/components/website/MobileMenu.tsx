@@ -98,7 +98,8 @@ export function MobileMenu({
                   </li>
                 ))}
               </ul>
-              <div className="mt-4 flex items-center justify-between">
+              {/* above the call to action, so the language list opens over it, not under it */}
+              <div className="relative z-10 mt-4 flex items-center justify-between">
                 <span className="font-sans text-[13px] text-[#64748b]">
                   Language
                 </span>
