@@ -106,7 +106,7 @@ export function CopyLine() {
           core (.mark-spin); a slight colour split at its edges, as the word's: a pale red copy a hair to the
           left and a pale cyan one a hair to the right, behind it and multiplied into the page, so they show
           only where they slip past its edge */}
-      <span className="absolute left-1/2 top-[calc(72px+0.05em)] h-[0.8em] w-[0.8em] -translate-x-1/2 md:top-[calc(150px+0.05em)]">
+      <span className="absolute left-1/2 top-[calc(72px-0.12em)] h-[0.8em] w-[0.8em] -translate-x-1/2 md:top-[calc(150px-0.12em)]">
         <SixLabsSilhouette
           spin
           className="absolute inset-0 h-full w-full -translate-x-[0.008em] text-[#f7a9ad] mix-blend-multiply"
