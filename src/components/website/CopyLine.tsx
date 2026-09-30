@@ -109,8 +109,8 @@ export function CopyLine() {
       </span>
 
       {/* the clear air and the crest, then the word, standing whole a little up off the tail's hairline */}
-      <div className="relative z-[1] pt-[calc(72px+0.5em)] md:pt-[calc(150px+0.5em)]">
-        <span className="block h-[1em] overflow-hidden text-center">
+      <div className="relative z-[1] pt-[calc(72px+0.46em)] md:pt-[calc(150px+0.46em)]">
+        <span className="block h-[1.04em] overflow-hidden text-center">
           <span className="foot-word font-semibold tracking-[-0.055em] text-[#0a1b33]">
             <span className={COPY + " relative z-[1]"}>
               <Word />
