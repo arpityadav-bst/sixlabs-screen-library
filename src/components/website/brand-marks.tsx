@@ -61,49 +61,22 @@ export function SixLabsMark({ className }: { className?: string }) {
   );
 }
 
-// The SixLabs mark filled in the colours of the header's glass mark (public/brand/sixlabs-mark-3d.png): cobalt
-// blades, deep at the top left and lit toward the bottom right, a faint light line just inside each edge
-// for the bevel, and a navy core with a soft highlight. The footer's mark cresting behind the wordmark
-// (CopyLine.tsx).
-export function SixLabsCobalt({
+// The SixLabs mark as the logo file itself draws it (public/brand/sixlabs-mark.svg): flat blue blades
+// (#1770EF) round a navy core (#030D2D). The footer's mark over the wordmark (CopyLine.tsx); with `spin`
+// its three blades turn slowly about the core (.mark-spin in globals.css).
+export function SixLabsLogo({
   className,
   spin,
 }: {
   className?: string;
-  spin?: boolean; // the three blades turn slowly about the core (.mark-spin in globals.css)
+  spin?: boolean;
 }) {
-  const id = useId();
   return (
     <svg viewBox="18 12.99 95.04 105.54" className={className} aria-hidden>
-      <defs>
-        <linearGradient id={`${id}-b`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#153a7a" />
-          <stop offset="0.55" stopColor="#23509f" />
-          <stop offset="1" stopColor="#3063c4" />
-        </linearGradient>
-        <radialGradient id={`${id}-c`} cx="0.4" cy="0.35" r="0.75">
-          <stop offset="0" stopColor="#1b2750" />
-          <stop offset="1" stopColor="#080f26" />
-        </radialGradient>
+      <circle cx="65.52" cy="65.76" r="15.41" fill="#030D2D" />
+      <g className={spin ? "mark-spin" : undefined} fill="#1770EF">
         {ARCS.map((d, k) => (
-          <clipPath key={k} id={`${id}-${k}`}>
-            <path d={d} />
-          </clipPath>
-        ))}
-      </defs>
-      <circle cx="65.52" cy="65.76" r="15.41" fill={`url(#${id}-c)`} />
-      <g className={spin ? "mark-spin" : undefined}>
-        {ARCS.map((d, k) => (
-          <g key={k}>
-            <path d={d} fill={`url(#${id}-b)`} />
-            <path
-              d={d}
-              fill="none"
-              stroke="rgba(160,190,255,0.35)"
-              strokeWidth={1.6}
-              clipPath={`url(#${id}-${k})`}
-            />
-          </g>
+          <path key={k} d={d} />
         ))}
       </g>
     </svg>
