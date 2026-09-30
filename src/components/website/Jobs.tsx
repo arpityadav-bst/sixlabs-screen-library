@@ -4,7 +4,7 @@
 // business page's "Every engagement is checked" cards: 20px medium titles, 14px muted lines) (hairline border, no
 // shadow, the players' cards' family; navy type, the accent on a word). Each job has its title and line, a terminal where the agent visibly does the job (JobTerminal.tsx), and its
 // tags as a small skills list. The cards rise in one after the other when the section comes into view, once; each terminal runs once, the
-// first time its card is pointed at (JobTerminal.tsx). Copy and runs are in jobs-data.ts. Below xl, where
+// first time the terminal itself is pointed at (JobTerminal.tsx). Copy and runs are in jobs-data.ts. Below xl, where
 // three columns do not fit, the cards become one swipeable row (it scroll-snaps, a card a stop, the next one
 // peeking in by 20px past the content's edge, so a card is as wide as the switch above it or wider) under a switch of the three jobs, so the section is one view instead of three tall cards in
 // a stack; on a touch screen each terminal runs as its card comes into view. The row runs out to the
@@ -51,7 +51,7 @@ const rise = (delay: number) => ({
 });
 
 export function Jobs() {
-  // which jobs have been pointed at: each terminal runs the first time its card is
+  // which jobs' terminals have been pointed at: each runs the first time it is
   const [asked, setAsked] = useState<Record<string, true>>({});
   // below xl: the row of cards and the job it rests on
   const row = useRef<HTMLDivElement>(null);
@@ -147,9 +147,6 @@ export function Jobs() {
             initial={{ opacity: 0, y: 28 }}
             animate={seen ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
             transition={{ duration: 0.7, ease, delay: 0.1 + k * 0.12 }}
-            onPointerEnter={() =>
-              setAsked((a) => (a[j.id] ? a : { ...a, [j.id]: true }))
-            }
             // the stroke light follows the pointer (.sheen in globals.css)
             onPointerMove={(e) => {
               const r = e.currentTarget.getBoundingClientRect();
@@ -170,7 +167,12 @@ export function Jobs() {
             <p className="mt-[9px] font-sans text-[14px] leading-[1.4] tracking-[-0.01em] text-[#64748b] min-h-[2.8em]">
               {j.body}
             </p>
-            <div className="mt-[26px]">
+            <div
+              className="mt-[26px]"
+              onPointerEnter={() =>
+                setAsked((a) => (a[j.id] ? a : { ...a, [j.id]: true }))
+              }
+            >
               <JobTerminal run={j.run} play={!!asked[j.id]} />
             </div>
             {/* The tags as the onBlue creators page's skills list: one soft panel, an accent line icon then

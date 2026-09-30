@@ -2,7 +2,7 @@
 
 // A job's terminal window (Jobs.tsx): the agent doing the job, played step by step from its run
 // (jobs-data.ts). It waits quietly, an empty prompt with a blinking cursor, until `play` (the visitor
-// pointing at its card, or on a touch screen the terminal coming into view): then it runs the job once,
+// pointing at the terminal, or on a touch screen the terminal coming into view): then it runs the job once,
 // start to finish, and stays filled. Only the one being looked at moves, so the section asks for no
 // attention it has not been given. The command types in after the prompt with a caret; each step then lands
 // in turn (a progress bar filling, a line ticked off, a share growing to its bar) until the result. A real
@@ -16,7 +16,7 @@
 // the edges, held there with no pointer, faint, over a glow of the accent rising from the window's foot;
 // both fade out as the run begins, and the field then stops drawing. Where there is a mouse, a faint cursor
 // breathes in the middle of the waiting window, a ring spreading from its tip (.term-hint, globals.css):
-// the hint that pointing at the card runs it; it goes with the field. Reduced motion shows the finished
+// the hint that pointing at it runs it; it goes with the field. Reduced motion shows the finished
 // run the moment it is asked for.
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
