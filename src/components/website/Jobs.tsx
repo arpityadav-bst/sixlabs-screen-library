@@ -2,8 +2,9 @@
 
 // "One model. Three jobs.": what the player model does, as three white cards (hairline border, soft
 // shadow, the players' cards' family; navy type, the accent on a word). Each job has its title and line, a terminal where the agent visibly does the job (JobTerminal.tsx), and its
-// tags as a small skills list. The cards rise in one after the other when the section comes into view, once; the terminals run
-// while they are in view. Copy and runs are in jobs-data.ts.
+// tags as a small skills list. The cards rise in one after the other when the section comes into view, once; each terminal runs once, the
+// first time its card is pointed at (JobTerminal.tsx). Copy and runs are in jobs-data.ts.
+import { useState } from "react";
 import { motion } from "motion/react";
 import {
   CircleCheck,
@@ -43,6 +44,8 @@ const rise = (delay: number) => ({
 });
 
 export function Jobs() {
+  // which jobs have been pointed at: each terminal runs the first time its card is
+  const [asked, setAsked] = useState<Record<string, true>>({});
   return (
     <section
       id="jobs"
@@ -62,16 +65,19 @@ export function Jobs() {
           <motion.article
             key={j.id}
             {...rise(0.1 + k * 0.12)}
+            onPointerEnter={() =>
+              setAsked((a) => (a[j.id] ? a : { ...a, [j.id]: true }))
+            }
             className="flex flex-col rounded-[32px] max-md:rounded-[24px] border border-slate-200/80 bg-white p-7 md:p-8 shadow-[0_1px_2px_rgba(10,27,51,0.04),0_24px_48px_-32px_rgba(10,27,51,0.25)]"
           >
-            <h3 className="font-display text-[26px] font-medium leading-tight tracking-tight text-[#0a1b33]">
+            <h3 className="font-display text-[26px] md:text-[30px] font-medium leading-tight tracking-tight text-[#0a1b33]">
               {j.title}
             </h3>
-            <p className="mt-2 font-sans text-[15px] leading-relaxed text-[#64748b] xl:min-h-[3.25em]">
+            <p className="mt-3 font-sans text-[16px] leading-relaxed text-[#475569] xl:min-h-[3.25em]">
               {j.body}
             </p>
             <div className="mt-7">
-              <JobTerminal run={j.run} lead={k * 1100} />
+              <JobTerminal run={j.run} play={!!asked[j.id]} />
             </div>
             {/* The tags as the onBlue creators page's skills list: one soft panel, a row per tag, an
                 accent line icon then the label, filling a column three rows deep before starting the next

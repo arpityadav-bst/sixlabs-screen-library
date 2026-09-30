@@ -1,16 +1,17 @@
 "use client";
 
 // A job's terminal window (Jobs.tsx): the agent doing the job, played step by step from its run
-// (jobs-data.ts). The command types in after the prompt with a caret; each step then lands in turn (a
-// progress bar filling, a line ticked off, a share growing to its bar) until the result; it rests, and the
-// run starts again. It plays only while in view, from the
-// top each time it comes back; `lead` staggers the three so they never move in step. A real terminal: a
-// dark navy window, flat in its card (no shadow), its bar only the traffic-light dots, light type, the
-// accent brightened (HI) so it reads on the dark (after the onBlue creators page's terminals). Set clean:
-// JetBrains Mono; a command at the left after its prompt and everything it prints indented under it; one
-// grid for all output (a glyph or label column, then the text); a blank line between a command's working
-// and its result; commands white, working grey, results light, and the accent on the run's answer alone.
-// Reduced motion shows the finished run.
+// (jobs-data.ts). It waits quietly, an empty prompt with a blinking cursor, until `play` (the visitor
+// pointing at its card, or on a touch screen the terminal coming into view): then it runs the job once,
+// start to finish, and stays filled. Only the one being looked at moves, so the section asks for no
+// attention it has not been given. The command types in after the prompt with a caret; each step then lands
+// in turn (a progress bar filling, a line ticked off, a share growing to its bar) until the result. A real
+// terminal: a dark navy window, flat in its card (no shadow), its bar only the traffic-light dots, light
+// type, the accent brightened (HI) so it reads on the dark (after the onBlue creators page's terminals).
+// Set clean: JetBrains Mono; a command at the left after its prompt and everything it prints indented under
+// it; one grid for all output (a glyph or label column, then the text); a blank line between a command's
+// working and its result; commands white, working grey, results light, and the accent on the run's answer
+// alone. Reduced motion shows the finished run the moment it is asked for.
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import type { Step } from "./jobs-data";
@@ -18,71 +19,70 @@ import type { Step } from "./jobs-data";
 const TYPE_MS = 34; // per typed character
 const STEP_MS = { out: 420, kv: 420, check: 200, bar: 360 } as const;
 const LOAD_MS = 1300;
-const HOLD_MS = 5200; // the finished run rests this long before it plays again
 const ease = [0.22, 1, 0.36, 1] as const;
 // the accent, lifted for the dark window (the answer only)
 const HI = "text-[#6ea8ff]";
+const CURSOR =
+  "inline-block h-[14px] w-[7px] translate-y-[2px] animate-pulse bg-slate-300";
 
-export function JobTerminal({
-  run,
-  lead = 0,
-}: {
-  run: Step[];
-  lead?: number; // ms before its first run
-}) {
+export function JobTerminal({ run, play }: { run: Step[]; play: boolean }) {
   const box = useRef<HTMLDivElement>(null);
-  // steps fully shown, the one in progress (if any), and how much of a command is typed
+  // steps fully shown, the one in progress (if any), and how much of a command is typed; `started` once
+  // the run has begun (before that: the empty prompt)
   const [at, setAt] = useState({ n: 0, busy: false, typed: 0 });
+  const [started, setStarted] = useState(false);
+  const began = useRef(false); // the run, once begun, is never begun again (nor stopped by its own start)
+  // touch screens have no hover: there the terminal runs when it comes into view
+  const [seen, setSeen] = useState(false);
 
   useEffect(() => {
     const el = box.current;
-    if (!el) return;
-    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let alive = false,
-      first = true;
-    const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
-    const play = async () => {
-      while (alive) {
-        setAt({ n: 0, busy: false, typed: 0 });
-        await wait(first ? 500 + lead : 700);
-        first = false;
-        for (let i = 0; i < run.length; i++) {
-          if (!alive) return;
-          const s = run[i];
-          if (s.t === "cmd") {
-            for (let c = 1; c <= s.text.length && alive; c++) {
-              setAt({ n: i, busy: true, typed: c });
-              await wait(TYPE_MS);
-            }
-            await wait(280);
-          } else {
-            setAt({ n: i, busy: true, typed: 0 });
-            await wait(s.t === "load" ? (s.ms ?? LOAD_MS) : STEP_MS[s.t]);
-          }
-          if (!alive) return;
-          setAt({ n: i + 1, busy: false, typed: 0 });
-        }
-        setAt({ n: run.length, busy: false, typed: 0 });
-        await wait(HOLD_MS);
-      }
-    };
+    if (!el || window.matchMedia("(hover: hover)").matches) return;
     const io = new IntersectionObserver(
       ([e]) => {
-        // reduced motion: the finished run, as it is
-        if (still) return setAt({ n: run.length, busy: false, typed: 0 });
-        if (e.isIntersecting && !alive) {
-          alive = true;
-          play();
-        } else if (!e.isIntersecting) alive = false;
+        if (e.isIntersecting) {
+          setSeen(true);
+          io.disconnect();
+        }
       },
-      { threshold: 0.3 },
+      { threshold: 0.6 },
     );
     io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const go = play || seen;
+  useEffect(() => {
+    if (!go || began.current) return;
+    began.current = true;
+    let alive = true;
+    const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    (async () => {
+      setStarted(true);
+      if (still) return setAt({ n: run.length, busy: false, typed: 0 });
+      for (let i = 0; i < run.length; i++) {
+        const s = run[i];
+        if (s.t === "cmd") {
+          for (let c = 1; c <= s.text.length; c++) {
+            if (!alive) return;
+            setAt({ n: i, busy: true, typed: c });
+            await wait(TYPE_MS);
+          }
+          await wait(280);
+        } else {
+          if (!alive) return;
+          setAt({ n: i, busy: true, typed: 0 });
+          await wait(s.t === "load" ? (s.ms ?? LOAD_MS) : STEP_MS[s.t]);
+        }
+        if (!alive) return;
+        setAt({ n: i + 1, busy: false, typed: 0 });
+      }
+    })();
     return () => {
       alive = false;
-      io.disconnect();
     };
-  }, [run, lead]);
+  }, [go, run]);
 
   return (
     <div
@@ -96,10 +96,23 @@ export function JobTerminal({
         <i className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
       </div>
       <div className="h-[300px] px-4 py-4 font-[family-name:var(--font-jbmono)] text-[12.5px] leading-[22px] text-slate-400 max-md:h-[272px] max-md:text-[11.5px] max-md:leading-[20px]">
-        {run.map((s, i) =>
-          i < at.n || (i === at.n && at.busy) ? (
-            <Line key={i} s={s} live={i === at.n && at.busy} typed={at.typed} />
-          ) : null,
+        {!started ? (
+          // waiting: an empty prompt, the cursor blinking
+          <div className="text-white">
+            <span className="mr-[1ch] text-slate-500">$</span>
+            <span className={CURSOR} />
+          </div>
+        ) : (
+          run.map((s, i) =>
+            i < at.n || (i === at.n && at.busy) ? (
+              <Line
+                key={i}
+                s={s}
+                live={i === at.n && at.busy}
+                typed={at.typed}
+              />
+            ) : null,
+          )
         )}
       </div>
     </div>
@@ -122,9 +135,7 @@ function Line({ s, live, typed }: { s: Step; live: boolean; typed: number }) {
       <div className={"text-white " + gap}>
         <span className="mr-[1ch] text-slate-500">$</span>
         {live ? s.text.slice(0, typed) : s.text}
-        {live && (
-          <span className="ml-px inline-block h-[14px] w-[7px] translate-y-[2px] animate-pulse bg-slate-300" />
-        )}
+        {live && <span className={"ml-px " + CURSOR} />}
       </div>
     );
   if (s.t === "load")
