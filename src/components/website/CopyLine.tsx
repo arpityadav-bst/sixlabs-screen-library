@@ -90,10 +90,10 @@ export function CopyLine() {
         </div>
       </div>
 
-      {/* the mark hovering over the word, its lower edge tucked behind it: the glow on the outer box, the
-          gentle bob on the inner one (.badge-bob, as the floating badges'), and its three blades turning
+      {/* the mark hovering over the word, its lower edge tucked behind it: the gentle bob on
+          the inner box (.badge-bob, as the floating badges'), and its three blades turning
           slowly about the core (.mark-spin) */}
-      <span className="absolute left-1/2 top-[calc(52px-0.05em)] z-0 h-[1.05em] w-[1.05em] -translate-x-1/2 drop-shadow-[0_0_0.3em_rgba(35,80,170,0.3)] md:top-[calc(100px-0.05em)]">
+      <span className="absolute left-1/2 top-[calc(52px-0.05em)] z-0 h-[1.05em] w-[1.05em] -translate-x-1/2 md:top-[calc(100px-0.05em)]">
         <span className="badge-bob block h-full w-full">
           <SixLabsCobalt spin className="block h-full w-full" />
         </span>
