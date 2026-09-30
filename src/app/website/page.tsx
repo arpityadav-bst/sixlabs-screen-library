@@ -28,11 +28,14 @@ export default function WebsitePage() {
       <Hero />
       <ScrubLine />
       <Players />
-      <Understands />
-      <Jobs />
-      <Faq />
-      <Closing />
-      <Footer />
+      {/* from here to the foot: the noise, over a ground that covers the ASCII field (.page-grain) */}
+      <div className="page-grain -mx-4 px-4 md:-mx-8 md:px-8">
+        <Understands />
+        <Jobs />
+        <Faq />
+        <Closing />
+        <Footer />
+      </div>
       <BackToTop />
     </main>
   );

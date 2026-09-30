@@ -11,7 +11,9 @@
 // Set clean: JetBrains Mono; a command at the left after its prompt and everything it prints indented under
 // it; one grid for all output (a glyph or label column, then the text); a blank line between a command's
 // working and its result; commands white, working grey, results light, and the accent on the run's answer
-// alone. Reduced motion shows the finished run the moment it is asked for.
+// alone. While it waits, a faint glow of the accent rises from the window's foot (a radial gradient), so
+// the window is not an empty dark box; it fades out as the run begins. Reduced motion shows the finished
+// run the moment it is asked for.
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import type { Step } from "./jobs-data";
@@ -95,25 +97,33 @@ export function JobTerminal({ run, play }: { run: Step[]; play: boolean }) {
         <i className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
         <i className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
       </div>
-      <div className="h-[300px] px-4 py-4 font-[family-name:var(--font-jbmono)] text-[12.5px] leading-[22px] text-slate-400 max-md:h-[272px] max-md:text-[11.5px] max-md:leading-[20px]">
-        {!started ? (
-          // waiting: an empty prompt, the cursor blinking
-          <div className="text-white">
-            <span className="mr-[1ch] text-slate-500">$</span>
-            <span className={CURSOR} />
-          </div>
-        ) : (
-          run.map((s, i) =>
-            i < at.n || (i === at.n && at.busy) ? (
-              <Line
-                key={i}
-                s={s}
-                live={i === at.n && at.busy}
-                typed={at.typed}
-              />
-            ) : null,
-          )
-        )}
+      <div className="relative h-[300px] px-4 py-4 font-[family-name:var(--font-jbmono)] text-[12.5px] leading-[22px] text-slate-400 max-md:h-[272px] max-md:text-[11.5px] max-md:leading-[20px]">
+        <div
+          className={
+            "pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_75%_65%_at_50%_100%,rgba(110,168,255,0.11),transparent)] transition-opacity duration-700 " +
+            (started ? "opacity-0" : "opacity-100")
+          }
+        />
+        <div className="relative">
+          {!started ? (
+            // waiting: an empty prompt, the cursor blinking
+            <div className="text-white">
+              <span className="mr-[1ch] text-slate-500">$</span>
+              <span className={CURSOR} />
+            </div>
+          ) : (
+            run.map((s, i) =>
+              i < at.n || (i === at.n && at.busy) ? (
+                <Line
+                  key={i}
+                  s={s}
+                  live={i === at.n && at.busy}
+                  typed={at.typed}
+                />
+              ) : null,
+            )
+          )}
+        </div>
       </div>
     </div>
   );
