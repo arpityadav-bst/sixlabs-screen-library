@@ -6,8 +6,11 @@
 // run starts again. It plays only while in view, from the
 // top each time it comes back; `lead` staggers the three so they never move in step. A real terminal: a
 // dark navy window, flat in its card (no shadow), its bar only the traffic-light dots, light type, the
-// accent brightened (HI) so it reads on the dark
-// (after the onBlue creators page's terminals). Reduced motion shows the finished run.
+// accent brightened (HI) so it reads on the dark (after the onBlue creators page's terminals). Set clean:
+// JetBrains Mono; a command at the left after its prompt and everything it prints indented under it; one
+// grid for all output (a glyph or label column, then the text); a blank line between a command's working
+// and its result; commands white, working grey, results light, and the accent on the run's answer alone.
+// Reduced motion shows the finished run.
 import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import type { Step } from "./jobs-data";
@@ -17,9 +20,8 @@ const STEP_MS = { out: 420, kv: 420, check: 200, bar: 360 } as const;
 const LOAD_MS = 1300;
 const HOLD_MS = 5200; // the finished run rests this long before it plays again
 const ease = [0.22, 1, 0.36, 1] as const;
-// the accent, lifted for the dark window: text and fills
+// the accent, lifted for the dark window (the answer only)
 const HI = "text-[#6ea8ff]";
-const HI_BG = "bg-[#4f8fff]";
 
 export function JobTerminal({
   run,
@@ -93,7 +95,7 @@ export function JobTerminal({
         <i className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
         <i className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
       </div>
-      <div className="h-[276px] px-4 py-4 font-mono text-slate-300 text-[12.5px] leading-[22px] max-md:h-[256px] max-md:text-[11.5px] max-md:leading-[20px]">
+      <div className="h-[300px] px-4 py-4 font-[family-name:var(--font-jbmono)] text-[12.5px] leading-[22px] text-slate-400 max-md:h-[272px] max-md:text-[11.5px] max-md:leading-[20px]">
         {run.map((s, i) =>
           i < at.n || (i === at.n && at.busy) ? (
             <Line key={i} s={s} live={i === at.n && at.busy} typed={at.typed} />
@@ -104,45 +106,49 @@ export function JobTerminal({
   );
 }
 
+// the output's indent under its command, and the label column of the result lines
+const OUT = "pl-[2ch]";
+const KEY = "grid grid-cols-[9ch_1fr]";
+
 function Line({ s, live, typed }: { s: Step; live: boolean; typed: number }) {
   const inn = {
-    initial: { opacity: 0, y: 4 },
+    initial: { opacity: 0, y: 3 },
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.25, ease },
   };
+  const gap = s.gap ? "mt-[11px]" : "";
   if (s.t === "cmd")
     return (
-      <div className="text-white">
-        <span className={"mr-2 " + HI}>$</span>
+      <div className={"text-white " + gap}>
+        <span className="mr-[1ch] text-slate-500">$</span>
         {live ? s.text.slice(0, typed) : s.text}
         {live && (
-          <span
-            className={
-              "ml-0.5 inline-block h-[14px] w-[7px] translate-y-[2px] animate-pulse " +
-              HI_BG
-            }
-          />
+          <span className="ml-px inline-block h-[14px] w-[7px] translate-y-[2px] animate-pulse bg-slate-300" />
         )}
       </div>
     );
   if (s.t === "load")
     return (
-      <motion.div {...inn} className="flex items-center gap-3 text-slate-400">
+      <motion.div
+        {...inn}
+        className={OUT + " flex items-center gap-[1ch] " + gap}
+      >
+        {/* a small spinner while it works, a tick once it is done */}
+        <span className="grid w-[1ch] shrink-0 place-items-center text-slate-500">
+          {live ? (
+            <span className="block h-2 w-2 animate-spin rounded-full border border-slate-500 border-t-transparent" />
+          ) : (
+            "✓"
+          )}
+        </span>
         <span className="shrink-0">{s.text}</span>
-        <span className="h-1 flex-1 overflow-hidden rounded-full bg-white/10">
+        <span className="h-[2px] flex-1 overflow-hidden rounded-full bg-white/[0.08]">
           <motion.span
-            className={"block h-full rounded-full " + HI_BG}
+            className="block h-full rounded-full bg-white/40"
             initial={{ width: live ? "0%" : "100%" }}
             animate={{ width: "100%" }}
             transition={{ duration: (s.ms ?? LOAD_MS) / 1000, ease: "linear" }}
           />
-        </span>
-        <span
-          className={
-            "w-9 shrink-0 text-right " + (live ? "text-slate-600" : HI)
-          }
-        >
-          {live ? "···" : "done"}
         </span>
       </motion.div>
     );
@@ -150,37 +156,45 @@ function Line({ s, live, typed }: { s: Step; live: boolean; typed: number }) {
     return (
       <motion.div
         {...inn}
-        className={s.tone === "ink" ? "text-white" : "text-slate-400"}
+        className={
+          OUT +
+          " " +
+          gap +
+          " " +
+          (s.tone === "ink" ? "text-slate-200" : "text-slate-400")
+        }
       >
         {s.text}
       </motion.div>
     );
   if (s.t === "kv")
     return (
-      <motion.div {...inn} className="grid grid-cols-[72px_1fr] gap-2">
+      <motion.div {...inn} className={OUT + " " + KEY + " " + gap}>
         <span className="text-slate-500">{s.k}</span>
-        <span className={s.accent ? HI : "text-white"}>{s.v}</span>
+        <span className={s.accent ? HI : "text-slate-200"}>{s.v}</span>
       </motion.div>
     );
   if (s.t === "check")
     return (
-      <motion.div {...inn} className="text-slate-200">
-        <span className={"mr-2 " + HI}>✓</span>
+      <motion.div
+        {...inn}
+        className={OUT + " flex gap-[1ch] text-slate-200 " + gap}
+      >
+        <span className="w-[1ch] shrink-0 text-center text-slate-500">✓</span>
         {s.text}
       </motion.div>
     );
   return (
-    <motion.div {...inn} className="pb-1">
-      <div className="flex justify-between text-slate-300">
-        <span>{s.text}</span>
-        <span className={s.accent ? HI : "text-white"}>{s.value}%</span>
+    <motion.div {...inn} className={OUT + " pb-1 " + gap}>
+      <div className="flex justify-between">
+        <span className="text-slate-300">{s.text}</span>
+        <span className="w-[4ch] text-right tabular-nums text-slate-200">
+          {s.value}%
+        </span>
       </div>
-      <div className="h-1 overflow-hidden rounded-full bg-white/10">
+      <div className="mt-0.5 h-[2px] overflow-hidden rounded-full bg-white/[0.08]">
         <motion.div
-          className={
-            "h-full origin-left rounded-full " +
-            (s.accent ? HI_BG : "bg-white/30")
-          }
+          className="h-full origin-left rounded-full bg-white/40"
           style={{ width: `${(s.value / s.of) * 100}%` }}
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}

@@ -7,14 +7,17 @@
 //   kv    a label and its value, the value in ink or the accent
 //   check a line ticked off
 //   bar   a share, as a bar against the largest share in its group (`of`)
+// `gap` puts a blank line before a step (between a command's working and its result). `accent` marks the
+// run's answer, the only thing in the accent.
 
-export type Step =
+export type Step = { gap?: boolean } & (
   | { t: "cmd"; text: string }
   | { t: "load"; text: string; ms?: number }
   | { t: "out"; text: string; tone?: "dim" | "ink" }
   | { t: "kv"; k: string; v: string; accent?: boolean }
   | { t: "check"; text: string }
-  | { t: "bar"; text: string; value: number; of: number; accent?: boolean };
+  | { t: "bar"; text: string; value: number; of: number }
+);
 
 export type Job = {
   id: string;
@@ -33,15 +36,9 @@ export const JOBS: Job[] = [
     run: [
       { t: "cmd", text: 'ask "why are payments abandoned?"' },
       { t: "load", text: "reading 2,163 sessions" },
-      { t: "kv", k: "why", v: "not cold feet", accent: true },
+      { t: "kv", k: "why", v: "not cold feet", accent: true, gap: true },
       { t: "out", text: "what they do next" },
-      {
-        t: "bar",
-        text: "watch a rewarded ad",
-        value: 13,
-        of: 13,
-        accent: true,
-      },
+      { t: "bar", text: "watch a rewarded ad", value: 13, of: 13 },
       { t: "bar", text: "claim free rewards", value: 12, of: 13 },
       { t: "bar", text: "buy with in-game currency", value: 8, of: 13 },
       { t: "kv", k: "evidence", v: "3 clips · 02:07 05:41 09:15" },
@@ -78,9 +75,9 @@ export const JOBS: Job[] = [
       { t: "check", text: "monetization" },
       { t: "check", text: "retention hooks" },
       { t: "out", text: "spec written", tone: "ink" },
-      { t: "cmd", text: "check build 4.2.0 --against spec" },
+      { t: "cmd", text: "check build 4.2.0 --against spec", gap: true },
       { t: "load", text: "new build vs spec", ms: 900 },
-      { t: "kv", k: "matched", v: "12 / 14" },
+      { t: "kv", k: "matched", v: "12 / 14", gap: true },
       { t: "kv", k: "flagged", v: "2 gaps", accent: true },
     ],
   },
