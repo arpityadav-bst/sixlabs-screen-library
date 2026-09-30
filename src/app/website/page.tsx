@@ -4,6 +4,7 @@ import { Hero } from "@/components/website/Hero";
 import { Players } from "@/components/website/Players";
 import { ScrubLine } from "@/components/website/ScrubLine";
 import { Understands } from "@/components/website/Understands";
+import { Jobs } from "@/components/website/Jobs";
 import { AsciiBackdrop } from "@/components/website/AsciiBackdrop";
 import { AccentWave } from "@/components/website/AccentWave";
 import { SmoothScroll } from "@/components/website/SmoothScroll";
@@ -24,6 +25,7 @@ export default function WebsitePage() {
       <ScrubLine />
       <Players />
       <Understands />
+      <Jobs />
     </main>
   );
 }
