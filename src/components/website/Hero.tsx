@@ -1,13 +1,13 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Waves } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { TileFloor, type FloorHandle } from "@/components/tiles/TileFloor";
 import { ScrollCue } from "./ScrollCue";
 import { PrimaryCta } from "./PrimaryCta";
 import { linkTo } from "./jump";
 import { TypedWord } from "./TypedWord";
+import { HeroNumbers, WaveButton, type Stat } from "./HeroBits";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -27,12 +27,13 @@ const COPIES_BASE = 10_956;
 // `full` (the 6labs-fullview page): the floor fills the whole first screen, edge to edge, instead of the
 // rounded container; the header lies over it, and the numbers, the scroll cue and the wave button sit
 // inside it: the numbers between the line and the call to action (in place of the social proof line),
-// the scroll cue under them, the wave button in its bottom right corner; a faint hairline divides it from the page below.
+// the scroll cue low at the left, the wave button, a filled pill, in the bottom right corner; the tiles
+// smaller and more of them, the next wave's new faces in the middle and the first wave's round them; a faint hairline divides it from the page below.
 export function Hero({ full = false }: { full?: boolean }) {
   const [floorReady, setFloorReady] = useState(false);
   const floor = useRef<FloorHandle | null>(null);
   const [copies, setCopies] = useState(COPIES_BASE);
-  const stats = [
+  const stats: Stat[] = [
     {
       value: "2B",
       label: ["Human players"],
@@ -46,71 +47,11 @@ export function Hero({ full = false }: { full?: boolean }) {
       live: true,
     },
   ];
-  // The headline numbers, centred under the container or (full) left under the copy: the humans in navy,
-  // their digital copies in the accent blue (the headline's "models" colour).
   const numbers = (left: boolean) => (
-    <motion.dl
-      // Comes in once the tiles are in: the floor is ready, the placeholder logo leaves (0.5s), then the
-      // tiles fade in (0.9s).
-      initial={{ opacity: 0, y: 6 }}
-      animate={floorReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
-      transition={{ duration: 0.6, ease, delay: floorReady ? 1.2 : 0 }}
-      className={"flex items-start gap-14 max-md:gap-8"}
-    >
-      {stats.map((s) => (
-        <div
-          key={s.label[0]}
-          className={
-            "flex flex-col " +
-            (left ? "items-start text-left" : "items-center text-center")
-          }
-        >
-          <dt className="order-2 mt-2 font-sans text-[14px] md:text-[15px] leading-snug text-[#64748b] max-md:whitespace-nowrap">
-            {s.label.map((line) => (
-              <span key={line} className="block">
-                {line}
-              </span>
-            ))}
-          </dt>
-          <dd
-            className={
-              "order-1 font-display text-[30px] font-medium leading-none tracking-tight tabular-nums " +
-              s.tone
-            }
-          >
-            {/* the live figure settles in from just above each time it counts up */}
-            <motion.span
-              key={s.value}
-              className="inline-block"
-              initial={s.live ? { opacity: 0.35, y: -5 } : false}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.45, ease }}
-            >
-              {s.value}
-            </motion.span>
-          </dd>
-        </div>
-      ))}
-    </motion.dl>
+    <HeroNumbers stats={stats} ready={floorReady} left={left} />
   );
   const wave = (
-    <>
-      {/* Sends the flip wave now: every tile back to default, activated or not. Just the icon; its label
-            fades in to its left on hover. */}
-      <button
-        type="button"
-        onClick={() => floor.current?.reset()}
-        className={
-          "group max-md:mr-0 p-1 flex items-center gap-1.5 text-slate-400 hover:text-accent transition-colors duration-200 " +
-          (full ? "" : "-mr-10")
-        }
-      >
-        <span className="text-[12px] leading-none opacity-0 translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0">
-          Next wave
-        </span>
-        <Waves className="w-4 h-4" strokeWidth={1.75} />
-      </button>
-    </>
+    <WaveButton full={full} onClick={() => floor.current?.reset()} />
   );
   const row = (
     <>
@@ -144,6 +85,16 @@ export function Hero({ full = false }: { full?: boolean }) {
           <TileFloor
             className="w-full h-full"
             introDelay={0.5}
+            // full: the camera pulled back for smaller, more tiles (not on a phone, where the faces would get
+            // too small to read), the second wave's cast in the middle. Read once, as the floor mounts.
+            distScale={
+              full &&
+              typeof window !== "undefined" &&
+              !window.matchMedia("(max-width: 767px)").matches
+                ? 1.5
+                : 1
+            }
+            mixWaves={full}
             onReady={(f) => {
               floor.current = f;
               setFloorReady(true);
@@ -239,7 +190,7 @@ export function Hero({ full = false }: { full?: boolean }) {
             {/* full: the numbers come straight after the line, then the call to action, then the scroll cue;
               no line of social proof (the numbers carry it) */}
             {full && (
-              <div className="mt-10 min-[1600px]:mt-12">{numbers(true)}</div>
+              <div className="mt-6 min-[1600px]:mt-7">{numbers(true)}</div>
             )}
             {/* The primary CTA, wide; the secondary action is the link that ends the subtitle. The quiet line
               of social proof sits at the bottom of the container. Only the controls take the pointer, so
@@ -247,7 +198,7 @@ export function Hero({ full = false }: { full?: boolean }) {
             <div
               className={
                 "pointer-events-auto " +
-                (full ? "mt-10 min-[1600px]:mt-12" : "mt-8")
+                (full ? "mt-6 min-[1600px]:mt-7" : "mt-8")
               }
             >
               <PrimaryCta>Try now</PrimaryCta>
@@ -268,17 +219,20 @@ export function Hero({ full = false }: { full?: boolean }) {
                 </p>
               </div>
             )}
-            {full && (
-              <div className="mt-12 max-md:hidden">
-                <ScrollCue />
-              </div>
-            )}
           </div>
         </div>
         {full && (
-          <div className="pointer-events-auto absolute bottom-8 right-6 z-20 max-md:bottom-5 max-md:right-4">
-            {wave}
-          </div>
+          <>
+            {/* the scroll cue low at the left, in line with the copy, well clear above where the tiles begin */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-[clamp(96px,16vh,168px)] z-20 max-md:hidden">
+              <div className="mx-auto flex w-full max-w-[1400px] px-6">
+                <ScrollCue />
+              </div>
+            </div>
+            <div className="pointer-events-auto absolute bottom-8 right-6 z-20 max-md:bottom-5 max-md:right-4">
+              {wave}
+            </div>
+          </>
         )}
       </section>
       {!full && row}

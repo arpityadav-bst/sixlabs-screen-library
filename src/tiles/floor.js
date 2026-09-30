@@ -19,8 +19,11 @@ import { tileGeometry } from './geometry.js';
 import { playIntro } from './intro.js';
 import { startAutoplay } from './autoplay.js';
 
-export async function createFloor(container, { params, base = '/tiles', isStatic = false, expose = false, introDelay = 0, onConvert = () => {} } = {}) {
-  const RAW = params ?? await fetch(`${base}/floor-params.json`).then((r) => r.json());
+// distScale pulls the camera back (smaller tiles, more of them: the grid is built to what it sees); mixWaves
+// casts the second wave's characters on the middle tiles and the first wave's around them (casts.js).
+export async function createFloor(container, { params, base = '/tiles', isStatic = false, expose = false, introDelay = 0, onConvert = () => {}, distScale = 1, mixWaves = false } = {}) {
+  const RAW0 = params ?? await fetch(`${base}/floor-params.json`).then((r) => r.json());
+  const RAW = distScale === 1 ? RAW0 : { ...RAW0, dist: RAW0.dist * distScale };
   const common = Object.assign({ W: 1920, H: 1080, assetBase: base }, RAW);
   const PF = Object.assign({}, common, RAW.states?.default ?? {}), PA = Object.assign({}, common, RAW.states?.shine ?? {});
   const P = PF;
@@ -154,7 +157,7 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   const nowCam = camera.clone();
   placeCamera(nowCam, P, Math.max(1, container.clientWidth) / Math.max(1, container.clientHeight));
   const bustTiles = busted.map(([i, j]) => (
-    { i, j, x: cx(i), y: tileH, z: cz(j), active: i === ia && j === ja, screen: toScreen(cx(i), cz(j)), shown: shownShare(nowCam, cx(i), tileH, cz(j), half).shown }));
+    { i, j, x: cx(i), y: tileH, z: cz(j), active: i === ia && j === ja, screen: toScreen(cx(i), cz(j)), ...(({ x, y, shown }) => ({ shown, mid: Math.hypot(x, y) }))(shownShare(nowCam, cx(i), tileH, cz(j), half)) }));
   const chars = await addCharacters(field, P, bustTiles, pictures);
 
   // Capture the reflection from the activeAt tile, with that tile and its busts out of the way.
@@ -244,7 +247,7 @@ export async function createFloor(container, { params, base = '/tiles', isStatic
   if (!isStatic) intro.done.then(() => {
     if (disposed) return;
     const ctl = startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU: U, nearU, P, expose, onConvert });
-    const cast = createCasts({ P, renderer, chars, bustTiles, pictures, gone: () => disposed });
+    const cast = createCasts({ P, renderer, chars, bustTiles, pictures, gone: () => disposed, mixWaves });
     const auto = startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, cast, half });
     // Off screen (scrolled past) or in a hidden tab, the auto-play holds, so the floor draws nothing
     // while the visitor is elsewhere on the page; it carries on when they come back.

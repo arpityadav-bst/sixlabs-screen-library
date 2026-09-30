@@ -48,13 +48,18 @@ export const preloadCharacters = (P) => loadPictures(P, P.chars ?? []);
 // Casts a set of characters onto the tiles: a Map "i,j" -> file name. Tiles go most visible first (their
 // `shown` share of the screen), each taking the least recently used character that no tile within two
 // cells already shows: every character lands on a well-visible tile before any repeats, and repeats end
-// up on the most cut-off tiles. `active` (static renders) pins one tile.
-export function castTiles(tiles, names, active) {
-  const ordered = [...tiles].sort((a, b) => ((b.shown ?? 0) - (a.shown ?? 0)) || (a.screen[1] - b.screen[1]) || (a.screen[0] - b.screen[0]));
-  const pool = names.filter((c) => c !== active);
-  const placed = [], lastUsed = new Map(pool.map((n) => [n, -1])), cast = new Map();
+// up on the most cut-off tiles. `active` (static renders) pins one tile. With `fill`, the tiles go from the
+// screen's middle outward instead (their `mid`), `names` take the middle ones, one each, and `fill` covers
+// the rest by the same rule: a cast too small for the floor sits in its middle, framed by another.
+export function castTiles(tiles, names, active, fill = null) {
+  const ordered = [...tiles].sort(fill
+    ? (a, b) => (a.mid ?? 0) - (b.mid ?? 0)
+    : (a, b) => ((b.shown ?? 0) - (a.shown ?? 0)) || (a.screen[1] - b.screen[1]) || (a.screen[0] - b.screen[0]));
+  let pool = names.filter((c) => c !== active);
+  const placed = [], lastUsed = new Map([...pool, ...(fill ?? [])].map((n) => [n, -1])), cast = new Map();
   const pick = (t) => {
     if (t.active && active) return active;
+    if (fill && placed.length === names.length) pool = fill; // every one of `names` is placed: the frame
     const near = new Set(placed.filter((p) => Math.abs(p.i - t.i) <= 2 && Math.abs(p.j - t.j) <= 2).map((p) => p.name));
     const byAge = [...pool].sort((x, y) => lastUsed.get(x) - lastUsed.get(y));
     return byAge.find((n) => !near.has(n)) ?? byAge[0];

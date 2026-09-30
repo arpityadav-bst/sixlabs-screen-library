@@ -1,0 +1,110 @@
+"use client";
+
+// Two pieces of the hero (Hero.tsx): the headline numbers and the wave button.
+import { Waves } from "lucide-react";
+import { motion } from "motion/react";
+
+const ease = [0.22, 1, 0.36, 1] as const;
+
+export type Stat = {
+  value: string;
+  label: string[];
+  tone: string;
+  live: boolean;
+};
+
+// The headline numbers, centred under the container or (left, the full view) left under the copy: the
+// humans in navy, their digital copies in the accent blue (the headline's "models" colour).
+export function HeroNumbers({
+  stats,
+  ready,
+  left,
+}: {
+  stats: Stat[];
+  ready: boolean;
+  left: boolean;
+}) {
+  return (
+    <motion.dl
+      // Comes in once the tiles are in: the floor is ready, the placeholder logo leaves (0.5s), then the
+      // tiles fade in (0.9s).
+      initial={{ opacity: 0, y: 6 }}
+      animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+      transition={{ duration: 0.6, ease, delay: ready ? 1.2 : 0 }}
+      className={"flex items-start gap-14 max-md:gap-8"}
+    >
+      {stats.map((s) => (
+        <div
+          key={s.label[0]}
+          className={
+            "flex flex-col " +
+            (left ? "items-start text-left" : "items-center text-center")
+          }
+        >
+          <dt className="order-2 mt-2 font-sans text-[14px] md:text-[15px] leading-snug text-[#64748b] max-md:whitespace-nowrap">
+            {s.label.map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
+          </dt>
+          <dd
+            className={
+              "order-1 font-display text-[30px] font-medium leading-none tracking-tight tabular-nums " +
+              s.tone
+            }
+          >
+            {/* the live figure settles in from just above each time it counts up */}
+            <motion.span
+              key={s.value}
+              className="inline-block"
+              initial={s.live ? { opacity: 0.35, y: -5 } : false}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, ease }}
+            >
+              {s.value}
+            </motion.span>
+          </dd>
+        </div>
+      ))}
+    </motion.dl>
+  );
+}
+
+export function WaveButton({
+  full,
+  onClick,
+}: {
+  full: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <>
+      {/* Sends the flip wave now: every tile back to default, activated or not. Just the icon; its label
+          fades in to its left on hover. */}
+      <button
+        type="button"
+        onClick={onClick}
+        className={
+          "group flex items-center transition-colors duration-200 hover:text-accent " +
+          (full
+            ? "h-10 rounded-full border border-slate-200/80 bg-white/90 px-3 text-[#0a1b33]/70 backdrop-blur-sm"
+            : "max-md:mr-0 p-1 gap-1.5 text-slate-400 -mr-10")
+        }
+      >
+        {/* full: the button is a filled pill round the icon; its label widens in inside it on hover */}
+        <span
+          className={
+            "text-[12px] leading-none opacity-0 transition-all duration-200 group-hover:opacity-100 whitespace-nowrap " +
+            (full
+              ? "max-w-0 overflow-hidden group-hover:max-w-[80px] group-hover:mr-1.5"
+              : "translate-x-1 group-hover:translate-x-0")
+          }
+        >
+          Next wave
+        </span>
+        <Waves className="w-4 h-4" strokeWidth={1.75} />
+      </button>
+    </>
+  );
+}
