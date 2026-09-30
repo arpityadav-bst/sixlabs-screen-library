@@ -10,6 +10,7 @@ import { getLenis } from "./SmoothScroll";
 export const easeOut = (k: number) => 1 - (1 - k) ** 3; // a quick start that settles
 
 let raf = 0;
+let until = 0; // when a glide run on the smooth scrolling ends, ms
 let holding = false;
 const KEYS = [" ", "ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End"];
 
@@ -27,7 +28,9 @@ function holdInput() {
   });
 }
 
-export const gliding = () => raf !== 0;
+// Is a glide under way? The page's other glides wait while one runs, so a long one (back to the top, say)
+// is never taken over by a section's glide it passes through.
+export const gliding = () => raf !== 0 || performance.now() < until;
 
 export function stopGlide() {
   cancelAnimationFrame(raf);
@@ -43,6 +46,7 @@ export function glideTo(
   stopGlide();
   const lenis = getLenis();
   if (lenis) {
+    until = performance.now() + seconds * 1000;
     lenis.scrollTo(to, { duration: seconds, easing, lock: true, force: true });
     return;
   }

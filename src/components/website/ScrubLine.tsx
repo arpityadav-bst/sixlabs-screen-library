@@ -8,7 +8,7 @@
 // in ACCENT fills to the accent blue. Reduced motion shows it filled.
 import { useEffect, useRef, useState } from "react";
 import { FloatingBadges } from "./FloatingBadges";
-import { getLenis } from "./SmoothScroll";
+import { easeOut, glideTo, gliding } from "./glide";
 
 const LINE =
   "A model is built from what the person does, not what they say. Put a thousand models on a new build and you know how it will land before anyone plays it.";
@@ -63,17 +63,9 @@ export function ScrubLine() {
       const up = t < lastT;
       lastT = t;
       if (shown >= 1) upArmed = true;
-      if (up && upArmed && shown <= 0 && p > 0) {
+      if (up && upArmed && shown <= 0 && p > 0 && !gliding()) {
         upArmed = false;
-        const lenis = getLenis();
-        if (lenis)
-          lenis.scrollTo(0, {
-            duration: TOP_S,
-            easing: (k) => 1 - (1 - k) ** 3,
-            lock: true,
-            force: true,
-          });
-        else window.scrollTo({ top: 0, behavior: "smooth" });
+        glideTo(0, TOP_S, easeOut);
       }
       setLit(Math.floor(shown));
     };

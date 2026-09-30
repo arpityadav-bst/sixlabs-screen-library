@@ -196,7 +196,10 @@ export function AccentWave() {
       if (q >= 0.995) drainUpGlided = false;
       if (y <= fillEnd + 1) glided = false;
       if (p >= 0.995) glidedUp = false;
-      if (down && !glided && y > fillEnd + NUDGE && p < 1) {
+      // no section glide starts while another glide is under way (back to the top, say)
+      if (gliding()) {
+        // passing through: nothing to start
+      } else if (down && !glided && y > fillEnd + NUDGE && p < 1) {
         glided = true;
         glide(end + 4, Math.min(Math.max(speed, 0), 2.5), GLIDE_S); // a few px past the end, so it lands full
       } else if (!down && y < lastYBefore && !glidedUp && p < 0.97 && p > 0) {

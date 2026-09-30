@@ -5,6 +5,7 @@ import { Players } from "@/components/website/Players";
 import { ScrubLine } from "@/components/website/ScrubLine";
 import { Understands } from "@/components/website/Understands";
 import { Jobs } from "@/components/website/Jobs";
+import { BackToTop } from "@/components/website/BackToTop";
 import { AsciiBackdrop } from "@/components/website/AsciiBackdrop";
 import { AccentWave } from "@/components/website/AccentWave";
 import { SmoothScroll } from "@/components/website/SmoothScroll";
@@ -26,6 +27,7 @@ export default function WebsitePage() {
       <Players />
       <Understands />
       <Jobs />
+      <BackToTop />
     </main>
   );
 }
