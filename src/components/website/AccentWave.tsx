@@ -26,9 +26,6 @@ const GRAIN = 0.07; // noise strength on the blue
 const NUDGE = 8;
 const GLIDE_S = 1.8;
 const DRAIN_VH = 1; // the way out past the players: a screen, as the next section comes up
-const WORD = "The players"; // the next section's name, huge in the halftone
-const WORD_ALPHA = 0.3;
-const WORD_DROP = 50; // px the word sits lower in the water
 const PITCH = 6; // halftone grid, px; a dot of radius PITCH / 2 touches its neighbours
 
 export function AccentWave() {
@@ -54,11 +51,6 @@ export function AccentWave() {
       w = 0,
       h = 0;
     const fill = `rgb(${ACCENT.join(",")})`;
-    // the display font (next/font names it on the root)
-    const display =
-      getComputedStyle(document.documentElement)
-        .getPropertyValue("--font-outfit")
-        .trim() || "sans-serif";
     // Film-grain noise laid over the blue (dots included): one tile of random light and dark pixels,
     // repeated, at GRAIN strength.
     const grainTile = document.createElement("canvas");
@@ -142,17 +134,6 @@ export function AccentWave() {
             ctx.fill();
           }
         }
-        // The word, huge and faint, riding the halftone: painted only where the blue already is, so in the
-        // dot rows it is made of dots and it turns solid as it sinks into the colour. It rises with the water.
-        ctx.globalCompositeOperation = "source-atop";
-        ctx.globalAlpha = WORD_ALPHA;
-        ctx.fillStyle = "#ffffff";
-        ctx.font = `500 ${Math.round(w * 0.14)}px ${display}, sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "alphabetic";
-        if (!q) ctx.fillText(WORD, w / 2, level + BAND * 0.12 + WORD_DROP); // only on the way in
-        ctx.globalCompositeOperation = "source-over";
-        ctx.fillStyle = fill;
         // the grain, only where the blue already is
         if (grain) {
           ctx.globalCompositeOperation = "source-atop";
