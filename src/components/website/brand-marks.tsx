@@ -109,3 +109,29 @@ export function SixLabsCobalt({
     </svg>
   );
 }
+
+// The mark as one flat silhouette in currentColor, its blades turning with the cobalt mark's when `spin`:
+// the two colour-split copies behind the footer's mark (CopyLine.tsx).
+export function SixLabsSilhouette({
+  className,
+  spin,
+}: {
+  className?: string;
+  spin?: boolean;
+}) {
+  return (
+    <svg
+      viewBox="18 12.99 95.04 105.54"
+      fill="currentColor"
+      className={className}
+      aria-hidden
+    >
+      <circle cx="65.52" cy="65.76" r="15.41" />
+      <g className={spin ? "mark-spin" : undefined}>
+        {ARCS.map((d, k) => (
+          <path key={k} d={d} />
+        ))}
+      </g>
+    </svg>
+  );
+}
