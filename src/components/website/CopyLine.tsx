@@ -1,6 +1,6 @@
 // The footer's wordmark band (Footer.tsx), between its links and its tail, at the height it had before the
 // picture: the huge wordmark sitting a little up off the tail's hairline, and the SixLabs mark, flat as
-// its logo file, over it with its blades slowly turning (after the onBlue creators page's
+// its logo file, cresting from behind it and fading down into it (after the onBlue creators page's
 // foot). Around them, nothing but the copy line (public/footer/copy-line.webp, generated on plain white
 // with no text in it): our players and a crowd behind them walk in from the left toward the mark, and come
 // out on the right as their AI copies, in their own clothes with a plain white face (as in the hero's tiles) and the
@@ -102,10 +102,12 @@ export function CopyLine() {
         </div>
       </div>
 
-      {/* the mark over the word, its lower edge tucked behind it, its three blades turning slowly about the
-          core (.mark-spin) */}
-      <span className="absolute left-1/2 top-[calc(72px-0.12em)] h-[0.8em] w-[0.8em] -translate-x-1/2 md:top-[calc(150px-0.12em)]">
-        <SixLabsLogo spin className="relative block h-full w-full" />
+      {/* the mark cresting from behind the word, solid through its top three quarters and fading, eased,
+          over its last quarter into the word */}
+      <span className="absolute left-1/2 top-[calc(72px+0.11em)] h-[1.05em] w-[1.05em] -translate-x-1/2 md:top-[calc(150px+0.11em)]">
+        <span className="block h-full w-full [mask-image:linear-gradient(180deg,#000_0%,#000_72%,rgba(0,0,0,0.88)_77%,rgba(0,0,0,0.66)_82%,rgba(0,0,0,0.4)_87%,rgba(0,0,0,0.18)_92%,rgba(0,0,0,0.05)_96%,transparent_100%)]">
+          <SixLabsLogo className="block h-full w-full" />
+        </span>
       </span>
 
       {/* the clear air and the crest, then the word, standing whole a little up off the tail's hairline */}

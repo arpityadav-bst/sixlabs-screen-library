@@ -62,19 +62,12 @@ export function SixLabsMark({ className }: { className?: string }) {
 }
 
 // The SixLabs mark as the logo file itself draws it (public/brand/sixlabs-mark.svg): flat blue blades
-// (#1770EF) round a navy core (#030D2D). The footer's mark over the wordmark (CopyLine.tsx); with `spin`
-// its three blades turn slowly about the core (.mark-spin in globals.css).
-export function SixLabsLogo({
-  className,
-  spin,
-}: {
-  className?: string;
-  spin?: boolean;
-}) {
+// (#1770EF) round a navy core (#030D2D). The footer's mark behind the wordmark (CopyLine.tsx).
+export function SixLabsLogo({ className }: { className?: string }) {
   return (
     <svg viewBox="18 12.99 95.04 105.54" className={className} aria-hidden>
       <circle cx="65.52" cy="65.76" r="15.41" fill="#030D2D" />
-      <g className={spin ? "mark-spin" : undefined} fill="#1770EF">
+      <g fill="#1770EF">
         {ARCS.map((d, k) => (
           <path key={k} d={d} />
         ))}

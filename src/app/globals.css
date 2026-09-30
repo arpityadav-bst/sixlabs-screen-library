@@ -66,19 +66,8 @@ body {
 .badge-bob {
   animation: badge-bob 5.5s ease-in-out infinite;
 }
-/* the footer mark's three blades turning slowly about its core (brand-marks.tsx, SixLabsCobalt spin): the
-   blades' box is the mark's own, so its centre is the core's */
-@keyframes mark-spin {
-  to { transform: rotate(360deg); }
-}
-.mark-spin {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: mark-spin 80s linear infinite;
-}
 @media (prefers-reduced-motion: reduce) {
   .badge-bob { animation: none; }
-  .mark-spin { animation: none; }
 }
 
 /* The hero's typed accent word (TypedWord.tsx), pure CSS so it runs from first paint. Letter i appears at
