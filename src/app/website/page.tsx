@@ -7,6 +7,8 @@ import { Understands } from "@/components/website/Understands";
 import { Jobs } from "@/components/website/Jobs";
 import { BackToTop } from "@/components/website/BackToTop";
 import { Faq } from "@/components/website/Faq";
+import { Closing } from "@/components/website/Closing";
+import { Footer } from "@/components/website/Footer";
 import { AsciiBackdrop } from "@/components/website/AsciiBackdrop";
 import { AccentWave } from "@/components/website/AccentWave";
 import { SmoothScroll } from "@/components/website/SmoothScroll";
@@ -18,7 +20,7 @@ export const metadata: Metadata = {
 
 export default function WebsitePage() {
   return (
-    <main className="relative min-h-screen overflow-x-clip px-4 md:px-8 pt-24 pb-24">
+    <main className="relative min-h-screen overflow-x-clip px-4 md:px-8 pt-24">
       <AsciiBackdrop />
       <AccentWave />
       <SmoothScroll />
@@ -29,6 +31,8 @@ export default function WebsitePage() {
       <Understands />
       <Jobs />
       <Faq />
+      <Closing />
+      <Footer />
       <BackToTop />
     </main>
   );

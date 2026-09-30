@@ -112,6 +112,11 @@ body {
   60%, 80% { opacity: 1; }
   100% { opacity: 0; }
 }
+/* waiting to come into view (TypedWord onView): the letters and their carets hold, delays and all */
+.tw-wait .tw-letter,
+.tw-wait .tw-letter::after {
+  animation-play-state: paused;
+}
 /* the hero copy fades in at first paint too, not once the scripts are up */
 .hero-copy-in {
   animation: hero-copy-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -123,4 +128,41 @@ body {
   .tw-letter { animation: none; opacity: 1; }
   .tw-letter::after { display: none; }
   .hero-copy-in { animation: none; }
+}
+
+/* The footer's wordmark (Footer.tsx), after the onBlue creators page's: huge, cropped by the page's foot,
+   the mark cresting from behind it, and its colour split only at the word's two ends (a pale red copy
+   nudged left, a pale cyan one nudged right, each masked to its own end and multiplied over the navy, so
+   the fringe shows only where a copy slips past a letter's edge), so the middle stays clean. */
+.foot-word {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+}
+.foot-word .fw-l,
+.foot-word .fw-r {
+  position: absolute;
+  inset: 0 -16px;
+  padding: 0 16px;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+.foot-word .fw-l {
+  color: #f7a9ad;
+  transform: translateX(-3px);
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, transparent 16%);
+  mask-image: linear-gradient(90deg, #000 0%, transparent 16%);
+}
+.foot-word .fw-r {
+  color: #a8e2ea;
+  transform: translateX(3px);
+  -webkit-mask-image: linear-gradient(270deg, #000 0%, transparent 16%);
+  mask-image: linear-gradient(270deg, #000 0%, transparent 16%);
+}
+/* the mark cresting from behind the word: solid through its top half, then a long fall to nothing */
+.foot-sun {
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 38%, rgba(0, 0, 0, 0.34) 66%, transparent 92%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 38%, rgba(0, 0, 0, 0.34) 66%, transparent 92%);
 }
