@@ -83,7 +83,7 @@ export function Understands() {
         <motion.span
           {...rise(0.3)}
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 z-10 grid h-[104px] w-[104px] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-[8px] border-[rgb(var(--page-rgb))] bg-white font-display text-[26px] font-normal tracking-tight text-[#0a1b33]/40 max-md:h-[72px] max-md:w-[72px] max-md:border-[6px] max-md:text-[20px]"
+          className="pointer-events-none absolute left-1/2 top-1/2 z-10 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-[6px] border-[rgb(var(--page-rgb))] bg-white font-display text-[30px] font-normal tracking-tight text-[#0a1b33]/40 max-md:h-16 max-md:w-16 max-md:text-[24px]"
         >
           vs
         </motion.span>
