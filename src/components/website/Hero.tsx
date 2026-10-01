@@ -83,9 +83,19 @@ export function Hero({ full = false }: { full?: boolean }) {
   const numbers = (left: boolean) => (
     <HeroNumbers stats={stats} ready={floorReady} left={left} />
   );
-  const wave = (
-    <WaveButton full={full} onClick={() => floor.current?.reset()} />
-  );
+  // the wave button: busy (its loader) from the press until the wave begins, which waits for the next cast
+  // if it is not in yet (autoplay.js)
+  const [waveBusy, setWaveBusy] = useState(false);
+  const sendWave = async () => {
+    if (waveBusy) return;
+    setWaveBusy(true);
+    try {
+      await floor.current?.reset();
+    } finally {
+      setWaveBusy(false);
+    }
+  };
+  const wave = <WaveButton full={full} busy={waveBusy} onClick={sendWave} />;
   const row = (
     <>
       {/* Outside the container, one row: the scroll cue under its bottom-left corner, the headline numbers
@@ -253,7 +263,7 @@ export function Hero({ full = false }: { full?: boolean }) {
               "absolute bottom-5 right-5 z-20 md:hidden " + fade(intro.extras)
             }
           >
-            <WaveButton full onClick={() => floor.current?.reset()} />
+            <WaveButton full busy={waveBusy} onClick={sendWave} />
           </div>
         )}
         {full && (

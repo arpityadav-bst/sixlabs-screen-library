@@ -75,9 +75,11 @@ export function HeroNumbers({
 
 export function WaveButton({
   full,
+  busy = false,
   onClick,
 }: {
   full: boolean;
+  busy?: boolean; // the next cast still loading: a spinner in the icon's place until the wave begins
   onClick: () => void;
 }) {
   return (
@@ -87,6 +89,7 @@ export function WaveButton({
       <button
         type="button"
         onClick={onClick}
+        aria-busy={busy}
         className={
           "group flex items-center transition-colors duration-200 hover:text-accent " +
           (full
@@ -105,7 +108,11 @@ export function WaveButton({
         >
           Next wave
         </span>
-        <Waves className="w-4 h-4" strokeWidth={1.75} />
+        {busy ? (
+          <span className="block h-4 w-4 animate-spin rounded-full border-[1.75px] border-current border-t-transparent" />
+        ) : (
+          <Waves className="w-4 h-4" strokeWidth={1.75} />
+        )}
       </button>
     </>
   );

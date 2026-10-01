@@ -10,11 +10,13 @@ import { shownShare } from './viewport.js';
 
 const RESUME_MS = 3000, FOCUS_MS = 380, GAP_MS = 220, MIN_SHOWN = 0.4, WAVE_SHOWN = 0.02;
 const WAVE_SPREAD = 1.3, FLIP_SECONDS = 0.75; // stagger across the screen, one tile's flip
+const PREPARE_AT = 0.7; // the share of the tiles on screen played when the next cast starts to load
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, cast, half }) {
   let stopped = false, paused = false, resumeTimer = 0, first = true, resetReq = false, waving = false;
   let held = false; // the floor is off screen or the tab hidden (floor.js): nothing is played, nothing drawn
+  const waiters = []; // the wave button's calls waiting on their wave's start (reset)
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const until = async (ok) => { while (!stopped && !ok()) await wait(60); };
   const cellOf = (key) => key.split(',').map(Number);
@@ -32,9 +34,20 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner,
     else resumeTimer = setTimeout(() => { paused = false; }, RESUME_MS);
   };
 
-  async function wave(all = false) {
+  // onStart: called as the flip begins (after the other cast is ready), for the wave button's wait (reset)
+  async function wave(all = false, onStart = () => {}) {
+    await cast.prepare(); // the other cast, fetched now if it was not yet (casts.js); the tiles rest meanwhile
+    if (resetReq) { // the wave button, pressed while this one waited: one wave over every tile, not two
+      resetReq = false;
+      all = true;
+      ctl.clearAll();
+      const started = waiters.splice(0), own = onStart;
+      onStart = () => { own(); started.forEach((r) => r()); };
+    }
+    if (stopped) return onStart();
     const tiles = onScreen(WAVE_SHOWN).filter((t) => all || ctl.spent.has(t.key) || t.shown < MIN_SHOWN);
     for (const key of ctl.spent) if (!tiles.some((t) => t.key === key)) ctl.unspend(key); // off screen: reset quietly
+    onStart();
     if (!tiles.length) return;
     ctl.inert = true;
     waving = true;
@@ -84,11 +97,14 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner,
       if (resetReq) {
         resetReq = false;
         ctl.clearAll();
-        await wave(true);
+        const started = waiters.splice(0);
+        await wave(true, () => started.forEach((r) => r()));
         await wait(GAP_MS);
         continue;
       }
-      const todo = onScreen().filter((t) => !ctl.spent.has(t.key));
+      const shownNow = onScreen(), todo = shownNow.filter((t) => !ctl.spent.has(t.key));
+      // most of the screen played: time to fetch the next cast, so it is in by the wave (casts.js)
+      if (todo.length <= shownNow.length * (1 - PREPARE_AT)) cast.prepare();
       if (!todo.length) {
         await until(() => !ctl.busy() || resetReq);
         if (!stopped && !resetReq) await wave();
@@ -116,8 +132,13 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner,
   })();
 
   return {
-    stop: () => { stopped = true; clearTimeout(resumeTimer); ctl.onUser = null; },
-    reset: () => { if (!waving) resetReq = true; },
+    stop: () => { stopped = true; clearTimeout(resumeTimer); ctl.onUser = null; waiters.splice(0).forEach((r) => r()); },
+    // resolves as the wave's flip begins, which can wait for the other cast to arrive (the wave button's loader)
+    reset: () => new Promise((r) => {
+      if (waving || stopped) return r();
+      waiters.push(r);
+      resetReq = true;
+    }),
     hold: (on) => { held = on; },
   };
 }

@@ -13,7 +13,7 @@ import { useEffect, useRef } from "react";
 
 export type FloorHandle = {
   dispose(): void;
-  reset(): void;
+  reset(): Promise<void> | void; // resolves as the wave begins (it may wait for the next cast, autoplay.js)
   setClearTop(px: number): void; // lowers the view so the field's top tile sits px down (floor.js)
 };
 
