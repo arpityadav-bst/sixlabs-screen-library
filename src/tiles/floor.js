@@ -10,6 +10,7 @@ import { studioEnvironment, glassMaterials } from './materials.js';
 import { nearShadeUniforms, applyNearShade } from './near-shade.js';
 import { floorMaterial, floorUniforms } from './floor-material.js';
 import { buildComposer } from './post.js';
+import { bakedReady } from './baked-textures.js';
 import { addCharacters } from './characters.js';
 import { planLoad } from './load-plan.js';
 import { idleUploader } from './upload.js';
@@ -168,6 +169,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   scene.add(key);
 
   const chars = await addCharacters(field, P, bustTiles, pictures, cast0, wait, warm);
+  await bakedReady(); // the frost, gradient and glint pictures (baked-textures.js) in before anything is drawn
 
   // Capture the reflection from the activeAt tile, with that tile and its busts out of the way.
   if (P.actSideMirror > 0) {
