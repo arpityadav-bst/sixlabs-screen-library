@@ -9,7 +9,7 @@
      spec.track    what to listen to for the pointer when it is not the host (a host painted behind the
                    content never sees a pointermove over it)
      spec.pointer  false to leave the pointer pool unwired (touch screens have no hover)
-     spec.expose   called with { sweep } once the field is live
+     spec.expose   called with { sweep, wake } once the field is live (wake: draw again after being hidden)
      spec.pool     { x, y } in fractions of the host: a pool held there with no pointer (the idle terminals) */
 export function mountAsciiField(spec) {
   {
@@ -191,7 +191,8 @@ export function mountAsciiField(spec) {
 
     function tick(now) {
       frame = 0;
-      if (!onScreen) { return; }
+      /* hidden (visibility, AsciiBackdrop.tsx): nothing drawn, the canvas kept at its size; wake() resumes */
+      if (!onScreen || host.style.visibility === 'hidden') { return; }
 
       /* THE THROTTLE COMES OFF WHILE THE BAND IS TRAVELLING. 14fps is what an
          ascii readout wants at rest and is visibly stepped on something crossing
@@ -258,7 +259,7 @@ export function mountAsciiField(spec) {
       }
       wake();
     }
-    if (spec.expose) { spec.expose({ sweep: runSweep }); }
+    if (spec.expose) { spec.expose({ sweep: runSweep, wake: function () { painted = 0; wake(); } }); }
 
     measure();
 

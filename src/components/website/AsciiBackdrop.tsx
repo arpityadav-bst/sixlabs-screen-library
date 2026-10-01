@@ -5,14 +5,16 @@
 // for the pointer on the whole document. Glyphs rest in navy and warm to the accent blue under the cursor.
 // Touch screens get the ambient field without the pointer pool. Past the line (#model-line, section 2) it
 // is paused: from there the players' water covers it and then the noise's ground (.page-grain), so it is
-// hidden (display none), which its own visibility watch reads as off screen and stops drawing; it wakes
-// the moment the view is back in the line. It is hidden too while something marked data-covers-view (the
-// full view's hero) fills the whole screen, where none of it would show.
+// hidden, and draws nothing while hidden; it wakes the moment the view is back in the line. It is hidden
+// too while something marked data-covers-view (the full view's hero) fills the whole screen, where none of
+// it would show. Hidden by visibility, not display: the canvas keeps its size, so coming back into the line
+// does not rebuild a screen-sized canvas mid-scroll (a hitch on a slow machine) or re-roll its glyphs.
 import { useEffect, useRef } from "react";
 import { mountAsciiField } from "./ascii-field";
 
 export function AsciiBackdrop() {
   const ref = useRef<HTMLDivElement>(null);
+  const field = useRef<{ wake(): void } | null>(null);
 
   useEffect(() => {
     const host = ref.current;
@@ -23,6 +25,7 @@ export function AsciiBackdrop() {
       reach: 120, // cursor pool radius in px (onBlue: 190)
       lens: 0.24, // how much the pool brightens a glyph (onBlue: 0.42)
       pointer: window.matchMedia("(hover: hover)").matches,
+      expose: (api: { wake(): void }) => (field.current = api),
     });
   }, []);
 
@@ -37,7 +40,10 @@ export function AsciiBackdrop() {
         past = line.getBoundingClientRect().bottom <= h + 1,
         c = cover?.getBoundingClientRect(),
         covered = !!c && c.top <= 0 && c.bottom >= h;
-      host.style.display = past || covered ? "none" : "";
+      const hide = past || covered;
+      if (hide === (host.style.visibility === "hidden")) return;
+      host.style.visibility = hide ? "hidden" : "";
+      if (!hide) field.current?.wake();
     };
     check();
     window.addEventListener("scroll", check, { passive: true });

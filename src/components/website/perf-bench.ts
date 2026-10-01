@@ -1,7 +1,10 @@
 "use client";
 
 // ?perf=bench: measures what each part of the hero floor costs on this machine, so it can be made lighter
-// where it is heavy and nowhere else. Once the floor is in it pauses the auto-play (window.__benchHold,
+// where it is heavy and nowhere else. Two cases come first as a baseline: nothing drawn (the page's own
+// frame rate with the floor still) and a blank frame (the cost of putting any frame on the canvas at all);
+// every case also notes the main thread's own time to issue its frame (cpu), so a frame rate held down by
+// the processor, not the GPU, shows as such. Once the floor is in it pauses the auto-play (window.__benchHold,
 // autoplay.js), then for each case below changes one thing from the full setting, lets it settle, draws the
 // floor on every frame for MEASURE_MS and keeps the frame times: the median, the slowest 5% and the fps,
 // each against the full setting. Alongside: the GPU, the screen and canvas size, the floor's draw calls,
@@ -21,6 +24,8 @@ type Mat = {
 type Floor = {
   renderer: {
     domElement: HTMLCanvasElement;
+    setRenderTarget(t: null): void;
+    clear(): void;
     info: {
       autoReset: boolean;
       reset(): void;
@@ -81,22 +86,31 @@ function toggle(fp: Floor, what: "grain" | "busts" | "tiles") {
   return () => undo.forEach((u) => u());
 }
 
-// the floor drawn on every frame for ms; the frame times
-async function measure(fp: Floor, ms: number) {
-  const gaps: number[] = [];
+// the floor drawn on every frame for ms (or `draw`, a case's own frame); the frame times, and the main
+// thread's time to issue each frame
+const drawFloor = (fp: Floor) => () => {
+  fp.refiner?.moving();
+  fp.composer.render();
+};
+async function measure(fp: Floor, ms: number, draw = drawFloor(fp)) {
+  const gaps: number[] = [],
+    cpu: number[] = [];
   let last = await frame();
   const end = last + ms;
   while (last < end) {
-    fp.refiner?.moving();
-    fp.composer.render();
+    const t0 = performance.now();
+    draw();
+    cpu.push(performance.now() - t0);
     const now = await frame();
     gaps.push(now - last);
     last = now;
   }
   gaps.sort((a, b) => a - b);
+  cpu.sort((a, b) => a - b);
   return {
     med: gaps[gaps.length >> 1],
     p95: gaps[Math.floor(gaps.length * 0.95)],
+    cpu: cpu[cpu.length >> 1],
   };
 }
 
@@ -166,8 +180,19 @@ export async function runBench(gpuName: () => string) {
   say("perf bench: pausing the auto-play… (keep the mouse off the floor)");
   await sleep(3500); // the activation under way finishes
 
-  const cases: [string, Partial<Cfg>, Parameters<typeof toggle>[1]?][] = [
+  const blank = () => {
+    fp.renderer.setRenderTarget(null);
+    fp.renderer.clear();
+  };
+  const cases: [
+    string,
+    Partial<Cfg>,
+    Parameters<typeof toggle>[1]?,
+    (() => void)?,
+  ][] = [
     ["full (dpr, aa 4)", {}],
+    ["nothing drawn (page alone)", {}, undefined, () => {}],
+    ["blank frame (canvas only)", {}, undefined, blank],
     ["aa 2", { aa: 2 }],
     ["aa 0 (no anti-aliasing)", { aa: 0 }],
     ["resolution 1.5", { r: 1.5 }],
@@ -180,13 +205,13 @@ export async function runBench(gpuName: () => string) {
   const rows: string[] = [];
   let base = 0,
     info = sceneInfo(fp);
-  for (const [k, [name, cfg, off]] of cases.entries()) {
+  for (const [k, [name, cfg, off, draw]] of cases.entries()) {
     say(`perf bench: ${k + 1}/${cases.length} ${name}…\n\n${rows.join("\n")}`);
     fp.set({ ...FULL, ...cfg });
     const undo = off ? toggle(fp, off) : () => {};
     await measure(fp, SETTLE_MS); // settles, and compiles what changed
     if (k === 0) info = sceneInfo(fp);
-    const m = await measure(fp, MEASURE_MS);
+    const m = await measure(fp, MEASURE_MS, draw);
     undo();
     if (k === 0) base = m.med;
     const vs =
@@ -198,7 +223,7 @@ export async function runBench(gpuName: () => string) {
         1000 / m.med,
       )
         .toString()
-        .padStart(3)} fps${vs}`,
+        .padStart(3)} fps  cpu ${m.cpu.toFixed(1).padStart(5)} ms${vs}`,
     );
   }
   fp.restore();
@@ -215,7 +240,7 @@ export async function runBench(gpuName: () => string) {
     `drawing buffers ~${buffersMB(cw * fp.dpr, ch * fp.dpr, FULL)} MB at full (estimate)`,
     `${navigator.userAgent.replace(/^Mozilla\/5\.0 /, "")}`,
     "",
-    "case                         median          worst 5%    fps  vs full",
+    "case                         median          worst 5%    fps  cpu (main thread)  vs full",
   ];
   const text = [...head, ...rows].join("\n");
   el.textContent = text + "\n\n";

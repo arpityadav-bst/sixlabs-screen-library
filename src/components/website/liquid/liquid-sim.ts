@@ -60,6 +60,18 @@ export function createLiquid(canvas: HTMLCanvasElement, picture: HTMLCanvasEleme
     uSheen: v(OPT.sheen), uIridescence: v(OPT.iridescence), uAmbient: v(OPT.ambient), uTime: v(0),
   });
   const passes = [splatP, curlP, vortP, divP, presP, gradP, advP, fadeP, comp];
+  // Every pass compiled now, as the page loads, off the main thread where the browser can (compileAsync): the
+  // first hover otherwise stalled for seconds while the simulation's eight shaders compiled one by one. The
+  // simulation's passes draw into its targets and the last one onto the canvas, and each is compiled for
+  // where it draws (a shader is built per target kind).
+  const compileFor = (mats: THREE.ShaderMaterial[], to: THREE.WebGLRenderTarget | null) => {
+    const s = new THREE.Scene();
+    mats.forEach((m) => { const q = new THREE.Mesh(quad, m); q.frustumCulled = false; s.add(q); });
+    renderer.setRenderTarget(to);
+    renderer.compileAsync(s, passCamera).catch(() => {}); // it compiles the moment it is called; the wait is for readiness
+  };
+  compileFor(passes.slice(0, -1), divergence);
+  compileFor([comp], null);
 
   const run = (m: THREE.ShaderMaterial, to: THREE.WebGLRenderTarget | null) => {
     mesh.material = m;
