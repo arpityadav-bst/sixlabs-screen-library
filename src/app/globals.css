@@ -283,3 +283,11 @@ body {
   opacity: 1;
 }
 
+/* Lite mode (perf.ts): on a machine that cannot keep up, the costliest effects come off. The noise is a
+   page-tall multiply blend; the header's blur re-samples whatever scrolls under it every frame (its strip
+   goes near-solid instead, so nothing reads through it); the floating tiles' shadow is a filter on moving
+   layers. */
+[data-lite] .page-grain::before { display: none; }
+[data-lite] #site-head { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+[data-lite] #site-head:not(.bg-transparent):not(.bg-white) { background-color: rgb(var(--page-rgb) / 0.97) !important; }
+[data-lite] .float-tile { filter: none !important; }

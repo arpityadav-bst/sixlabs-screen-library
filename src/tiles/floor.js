@@ -207,7 +207,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   // Live: a one-sample frame straight away, then progressive smoothing (post.js). Static renders take
   // the full supersampled frame in one go. Resizes re-run it; an unchanged size is skipped (the
   // observer also fires once when it starts).
-  let size = '', clearTop = 0, tops = null, gov = null; // gov: the live floor's resolution (governor.js)
+  let size = '', clearTop = 0, tops = null, gov = null, disposed = false; // gov: the live floor's resolution (governor.js)
   const draw = (force = false) => {
     const w = Math.max(1, container.clientWidth), h = Math.max(1, container.clientHeight);
     if (`${w}x${h}` === size && !force) return;
@@ -228,7 +228,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
     composer.render();
     refiner?.start();
   };
-  if (!isStatic) gov = governFloor(renderer, composer, () => draw(true)); // steps down on a slow GPU
+  if (!isStatic) gov = governFloor(renderer, composer, () => { if (!disposed) draw(true); }); // steps down on a slow GPU
   // Rehearsal: one frame with a tile raised mid-activation (reflection, glow, spill all live), so any
   // first-use GPU work happens now rather than on the first hover. It is overwritten before it is shown.
   if (!isStatic) {
@@ -256,7 +256,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
     const i = Math.round((hit.x - ox) / pitch), j = Math.round((hit.z - oz) / pitch);
     return Math.abs(hit.x - cx(i)) < half && Math.abs(hit.z - cz(j)) < half && slot.has(`${i},${j}`) ? [i, j] : null;
   };
-  let stop = () => {}, reset = () => {}, disposed = false;
+  let stop = () => {}, reset = () => {};
   if (!isStatic) intro.done.then(() => {
     if (disposed) return;
     const ctl = startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU: U, nearU, P, expose, onConvert });

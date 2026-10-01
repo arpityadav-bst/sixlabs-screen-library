@@ -7,9 +7,10 @@
 // is paused: from there the players' water covers it and then the noise's ground (.page-grain), so it is
 // hidden (display none), which its own visibility watch reads as off screen and stops drawing; it wakes
 // the moment the view is back in the line. It is hidden too while something marked data-covers-view (the
-// full view's hero) fills the whole screen, where none of it would show.
+// full view's hero) fills the whole screen, where none of it would show, and for good in lite mode (perf.ts).
 import { useEffect, useRef } from "react";
 import { mountAsciiField } from "./ascii-field";
+import { isLite, LITE } from "./perf";
 
 export function AsciiBackdrop() {
   const ref = useRef<HTMLDivElement>(null);
@@ -37,14 +38,16 @@ export function AsciiBackdrop() {
         past = line.getBoundingClientRect().bottom <= h + 1,
         c = cover?.getBoundingClientRect(),
         covered = !!c && c.top <= 0 && c.bottom >= h;
-      host.style.display = past || covered ? "none" : "";
+      host.style.display = past || covered || isLite() ? "none" : "";
     };
     check();
     window.addEventListener("scroll", check, { passive: true });
     window.addEventListener("resize", check);
+    window.addEventListener(LITE, check);
     return () => {
       window.removeEventListener("scroll", check);
       window.removeEventListener("resize", check);
+      window.removeEventListener(LITE, check);
     };
   }, []);
 
