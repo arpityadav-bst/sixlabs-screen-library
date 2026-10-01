@@ -8,7 +8,10 @@
 // players' clips (PlayerPortrait.tsx): which files play (webm or stacked), how long their seeks took to land
 // in the last ten seconds (the scrubbed turn: the average, the slowest and how many), and how long the last
 // clip to appear waited for its first frame. ?perf=bench also runs the floor benchmark (perf-bench.ts),
-// which measures what each of its parts costs here.
+// which measures what each of its parts costs here. The readout keeps a log, a line a second for the last
+// three minutes (the section in the middle of the view, then the readout's numbers), and its Copy button puts
+// the log on the clipboard under the page's address, the GPU, the screen and the browser, so a whole test run
+// (a scroll through the page, a few player switches) is one paste, no photos.
 import type { PerfVideo } from "./PlayerPortrait";
 
 // ?off=… in the address turns parts of the page off for one visit, to find what a slow machine is paying
@@ -51,7 +54,37 @@ export function perfReadout() {
     maxWidth: "92vw",
     whiteSpace: "pre-line",
   });
+  const text = document.createElement("div");
+  const copy = document.createElement("button");
+  copy.textContent = "Copy log";
+  Object.assign(copy.style, {
+    pointerEvents: "auto",
+    marginTop: "5px",
+    font: "11px ui-monospace, monospace",
+    padding: "3px 9px",
+    borderRadius: "6px",
+    border: "0",
+    background: "#fff",
+    color: "#0a1b33",
+    cursor: "pointer",
+  });
+  el.append(text, copy);
   document.body.appendChild(el);
+  const log: string[] = [];
+  copy.onclick = () => {
+    const head = [
+      `6labs perf log · ${new Date().toISOString().slice(0, 19)} · ${location.href}`,
+      `gpu ${gpuName()} · dpr ${window.devicePixelRatio} · screen ${screen.width}x${screen.height} · view ${innerWidth}x${innerHeight}`,
+      navigator.userAgent,
+      "",
+    ];
+    navigator.clipboard
+      ?.writeText([...head, ...log].join("\n"))
+      .then(() => {
+        copy.textContent = "Copied";
+        setTimeout(() => (copy.textContent = "Copy log"), 1500);
+      });
+  };
   const video: PerfVideo = { seeks: [], first: [] };
   (window as unknown as { __perfVideo?: PerfVideo }).__perfVideo = video;
   const gpu = gpuName();
@@ -70,7 +103,13 @@ export function perfReadout() {
   const gaps: [number, number][] = []; // [when, frame time]
   let n = 0,
     t = performance.now(),
-    last = 0;
+    last = 0,
+    logged = 0;
+  const born = performance.now();
+  // the section in the middle of the view (the nearest element with an id under its centre)
+  const section = () =>
+    document.elementFromPoint(innerWidth / 2, innerHeight / 2)?.closest("[id]")
+      ?.id ?? "-";
   const tick = (now: number) => {
     n++;
     if (last) gaps.push([now, now - last]);
@@ -101,9 +140,26 @@ export function perfReadout() {
       const clips = video.format
         ? `clips ${video.format} · seeks ${sk.length ? `avg ${Math.round(sk.reduce((a, b) => a + b, 0) / sk.length)}ms, slowest ${Math.round(Math.max(...sk))}ms (${sk.length})` : "-"}/10s · first frame ${firstMs !== undefined ? `${(firstMs / 1000).toFixed(1)}s` : "-"}`
         : "";
-      el.textContent =
+      const fps = Math.round((n * 1000) / (now - t));
+      if (now - logged >= 1000) {
+        logged = now;
+        log.push(
+          [
+            `${((now - born) / 1000).toFixed(0).padStart(4)}s ${section().padEnd(12)}`,
+            `${fps} fps`,
+            `worst5 ${p95.toFixed(0)}ms`,
+            `>50ms ${long}`,
+            `floor ${d.floor ?? "-"}`,
+            clips.replace(/^clips /, ""),
+          ]
+            .filter(Boolean)
+            .join(" · "),
+        );
+        if (log.length > 180) log.shift();
+      }
+      text.textContent =
         [
-          `${Math.round((n * 1000) / (now - t))} fps`,
+          `${fps} fps`,
           `worst 5% ${p95.toFixed(0)}ms`,
           `>50ms frames ${long}/10s`,
           `long tasks ${lt}/10s`,
