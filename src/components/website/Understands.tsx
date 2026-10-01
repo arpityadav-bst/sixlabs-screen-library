@@ -7,7 +7,9 @@
 // (brand-marks.tsx, both marks in one line style), then the same two lines: what it learns from, and what
 // it now understands. The comparison is in the type: each line leads with its verb in a softer ink and puts
 // what differs in full ink, and the two cards share their rows (a subgrid), so each line sits level with its
-// counterpart and reads across. They rise in one after the other when the section comes into view, once.
+// counterpart and reads across. The grid is the section below's (Jobs.tsx): the same width and side
+// padding, and its 24px gutter between the cards. They rise in one after the other when the section comes into
+// view, once.
 // The section is only as tall as its cards; above them, below the fixed header, and below them to the next
 // one (Jobs.tsx) the same block's distance (about 144px, 96px on phones), not a whole section's.
 import { motion } from "motion/react";
@@ -61,7 +63,7 @@ export function Understands() {
       id="understands"
       className="relative mx-auto w-full max-w-[1400px] px-4 pt-[calc(70px+96px)] md:px-16 md:pt-[calc(89px+clamp(96px,9vw,144px))]"
     >
-      <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 md:grid-rows-[auto_auto_auto] md:gap-x-16 md:gap-y-0">
+      <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 md:grid-rows-[auto_auto_auto] md:gap-x-6 md:gap-y-0">
         <motion.div {...rise(0)} className={theirs}>
           <span className={lockup}>
             <ChatGptMark className="h-8 w-8" />
