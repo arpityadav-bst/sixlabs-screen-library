@@ -2,7 +2,9 @@
 // floor is drawing (a render in the last second), it times the page's own frames and, about every second,
 // takes their median: slower than SLOW_MS (about 45 fps) steps the floor's work down LEVELS, further at once
 // the slower it is (two steps under 25 fps, three under 10). A level sets the drawing resolution, the glass's
-// see-through pass and the anti-aliasing samples. A fast GPU never trips it and keeps everything at full.
+// see-through pass and the anti-aliasing samples; the resolution goes first and the anti-aliasing last (at a
+// resolution of 1 its samples cost little, and without them the tiles' edges stair-step), and it stops at
+// 0.75. A fast GPU never trips it and keeps everything at full.
 // It never steps back up: a sharpness that comes and goes reads worse than one that holds. onChange redraws
 // the floor at the new resolution; <html data-floor> reads "ratio/glass/aa" (?perf, website/perf.ts).
 const SLOW_MS = 22;
@@ -10,11 +12,11 @@ const LEVELS = [
   { r: Infinity, glass: 1, aa: 4 }, // r: the most device pixels it draws per CSS pixel
   { r: Infinity, glass: 0.5, aa: 4 },
   { r: 1.5, glass: 0.5, aa: 4 },
-  { r: 1.25, glass: 0.5, aa: 2 },
-  { r: 1, glass: 0.5, aa: 0 },
-  { r: 0.85, glass: 0.25, aa: 0 },
-  { r: 0.7, glass: 0.25, aa: 0 },
-  { r: 0.55, glass: 0.25, aa: 0 },
+  { r: 1.25, glass: 0.5, aa: 4 },
+  { r: 1, glass: 0.5, aa: 4 },
+  { r: 1, glass: 0.5, aa: 2 },
+  { r: 0.85, glass: 0.25, aa: 2 },
+  { r: 0.75, glass: 0.25, aa: 0 },
 ];
 
 export function governFloor(renderer, composer, onChange) {

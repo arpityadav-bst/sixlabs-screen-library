@@ -74,7 +74,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   const ia = Math.max(1, Math.round((pa.x - ox) / pitch)), ja = Math.round((pa.z - oz) / pitch);
   const ax = cx(ia), azz = cz(ja);
 
-  const geo = tileGeometry(P, half);
+  const geo = tileGeometry(P, half), floorGeo = isStatic ? geo : tileGeometry(P, half, 6, 2); // the resting tiles: 620 triangles, not 4,140
   const tileH = P.core + P.bevelT; // visible height above the floor
 
   // Floor: the blue pool follows whichever tile is raised (the rig moves it and sets its strength).
@@ -109,7 +109,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   // buffer update, not a shader recompile.
   const m4 = new THREE.Matrix4(), slot = new Map(), WHITE = new THREE.Color('#ffffff'), SPENT = new THREE.Color(P.spentTint ?? '#b8bbc1');
   const addTiles = (list, materials) => {
-    const mesh = new THREE.InstancedMesh(geo, materials, list.length);
+    const mesh = new THREE.InstancedMesh(floorGeo, materials, list.length);
     list.forEach(([i, j], k) => { mesh.setMatrixAt(k, m4.makeTranslation(cx(i), 0, cz(j))); mesh.setColorAt(k, WHITE); slot.set(`${i},${j}`, [mesh, k]); });
     field.add(mesh);
   };

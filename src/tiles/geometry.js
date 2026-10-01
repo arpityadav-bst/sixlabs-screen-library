@@ -1,7 +1,10 @@
-// The one tile shape every tile shares: a rounded square slab with a bevelled top edge.
+// The one tile shape every tile shares: a rounded square slab with a bevelled top edge. curve and bevel are
+// its segments per corner arc and across the bevel: the full 18 / 6 for the raised tile (shown large) and
+// still renders; the resting floor's tiles, a few dozen px across, take far fewer (floor.js), as at their
+// size the corners and the bevel read the same and 4,000 triangles a tile were mostly smaller than a pixel.
 import * as THREE from 'three';
 
-export function tileGeometry(P, half) {
+export function tileGeometry(P, half, curve = 18, bevel = 6) {
   const h = half - P.bevel, r = P.tile * P.radius - P.bevel;
   const s = new THREE.Shape();
   s.moveTo(-h + r, -h);
@@ -14,7 +17,7 @@ export function tileGeometry(P, half) {
   s.lineTo(-h, -h + r);
   s.absarc(-h + r, -h + r, r, Math.PI, Math.PI * 1.5, false);
   const g = new THREE.ExtrudeGeometry(s, {
-    depth: P.core, bevelEnabled: true, bevelThickness: P.bevelT, bevelSize: P.bevel, bevelSegments: 6, curveSegments: 18,
+    depth: P.core, bevelEnabled: true, bevelThickness: P.bevelT, bevelSize: P.bevel, bevelSegments: bevel, curveSegments: curve,
   });
   g.rotateX(-Math.PI / 2);
   // The underside bevel sits below the floor, so each tile meets the floor with a clean wall, no dark crease.
