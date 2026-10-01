@@ -26,12 +26,12 @@ const GROUPS: { title: string; rows: Row[] }[] = [
       },
       {
         href: "/website-hologram",
-        name: "6labs website, hologram copies",
+        name: "6labs website, digital AI",
         desc: "The landing page with every AI copy as a faceless blue scan-line hologram: on the hero's tiles, in the players' Human / AI switch and in the footer. The humans are unchanged.",
       },
       {
         href: "/6labs-fullview-hologram",
-        name: "6labs fullview, hologram copies",
+        name: "6labs fullview, digital AI",
         desc: "The fullview landing page with the same hologram AI copies.",
       },
     ],
