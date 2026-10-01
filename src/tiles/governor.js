@@ -1,3 +1,5 @@
+import { opaqueGlass } from './opaque-glass.js';
+
 // Keeps the live floor smooth on a weak GPU (an Intel Mac's UHD 630 ran the full view at 2 fps). While the
 // floor is drawing (a render in the last second), it times the page's own frames and, about every second,
 // takes their median: slower than SLOW_MS (about 45 fps) steps the floor's work down LEVELS, further at once
@@ -34,17 +36,10 @@ export function governFloor(renderer, composer, onChange, parts = {}) {
     document.documentElement.dataset.floor = `${ratio.toFixed(2)}/${L.glass}/${L.aa}`;
   };
   apply();
-  // ?off=glass (website/perf.ts): the resting tiles without their see-through glass, to see and measure the
-  // floor without its glass pass; nothing changes without it. What the glass let through was mostly the floor
-  // under it, so each glass material's own colour takes the floor's colour by the share it let through (the
-  // tops 82%, the walls all of it): the tiles keep the shade the glass gave them, now as a solid.
+  // ?off=glass (website/perf.ts): the resting tiles opaque, coloured to read as the glass did (opaque-glass.js),
+  // to see and measure the floor without its glass pass; nothing changes without it
   if ((new URLSearchParams(location.search).get('off') ?? '').split(',').includes('glass'))
-    parts.scene?.traverse((o) => [o.material].flat().forEach((m) => {
-      if (!(m?.transmission > 0)) return;
-      if (parts.floorColor && m.color) m.color.lerp(m.color.clone().set(parts.floorColor), m.transmission);
-      m.transmission = 0;
-      m.needsUpdate = true;
-    }));
+    opaqueGlass(parts.scene, parts.floorColor);
   const render = composer.render.bind(composer);
   composer.render = (...args) => {
     lastRender = performance.now();
