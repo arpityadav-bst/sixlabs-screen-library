@@ -1,28 +1,16 @@
 "use client";
 
-// Lite mode, for a machine that cannot keep up (an Intel Mac's built-in graphics at 2x, say). Once the
-// hero's floor is in (window.__floorReady, floor.js) and a moment more, the page's frame gaps are timed in
-// windows of WINDOW; if one window's median runs slower than SLOW_MS (about 40 fps), lite mode starts and
-// stays: <html data-lite="1"> and a "perf-lite" event, which the page's heavy parts answer: smooth scrolling
-// hands back to the browser's own (SmoothScroll.tsx), the floor drops to its lightest (governor.js), the
-// ASCII field stops (AsciiBackdrop.tsx), the accent water's halftone coarsens (AccentWave.tsx), and the
-// noise, blur and shadows come off (globals.css). A fast machine never trips it.
-// ?lite in the address forces it; ?perf shows a small readout (frame rate, lite, the floor's resolution,
-// the GPU), for checking a machine from afar.
-export const LITE = "perf-lite";
+// Lite mode, on for everyone (the page as smooth as it runs on any machine, an Intel Mac's built-in graphics
+// included): <html data-lite="1"> from the server's first paint (layout.tsx), which the page's heavy parts
+// answer: scrolling is the browser's own, not smoothed (SmoothScroll.tsx), the ASCII field stays off
+// (AsciiBackdrop.tsx), the accent water's halftone is coarser (AccentWave.tsx), the floor's glass pass runs
+// at half resolution (governor.js, which still lowers the floor's resolution where it runs slow), and the
+// page noise, the header's blur and the floating tiles' shadow are off (globals.css).
+// ?full in the address turns it off, for the full version; ?perf shows a small readout (frame rate, lite,
+// the floor's resolution, the GPU), for checking a machine from afar.
 export const isLite = () =>
   typeof document !== "undefined" &&
   document.documentElement.dataset.lite === "1";
-
-const SLOW_MS = 24,
-  WINDOW = 90,
-  SETTLE_MS = 1500; // after the floor is in: its tiles rise and its late pictures go up first
-
-function goLite() {
-  if (isLite()) return;
-  document.documentElement.dataset.lite = "1";
-  window.dispatchEvent(new Event(LITE));
-}
 
 function gpuName() {
   const gl = document.createElement("canvas").getContext("webgl");
@@ -31,7 +19,9 @@ function gpuName() {
 }
 
 function readout() {
+  if (document.getElementById("perf-readout")) return;
   const el = document.createElement("div");
+  el.id = "perf-readout";
   Object.assign(el.style, {
     position: "fixed",
     left: "8px",
@@ -62,33 +52,9 @@ function readout() {
   requestAnimationFrame(tick);
 }
 
-// Starts the watch (SmoothScroll.tsx mounts it on every page); returns its stop.
-export function watchPerf(): () => void {
+// Reads the address once, on the first page (SmoothScroll.tsx runs it before it starts): ?full, ?perf.
+export function readPerfFlags() {
   const q = new URLSearchParams(location.search);
-  if (q.has("lite")) goLite();
+  if (q.has("full")) delete document.documentElement.dataset.lite;
   if (q.has("perf")) readout();
-  if (isLite()) return () => {};
-  const born = performance.now();
-  let raf = 0,
-    last = 0,
-    from = 0,
-    gaps: number[] = [];
-  const tick = (now: number) => {
-    const w = window as unknown as { __floorReady?: boolean };
-    // from SETTLE_MS after the floor is in (or 8s in, a page without one)
-    if (!from && (w.__floorReady || now - born > 8000)) from = now + SETTLE_MS;
-    if (from && now > from && last && !document.hidden) {
-      const g = now - last;
-      if (g < 250) gaps.push(g); // a hidden tab or a one-off stall is not a slow machine
-    }
-    last = now;
-    if (gaps.length >= WINDOW) {
-      const slow = gaps.sort((a, b) => a - b)[WINDOW >> 1] > SLOW_MS;
-      gaps = [];
-      if (slow) return goLite();
-    }
-    raf = requestAnimationFrame(tick);
-  };
-  raf = requestAnimationFrame(tick);
-  return () => cancelAnimationFrame(raf);
 }

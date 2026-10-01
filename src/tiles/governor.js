@@ -4,8 +4,8 @@
 // resolution (the frosted glass hides the difference), then the drawing resolution, x0.8 a step, down to
 // MIN_RATIO. A fast GPU never trips it and keeps everything at full. It never steps back up: a sharpness that
 // comes and goes reads worse than one that holds. onChange redraws the floor at the new resolution. In the
-// page's lite mode (perf-lite, website/perf.ts) it goes straight to its lightest: half-resolution glass
-// and a resolution of 1 (or MIN_RATIO, if it is already there). <html data-floor> reads "ratio/glass" (?perf).
+// page's lite mode (<html data-lite>, website/perf.ts) the glass starts at half resolution.
+// <html data-floor> reads "ratio/glass" (?perf).
 const SLOW_MS = 22, WINDOW = 36, MIN_RATIO = 0.8;
 
 export function governFloor(renderer, composer, onChange) {
@@ -18,13 +18,7 @@ export function governFloor(renderer, composer, onChange) {
     note();
     onChange();
   };
-  const lightest = () => {
-    renderer.transmissionResolutionScale = 0.5;
-    ratio = Math.min(ratio, 1);
-    note();
-  };
-  if (document.documentElement.dataset.lite === '1') lightest();
-  window.addEventListener('perf-lite', () => { lightest(); onChange(); }, { once: true });
+  if (document.documentElement.dataset.lite === '1') renderer.transmissionResolutionScale = 0.5;
   note();
   const render = composer.render.bind(composer);
   composer.render = (...args) => {
