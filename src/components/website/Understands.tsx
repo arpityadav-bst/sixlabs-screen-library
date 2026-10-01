@@ -5,8 +5,8 @@
 // container, rounded corners, hairline border; no shadow; navy type), ChatGPT; on the right, in the primary
 // (the CTA's navy) in white for the contrast, 6labs. Each opens with its maker's mark and name side by side
 // (brand-marks.tsx, both marks in one line style), then the same two lines: what it learns from, and what
-// it now understands. The comparison is in the type: each line leads with its verb in a softer ink and puts
-// what differs in full ink, and the two cards share their rows (a subgrid), so each line sits level with its
+// it now understands. Each line is in its card's one ink (navy on the grey, white on the navy), and the two
+// cards share their rows (a subgrid), so each line sits level with its
 // counterpart and reads across. The grid is the section below's (Jobs.tsx): the same width and side
 // padding, and its 24px gutter between the cards. They rise in one after the other when the section comes into
 // view, once, and a "vs" over the gutter between them joins the two.
@@ -48,12 +48,11 @@ const rise = (delay: number) => ({
   transition: { duration: 0.7, ease, delay },
 });
 
-// a card's two lines, the verb softened (navy at 45% / white at 50%) and the rest in full ink
-function Lines({ side, soft }: { side: "theirs" | "ours"; soft: string }) {
+// a card's two lines, all in the card's own ink (navy on the grey, white on the navy)
+function Lines({ side }: { side: "theirs" | "ours" }) {
   return LINES.map((l, k) => (
     <p key={k} className={line + (k === 0 ? " mt-6" : " mt-3")}>
-      <span className={soft}>{l[side][0]} </span>
-      {l[side][1]}
+      {l[side][0]} {l[side][1]}
     </p>
   ));
 }
@@ -70,14 +69,14 @@ export function Understands() {
             <ChatGptMark className="h-8 w-8" />
             <span className={name + " font-medium"}>ChatGPT</span>
           </span>
-          <Lines side="theirs" soft="text-[#0a1b33]/45" />
+          <Lines side="theirs" />
         </motion.div>
         <motion.div {...rise(0.15)} className={ours}>
           <span className={lockup}>
             <SixLabsMark className="h-8 w-8" />
             <span className={name + " font-normal"}>6labs</span>
           </span>
-          <Lines side="ours" soft="text-white/50" />
+          <Lines side="ours" />
         </motion.div>
         {/* the "vs" that joins them: over the gutter at the cards' middle (where the stacked cards meet, on a
             phone), a ring of the page's own colour round it, so it reads as cut into both cards */}
