@@ -1,7 +1,8 @@
 // The one tile shape every tile shares: a rounded square slab with a bevelled top edge. curve and bevel are
 // its segments per corner arc and across the bevel: the full 18 / 6 for the raised tile (shown large) and
-// still renders; the resting floor's tiles, a few dozen px across, take far fewer (floor.js), as at their
-// size the corners and the bevel read the same and 4,000 triangles a tile were mostly smaller than a pixel.
+// still renders; the resting floor's tiles, a few dozen px across, take far fewer (floor.js: 6 per corner, the
+// 1-2px bevel as one slope), as at their size the corners and the bevel read the same and 4,000 triangles a
+// tile were mostly smaller than a pixel.
 import * as THREE from 'three';
 
 export function tileGeometry(P, half, curve = 18, bevel = 6) {

@@ -74,7 +74,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   const ia = Math.max(1, Math.round((pa.x - ox) / pitch)), ja = Math.round((pa.z - oz) / pitch);
   const ax = cx(ia), azz = cz(ja);
 
-  const geo = tileGeometry(P, half), floorGeo = isStatic ? geo : tileGeometry(P, half, 6, 2); // the resting tiles: 620 triangles, not 4,140
+  const geo = tileGeometry(P, half), floorGeo = isStatic ? geo : tileGeometry(P, half, 6, 1); // the resting tiles: 412 triangles, not 4,140
   const tileH = P.core + P.bevelT; // visible height above the floor
 
   // Floor: the blue pool follows whichever tile is raised (the rig moves it and sets its strength).
