@@ -10,7 +10,7 @@ import { studioEnvironment, glassMaterials } from './materials.js';
 import { nearShadeUniforms, applyNearShade } from './near-shade.js';
 import { floorMaterial, floorUniforms } from './floor-material.js';
 import { buildComposer } from './post.js';
-import { bakedReady } from './baked-textures.js';
+import { bakedReady } from './baked-textures.js'; import { keepGpuAwake } from './gpu-awake.js';
 import { addCharacters } from './characters.js';
 import { planLoad } from './load-plan.js';
 import { idleUploader } from './upload.js';
@@ -40,6 +40,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   renderer.toneMappingExposure = P.exposure;
   Object.assign(renderer.domElement.style, { display: 'block', width: '100%', height: '100%' });
   container.appendChild(renderer.domElement);
+  const sleepless = isStatic ? null : keepGpuAwake(renderer); // the Radeon never idle long enough to power down (gpu-awake.js)
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(P.fogColor);
@@ -291,7 +292,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
       stop();
       mirrorRT.dispose();
       composer.dispose?.(); // the lean pipeline puts three's tone mapping chunk back (lean.js)
-      renderer.dispose();
+      sleepless?.(); renderer.dispose();
       renderer.forceContextLoss();
       renderer.domElement.remove();
     },
