@@ -2,8 +2,9 @@
 // premultiplied by its transparency (tools/stack-alpha.sh), in its top half and the transparency, as grey,
 // in its bottom half; WebGL puts the two back together as
 // one see-through image on the canvas. This is how the players' clips play in Safari and on iPhones, which
-// show a WebM clip's transparency as black (useClipFormat.ts). The drawing buffer is kept between frames so
-// the portrait swap's sweep (PortraitSwap.tsx) can read the canvas like a video. Null without WebGL.
+// show a WebM clip's transparency as black (useClipFormat.ts), and wherever the clip's frames are decoded
+// directly (clip-frames.ts). The drawing buffer is kept between frames so the portrait swap's sweep
+// (PortraitSwap.tsx) can read the canvas like a video. Null without WebGL.
 
 const VERTEX = `
 attribute vec2 p;
@@ -60,11 +61,31 @@ export function stackedAlpha(canvas: HTMLCanvasElement) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
-  // the video's current frame onto the canvas
-  return (video: HTMLVideoElement) => {
-    if (video.readyState < 2) return; // no frame yet
+  // A decoded frame goes up as it is where WebGL takes one; where it does not (an older WebKit), through a 2D
+  // canvas, which every browser with WebCodecs draws one into.
+  let flat: CanvasRenderingContext2D | null = null;
+  const upload = (src: HTMLVideoElement | VideoFrame) => {
+    if (src instanceof HTMLVideoElement || !flat) {
+      try {
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+        return;
+      } catch {
+        if (src instanceof HTMLVideoElement) return;
+      }
+      flat = document.createElement("canvas").getContext("2d");
+      if (!flat) return;
+    }
+    if (flat.canvas.width !== src.displayWidth) flat.canvas.width = src.displayWidth;
+    if (flat.canvas.height !== src.displayHeight) flat.canvas.height = src.displayHeight;
+    flat.drawImage(src, 0, 0);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, flat.canvas);
+  };
+
+  // the video's current frame, or a decoded frame, onto the canvas
+  return (src: HTMLVideoElement | VideoFrame) => {
+    if (src instanceof HTMLVideoElement && src.readyState < 2) return; // no frame yet
     gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+    upload(src);
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

@@ -18,8 +18,13 @@
 // the stacked canvas carries it as its background until the first frame is drawn on it, so switching to a
 // player whose clip is still loading shows them at once instead of an empty space. With ?perf each seek's
 // time to land and the first frame's wait are noted for the readout (window.__perfVideo, perf.ts).
+// Where the browser can decode it itself (WebCodecs, clip-frames.ts), a stacked clip is not seeked at all:
+// each step of the turn is decoded straight onto the canvas, in a few ms instead of a seek's 70 to 190; the
+// hidden <video> takes the clip only where that cannot run. The turn follows the cursor only while the
+// portrait is on (or about to come on) screen, so moving the mouse elsewhere on the page decodes nothing.
 import { useEffect, useRef, type RefObject } from "react";
 import { stackedAlpha } from "./stacked-alpha";
+import { canDecode, clipFrames, type ClipFrames } from "./clip-frames";
 
 const REACH = 0.5;
 const SWAY = 0.85;
@@ -68,20 +73,32 @@ export function PlayerPortrait({
     // stacked: what shows is the canvas, drawn from each frame the hidden clip lands on
     const canvas = stacked ? frame.current : null;
     const draw = canvas ? stackedAlpha(canvas) : null;
+    const decode = !!(stacked && draw && load && canDecode());
     const perf = (window as unknown as { __perfVideo?: PerfVideo }).__perfVideo;
-    if (perf) perf.format = stacked ? "stacked" : "webm";
+    if (perf) perf.format = stacked ? (decode ? "decoded" : "stacked") : "webm";
     const born = performance.now();
     let asked = 0,
       reported = false;
-    const paint = () => {
+    const landed = (ms: number) => {
+      if (!perf) return;
+      perf.seeks.push([performance.now(), ms]);
+      if (!reported) perf.first.push([performance.now(), performance.now() - born]);
+      reported = true;
+    };
+    const paint = (from: HTMLVideoElement | VideoFrame = video) => {
       if (!draw) return;
-      draw(video);
+      draw(from);
       if (canvas) canvas.style.backgroundImage = ""; // the first frame is in: the still steps aside
     };
+    const paintVideo = () => paint(video); // as a listener: its argument is the event
     const shown = canvas ?? video;
     let target = 0,
-      seeking = false;
+      seeking = false,
+      onScreen = false,
+      frames: ClipFrames | null = null;
+    const duration = () => frames?.duration ?? video.duration;
     const seek = () => {
+      if (frames) return frames.show(target);
       if (
         !video.duration ||
         seeking ||
@@ -93,12 +110,7 @@ export function PlayerPortrait({
       video.currentTime = target;
     };
     const onSeeked = () => {
-      if (perf && asked) {
-        perf.seeks.push([performance.now(), performance.now() - asked]);
-        if (!reported)
-          perf.first.push([performance.now(), performance.now() - born]);
-        reported = true;
-      }
+      if (asked) landed(performance.now() - asked);
       paint();
       seeking = false;
       seek(); // the target may have moved while that seek ran
@@ -125,41 +137,58 @@ export function PlayerPortrait({
     };
     // the clip's time for that look
     const aim = () => {
-      if (!video.duration) return;
+      const length = duration();
+      if (!length || !onScreen) return;
       const d = look();
       const share = d < 0 ? straight * (1 + d) : straight + d * (1 - straight);
-      target = share * video.duration;
+      target = share * length;
       seek();
     };
+    // the decoded frames, once the clip is in; where they cannot run, the hidden <video> takes the clip
+    const gone = new AbortController();
+    if (decode)
+      clipFrames(stacked!, paint, landed, gone.signal)
+        .catch(() => null)
+        .then((f) => {
+          if (gone.signal.aborted) return f?.close();
+          if (!f) video.src = stacked!;
+          frames = f;
+          aim();
+        });
     video.addEventListener("seeked", onSeeked);
-    video.addEventListener("loadeddata", paint);
+    video.addEventListener("loadeddata", paintVideo);
     video.addEventListener("loadedmetadata", aim);
     if (video.readyState >= 1) aim();
     // the module listener was added first, so it has noted the pointer by the time this runs
     window.addEventListener("mousemove", aim, { passive: true });
-    // touch: the sway runs frame by frame while the portrait is on screen
+    // on screen (or within 200px of it), the portrait follows; touch: the sway runs frame by frame meanwhile
     let raf = 0;
     const tick = () => {
       aim();
       raf = requestAnimationFrame(tick);
     };
-    const io =
-      touch && !still
-        ? new IntersectionObserver(([e]) => {
-            if (e.isIntersecting && !raf) raf = requestAnimationFrame(tick);
-            if (!e.isIntersecting) {
-              cancelAnimationFrame(raf);
-              raf = 0;
-            }
-          })
-        : null;
-    io?.observe(shown);
+    const io = new IntersectionObserver(
+      ([e]) => {
+        onScreen = e.isIntersecting;
+        if (onScreen) aim();
+        if (!touch || still) return;
+        if (onScreen && !raf) raf = requestAnimationFrame(tick);
+        if (!onScreen) {
+          cancelAnimationFrame(raf);
+          raf = 0;
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    io.observe(shown);
     return () => {
+      gone.abort();
+      frames?.close();
       video.removeEventListener("seeked", onSeeked);
-      video.removeEventListener("loadeddata", paint);
+      video.removeEventListener("loadeddata", paintVideo);
       video.removeEventListener("loadedmetadata", aim);
       window.removeEventListener("mousemove", aim);
-      io?.disconnect();
+      io.disconnect();
       cancelAnimationFrame(raf);
     };
   }, [src, straight, ref, load, stacked, frame]);
@@ -169,7 +198,7 @@ export function PlayerPortrait({
       <>
         <video
           ref={ref}
-          src={load ? stacked : undefined}
+          src={load && !canDecode() ? stacked : undefined} // decoded instead where it can be (clip-frames.ts)
           muted
           playsInline
           preload="auto"
