@@ -1,0 +1,254 @@
+"use client";
+
+// ?perf=bench: measures what each part of the hero floor costs on this machine, so it can be made lighter
+// where it is heavy and nowhere else. Once the floor is in it pauses the auto-play (window.__benchHold,
+// autoplay.js), then for each case below changes one thing from the full setting, lets it settle, draws the
+// floor on every frame for MEASURE_MS and keeps the frame times: the median, the slowest 5% and the fps,
+// each against the full setting. Alongside: the GPU, the screen and canvas size, the floor's draw calls,
+// triangles, textures and shader programs, and an estimate of its drawing buffers' memory. The panel's Copy
+// puts it all on the clipboard as text. The floor's parts come from window.__floorPerf (governor.js).
+type Cfg = { r: number; glass: number; aa: number };
+type Obj = {
+  isInstancedMesh?: boolean;
+  visible: boolean;
+  material?: Mat | Mat[];
+  traverse(f: (o: Obj) => void): void;
+};
+type Mat = {
+  transmission?: number;
+  needsUpdate?: boolean;
+  customProgramCacheKey?: () => string;
+};
+type Floor = {
+  renderer: {
+    domElement: HTMLCanvasElement;
+    info: {
+      autoReset: boolean;
+      reset(): void;
+      render: { calls: number; triangles: number };
+      memory: { geometries: number; textures: number };
+      programs?: unknown[];
+    };
+  };
+  composer: {
+    render(): void;
+    passes: { enabled: boolean; uniforms?: Record<string, unknown> }[];
+  };
+  scene: Obj;
+  refiner?: { moving(): void };
+  dpr: number;
+  level: number;
+  levels: Cfg[];
+  set(cfg: Partial<Cfg>): void;
+  restore(): void;
+};
+
+const SETTLE_MS = 700,
+  MEASURE_MS = 2200;
+const FULL: Cfg = { r: Infinity, glass: 1, aa: 4 };
+
+const frame = () => new Promise<number>((r) => requestAnimationFrame(r));
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+// every material of every object, with its object
+function each(scene: Obj, f: (o: Obj, m: Mat) => void) {
+  scene.traverse((o) => {
+    const ms = Array.isArray(o.material)
+      ? o.material
+      : o.material
+        ? [o.material]
+        : [];
+    ms.forEach((m) => f(o, m));
+  });
+}
+
+// One thing switched off for a case, and its undo.
+function toggle(fp: Floor, what: "grain" | "glass" | "busts" | "tiles") {
+  const undo: (() => void)[] = [];
+  if (what === "grain")
+    fp.composer.passes
+      .filter((p) => p.uniforms && "uAmt" in p.uniforms)
+      .forEach((p) => {
+        p.enabled = false;
+        undo.push(() => (p.enabled = true));
+      });
+  each(fp.scene, (o, m) => {
+    if (what === "glass" && (m.transmission ?? 0) > 0) {
+      const t = m.transmission;
+      m.transmission = 0;
+      m.needsUpdate = true;
+      undo.push(() => {
+        m.transmission = t;
+        m.needsUpdate = true;
+      });
+    }
+    const bust = m.customProgramCacheKey?.().startsWith("char-");
+    if ((what === "busts" && bust) || (what === "tiles" && o.isInstancedMesh)) {
+      if (o.visible) undo.push(() => (o.visible = true));
+      o.visible = false;
+    }
+  });
+  return () => undo.forEach((u) => u());
+}
+
+// the floor drawn on every frame for ms; the frame times
+async function measure(fp: Floor, ms: number) {
+  const gaps: number[] = [];
+  let last = await frame();
+  const end = last + ms;
+  while (last < end) {
+    fp.refiner?.moving();
+    fp.composer.render();
+    const now = await frame();
+    gaps.push(now - last);
+    last = now;
+  }
+  gaps.sort((a, b) => a - b);
+  return {
+    med: gaps[gaps.length >> 1],
+    p95: gaps[Math.floor(gaps.length * 0.95)],
+  };
+}
+
+// the floor's own count, over one whole frame (three resets it for every pass otherwise)
+function sceneInfo(fp: Floor) {
+  const info = fp.renderer.info;
+  info.autoReset = false;
+  info.reset();
+  fp.refiner?.moving();
+  fp.composer.render();
+  const out = {
+    calls: info.render.calls,
+    triangles: info.render.triangles,
+    textures: info.memory.textures,
+    geometries: info.memory.geometries,
+    programs: info.programs?.length ?? 0,
+  };
+  info.autoReset = true;
+  info.reset();
+  return out;
+}
+
+// the drawing buffers' memory, roughly: the scene's multisampled target, the glass pass (three.js keeps it at
+// 4 samples at least, plus its mipmapped copy), the composer's two and the anti-aliasing's hold, the canvas
+function buffersMB(w: number, h: number, c: Cfg) {
+  const px = w * h,
+    g = px * c.glass * c.glass;
+  const scene = px * Math.max(1, c.aa) * (8 + 4),
+    glass = g * 4 * (8 + 4) + g * 8 * 1.34,
+    rest = px * 8 * 3 + px * 8;
+  return Math.round((scene + glass + rest) / 1e6);
+}
+
+function panel() {
+  const el = document.createElement("div");
+  Object.assign(el.style, {
+    position: "fixed",
+    left: "8px",
+    bottom: "44px",
+    zIndex: "2147483647",
+    maxWidth: "min(560px, 92vw)",
+    maxHeight: "70vh",
+    overflow: "auto",
+    font: "11px/1.5 ui-monospace, monospace",
+    color: "#fff",
+    background: "rgba(10,27,51,0.92)",
+    padding: "10px 12px",
+    borderRadius: "10px",
+    whiteSpace: "pre",
+  });
+  document.body.appendChild(el);
+  return el;
+}
+
+export async function runBench(gpu: string) {
+  const el = panel();
+  const say = (t: string) => (el.textContent = t);
+  say("perf bench: waiting for the floor…");
+  const w = window as unknown as {
+    __floorPerf?: Floor;
+    __floorReady?: boolean;
+    __benchHold?: boolean;
+  };
+  while (!w.__floorPerf || !w.__floorReady) await sleep(250);
+  const fp = w.__floorPerf;
+  const chosen = fp.levels[fp.level];
+  await sleep(2500); // the tiles rise and their first pictures go up
+  w.__benchHold = true;
+  say("perf bench: pausing the auto-play… (keep the mouse off the floor)");
+  await sleep(3500); // the activation under way finishes
+
+  const cases: [string, Partial<Cfg>, Parameters<typeof toggle>[1]?][] = [
+    ["full (dpr, glass 1, aa 4)", {}],
+    ["aa 2", { aa: 2 }],
+    ["aa 0 (no anti-aliasing)", { aa: 0 }],
+    ["glass pass 0.5", { glass: 0.5 }],
+    ["glass pass 0.25", { glass: 0.25 }],
+    ["resolution 1.5", { r: 1.5 }],
+    ["resolution 1", { r: 1 }],
+    ["resolution 0.75", { r: 0.75 }],
+    ["glass effect off", {}, "glass"],
+    ["film grain off", {}, "grain"],
+    ["portraits hidden", {}, "busts"],
+    ["floor tiles hidden", {}, "tiles"],
+  ];
+  const rows: string[] = [];
+  let base = 0,
+    info = sceneInfo(fp);
+  for (const [k, [name, cfg, off]] of cases.entries()) {
+    say(`perf bench: ${k + 1}/${cases.length} ${name}…\n\n${rows.join("\n")}`);
+    fp.set({ ...FULL, ...cfg });
+    const undo = off ? toggle(fp, off) : () => {};
+    await measure(fp, SETTLE_MS); // settles, and compiles what changed
+    if (k === 0) info = sceneInfo(fp);
+    const m = await measure(fp, MEASURE_MS);
+    undo();
+    if (k === 0) base = m.med;
+    const vs =
+      k === 0
+        ? ""
+        : `  ${m.med <= base ? "-" : "+"}${Math.abs(m.med - base).toFixed(1)} ms`;
+    rows.push(
+      `${name.padEnd(28)} ${m.med.toFixed(1).padStart(6)} ms  p95 ${m.p95.toFixed(1).padStart(6)}  ${Math.round(
+        1000 / m.med,
+      )
+        .toString()
+        .padStart(3)} fps${vs}`,
+    );
+  }
+  fp.restore();
+  w.__benchHold = false;
+
+  const c = fp.renderer.domElement,
+    cw = c.clientWidth,
+    ch = c.clientHeight;
+  const head = [
+    `6labs perf bench · ${new Date().toISOString().slice(0, 16)}`,
+    `gpu ${gpu}`,
+    `dpr ${fp.dpr} · screen ${screen.width}x${screen.height} · floor ${cw}x${ch} css px`,
+    `governor had chosen ${Math.min(fp.dpr, chosen.r).toFixed(2)}/${chosen.glass}/${chosen.aa}`,
+    `floor: ${info.calls} draw calls · ${(info.triangles / 1e6).toFixed(2)} M triangles · ${info.textures} textures · ${info.geometries} geometries · ${info.programs} programs`,
+    `drawing buffers ~${buffersMB(cw * fp.dpr, ch * fp.dpr, FULL)} MB at full (estimate)`,
+    `${navigator.userAgent.replace(/^Mozilla\/5\.0 /, "")}`,
+    "",
+    "case                         median          worst 5%    fps  vs full",
+  ];
+  const text = [...head, ...rows].join("\n");
+  el.textContent = text + "\n\n";
+  const copy = document.createElement("button");
+  copy.textContent = "Copy";
+  Object.assign(copy.style, {
+    font: "12px ui-monospace, monospace",
+    padding: "4px 10px",
+    borderRadius: "6px",
+    border: "0",
+    background: "#fff",
+    color: "#0a1b33",
+    cursor: "pointer",
+  });
+  copy.onclick = () =>
+    navigator.clipboard
+      ?.writeText(text)
+      .then(() => (copy.textContent = "Copied"));
+  el.appendChild(copy);
+}

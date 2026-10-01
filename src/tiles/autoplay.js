@@ -93,7 +93,7 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner,
 
   (async () => {
     while (!stopped) {
-      if (held) { await wait(250); continue; }
+      if (held || window.__benchHold) { await wait(250); continue; } // __benchHold: ?perf=bench measuring
       if (resetReq) {
         resetReq = false;
         ctl.clearAll();

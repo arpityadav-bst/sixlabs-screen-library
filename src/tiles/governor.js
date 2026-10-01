@@ -7,6 +7,8 @@
 // 0.75. A fast GPU never trips it and keeps everything at full.
 // It never steps back up: a sharpness that comes and goes reads worse than one that holds. onChange redraws
 // the floor at the new resolution; <html data-floor> reads "ratio/glass/aa" (?perf, website/perf.ts).
+// With ?perf in the address it also hands the page's benchmark (website/perf-bench.ts) window.__floorPerf:
+// the floor's parts, and set(cfg) / restore() to hold a level of its own choosing while it measures.
 const SLOW_MS = 22;
 const LEVELS = [
   { r: Infinity, glass: 1, aa: 4 }, // r: the most device pixels it draws per CSS pixel
@@ -19,12 +21,12 @@ const LEVELS = [
   { r: 0.75, glass: 0.25, aa: 0 },
 ];
 
-export function governFloor(renderer, composer, onChange) {
+export function governFloor(renderer, composer, onChange, parts = {}) {
   const dpr = window.devicePixelRatio || 1, aaPass = composer.passes[0];
-  let level = 0;
+  let level = 0, held = null; // held: a benchmark's own level, the governor standing aside meanwhile
   let ratio = dpr, lastRender = 0, prev = 0, gaps = [], since = 0;
   const apply = () => {
-    const L = LEVELS[level];
+    const L = held ?? LEVELS[level];
     ratio = Math.min(dpr, L.r);
     renderer.transmissionResolutionScale = L.glass;
     const rt = aaPass?._sampleRenderTarget;
@@ -46,6 +48,7 @@ export function governFloor(renderer, composer, onChange) {
       gaps.push(gap);
       since ||= now;
     }
+    if (held) gaps = [];
     if (gaps.length >= 3 && now - since >= 1000) {
       const med = gaps.sort((a, b) => a - b)[gaps.length >> 1];
       gaps = [];
@@ -60,5 +63,13 @@ export function governFloor(renderer, composer, onChange) {
     requestAnimationFrame(probe);
   };
   requestAnimationFrame(probe);
+  if (new URLSearchParams(location.search).has('perf')) {
+    window.__floorPerf = {
+      renderer, composer, ...parts, dpr, levels: LEVELS,
+      get level() { return level; },
+      set(cfg) { held = { ...LEVELS[level], ...held, ...cfg }; apply(); onChange(); },
+      restore() { held = null; apply(); onChange(); },
+    };
+  }
   return { get ratio() { return ratio; } };
 }
