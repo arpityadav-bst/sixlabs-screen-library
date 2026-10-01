@@ -9,9 +9,10 @@
 // spentTint, the colour a used tile rests in (floor-params.json's own otherwise). On a phone (below md) the
 // tiles' pictures are the 512px copies (tiles/512/, tiles-holo/512/): the tiles are small there, and they
 // look the same at a little over half the download.
-// Two screens past it, the floor is let go entirely (floor.js dispose): its drawing buffers, its pictures and
+// Three screens past it, the floor is let go entirely (floor.js dispose): its drawing buffers, its pictures and
 // its hold on the faster GPU (a two-GPU Mac keeps its Radeon powered, and warm, while any page holds it). It
-// is built again, its tiles already in place (no load-in), once the visitor is back within a screen of it, or
+// is built again, a step at a time (build-steps.js) and its tiles already in place (no load-in), once the
+// visitor is back within two screens of it, or
 // the moment a glide to the top starts (wakeFloor: the back-to-top button, an in-page link to the top), so it
 // is drawing before it is in view. onReady fires once, with a handle that reaches whichever floor is built.
 import { useEffect, useRef } from "react";
@@ -86,6 +87,7 @@ export function TileFloor({
             spentTint,
             introDelay: again ? 0 : introDelay,
             introSeconds: again ? 0 : undefined,
+            rebuild: again,
             distScale,
             mixWaves,
             onConvert: () => convert.current?.(),
@@ -100,8 +102,8 @@ export function TileFloor({
         })
         .catch(() => (building = false));
     };
-    const near = new IntersectionObserver(([e]) => e.isIntersecting && build(), { rootMargin: "100% 0px" });
-    const far = new IntersectionObserver(([e]) => !e.isIntersecting && release(), { rootMargin: "200% 0px" });
+    const near = new IntersectionObserver(([e]) => e.isIntersecting && build(), { rootMargin: "200% 0px" });
+    const far = new IntersectionObserver(([e]) => !e.isIntersecting && release(), { rootMargin: "300% 0px" });
     near.observe(box);
     far.observe(box);
     wakers.add(build);
