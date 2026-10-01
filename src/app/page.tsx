@@ -25,12 +25,12 @@ const GROUPS: { title: string; rows: Row[] }[] = [
         desc: "The same landing page with the glass tile floor filling the whole first screen, edge to edge: the header lies over it, and the numbers, the scroll cue and the wave button sit inside it along its foot.",
       },
       {
-        href: "/website-hologram",
+        href: "/website-digital-ai",
         name: "6labs website, digital AI",
         desc: "The landing page with every AI copy as a faceless blue scan-line hologram: on the hero's tiles, in the players' Human / AI switch and in the footer. The humans are unchanged.",
       },
       {
-        href: "/6labs-fullview-hologram",
+        href: "/6labs-fullview-digital-ai",
         name: "6labs fullview, digital AI",
         desc: "The fullview landing page with the same hologram AI copies.",
       },
