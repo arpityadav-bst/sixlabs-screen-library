@@ -33,7 +33,7 @@ export function LiquidLine({
   accents: boolean[];
   onLive: (live: boolean) => void;
 }) {
-  const host = useRef<HTMLDivElement>(null);
+  const host = useRef<HTMLSpanElement>(null);
   const litNow = useRef(lit);
   useEffect(() => {
     litNow.current = lit;
@@ -165,7 +165,7 @@ export function LiquidLine({
   }, [para, accents, onLive]);
 
   return (
-    <div
+    <span
       ref={host}
       aria-hidden
       className="pointer-events-none absolute max-lg:hidden"
