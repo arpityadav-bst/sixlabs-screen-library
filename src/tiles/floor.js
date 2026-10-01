@@ -10,7 +10,6 @@ import { studioEnvironment, glassMaterials } from './materials.js';
 import { nearShadeUniforms, applyNearShade } from './near-shade.js';
 import { floorMaterial, floorUniforms } from './floor-material.js';
 import { buildComposer } from './post.js';
-import { buildSteps } from './build-steps.js';
 import { addCharacters } from './characters.js';
 import { planLoad } from './load-plan.js';
 import { idleUploader } from './upload.js';
@@ -25,7 +24,7 @@ import { startAutoplay } from './autoplay.js';
 
 // distScale pulls the camera back (smaller tiles, more of them: the grid is built to what it sees); mixWaves
 // casts the second wave's characters on the middle tiles and the first wave's around them (casts.js).
-export async function createFloor(container, { params, base = '/tiles', aiBase = base, res = 768, isStatic = false, expose = false, introDelay = 0, introSeconds = 0.9, rebuild = false, onConvert = () => {}, distScale = 1, mixWaves = false, spentTint = '' } = {}) {
+export async function createFloor(container, { params, base = '/tiles', aiBase = base, res = 768, isStatic = false, expose = false, introDelay = 0, onConvert = () => {}, distScale = 1, mixWaves = false, spentTint = '' } = {}) {
   const RAW0 = params ?? await fetch(`${base}/floor-params.json`).then((r) => r.json());
   const RAW = distScale === 1 ? RAW0 : { ...RAW0, dist: RAW0.dist * distScale };
   const common = Object.assign({ W: 1920, H: 1080, assetBase: base, aiAssetBase: aiBase, picDir: res === 768 ? '' : `/${res}` }, RAW, spentTint && { spentTint }); // aiBase: where chars-ai/ is read from (the hologram copies live in /tiles-holo)
@@ -40,11 +39,10 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   renderer.toneMappingExposure = P.exposure;
   Object.assign(renderer.domElement.style, { display: 'block', width: '100%', height: '100%' });
   container.appendChild(renderer.domElement);
-  const { step, done } = buildSteps(rebuild); await step('context'); // built again: a frame between heavy steps (build-steps.js)
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(P.fogColor);
-  scene.environment = studioEnvironment(renderer, P); await step('lighting');
+  scene.environment = studioEnvironment(renderer, P);
   scene.environmentIntensity = P.envI;
   scene.fog = new THREE.Fog(P.fogColor, P.dist + P.fogNear, P.dist + P.fogFar);
 
@@ -174,13 +172,13 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   // Capture the reflection from the activeAt tile, with that tile and its busts out of the way.
   if (P.actSideMirror > 0) {
     const own = chars.get(`${ia},${ja}`)?.meshes ?? [];
-    renderer.setRenderTarget(mirrorRT); await renderer.compileAsync(scene, camera); renderer.setRenderTarget(null); await step('reflection shaders'); // in parallel where the driver allows
+    renderer.setRenderTarget(mirrorRT); await renderer.compileAsync(scene, camera); renderer.setRenderTarget(null); // its shaders first, in parallel where the driver allows
     mirrorCam.position.set(ax, P.lift + tileH / 2, azz);
     setTileLift(ia, ja, 0, true);
     own.forEach((m) => { m.visible = false; });
     mirrorCam.update(renderer, scene);
     own.forEach((m) => { m.visible = true; });
-    setTileLift(ia, ja, 0, false); await step('reflection');
+    setTileLift(ia, ja, 0, false);
   }
 
   if (isStatic) {
@@ -208,7 +206,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   await renderer.compileAsync(scene, camera);
   renderer.setRenderTarget(null);
   rigs.forEach((r) => r.preview(false));
-  warmTarget.dispose(); await step('shaders');
+  warmTarget.dispose();
 
   // Live: one multisampled frame (lean.js). Static renders take the full supersampled frame in one go
   // (post.js). Resizes re-run it; an unchanged size is skipped (the
@@ -244,11 +242,10 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
     rig.clear();
     nearU.uShadowAmt.value = nearU.uSpillAmt.value = 0;
     U.uGlowS.value = U.uGlowTint.value = 0;
-    await step('first frame');
   }
-  draw(true); await step('frame');
+  draw(true);
   // Live: the tiles fade in and rise out of the floor; a resize mid-way snaps them into place.
-  const intro = isStatic ? null : playIntro({ renderer, composer, field, rise: tileH, delay: introDelay, seconds: introSeconds });
+  const intro = isStatic ? null : playIntro({ renderer, composer, field, rise: tileH, delay: introDelay });
   const resize = new ResizeObserver(() => { const w = `${Math.max(1, container.clientWidth)}x${Math.max(1, container.clientHeight)}`; if (w !== size) intro?.cancel(); draw(); });
   resize.observe(container);
 
@@ -276,7 +273,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
     reset = auto.reset;
   });
 
-  window.__floorReady = true; done();
+  window.__floorReady = true;
   if (expose) {
     window.__info = { characterTiles: busted.length, active: [ia, ja], activeScreen: toScreen(ax, azz).map(Math.round) };
     window.__done = true;

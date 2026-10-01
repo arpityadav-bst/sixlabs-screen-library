@@ -100,7 +100,7 @@ export function perfReadout() {
   const video: PerfVideo = { seeks: [], first: [] };
   (window as unknown as { __perfVideo?: PerfVideo }).__perfVideo = video;
   // the floor's own moments, for the log: a reset wave running, the second cast loading (autoplay.js, casts.js)
-  const events: { wave?: boolean; cast?: string; build?: string } = {}; // build: each step's time (tiles/build-steps.js)
+  const events: { wave?: boolean; cast?: string } = {};
   (window as unknown as { __floorEvents?: typeof events }).__floorEvents = events;
   let gpu = gpuName(),
     gpuFloor = false;
@@ -169,13 +169,12 @@ export function perfReadout() {
             `${fps} fps`,
             `worst5 ${p95.toFixed(0)}ms`,
             `>50ms ${long}`,
-            `floor ${d.floor ?? "-"}${events.wave ? " WAVE" : ""}${events.cast ? ` cast ${events.cast}` : ""}${events.build ? ` · floor ${events.build}` : ""}`,
+            `floor ${d.floor ?? "-"}${events.wave ? " WAVE" : ""}${events.cast ? ` cast ${events.cast}` : ""}`,
             clips.replace(/^clips /, ""),
           ]
             .filter(Boolean)
             .join(" · "),
         );
-        events.build = undefined; // on its one line
         if (log.length > 180) log.shift();
       }
       text.textContent =

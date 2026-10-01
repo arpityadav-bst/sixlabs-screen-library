@@ -9,7 +9,6 @@ const ease = (t) => 1 - Math.pow(1 - t, 3);
 // field: the group holding every tile and bust. Resolves once the intro has finished (or was cut short
 // by a resize or dispose, in which case the field snaps to its final place).
 // delay: seconds the bare floor holds before the tiles start (room for a page loader to leave first).
-// seconds 0: the tiles in place at once (the floor built again on the way back to it, TileFloor.tsx).
 export function playIntro({ renderer, composer, field, rise, seconds = 0.9, delay = 0 }) {
   const size = renderer.getDrawingBufferSize(new THREE.Vector2());
   const base = new THREE.FramebufferTexture(size.x, size.y);
@@ -38,7 +37,7 @@ export function playIntro({ renderer, composer, field, rise, seconds = 0.9, dela
     // whole floor every frame here stuttered the full view's typed title word).
     if (drawn && (now - start) / 1000 < delay) { raf = requestAnimationFrame(frame); return; }
     drawn = true;
-    const t = seconds > 0 ? Math.min(1, Math.max(0, (now - start) / 1000 - delay) / seconds) : 1, e = ease(t);
+    const t = Math.min(1, Math.max(0, (now - start) / 1000 - delay) / seconds), e = ease(t);
     field.position.y = -rise * (1 - e);
     blend(e);
     composer.render();

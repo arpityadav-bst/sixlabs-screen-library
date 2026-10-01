@@ -6,9 +6,6 @@
 // over them shows that picture through Canvas UI's liquid (liquid/liquid-sim.ts): the cursor drags the words
 // about, splits their colours round it and lights them where it flows. Once the canvas is live, onLive(true)
 // tells the line to make its own words transparent; they stay in place for layout, selection and reading.
-// The simulation is built while the line is within a screen of the view and let go two screens past it, its
-// canvas with it (a canvas's lost context cannot be had again), so the faster GPU it asks for is let go too
-// (a two-GPU Mac keeps its Radeon powered, and warm, while any page holds it; TileFloor.tsx does the same).
 import { useEffect, useRef, type RefObject } from "react";
 import { isOff } from "./perf";
 
@@ -33,7 +30,7 @@ export function LiquidLine({
   accents: boolean[];
   onLive: (live: boolean) => void;
 }) {
-  const host = useRef<HTMLSpanElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
   const litNow = useRef(lit);
   useEffect(() => {
     litNow.current = lit;
@@ -41,9 +38,9 @@ export function LiquidLine({
 
   useEffect(() => {
     const p = para.current,
-      box = host.current;
+      c = canvas.current;
     const mq = window.matchMedia(DESKTOP);
-    if (!p || !box || !mq.matches || isOff("liquid")) return; // ?off=liquid (perf.ts)
+    if (!p || !c || !mq.matches || isOff("liquid")) return; // ?off=liquid (perf.ts)
     const pic = document.createElement("canvas"),
       ctx = pic.getContext("2d");
     if (!ctx) return;
@@ -111,62 +108,35 @@ export function LiquidLine({
     };
 
     let sim: { destroy(): void } | null = null,
-      c: HTMLCanvasElement | null = null,
-      gone = false,
-      wanted = false,
-      loading = false;
+      gone = false;
     const ro = new ResizeObserver(layout);
-    // the simulation loads once the line's font is in (the words are drawn in it)
-    const build = () => {
-      wanted = true;
-      if (sim || loading) return;
-      loading = true;
-      Promise.all([document.fonts.ready, import("./liquid/liquid-sim")]).then(
-        ([, { createLiquid }]) => {
-          loading = false;
-          if (gone || !wanted || sim) return;
-          layout();
-          ro.observe(p);
-          c = document.createElement("canvas");
-          c.style.cssText = "display:block;width:100%;height:100%";
-          box.appendChild(c);
-          sim = createLiquid(c, pic, frame);
-          if (!sim) return c.remove();
-          ready = true;
-          onLive(mq.matches);
-        },
-      );
-    };
-    const release = () => {
-      wanted = false;
-      if (!sim) return;
-      sim.destroy();
-      sim = null;
-      c?.remove();
-      ready = false;
-      onLive(false);
-    };
-    const near = new IntersectionObserver(([e]) => e.isIntersecting && build(), { rootMargin: "100% 0px" });
-    const far = new IntersectionObserver(([e]) => !e.isIntersecting && release(), { rootMargin: "200% 0px" });
-    near.observe(box);
-    far.observe(box);
+    // the simulation loads with the effect only, once the line's font is in (the words are drawn in it)
+    Promise.all([document.fonts.ready, import("./liquid/liquid-sim")]).then(
+      ([, { createLiquid }]) => {
+        if (gone) return;
+        layout();
+        ro.observe(p);
+        sim = createLiquid(c, pic, frame);
+        if (!sim) return;
+        ready = true;
+        onLive(true);
+      },
+    );
     // narrowed below a desktop, the canvas hides (max-lg:hidden) and the words show their own ink again
     const onChange = () => ready && onLive(mq.matches);
     mq.addEventListener("change", onChange);
     return () => {
       gone = true;
-      near.disconnect();
-      far.disconnect();
       mq.removeEventListener("change", onChange);
       ro.disconnect();
-      release();
+      sim?.destroy();
       onLive(false);
     };
   }, [para, accents, onLive]);
 
   return (
-    <span
-      ref={host}
+    <canvas
+      ref={canvas}
       aria-hidden
       className="pointer-events-none absolute max-lg:hidden"
       style={{

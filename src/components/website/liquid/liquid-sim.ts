@@ -196,7 +196,6 @@ export function createLiquid(canvas: HTMLCanvasElement, picture: HTMLCanvasEleme
       quad.dispose();
       tex.dispose();
       renderer.dispose();
-      renderer.forceContextLoss(); // the context itself, at once, not when the canvas is collected
     },
   };
 }
