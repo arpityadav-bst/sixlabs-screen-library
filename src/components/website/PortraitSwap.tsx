@@ -101,12 +101,19 @@ export function PortraitSwap({
             : incoming.height) || 1080;
     cv.width = W;
     cv.height = H;
+    // The new copy's frame, copied here once a frame (the band's rows only) and every step below reads the copy:
+    // reading the copy's own canvas or video six times a frame cost a readback each in Safari, where the clips
+    // are WebGL canvases (stacked-alpha.ts), and held the switch to a few frames a second there.
+    const snap = document.createElement("canvas");
+    snap.width = W;
+    snap.height = H;
+    const sx = snap.getContext("2d");
     // one colour channel at a time is built here, then added onto the band
     const work = document.createElement("canvas");
     work.width = W;
     work.height = H;
     const wx = work.getContext("2d");
-    if (!wx) return settle();
+    if (!wx || !sx) return settle();
     const band = BAND * H,
       rise = DOME * H;
     // the dome's drop below its middle at x: an ellipse, flat on top and steep at the sides
@@ -125,16 +132,18 @@ export function PortraitSwap({
       const top = Math.max(0, Math.floor(mid - band / 2)),
         h = Math.min(H, Math.ceil(mid + rise + band / 2)) - top;
       if (h <= 0) return;
+      sx.clearRect(0, top, W, h);
+      sx.drawImage(incoming, 0, top, W, h, 0, top, W, h);
       // the new copy's frame, channel by channel, each shifted sideways, added back together
       ctx.globalCompositeOperation = "lighter";
       for (const [colour, dx] of CHANNELS) {
         wx.globalCompositeOperation = "copy";
-        wx.drawImage(incoming, 0, top, W, h, dx, top, W, h);
+        wx.drawImage(snap, 0, top, W, h, dx, top, W, h);
         wx.globalCompositeOperation = "multiply";
         wx.fillStyle = colour;
         wx.fillRect(0, top, W, h);
         wx.globalCompositeOperation = "destination-in"; // back to the character's own outline
-        wx.drawImage(incoming, 0, top, W, h, dx, top, W, h);
+        wx.drawImage(snap, 0, top, W, h, dx, top, W, h);
         ctx.drawImage(work, 0, top, W, h, 0, top, W, h);
       }
       // kept only inside the halftone: dots from specks at the band's edges to solid on the dome's line
@@ -172,7 +181,7 @@ export function PortraitSwap({
       wx.stroke();
       wx.restore();
       wx.globalCompositeOperation = "destination-in";
-      wx.drawImage(incoming, 0, top, W, h, 0, top, W, h);
+      wx.drawImage(snap, 0, top, W, h, 0, top, W, h);
       ctx.globalCompositeOperation = "source-over";
       ctx.drawImage(work, 0, top, W, h, 0, top, W, h);
     };

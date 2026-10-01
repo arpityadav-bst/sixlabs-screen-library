@@ -27,6 +27,10 @@ import { stackedAlpha } from "./stacked-alpha";
 import { canDecode, clipFrames, type ClipFrames } from "./clip-frames";
 
 const REACH = 0.5;
+// The turn eases after the cursor rather than jumping to it (seconds to close about two thirds of the way):
+// steps between the frames it can show read as one motion, and a player whose clip has just come in turns
+// from straight ahead (its still) toward the cursor instead of snapping there.
+const FOLLOW_S = 0.09;
 const SWAY = 0.85;
 const SWAY_S = 9;
 const T0 = typeof performance !== "undefined" ? performance.now() : 0;
@@ -135,14 +139,29 @@ export function PlayerPortrait({
           ? Math.max(-1, (pointerX - cx) / (cx * REACH))
           : Math.min(1, (pointerX - cx) / ((window.innerWidth - cx) * REACH));
     };
-    // the clip's time for that look
-    const aim = () => {
+    // the clip's time for that look, eased toward (FOLLOW_S) from where the turn is now
+    let goal = straight,
+      eased: number | null = null,
+      easing = 0,
+      lastT = 0;
+    const follow = (now: number) => {
       const length = duration();
-      if (!length || !onScreen) return;
-      const d = look();
-      const share = d < 0 ? straight * (1 + d) : straight + d * (1 - straight);
-      target = share * length;
+      if (!length) return void (easing = 0);
+      const dt = lastT ? Math.min(0.05, (now - lastT) / 1000) : 1 / 60;
+      lastT = now;
+      eased ??= straight; // first shown: from straight ahead, as its still stands
+      eased += (goal - eased) * (1 - Math.exp(-dt / FOLLOW_S));
+      if (Math.abs(goal - eased) < 0.002) eased = goal;
+      target = eased * length;
       seek();
+      easing = eased === goal ? 0 : requestAnimationFrame(follow);
+      if (!easing) lastT = 0;
+    };
+    const aim = () => {
+      if (!duration() || !onScreen) return;
+      const d = look();
+      goal = d < 0 ? straight * (1 + d) : straight + d * (1 - straight);
+      if (!easing) easing = requestAnimationFrame(follow);
     };
     // the decoded frames, once the clip is in; where they cannot run, the hidden <video> takes the clip
     const gone = new AbortController();
@@ -191,6 +210,7 @@ export function PlayerPortrait({
       window.removeEventListener("mousemove", aim);
       io.disconnect();
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(easing);
     };
   }, [src, straight, ref, load, stacked, frame]);
 
