@@ -230,7 +230,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
     composer.render();
     refiner?.start();
   };
-  if (!isStatic) gov = governFloor(renderer, composer, () => { if (!disposed) draw(true); }, { scene, refiner }); // steps down on a slow GPU
+  if (!isStatic) gov = governFloor(renderer, composer, () => { if (!disposed) draw(true); }, { scene, refiner, floorColor: P.floorColor }); // steps down on a slow GPU
   // Rehearsal: one frame with a tile raised mid-activation (reflection, glow, spill all live), so any
   // first-use GPU work happens now rather than on the first hover. It is overwritten before it is shown.
   if (!isStatic) {
