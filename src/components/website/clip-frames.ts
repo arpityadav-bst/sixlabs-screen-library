@@ -13,8 +13,9 @@
 //   - Chrome is asked for its software decoder (prefer-software) where it has one: it works inside the page's
 //     own process, while the hardware decoder's frames went by way of the browser's GPU process and waited
 //     behind its compositing. ?decoder=hw asks for the hardware one instead, ?decoder=sw for software anywhere.
-// shown(ms) hears how long each drawn frame took from being asked for (?perf, perf.ts). Null where the clip
-// cannot be decoded here (no WebCodecs, no H.264 decoder): the <video> plays it.
+// shown(ms) hears how long each drawn frame took from being asked for (?perf, perf.ts). Where the clip cannot
+// be decoded here it resolves to the reason instead (a string, shown by ?perf), and the <video> plays it;
+// failed(reason) hears a decoder that gives up later, mid-turn, for the same.
 import { readMp4, type Mp4 } from "./mp4-samples";
 
 export type ClipFrames = { duration: number; kind: string; show(t: number): void; close(): void };
@@ -82,11 +83,12 @@ export async function clipFrames(
   url: string,
   draw: (frame: VideoFrame) => void,
   shown: (ms: number) => void,
+  failed: (reason: string) => void,
   signal: AbortSignal,
-): Promise<ClipFrames | null> {
-  if (!canDecode()) return null;
+): Promise<ClipFrames | string> {
+  if (!canDecode()) return "no WebCodecs";
   const res = await fetch(url, { signal });
-  if (!res.ok || !res.body) return null;
+  if (!res.ok || !res.body) return `fetch ${res.status}`;
   let mp4: Mp4 | null = null,
     run = () => {},
     parsed = () => {};
@@ -98,9 +100,11 @@ export async function clipFrames(
   file.done.catch(() => {});
   await Promise.race([table, file.done]); // the sample table: in with the first few kB
   const clip = mp4 as Mp4 | null;
-  if (!clip || signal.aborted) return null;
+  if (signal.aborted) return "gone";
+  if (!clip) return "no sample table";
   const setup = await config(clip);
-  if (!setup || signal.aborted) return null;
+  if (signal.aborted) return "gone";
+  if (!setup) return `no decoder for ${clip.codec}`;
   const { samples } = clip;
   const keyOf = (k: number) => {
     while (k > 0 && !samples[k].key) k--;
@@ -135,9 +139,10 @@ export async function clipFrames(
       held?.close();
       held = frame;
     },
-    error: () => {
+    error: (e) => {
       dead = true;
       land(null);
+      failed(`decoder error: ${e.message}`);
     },
   });
   decoder.configure(setup.c);

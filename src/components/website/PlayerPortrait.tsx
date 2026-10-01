@@ -79,7 +79,7 @@ export function PlayerPortrait({
     const draw = canvas ? stackedAlpha(canvas) : null;
     const decode = !!(stacked && draw && load && canDecode());
     const perf = (window as unknown as { __perfVideo?: PerfVideo }).__perfVideo;
-    if (perf) perf.format = stacked ? (decode ? "decoded" : "stacked") : "webm";
+    if (perf) perf.format = stacked ? (decode ? "decoder starting" : "stacked") : "webm";
     const born = performance.now();
     let asked = 0,
       reported = false;
@@ -163,15 +163,23 @@ export function PlayerPortrait({
       goal = d < 0 ? straight * (1 + d) : straight + d * (1 - straight);
       if (!easing) easing = requestAnimationFrame(follow);
     };
-    // the decoded frames, once the clip is in; where they cannot run, the hidden <video> takes the clip
+    // the decoded frames, once the clip is in; where they cannot run (or give up), the hidden <video> takes the
+    // clip, and ?perf says why
     const gone = new AbortController();
+    const fallBack = (why: string) => {
+      if (gone.signal.aborted) return;
+      frames?.close();
+      frames = null;
+      if (perf) perf.format = `stacked (no decoding: ${why})`;
+      video.src = stacked!;
+    };
     if (decode)
-      clipFrames(stacked!, paint, landed, gone.signal)
-        .catch(() => null)
+      clipFrames(stacked!, paint, landed, fallBack, gone.signal)
+        .catch((e: unknown) => (e instanceof Error ? e.message : String(e)))
         .then((f) => {
-          if (gone.signal.aborted) return f?.close();
-          if (!f) video.src = stacked!;
-          else if (perf) perf.format = `decoded ${f.kind}`; // which decoder: sw, hw, or the browser's pick
+          if (gone.signal.aborted) return typeof f === "string" ? undefined : f.close();
+          if (typeof f === "string") return fallBack(f);
+          if (perf) perf.format = `decoded ${f.kind}`; // which decoder: sw, hw, or the browser's pick
           frames = f;
           aim();
         });
