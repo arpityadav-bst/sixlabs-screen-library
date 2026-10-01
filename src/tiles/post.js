@@ -4,6 +4,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { TAARenderPass } from 'three/addons/postprocessing/TAARenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { buildLean, leanRefiner, leanWanted } from './lean.js';
 
 // The film grain, added in the output pass's own shader after its tone mapping and sRGB (it was a pass of its
 // own, a whole extra full-screen read and write a frame for the same result).
@@ -45,6 +46,11 @@ function readInPlace(aa, next) {
 }
 
 export function buildComposer(renderer, scene, camera, P) {
+  if (leanWanted()) { // ?pipeline=lean (lean.js)
+    const lean = buildLean(renderer, scene, P);
+    lean.setCamera(camera);
+    return lean;
+  }
   const composer = new EffectComposer(renderer);
   // TAA with accumulate off is plain supersampling (static renders use it at P.ssaa); the live floor
   // switches accumulation on through createRefiner.
@@ -67,6 +73,7 @@ export function buildComposer(renderer, scene, camera, P) {
 // Once the scene is still, every frame adds one more jittered sample to a running average until 32 are
 // in, so the image sharpens over about half a second instead of one heavy frame blocking the GPU.
 export function createRefiner(composer) {
+  if (composer.lean) return leanRefiner(); // the lean pipeline draws every frame one way (lean.js)
   const aa = composer.passes[0];
   let raf = 0;
   const step = () => { composer.render(); raf = aa.accumulateIndex < 32 ? requestAnimationFrame(step) : 0; };

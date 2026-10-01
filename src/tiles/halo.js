@@ -22,6 +22,7 @@ void main() {
   float sweep = smoothstep(uHead - 0.6, uHead + 0.6, dot(n, vec2(0.70711)));
   float g = uAmt * side * sweep * exp(-d / uW);
   gl_FragColor = vec4(uCol, clamp(g, 0.0, 1.0));
+  #include <tonemapping_fragment>
 }`,
   });
   const mesh = new THREE.Mesh(new THREE.PlaneGeometry(P.tile * 3, P.tile * 3), mat);

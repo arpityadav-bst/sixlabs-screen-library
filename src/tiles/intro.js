@@ -17,9 +17,11 @@ const ease = (t) => 1 - Math.pow(1 - t, 3);
 // by a resize or dispose, in which case the field snaps to its final place).
 // delay: seconds the bare floor holds before the tiles start (room for a page loader to leave first).
 export function playIntro({ renderer, composer, refiner, field, rise, seconds = 0.9, delay = 0 }) {
-  const pass = new ShaderPass(IntroShader);
+  const pass = composer.lean ? null : new ShaderPass(IntroShader);
   const size = renderer.getDrawingBufferSize(new THREE.Vector2());
   const base = new THREE.FramebufferTexture(size.x, size.y);
+  // the crossfade: a pass of its own in the usual pipeline, the lean one's last pass under ?pipeline=lean
+  const blend = (amount) => (pass ? (pass.uniforms.uAmt.value = amount) : composer.setIntro(base, amount));
 
   // capture the bare floor, exactly as it will look under the tiles
   field.visible = false;
@@ -27,8 +29,10 @@ export function playIntro({ renderer, composer, refiner, field, rise, seconds = 
   composer.render();
   renderer.copyFramebufferToTexture(base);
   field.visible = true;
-  pass.uniforms.tBase.value = base;
-  composer.addPass(pass);
+  if (pass) {
+    pass.uniforms.tBase.value = base;
+    composer.addPass(pass);
+  }
 
   let raf = 0, start = 0, over = false, drawn = false, finish;
   const end = () => {
@@ -36,8 +40,10 @@ export function playIntro({ renderer, composer, refiner, field, rise, seconds = 
     over = true;
     cancelAnimationFrame(raf);
     field.position.y = 0;
-    composer.removePass(pass);
-    pass.dispose();
+    if (pass) {
+      composer.removePass(pass);
+      pass.dispose();
+    } else composer.setIntro(null);
     base.dispose();
     finish();
   };
@@ -50,14 +56,14 @@ export function playIntro({ renderer, composer, refiner, field, rise, seconds = 
     drawn = true;
     const t = Math.min(1, Math.max(0, (now - start) / 1000 - delay) / seconds), e = ease(t);
     field.position.y = -rise * (1 - e);
-    pass.uniforms.uAmt.value = e;
+    blend(e);
     refiner.moving();
     composer.render();
     if (t < 1) raf = requestAnimationFrame(frame);
     else { end(); composer.render(); refiner.start(); }
   };
   const done = new Promise((r) => { finish = r; });
-  pass.uniforms.uAmt.value = 0;
+  blend(0);
   field.position.y = -rise;
   raf = requestAnimationFrame(frame);
   return { done, cancel: end };
