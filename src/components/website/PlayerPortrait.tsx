@@ -28,9 +28,11 @@ import { canDecode, clipFrames, type ClipFrames } from "./clip-frames";
 
 const REACH = 0.5;
 // The turn eases after the cursor rather than jumping to it (seconds to close about two thirds of the way):
-// steps between the frames it can show read as one motion, and a player whose clip has just come in turns
-// from straight ahead (its still) toward the cursor instead of snapping there.
-const FOLLOW_S = 0.09;
+// following the cursor, just enough that the steps between the frames it can show read as one motion (more
+// read as lag); a player whose clip has just come in turns from straight ahead (its still) toward the cursor
+// at the gentler ARRIVE_S instead of snapping there.
+const FOLLOW_S = 0.035;
+const ARRIVE_S = 0.12;
 const SWAY = 0.85;
 const SWAY_S = 9;
 const T0 = typeof performance !== "undefined" ? performance.now() : 0;
@@ -142,6 +144,7 @@ export function PlayerPortrait({
     // the clip's time for that look, eased toward (FOLLOW_S) from where the turn is now
     let goal = straight,
       eased: number | null = null,
+      arriving = true, // the first turn, from the still toward the cursor
       easing = 0,
       lastT = 0;
     const follow = (now: number) => {
@@ -150,8 +153,11 @@ export function PlayerPortrait({
       const dt = lastT ? Math.min(0.05, (now - lastT) / 1000) : 1 / 60;
       lastT = now;
       eased ??= straight; // first shown: from straight ahead, as its still stands
-      eased += (goal - eased) * (1 - Math.exp(-dt / FOLLOW_S));
-      if (Math.abs(goal - eased) < 0.002) eased = goal;
+      eased += (goal - eased) * (1 - Math.exp(-dt / (arriving ? ARRIVE_S : FOLLOW_S)));
+      if (Math.abs(goal - eased) < 0.002) {
+        eased = goal;
+        arriving = false;
+      }
       target = eased * length;
       seek();
       easing = eased === goal ? 0 : requestAnimationFrame(follow);
