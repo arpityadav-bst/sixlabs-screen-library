@@ -7,6 +7,7 @@
 // section glides while it runs (glide.ts), so passing through the line and the players never sets them off.
 import { easeOut, glideTo } from "./glide";
 import { COMPLETE_AT, WAVE_VH } from "./ScrubLine";
+import { wakeFloor } from "@/components/tiles/TileFloor";
 
 export type Spot = "top" | "model-line" | "players" | "jobs" | "faq";
 
@@ -32,6 +33,7 @@ function restAt(spot: Spot): number | null {
 export function jumpTo(spot: Spot) {
   const to = restAt(spot);
   if (to === null) return;
+  if (spot === "top") wakeFloor(); // the hero's floor, let go further down, built again as the glide starts
   const max = document.documentElement.scrollHeight - window.innerHeight;
   const at = Math.max(0, Math.min(max, to));
   const far = Math.abs(at - window.scrollY);

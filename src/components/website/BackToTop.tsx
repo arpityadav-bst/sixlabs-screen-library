@@ -9,6 +9,7 @@
 import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { easeOut, glideTo } from "./glide";
+import { wakeFloor } from "@/components/tiles/TileFloor";
 
 export function BackToTop() {
   const [on, setOn] = useState(false);
@@ -49,8 +50,11 @@ export function BackToTop() {
   }, []);
 
   // longer runs take a little longer, never a drag
-  const toTop = () =>
+  // (the hero's floor, let go further down, is built again as it starts: TileFloor.tsx)
+  const toTop = () => {
+    wakeFloor();
     glideTo(0, Math.min(2.2, 0.9 + window.scrollY / 4000), easeOut);
+  };
 
   return (
     <button
