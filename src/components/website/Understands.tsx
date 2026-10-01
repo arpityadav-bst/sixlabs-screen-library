@@ -9,7 +9,7 @@
 // what differs in full ink, and the two cards share their rows (a subgrid), so each line sits level with its
 // counterpart and reads across. The grid is the section below's (Jobs.tsx): the same width and side
 // padding, and its 24px gutter between the cards. They rise in one after the other when the section comes into
-// view, once.
+// view, once, and a "vs" over the gutter between them joins the two.
 // The section is only as tall as its cards; above them, below the fixed header, and below them to the next
 // one (Jobs.tsx) the same block's distance (about 144px, 96px on phones), not a whole section's.
 import { motion } from "motion/react";
@@ -63,7 +63,7 @@ export function Understands() {
       id="understands"
       className="relative mx-auto w-full max-w-[1400px] px-4 pt-[calc(70px+96px)] md:px-16 md:pt-[calc(89px+clamp(96px,9vw,144px))]"
     >
-      <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 md:grid-rows-[auto_auto_auto] md:gap-x-6 md:gap-y-0">
+      <div className="relative grid w-full grid-cols-1 gap-6 md:grid-cols-2 md:grid-rows-[auto_auto_auto] md:gap-x-6 md:gap-y-0">
         <motion.div {...rise(0)} className={theirs}>
           <span className={lockup}>
             <ChatGptMark className="h-8 w-8" />
@@ -78,6 +78,15 @@ export function Understands() {
           </span>
           <Lines side="ours" soft="text-white/50" />
         </motion.div>
+        {/* the "vs" that joins them: over the gutter at the cards' middle (where the stacked cards meet, on a
+            phone), a ring of the page's own colour round it, so it reads as cut into both cards */}
+        <motion.span
+          {...rise(0.3)}
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/2 z-10 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-[6px] border-[rgb(var(--page-rgb))] bg-white font-display text-[17px] font-medium tracking-tight text-[#0a1b33] max-md:h-14 max-md:w-14 max-md:text-[15px]"
+        >
+          vs
+        </motion.span>
       </div>
     </section>
   );
