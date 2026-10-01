@@ -12,6 +12,7 @@ import { Footer } from "@/components/website/Footer";
 import { AsciiBackdrop } from "@/components/website/AsciiBackdrop";
 import { AccentWave } from "@/components/website/AccentWave";
 import { PerfBoot } from "@/components/website/PerfBoot";
+import { SafariScroll } from "@/components/website/SafariScroll";
 import { ClickLock } from "@/components/website/ClickLock";
 
 export const metadata: Metadata = {
@@ -25,6 +26,7 @@ export default function WebsitePage() {
       <AsciiBackdrop />
       <AccentWave />
       <PerfBoot />
+      <SafariScroll />
       {/* for now, links and calls to action do nothing when clicked (ClickLock.tsx) */}
       <ClickLock />
       <Header />

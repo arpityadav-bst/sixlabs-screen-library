@@ -10,7 +10,7 @@
 // the players the light page rises back from the bottom over DRAIN_VH of a screen, pushing the blue up and
 // off (its edge the mirror of the entry arc), as the next section (Understands.tsx) comes up. All of it
 // follows the scroll as it is; a scroll that comes to rest near the players settles them in place, the
-// water full (the players' magnet, globals.css).
+// water full (the players' magnet: globals.css, and SafariScroll.tsx in desktop Safari).
 import { useEffect, useRef } from "react";
 import { WAVE_VH } from "./ScrubLine";
 import { isOff } from "./perf";

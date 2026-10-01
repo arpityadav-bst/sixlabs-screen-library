@@ -20,9 +20,13 @@ body {
 /* The page scrolls as the browser scrolls it, with one magnet: a scroll that comes to rest near the players
    section (Players.tsx) settles with it in place, its top at the view's, where the accent water has just
    filled the view (AccentWave.tsx). "proximity", so only a scroll that ends close by is caught; the in-page
-   links' glide turns it off while it runs (glide.ts). */
+   links' glide turns it off while it runs (glide.ts). Desktop Safari scrolls on Lenis, which cannot take
+   scroll snap: there it is off and the magnet is Lenis's own (SafariScroll.tsx). */
 html {
   scroll-snap-type: y proximity;
+}
+html.lenis {
+  scroll-snap-type: none;
 }
 #players {
   scroll-snap-align: start;
