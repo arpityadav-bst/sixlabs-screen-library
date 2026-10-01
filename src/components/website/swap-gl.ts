@@ -74,47 +74,62 @@ const BAND = 0.6, // the band's depth, a share of the portrait's height
 export const SWEEP = { band: BAND * SIZE.h, rise: DOME * SIZE.h };
 
 export function swapGL(canvas: HTMLCanvasElement): SwapGL | null {
-  const gl = canvas.getContext("webgl", { premultipliedAlpha: true, antialias: false });
+  // ?portraitgpu=high: this canvas on the faster GPU too (a two-GPU Mac's Radeon, where the floor already is),
+  // to compare against the default in Safari
+  const high = /[?&]portraitgpu=high/.test(location.search);
+  const gl = canvas.getContext("webgl", { premultipliedAlpha: true, antialias: false, powerPreference: high ? "high-performance" : "default" });
   if (!gl) return null;
-  const shader = (type: number, src: string) => {
-    const s = gl.createShader(type)!;
-    gl.shaderSource(s, src);
-    gl.compileShader(s);
-    return s;
+  const setup = () => {
+    const shader = (type: number, src: string) => {
+      const s = gl.createShader(type)!;
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      return s;
+    };
+    const prog = gl.createProgram()!;
+    gl.attachShader(prog, shader(gl.VERTEX_SHADER, VERT));
+    gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, FRAG));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+    gl.useProgram(prog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+    const at = gl.getAttribLocation(prog, "p");
+    gl.enableVertexAttribArray(at);
+    gl.vertexAttribPointer(at, 2, gl.FLOAT, false, 0, 0);
+    const where = new Map<string, WebGLUniformLocation | null>();
+    const u = (n: string) => {
+      if (!where.has(n)) where.set(n, gl.getUniformLocation(prog, n));
+      return where.get(n)!;
+    };
+    const tex = [0, 1].map((i) => {
+      const t = gl.createTexture();
+      gl.activeTexture(gl.TEXTURE0 + i);
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      for (const [k, v] of [[gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE], [gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR]])
+        gl.texParameteri(gl.TEXTURE_2D, k, v);
+      return t;
+    });
+    gl.uniform1i(u("tA"), 0);
+    gl.uniform1i(u("tB"), 1);
+    gl.uniform2f(u("uSize"), SIZE.w, SIZE.h);
+    gl.uniform1f(u("uBand"), SWEEP.band);
+    gl.uniform1f(u("uRise"), SWEEP.rise);
+    gl.uniform1f(u("uPitch"), PITCH);
+    gl.uniform1f(u("uChroma"), CHROMA);
+    gl.uniform3f(u("uGlow"), GLOW[0], GLOW[1], GLOW[2]);
+    return { u, tex };
   };
-  const prog = gl.createProgram()!;
-  gl.attachShader(prog, shader(gl.VERTEX_SHADER, VERT));
-  gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, FRAG));
-  gl.linkProgram(prog);
-  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
-  gl.useProgram(prog);
-  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-  const at = gl.getAttribLocation(prog, "p");
-  gl.enableVertexAttribArray(at);
-  gl.vertexAttribPointer(at, 2, gl.FLOAT, false, 0, 0);
-  const where = new Map<string, WebGLUniformLocation | null>();
-  const u = (n: string) => {
-    if (!where.has(n)) where.set(n, gl.getUniformLocation(prog, n));
-    return where.get(n)!;
-  };
-  const tex = [0, 1].map((i) => {
-    const t = gl.createTexture();
-    gl.activeTexture(gl.TEXTURE0 + i);
-    gl.bindTexture(gl.TEXTURE_2D, t);
-    for (const [k, v] of [[gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE], [gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR]])
-      gl.texParameteri(gl.TEXTURE_2D, k, v);
-    return t;
-  });
-  gl.uniform1i(u("tA"), 0);
-  gl.uniform1i(u("tB"), 1);
-  gl.uniform2f(u("uSize"), SIZE.w, SIZE.h);
-  gl.uniform1f(u("uBand"), SWEEP.band);
-  gl.uniform1f(u("uRise"), SWEEP.rise);
-  gl.uniform1f(u("uPitch"), PITCH);
-  gl.uniform1f(u("uChroma"), CHROMA);
-  gl.uniform3f(u("uGlow"), GLOW[0], GLOW[1], GLOW[2]);
+  let st = setup();
+  if (!st) return null;
   const has = [false, false];
+  // A lost context (the GPU switched, memory pressed) comes back rebuilt, its frames to come again; Safari gives
+  // a page the faster GPU only where it handles this.
+  canvas.addEventListener("webglcontextlost", (e) => e.preventDefault());
+  canvas.addEventListener("webglcontextrestored", () => {
+    st = setup();
+    has[0] = has[1] = false;
+  });
 
   // A decoded frame goes up as it is where WebGL takes one; where it does not (an older WebKit), through a
   // 2D canvas, which every browser with WebCodecs draws one into.
@@ -139,13 +154,15 @@ export function swapGL(canvas: HTMLCanvasElement): SwapGL | null {
 
   return {
     upload(slot, src) {
-      if (src instanceof HTMLVideoElement && src.readyState < 2) return; // no frame yet
+      if (!st || (src instanceof HTMLVideoElement && src.readyState < 2)) return; // no frame yet
       gl.activeTexture(gl.TEXTURE0 + slot);
-      gl.bindTexture(gl.TEXTURE_2D, tex[slot]);
+      gl.bindTexture(gl.TEXTURE_2D, st.tex[slot]);
       if (put(src)) has[slot] = true;
     },
     has: (slot) => has[slot],
     draw(show, sweep) {
+      if (!st) return;
+      const { u } = st;
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform1f(u("uShow"), show);
       gl.uniform1f(u("uSweep"), sweep ? 1 : 0);

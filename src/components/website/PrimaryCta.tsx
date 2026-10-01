@@ -15,6 +15,7 @@ import {
   useReducedMotion,
 } from "motion/react";
 import { SPECTRUM } from "./prism";
+import { CtaDots } from "./CtaDots";
 
 const NAVY = "#0a152d";
 const NAVY_SHIFT = "#0c1e42"; // NAVY moved 10% toward the accent (#1a6dff)
@@ -54,17 +55,6 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
     const x = -h / 2 + p * (w + h);
     const b = h * (1 - 2 * Math.min(1, Math.max(0, x / w)));
     return `M ${-h} -2 L ${x} -2 Q ${x - b} ${h / 2} ${x} ${h + 2} L ${-h} ${h + 2} Z`;
-  });
-  // The dot band: the region between two copies of the curved front, DOT_BAND apart.
-  const dotBand = useTransform(t, (p) => {
-    const { w, h } = box.current;
-    const edge = (dx: number) => {
-      const x = -h / 2 + p * (w + h) + dx;
-      return [x, h * (1 - 2 * Math.min(1, Math.max(0, x / w)))];
-    };
-    const [xl, bl] = edge(-DOT_BAND / 2),
-      [xr, br] = edge(DOT_BAND / 2);
-    return `M ${xl} -2 Q ${xl - bl} ${h / 2} ${xl} ${h + 2} L ${xr} ${h + 2} Q ${xr - br} ${h / 2} ${xr} -2 Z`;
   });
   const shift = useMotionValue(0); // the shifted fill's opacity: on while hovered, eases off after
   const ds = [
@@ -117,57 +107,8 @@ export function PrimaryCta({ children }: { children: React.ReactNode }) {
       >
         <motion.path d={filled} fill={NAVY_SHIFT} style={{ opacity: shift }} />
       </svg>
-      {SWEEP === "dots" && (
-        <svg
-          aria-hidden
-          className="pointer-events-none absolute inset-0 h-full w-full"
-          viewBox={`0 0 ${size.w} ${size.h}`}
-          preserveAspectRatio="none"
-        >
-          <defs>
-            <pattern
-              id={`${uid}-dots`}
-              width="3.5"
-              height="3.5"
-              patternUnits="userSpaceOnUse"
-            >
-              <circle cx="1.75" cy="1.75" r="0.95" fill="#9cc0ff" />
-            </pattern>
-            <filter
-              id={`${uid}-soft`}
-              x="-50%"
-              y="-20%"
-              width="200%"
-              height="140%"
-            >
-              <feGaussianBlur stdDeviation="5" />
-            </filter>
-            <mask
-              id={`${uid}-mask`}
-              maskUnits="userSpaceOnUse"
-              x="-100"
-              y="-10"
-              width={size.w + 200}
-              height={size.h + 20}
-            >
-              <motion.path
-                d={dotBand}
-                fill="#fff"
-                filter={`url(#${uid}-soft)`}
-              />
-            </mask>
-          </defs>
-          <motion.rect
-            x="-100"
-            y="-10"
-            width={size.w + 200}
-            height={size.h + 20}
-            fill={`url(#${uid}-dots)`}
-            mask={`url(#${uid}-mask)`}
-            style={{ opacity }}
-          />
-        </svg>
-      )}
+      {/* the dot band: drawn on a small canvas (CtaDots.tsx), not an SVG pattern through a blurred mask */}
+      {SWEEP === "dots" && <CtaDots t={t} opacity={opacity} size={size} band={DOT_BAND} />}
       {SWEEP === "prism" && (
         <svg
           aria-hidden

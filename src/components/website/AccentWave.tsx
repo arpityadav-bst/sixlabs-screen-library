@@ -15,6 +15,7 @@ import { useEffect, useRef } from "react";
 import { COMPLETE_AT, WAVE_VH } from "./ScrubLine";
 import { easeOut, glideTo, gliding, stopGlide } from "./glide";
 import { isOff } from "./perf";
+import { accentWaveGL } from "./accent-wave-gl";
 
 const ACCENT = [26, 109, 255];
 const ARC = 90; // how much higher the middle of the edge is than its ends, px
@@ -37,8 +38,11 @@ export function AccentWave() {
     const canvas = ref.current,
       line = document.getElementById("model-line"),
       players = document.getElementById("players");
-    const ctx = canvas?.getContext("2d");
-    if (!canvas || !ctx || !line) return;
+    if (!canvas || !line) return;
+    // drawn on the GPU in one pass (accent-wave-gl.ts); the 2D canvas below only where WebGL is missing
+    const gpu = accentWaveGL(canvas, { accent: ACCENT, arc: ARC, band: BAND, pitch: PITCH, grain: GRAIN });
+    const ctx = gpu ? null : canvas.getContext("2d");
+    if (!gpu && !ctx) return;
     let lastY = window.scrollY,
       lastT = performance.now(),
       speed = 0,
@@ -51,14 +55,15 @@ export function AccentWave() {
       raf = 0,
       filled = false,
       w = 0,
-      h = 0;
+      h = 0,
+      dpr = 1;
     const fill = `rgb(${ACCENT.join(",")})`;
     const dots = !isOff("wave"); // ?off=wave: the solid blue alone, for measuring the dots (perf.ts)
     // Film-grain noise laid over the blue (dots included): one tile of random light and dark pixels,
     // repeated, at GRAIN strength.
     const grainTile = document.createElement("canvas");
     grainTile.width = grainTile.height = 160;
-    const gctx = grainTile.getContext("2d");
+    const gctx = ctx && grainTile.getContext("2d");
     if (gctx) {
       const img = gctx.createImageData(160, 160);
       for (let k = 0; k < img.data.length; k += 4) {
@@ -68,7 +73,7 @@ export function AccentWave() {
       }
       gctx.putImageData(img, 0, 0);
     }
-    const grain = ctx.createPattern(grainTile, "repeat");
+    const grain = ctx?.createPattern(grainTile, "repeat") ?? null;
 
     const announce = (on: boolean) => {
       if (on === filled) return;
@@ -88,7 +93,6 @@ export function AccentWave() {
       // some slack before it counts as drained, so scrolling back a step does not undo the players
       const f = Math.min(p, 1 - q); // how full the view is: risen, less pushed out
       if (f < 0.8) announce(false);
-      ctx.clearRect(0, 0, w, h);
       // Both ways the edge travels up the view, eased so it starts and settles gently. In, it runs from
       // below the view (halftone included) until the solid covers it (p 1, which is when it announces
       // full); out (q), from the solid covering the view until the blue and its halftone have left the top.
@@ -99,6 +103,14 @@ export function AccentWave() {
       const level = out
         ? h + ARC + PITCH * 2 - ke * (h + ARC + BAND + PITCH * 5)
         : h + BAND - ke * (h + BAND + ARC + PITCH * 3);
+      if (gpu) {
+        // unchanged (the view full of blue, scrolling on through the players): nothing is drawn again
+        gpu.draw(f > 0 ? { w, h, level, dir, dots } : null, dpr);
+        if (f >= FULL_AT) announce(true);
+        return;
+      }
+      if (!ctx) return;
+      ctx.clearRect(0, 0, w, h);
       if (f > 0) {
         ctx.fillStyle = fill;
         ctx.beginPath();
@@ -154,13 +166,13 @@ export function AccentWave() {
     const glide = (to: number, v0: number, seconds: number) =>
       glideTo(to, seconds, easeOut, v0);
     const measure = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
       if (w !== window.innerWidth || h !== window.innerHeight) {
         w = window.innerWidth;
         h = window.innerHeight;
         canvas.width = Math.round(w * dpr);
         canvas.height = Math.round(h * dpr);
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
       // the rise runs over the last WAVE_VH of the scroll line's track, while its stage is still pinned
       const end =

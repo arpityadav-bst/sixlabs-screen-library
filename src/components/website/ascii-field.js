@@ -11,6 +11,8 @@
      spec.pointer  false to leave the pointer pool unwired (touch screens have no hover)
      spec.expose   called with { sweep, wake } once the field is live (wake: draw again after being hidden)
      spec.pool     { x, y } in fractions of the host: a pool held there with no pointer (the idle terminals) */
+import { glyphAtlas } from './ascii-glyphs.js';
+
 export function mountAsciiField(spec) {
   {
     var host = spec.host;
@@ -31,7 +33,7 @@ export function mountAsciiField(spec) {
     var FRINGE = spec.fringe !== false;
     var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    var w = 0, h = 0, cols = 0, rows = 0, seed = null;
+    var w = 0, h = 0, cols = 0, rows = 0, seed = null, stamp = null;
     var px = 0, py = 0, tracking = false;
     var onScreen = false, frame = 0, painted = 0;
     var sweepT = -1, sweepDur = 0, sweepBand = 0.34, sweepMid = null, sweepEnd = null;
@@ -74,6 +76,7 @@ export function mountAsciiField(spec) {
       ctx.font = '11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
       ctx.textBaseline = 'middle';
       ctx.textAlign = 'center';
+      stamp = glyphAtlas(RAMP, ctx.font, CELL, dpr); // the glyphs as pictures (ascii-glyphs.js)
       if (spec.pool) { px = spec.pool.x * w; py = spec.pool.y * h; tracking = true; }
     }
 
@@ -157,12 +160,11 @@ export function mountAsciiField(spec) {
               var gi = (hash2(x + k * 0.37, y + k * 0.61) * RAMP.length) | 0;
               /* the brightest cells burn toward white, the way a phosphor tube does */
               var m = roll2 * 0.35;
-              ctx.fillStyle = 'rgba(' +
-                Math.round(BAND_INK[0] + (255 - BAND_INK[0]) * m) + ',' +
-                Math.round(BAND_INK[1] + (255 - BAND_INK[1]) * m) + ',' +
-                Math.round(BAND_INK[2] + (255 - BAND_INK[2]) * m) + ',' +
-                Math.min(band * 1.2, 1).toFixed(3) + ')';
-              ctx.fillText(RAMP.charAt(gi), cx, cy);
+              stamp(ctx, RAMP.charAt(gi),
+                BAND_INK[0] + (255 - BAND_INK[0]) * m,
+                BAND_INK[1] + (255 - BAND_INK[1]) * m,
+                BAND_INK[2] + (255 - BAND_INK[2]) * m,
+                Math.min(band * 1.2, 1), cx, cy);
             }
             continue;
           }
@@ -175,16 +177,12 @@ export function mountAsciiField(spec) {
 
           var fringe = FRINGE ? lens * (1 - lens) * 4 : 0;
           if (fringe > 0.18) {
-            var f = (alpha * 0.14 * fringe).toFixed(3);
-            ctx.fillStyle = 'rgba(255,90,90,' + f + ')';
-            ctx.fillText(glyph, cx - 1, cy);
-            ctx.fillStyle = 'rgba(90,200,255,' + f + ')';
-            ctx.fillText(glyph, cx + 1, cy);
+            var f = alpha * 0.14 * fringe;
+            stamp(ctx, glyph, 255, 90, 90, f, cx - 1, cy);
+            stamp(ctx, glyph, 90, 200, 255, f, cx + 1, cy);
           }
 
-          ctx.fillStyle = 'rgba(' + mix(0, lens) + ',' + mix(1, lens) + ',' +
-            mix(2, lens) + ',' + alpha.toFixed(3) + ')';
-          ctx.fillText(glyph, cx, cy);
+          stamp(ctx, glyph, mix(0, lens), mix(1, lens), mix(2, lens), alpha, cx, cy);
         }
       }
     }
