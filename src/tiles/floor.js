@@ -195,6 +195,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
 
   // The canvas fills its container; its buffer matches the displayed size exactly, so the browser never
   // rescales it. The camera reframes for the container's shape (viewport.js).
+  if (!isStatic) opaqueGlass(scene, P.floorColor); // the resting tiles opaque (opaque-glass.js), before their shaders are compiled (below)
   const composer = buildComposer(renderer, scene, camera, P, !isStatic);
 
   // Shader warm-up: compile every material up front, in parallel where the GPU driver allows, including
@@ -230,7 +231,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
     composer.setSize(w, h);
     composer.render();
   };
-  if (!isStatic) { opaqueGlass(scene, P.floorColor); gov = floorPerf(renderer, composer, () => { if (!disposed) draw(true); }, { scene }); } // the resting tiles opaque (opaque-glass.js)
+  if (!isStatic) gov = floorPerf(renderer, composer, () => { if (!disposed) draw(true); }, { scene });
   // Rehearsal: one frame with a tile raised mid-activation (reflection, glow, spill all live), so any
   // first-use GPU work happens now rather than on the first hover. It is overwritten before it is shown.
   if (!isStatic) {
