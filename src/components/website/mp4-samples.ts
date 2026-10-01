@@ -2,7 +2,8 @@
 // read straight from the file's boxes: each frame's bytes, time and whether it is a keyframe, and what the
 // decoder is configured with (its codec string and the avcC record). Enough for clip-frames.ts to feed
 // WebCodecs; not a general MP4 reader: one video track, frames in display order (no B-frames), no edit list,
-// as those files are made. Null for anything else.
+// as those files are made. Null for anything else, and for a file still arriving (length: the bytes in so
+// far) until its whole moov box is in: the stacked clips carry it ahead of the frames (faststart).
 export type Sample = {
   offset: number;
   size: number;
@@ -20,7 +21,7 @@ export type Mp4 = {
 };
 type Range = [number, number];
 
-export function readMp4(buf: ArrayBuffer): Mp4 | null {
+export function readMp4(buf: ArrayBuffer, length = buf.byteLength): Mp4 | null {
   const v = new DataView(buf),
     u8 = new Uint8Array(buf);
   const kind = (o: number) =>
@@ -49,7 +50,7 @@ export function readMp4(buf: ArrayBuffer): Mp4 | null {
     }
     return r;
   };
-  const moov = find([0, buf.byteLength], "moov");
+  const moov = find([0, length], "moov");
   if (!moov) return null;
   const mdia = boxes(...moov)
     .filter(([t]) => t === "trak")

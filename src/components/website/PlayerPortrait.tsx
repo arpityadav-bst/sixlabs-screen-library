@@ -152,6 +152,7 @@ export function PlayerPortrait({
         .then((f) => {
           if (gone.signal.aborted) return f?.close();
           if (!f) video.src = stacked!;
+          else if (perf) perf.format = `decoded ${f.kind}`; // which decoder: sw, hw, or the browser's pick
           frames = f;
           aim();
         });
