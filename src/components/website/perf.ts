@@ -98,6 +98,9 @@ export function perfReadout() {
   };
   const video: PerfVideo = { seeks: [], first: [] };
   (window as unknown as { __perfVideo?: PerfVideo }).__perfVideo = video;
+  // the floor's own moments, for the log: a reset wave running, the second cast loading (autoplay.js, casts.js)
+  const events: { wave?: boolean; cast?: string } = {};
+  (window as unknown as { __floorEvents?: typeof events }).__floorEvents = events;
   let gpu = gpuName(),
     gpuFloor = false;
   if (mode === "bench") import("./perf-bench").then((m) => m.runBench(gpuName));
@@ -165,7 +168,7 @@ export function perfReadout() {
             `${fps} fps`,
             `worst5 ${p95.toFixed(0)}ms`,
             `>50ms ${long}`,
-            `floor ${d.floor ?? "-"}`,
+            `floor ${d.floor ?? "-"}${events.wave ? " WAVE" : ""}${events.cast ? ` cast ${events.cast}` : ""}`,
             clips.replace(/^clips /, ""),
           ]
             .filter(Boolean)

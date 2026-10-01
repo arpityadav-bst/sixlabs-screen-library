@@ -17,13 +17,16 @@ export function createCasts({ P, chars, bustTiles, pictures, gone, mixWaves = fa
   const casts = [{ names: new Map([...chars].map(([k, c]) => [k, c.name])), tex: null }, null];
   const first = settled(pictures).then((tex) => { casts[0].tex = tex; });
   let second = null;
+  const ev = (cast) => { if (window.__floorEvents) window.__floorEvents.cast = cast; }; // ?perf's log (website/perf.ts)
   const prepare = () => (second ??= first.then(async () => {
     if (!P.chars2?.length || gone()) return;
+    ev('loading');
     const names = P.chars2;
     const two = await settled(planPictures(P, [names.map((n) => `chars/${n}`), names.map((n) => `chars-ai/${n}`)]).get);
     for (const t of two.values()) await warm(t);
     if (gone()) return;
     casts[1] = { names: castTiles(bustTiles, names, null, mixWaves ? P.chars : null), tex: two };
+    ev('ready');
   }).catch(() => {})); // a cast that fails to load leaves the waves on the first
   let shown = 0;
   const api = {

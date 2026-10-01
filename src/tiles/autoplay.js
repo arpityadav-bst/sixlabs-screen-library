@@ -51,6 +51,7 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner,
     if (!tiles.length) return;
     ctl.inert = true;
     waving = true;
+    if (window.__floorEvents) window.__floorEvents.wave = true; // ?perf's log marks the wave (website/perf.ts)
     const x0 = Math.min(...tiles.map((t) => t.x)), span = Math.max(1e-3, Math.max(...tiles.map((t) => t.x)) - x0);
     const swapped = new Set(), target = cast.next();
     refiner.moving();
@@ -87,6 +88,7 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner,
     cast.done(target);
     refiner.start();
     waving = false;
+    if (window.__floorEvents) window.__floorEvents.wave = false;
     ctl.inert = false;
     first = true;
   }
