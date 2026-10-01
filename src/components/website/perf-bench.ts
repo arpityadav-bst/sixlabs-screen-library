@@ -64,9 +64,22 @@ function each(scene: Obj, f: (o: Obj, m: Mat) => void) {
   });
 }
 
-// One thing switched off for a case, and its undo.
-function toggle(fp: Floor, what: "grain" | "busts" | "tiles") {
+// One thing switched off for a case, and its undo. alone: every other part of the page hidden (visibility),
+// so only the floor's canvas is left for the browser to put together into the frame.
+function toggle(fp: Floor, what: "grain" | "busts" | "tiles" | "alone") {
   const undo: (() => void)[] = [];
+  if (what === "alone") {
+    const css = document.createElement("style"),
+      c = fp.renderer.domElement;
+    css.textContent =
+      "body * { visibility: hidden !important } [data-bench-alone] { visibility: visible !important }";
+    document.head.appendChild(css);
+    c.dataset.benchAlone = "";
+    undo.push(() => {
+      css.remove();
+      delete c.dataset.benchAlone;
+    });
+  }
   if (what === "grain")
     fp.composer.passes
       .filter((p) => p.uniforms && "uAmt" in p.uniforms)
@@ -193,6 +206,11 @@ export async function runBench(gpuName: () => string) {
     ["full (dpr, aa 4)", {}],
     ["nothing drawn (page alone)", {}, undefined, () => {}],
     ["blank frame (canvas only)", {}, undefined, blank],
+    // where a blank frame's cost lies: the canvas's own size (a quarter of the pixels, shown at the same
+    // size), the page's other layers (hidden), or neither (the screen area the browser redraws)
+    ["blank frame, canvas at 0.5", { r: 0.5 }, undefined, blank],
+    ["blank frame, canvas alone", {}, "alone", blank],
+    ["blank frame, alone at 0.5", { r: 0.5 }, "alone", blank],
     ["aa 2", { aa: 2 }],
     ["aa 0 (no anti-aliasing)", { aa: 0 }],
     ["resolution 1.5", { r: 1.5 }],
