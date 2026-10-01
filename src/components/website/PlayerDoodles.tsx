@@ -10,23 +10,18 @@
 // AI's copy away and the hand sketches it all again. Everything leaves with the player (another pick) and
 // is wiped when the section leaves view. The drawings are in player-doodles.ts (coordinates in the
 // portrait video's own 810 x 1080 frame); one stroke is DoodleStroke.tsx.
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { animate, motionValue } from "motion/react";
 import { DOODLES } from "./player-doodles";
 import { DoodleStroke } from "./DoodleStroke";
 import type { Mode } from "./ModeToggle";
 
 const DELAY_S = 5;
-// the hand's unevenness: lines pushed off their path by smooth noise, WOBBLE frame px at most, over
-// waves about 1 / ROUGH_FREQ long, so no stroke runs perfectly clean
-const WOBBLE = 6;
-const ROUGH_FREQ = 0.03;
 const AI_LEAD_S = 0.6; // after the switch, while the portrait's sweep is under way, the copying begins
 const AI_PACE = 0.5; // the copy's timing against the hand's: twice as fast
 // the hand's pace against the drawings' written timing (player-doodles.ts), first time and again after
 // the AI's copy is put away: brisk, so it has finished before the portrait first turns AI
 const HAND_PACE = 0.6;
-const AI_GLOW = "#7fb2ff";
 const ease = "easeInOut" as const;
 const REDUCED = "(prefers-reduced-motion: reduce)";
 
@@ -40,7 +35,6 @@ export function PlayerDoodles({
   mode: Mode;
 }) {
   const strokes = DOODLES[id];
-  const uid = useId();
   // per stroke: the hand's line and the AI's copy, each how far drawn, begun, and faded
   const [mv] = useState(() =>
     (DOODLES[id] ?? []).map(() => ({
@@ -148,57 +142,23 @@ export function PlayerDoodles({
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <filter
-        id={`${uid}-rough`}
-        filterUnits="userSpaceOnUse"
-        x="-400"
-        y="-300"
-        width="1610"
-        height="1680"
-      >
-        <feTurbulence
-          type="fractalNoise"
-          baseFrequency={ROUGH_FREQ}
-          numOctaves={2}
-          seed={7}
-        />
-        <feDisplacementMap in="SourceGraphic" scale={WOBBLE * 2} />
-      </filter>
-      {/* the AI's line: its own clean stroke over a soft blue glow */}
-      <filter
-        id={`${uid}-glow`}
-        filterUnits="userSpaceOnUse"
-        x="-400"
-        y="-300"
-        width="1610"
-        height="1680"
-      >
-        <feGaussianBlur in="SourceAlpha" stdDeviation={4} result="blur" />
-        <feFlood floodColor={AI_GLOW} floodOpacity={0.9} />
-        <feComposite in2="blur" operator="in" result="glow" />
-        <feMerge>
-          <feMergeNode in="glow" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
-      <g filter={`url(#${uid}-rough)`}>
+      {/* the hand's lines, then the AI's copies over them (DoodleStroke.tsx: no filters, no masks) */}
+      <g>
         {strokes.map((s, i) => (
           <DoodleStroke
             key={i}
             s={s}
-            maskId={`${uid}-h${i}`}
             len={mv[i].len}
             show={mv[i].show}
             fade={mv[i].fade}
           />
         ))}
       </g>
-      <g filter={`url(#${uid}-glow)`}>
+      <g>
         {strokes.map((s, i) => (
           <DoodleStroke
             key={i}
             s={s}
-            maskId={`${uid}-a${i}`}
             len={mv[i].aiLen}
             show={mv[i].aiShow}
             fade={mv[i].aiFade}
