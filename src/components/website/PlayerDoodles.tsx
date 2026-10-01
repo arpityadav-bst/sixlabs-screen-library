@@ -142,7 +142,7 @@ export function PlayerDoodles({
     <svg
       aria-hidden
       viewBox="0 0 810 1080"
-      className="pointer-events-none absolute inset-0 -z-10 h-full w-full overflow-visible"
+      className="player-doodles pointer-events-none absolute inset-0 -z-10 h-full w-full overflow-visible"
       fill="none"
       stroke="#ffffff"
       strokeLinecap="round"

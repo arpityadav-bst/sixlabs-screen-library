@@ -11,6 +11,21 @@
 // which measures what each of its parts costs here.
 import type { PerfVideo } from "./PlayerPortrait";
 
+// ?off=… in the address turns parts of the page off for one visit, to find what a slow machine is paying
+// for: ascii (the ASCII field), wave (the accent water's halftone dots; its blue stays), liquid (the scroll
+// line's liquid), tiles (the floating tiles), doodles (the players' doodles), smooth (the smooth scrolling),
+// grain (the page noise), blur (the header's blur). Comma-separated, any number; <html data-off> carries them
+// for the CSS ones (globals.css). Nothing changes without it.
+export const isOff = (part: string) =>
+  typeof location !== "undefined" &&
+  (new URLSearchParams(location.search).get("off") ?? "")
+    .split(",")
+    .includes(part);
+export function applyOff() {
+  const off = new URLSearchParams(location.search).get("off");
+  if (off) document.documentElement.dataset.off = off.split(",").join(" ");
+}
+
 function gpuName() {
   const gl = document.createElement("canvas").getContext("webgl");
   const ext = gl?.getExtension("WEBGL_debug_renderer_info");
@@ -96,6 +111,7 @@ export function perfReadout() {
           `dpr ${window.devicePixelRatio}`,
           heap ? `heap ${Math.round(heap.usedJSHeapSize / 1e6)}MB` : "",
           gpu,
+          d.off ? `off: ${d.off}` : "",
         ]
           .filter(Boolean)
           .join(" · ") +

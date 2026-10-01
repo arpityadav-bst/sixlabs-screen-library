@@ -7,6 +7,7 @@
 // about, splits their colours round it and lights them where it flows. Once the canvas is live, onLive(true)
 // tells the line to make its own words transparent; they stay in place for layout, selection and reading.
 import { useEffect, useRef, type RefObject } from "react";
+import { isOff } from "./perf";
 
 const M = 56; // px of room round the words for the liquid to drag them into
 const FILL_S = 0.2; // a word's fill from faint to full, as the words' own transition (200ms)
@@ -39,7 +40,7 @@ export function LiquidLine({
     const p = para.current,
       c = canvas.current;
     const mq = window.matchMedia(DESKTOP);
-    if (!p || !c || !mq.matches) return;
+    if (!p || !c || !mq.matches || isOff("liquid")) return; // ?off=liquid (perf.ts)
     const pic = document.createElement("canvas"),
       ctx = pic.getContext("2d");
     if (!ctx) return;

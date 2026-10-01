@@ -8,19 +8,21 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
-import { perfReadout } from "./perf";
+import { applyOff, isOff, perfReadout } from "./perf";
 
 let instance: Lenis | null = null;
 export const getLenis = () => instance;
 
 export function SmoothScroll() {
   useEffect(() => {
-    perfReadout(); // ?perf (perf.ts); mounted here as this is on every page
-    instance = new Lenis({
-      lerp: 0.15, // how much of the way to the wheel's target each frame covers: smooth, but close behind it
-      smoothWheel: true,
-      autoRaf: true,
-    });
+    applyOff(); // ?off=… (perf.ts); mounted here as this is on every page
+    perfReadout(); // ?perf
+    if (!isOff("smooth"))
+      instance = new Lenis({
+        lerp: 0.15, // how much of the way to the wheel's target each frame covers: smooth, but close behind it
+        smoothWheel: true,
+        autoRaf: true,
+      });
     return () => {
       instance?.destroy();
       instance = null;

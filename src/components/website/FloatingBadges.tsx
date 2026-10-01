@@ -28,7 +28,6 @@ import {
   type Badge,
 } from "./floating-badges-data";
 
-
 const DRIFT = 22; // px a depth-1 badge moves with the cursor at the edge of the screen
 const FLIP_EVERY: [number, number] = [3.5, 6.5]; // s between flips, picked at random in this range
 const FLIP_S = 0.8; // one flip, seconds
@@ -99,7 +98,11 @@ export function FloatingBadges() {
   }, [near]);
 
   return (
-    <div ref={box} aria-hidden className="pointer-events-none absolute inset-0">
+    <div
+      ref={box}
+      aria-hidden
+      className="floating-badges pointer-events-none absolute inset-0"
+    >
       {BADGES.map((b, i) => (
         <FloatingBadge
           key={b.cast[0]}

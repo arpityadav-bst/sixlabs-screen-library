@@ -14,6 +14,7 @@
 import { useEffect, useRef } from "react";
 import { COMPLETE_AT, WAVE_VH } from "./ScrubLine";
 import { easeOut, glideTo, gliding, stopGlide } from "./glide";
+import { isOff } from "./perf";
 
 const ACCENT = [26, 109, 255];
 const ARC = 90; // how much higher the middle of the edge is than its ends, px
@@ -52,6 +53,7 @@ export function AccentWave() {
       w = 0,
       h = 0;
     const fill = `rgb(${ACCENT.join(",")})`;
+    const dots = !isOff("wave"); // ?off=wave: the solid blue alone, for measuring the dots (perf.ts)
     // Film-grain noise laid over the blue (dots included): one tile of random light and dark pixels,
     // repeated, at GRAIN strength.
     const grainTile = document.createElement("canvas");
@@ -112,7 +114,7 @@ export function AccentWave() {
         // the halftone on the far side of the edge: s runs 0 (the band's outer side) to 1 (at the edge).
         // The dots keep growing past touching (radius PITCH / 2) to covering their whole cell (PITCH *
         // 0.72, over half the diagonal) and carry on a few rows into the solid, so it melts in, no seam.
-        for (let gx = PITCH / 2; gx < w; gx += PITCH) {
+        for (let gx = PITCH / 2; gx < (dots ? w : 0); gx += PITCH) {
           const e = edge(gx, level, dir);
           const a = e - dir * BAND,
             b = e + dir * PITCH * 3;

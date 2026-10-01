@@ -247,3 +247,9 @@ body {
   opacity: 1;
 }
 
+/* ?off=… (perf.ts): parts switched off for one visit while a slow machine is measured */
+[data-off~="ascii"] .ascii-host { display: none !important; }
+[data-off~="tiles"] .floating-badges { display: none; }
+[data-off~="doodles"] .player-doodles { display: none; }
+[data-off~="grain"] .page-grain::before { display: none; }
+[data-off~="blur"] #site-head { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
