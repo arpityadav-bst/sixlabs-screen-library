@@ -5,8 +5,9 @@
 // is ready; the tiles then wait introDelay seconds before fading in (so a loader can leave first).
 // onConvert fires each time a character on the floor becomes their AI copy. distScale and mixWaves pass to
 // the engine (floor.js): the camera pulled back for smaller, more tiles; the second wave's cast in the middle.
-// aiBase is where the AI copies' pictures are read from (chars-ai/ under it), the humans staying in /tiles;
-// spentTint, the colour a used tile rests in (floor-params.json's own otherwise). On a phone (below md) the
+// aiBase is where the AI copies' pictures are read from (chars-ai/ under it: the blue holograms in /tiles-holo),
+// the humans staying in /tiles; spentTint, the colour a used tile rests in (a very light wash of the holograms'
+// sky blue). On a phone (below md) the
 // tiles' pictures are the 512px copies (tiles/512/, tiles-holo/512/): the tiles are small there, and they
 // look the same at a little over half the download.
 import { useEffect, useRef } from "react";
@@ -24,8 +25,8 @@ export function TileFloor({
   introDelay = 0,
   distScale = 1,
   mixWaves = false,
-  aiBase,
-  spentTint,
+  aiBase = "/tiles-holo",
+  spentTint = "#e3f3ff",
 }: {
   className?: string;
   onReady?: (floor: FloorHandle) => void;
@@ -48,7 +49,7 @@ export function TileFloor({
     import("@/tiles/floor.js").then(({ createFloor }) =>
       createFloor(ref.current, {
         base: "/tiles",
-        aiBase: aiBase ?? "/tiles",
+        aiBase,
         res: window.matchMedia("(max-width: 767px)").matches ? 512 : 768,
         spentTint,
         introDelay,

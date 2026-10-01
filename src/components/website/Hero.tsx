@@ -7,7 +7,6 @@ import { PrimaryCta } from "./PrimaryCta";
 import { linkTo } from "./jump";
 import { TypedWord } from "./TypedWord";
 import { FloorLogo, HeroNumbers, WaveButton, type Stat } from "./HeroBits";
-import { useArt } from "./art";
 import { HeroLoader } from "./HeroLoader";
 import { FULL_TILES_AT, useHeroIntro } from "./hero-intro";
 
@@ -33,7 +32,6 @@ const CLEAR = -12; // below zero: the field top is measured a little past the sc
 // smaller and more of them, the next wave's new faces in the middle and the first wave's round them; a faint hairline divides it from the page below.
 export function Hero({ full = false }: { full?: boolean }) {
   const [floorReady, setFloorReady] = useState(false);
-  const art = useArt(); // the hologram pages read the AI copies from /tiles-holo
   const intro = useHeroIntro(full, floorReady); // what has come in yet (hero-intro.ts)
   const fade = (on: boolean) =>
     "transition-opacity duration-700 ease-out " +
@@ -149,9 +147,6 @@ export function Hero({ full = false }: { full?: boolean }) {
                 ? 1.5
                 : 1
             }
-            aiBase={art === "hologram" ? "/tiles-holo" : undefined}
-            // a used tile rests a little darker; on the hologram pages, a very light wash of the holograms' sky blue
-            spentTint={art === "hologram" ? "#e3f3ff" : undefined}
             onReady={(f) => {
               floor.current = f;
               f.setClearTop(clear.current);

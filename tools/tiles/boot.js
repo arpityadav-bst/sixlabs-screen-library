@@ -4,4 +4,4 @@ import { createFloor } from '/src/tiles/floor.js';
 
 const given = window.PARAMS && Object.keys(window.PARAMS).length ? window.PARAMS : null;
 const params = given ?? await fetch('/tiles/floor-params.json').then((r) => r.json());
-createFloor(document.body, { params, base: '/tiles', isStatic: true, expose: true });
+createFloor(document.body, { params, base: '/tiles', aiBase: '/tiles-holo', isStatic: true, expose: true }); // the AI copies are the holograms

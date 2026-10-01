@@ -18,7 +18,6 @@ import { PlayerTraits } from "./PlayerTraits";
 import { PlayerArrows, PlayerCarousel } from "./PlayerCarousel";
 import { useClipFormat } from "./useClipFormat";
 import { usePrefetchClips } from "./usePrefetchClips";
-import { useArt } from "./art";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 // On the accent blue (AccentWave.tsx): white cards.
@@ -86,11 +85,10 @@ export function Players() {
     transition: { duration: 0.5, ease, delay },
   });
   const player = PLAYERS[active];
-  const holo = useArt() === "hologram"; // the hologram pages swap to the hologram AI clips
   // the real player or their AI copy, per player, switching by itself until the visitor picks one
   // Safari and iPhones draw a WebM's transparency black: they get the stacked clips (useClipFormat.ts)
   const format = useClipFormat();
-  usePrefetchClips(near, active, holo, format); // the other players' clips, fetched ahead
+  usePrefetchClips(near, active, format); // the other players' clips, fetched ahead
   const [mode, setMode] = usePlayerMode(player.id, shown && !!player.aiVideo);
 
   return (
@@ -155,7 +153,7 @@ export function Players() {
                 {player.video && player.aiVideo ? (
                   <PortraitSwap
                     human={player.video}
-                    ai={(holo && player.holoVideo) || player.aiVideo}
+                    ai={player.aiVideo}
                     mode={mode}
                     label={player.title}
                     load={near}

@@ -1,20 +1,18 @@
 // The footer's wordmark band (Footer.tsx), between its links and its tail, at the height it had before the
 // picture: the huge wordmark sitting a little up off the tail's hairline, and the SixLabs mark, flat as
 // its logo file, cresting from behind it and fading down into it (after the onBlue creators page's
-// foot). Around them, nothing but the copy line (public/footer/copy-line.webp, generated on plain white
+// foot). Around them, nothing but the copy line (public/footer/copy-line-holo.webp, generated on plain white
 // with no text in it): our players and a crowd behind them walk in from the left toward the mark, and come
-// out on the right as their AI copies, in their own clothes with a plain white face (as in the hero's tiles) and the
-// blue lines at the neck, so the brand in the middle is where the copying happens. The picture has no ground and no scene:
+// out on the right as their AI copies, the blue scan-line hologram (as in the hero's tiles), so the brand in
+// the middle is where the copying happens. The picture has no ground and no scene:
 // it reads as multiplied into the page, so its white is the page and only the people show; those nearest
 // the word fade into the page around it (both done on a canvas, CopyLinePicture.tsx, with no blend mode or
 // mask on the page). From a tablet up it runs the band's full width at its own
 // shape (FIT), so two spec labels in code, on leader lines, can sit in its own coordinates and land on the
 // same heads at any width (desktop only). A phone has no room for it: there the band is just the mark and
 // the word. Colour split on the word's two
-// ends only (.foot-word in globals.css), behind the picture and the word. The hologram pages (art.tsx) use copy-line-holo.webp, the same
-// picture with the copies redrawn as the blue hologram.
+// ends only (.foot-word in globals.css), behind the picture and the word.
 import { SixLabsLogo } from "./brand-marks";
-import { useArt } from "./art";
 import { CopyLinePicture } from "./CopyLinePicture";
 
 // The picture is drawn as two halves (CopyLinePicture.tsx) pushed apart by SPREAD (% of its width): the players a little further
@@ -61,8 +59,7 @@ const FIT =
   "absolute max-md:inset-0 md:inset-x-0 md:top-[calc((100%-42.857cqw)*0.05)] md:aspect-[2688/1152]";
 
 export function CopyLine() {
-  const pic =
-    useArt() === "hologram" ? "copy-line-holo.webp?v=1" : "copy-line.webp?v=7";
+  const pic = "copy-line-holo.webp?v=1";
   return (
     // the band: the clear air, the mark's crest above the word, then the word (1em)
     <div

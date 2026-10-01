@@ -18,8 +18,7 @@ export type Player = {
   // `stacked` is the same clip as a stacked-alpha MP4 and `still` its straight-ahead frame, for browsers
   // that cannot show the WebM's transparency (useClipFormat.ts)
   video?: Clip;
-  aiVideo?: Clip; // the same turn as their AI copy (the Human / AI toggle)
-  holoVideo?: Clip; // that AI copy as the blue hologram, for the hologram pages (art.tsx)
+  aiVideo?: Clip; // the same turn as their AI copy, the blue hologram (the Human / AI toggle)
   traits: { label: string; value: number }[];
 };
 
@@ -49,12 +48,6 @@ export const PLAYERS: Player[] = [
       still: "/players/explorer-still.webp",
     },
     aiVideo: {
-      src: "/players/explorer-ai.webm?v=1",
-      straight: 0.49,
-      stacked: "/players/explorer-ai-stacked.mp4?v=4",
-      still: "/players/explorer-ai-still.webp",
-    },
-    holoVideo: {
       src: "/players-holo/explorer-ai.webm?v=1",
       straight: 0.48,
       stacked: "/players-holo/explorer-ai-stacked.mp4?v=3",
@@ -75,12 +68,6 @@ export const PLAYERS: Player[] = [
       still: "/players/grinder-still.webp",
     },
     aiVideo: {
-      src: "/players/grinder-ai.webm?v=1",
-      straight: 0.5,
-      stacked: "/players/grinder-ai-stacked.mp4?v=4",
-      still: "/players/grinder-ai-still.webp",
-    },
-    holoVideo: {
       src: "/players-holo/grinder-ai.webm?v=1",
       straight: 0.48,
       stacked: "/players-holo/grinder-ai-stacked.mp4?v=3",
@@ -101,12 +88,6 @@ export const PLAYERS: Player[] = [
       still: "/players/spender-still.webp?v=2",
     },
     aiVideo: {
-      src: "/players/spender-ai.webm?v=2",
-      straight: 0.52,
-      stacked: "/players/spender-ai-stacked.mp4?v=5",
-      still: "/players/spender-ai-still.webp?v=2",
-    },
-    holoVideo: {
       src: "/players-holo/spender-ai.webm?v=2",
       straight: 0.48,
       stacked: "/players-holo/spender-ai-stacked.mp4?v=4",
@@ -127,12 +108,6 @@ export const PLAYERS: Player[] = [
       still: "/players/lost-still.webp?v=2",
     },
     aiVideo: {
-      src: "/players/lost-ai.webm?v=2",
-      straight: 0.52,
-      stacked: "/players/lost-ai-stacked.mp4?v=5",
-      still: "/players/lost-ai-still.webp?v=2",
-    },
-    holoVideo: {
       src: "/players-holo/lost-ai.webm?v=2",
       straight: 0.48,
       stacked: "/players-holo/lost-ai-stacked.mp4?v=4",

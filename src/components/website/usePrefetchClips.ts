@@ -16,7 +16,6 @@ const fetched = new Set<string>();
 export function usePrefetchClips(
   near: boolean,
   active: number,
-  holo: boolean,
   format: ClipFormat,
 ) {
   useEffect(() => {
@@ -25,8 +24,7 @@ export function usePrefetchClips(
     const touch = window.matchMedia("(hover: none)").matches;
     const urls = PLAYERS.flatMap((p, k) => {
       if (k === active || (touch && Math.abs(k - active) !== 1)) return [];
-      const ai = (holo && p.holoVideo) || p.aiVideo;
-      return [p.video, ai].flatMap((c) =>
+      return [p.video, p.aiVideo].flatMap((c) =>
         c ? [format === "stacked" ? c.stacked : c.src] : [],
       );
     });
@@ -46,5 +44,5 @@ export function usePrefetchClips(
       stop = true;
       window.clearTimeout(timer);
     };
-  }, [near, active, holo, format]);
+  }, [near, active, format]);
 }
