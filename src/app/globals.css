@@ -253,3 +253,6 @@ body {
 [data-off~="doodles"] .player-doodles { display: none; }
 [data-off~="grain"] .page-grain::before { display: none; }
 [data-off~="blur"] #site-head { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+/* fx: every effect that stops Chrome on a Mac from handing a frame's canvas and layers to the system as they are
+   (backdrop blur, blend modes, CSS masks and filters, anywhere on screen), so it puts the whole frame together itself */
+[data-off~="fx"] *, [data-off~="fx"] *::before, [data-off~="fx"] *::after { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; mix-blend-mode: normal !important; filter: none !important; -webkit-mask-image: none !important; mask-image: none !important; }

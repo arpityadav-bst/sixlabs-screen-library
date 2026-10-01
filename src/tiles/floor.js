@@ -33,8 +33,8 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
 
   // The scene is drawn into the composer's own multisampled target (post.js) and reaches the canvas as one flat
   // image, so the canvas needs no anti-aliasing of its own; its drawing buffer is kept only where it is read back.
-  // high-performance: on a laptop with two GPUs (a MacBook Pro's Radeon beside its Intel UHD 630) the browser otherwise draws on the weak one.
-  const renderer = new THREE.WebGLRenderer({ antialias: isStatic, preserveDrawingBuffer: isStatic || expose, powerPreference: 'high-performance' });
+  // high-performance: on a laptop with two GPUs (a MacBook Pro's Radeon beside its Intel UHD 630) the browser otherwise draws on the weak one; ?gpu=low tries that one (website/perf.ts).
+  const renderer = new THREE.WebGLRenderer({ antialias: isStatic, preserveDrawingBuffer: isStatic || expose, powerPreference: /[?&]gpu=low/.test(globalThis.location?.search ?? '') ? 'low-power' : 'high-performance' });
   renderer.toneMapping = THREE.NeutralToneMapping;
   renderer.toneMappingExposure = P.exposure;
   Object.assign(renderer.domElement.style, { display: 'block', width: '100%', height: '100%' });
