@@ -34,6 +34,12 @@ export function governFloor(renderer, composer, onChange, parts = {}) {
     document.documentElement.dataset.floor = `${ratio.toFixed(2)}/${L.glass}/${L.aa}`;
   };
   apply();
+  // ?off=glass (website/perf.ts): the resting tiles without their see-through glass, to see and measure the
+  // floor without its glass pass; nothing changes without it
+  if ((new URLSearchParams(location.search).get('off') ?? '').split(',').includes('glass'))
+    parts.scene?.traverse((o) => [o.material].flat().forEach((m) => {
+      if (m?.transmission > 0) { m.transmission = 0; m.needsUpdate = true; }
+    }));
   const render = composer.render.bind(composer);
   composer.render = (...args) => {
     lastRender = performance.now();
