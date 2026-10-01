@@ -95,6 +95,11 @@ export function castTiles(tiles, names, active, fill = null) {
 // setPictures(human, ai) }. It waits for the pictures in `wait` only (all by default); a bust whose picture
 // is not in yet shows BLANK and takes its picture once it has arrived and warm(texture) has put it on the
 // GPU. Until its AI copy is in (aiIn; aiReady resolves then, false if it failed), a tile stays human.
+// Only the picture that shows is drawn: the human until the tile turns, the AI copy after, both only while
+// one crossfades into the other (setScan). A tile drawing both at all times cost every frame a draw call per
+// tile for a picture at zero opacity, a fixed cost on a weak GPU (about half of 32ms on an Intel UHD 630). The
+// AI copies are drawn once at the start (the floor's rehearsal, so their shader is ready before the first
+// tile turns), then hidden until their tile turns.
 export async function addCharacters(scene, P, tiles, pics = planPictures(P, [(P.chars ?? []).flatMap((n) => [`chars/${n}`, `chars-ai/${n}`])]),
   cast = castTiles(tiles, P.chars ?? [], P.charActive), wait = [...pics.get.keys()], warm = async (t) => t) {
   const out = new Map();
@@ -114,10 +119,17 @@ export async function addCharacters(scene, P, tiles, pics = planPictures(P, [(P.
       bust.renderOrder = order;
       scene.add(bust);
       meshes.push(bust);
+      // the AI copy: drawn the first time (its shader made ready), then shown only while its tile turns
+      if (role === 'ai') bust.onAfterRender = () => { bust.onAfterRender = () => {}; bust.visible = scanU.value > 0; };
     }
     const entry = {
       name, meshes, converted: false, at: [t.x, t.y, t.z], aiIn: pics.now.has(`chars-ai/${name}`),
-      setScan: (s) => { scanU.value = entry.aiIn ? s : 0; },
+      setScan: (s) => {
+        const v = entry.aiIn ? s : 0;
+        scanU.value = v;
+        meshes[0].visible = v < 1; // the human, until the AI copy has fully taken its place
+        meshes[1].visible = v > 0; // the AI copy, from the moment it starts to show
+      },
       setLift: (y) => meshes.forEach((m) => { m.position.y = t.y + 0.002 + y; }),
       setPictures: (human, ai) => { meshes[0].material.map = human; meshes[1].material.map = ai; entry.aiIn = true; entry.aiReady = Promise.resolve(true); },
     };
