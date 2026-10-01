@@ -34,7 +34,7 @@ export function Footer() {
           <a {...linkTo("top")} className="inline-flex items-center gap-2.5">
             {/* eslint-disable-next-line @next/next/no-img-element -- a fixed 32px mark, no optimisation needed */}
             <img
-              src="/brand/sixlabs-mark-3d.png"
+              src="/brand/sixlabs-mark.svg"
               alt=""
               width={32}
               height={32}

@@ -13,7 +13,7 @@ export function Closing() {
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- a fixed 44px mark, no optimisation needed */}
       <img
-        src="/brand/sixlabs-mark-3d.png"
+        src="/brand/sixlabs-mark.svg"
         alt=""
         width={44}
         height={44}

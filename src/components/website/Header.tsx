@@ -1,6 +1,6 @@
 // Top header: layout and styling from the Halo prompt's navbar, recoloured to this site's light palette;
 // content from the 6labs.ai header. Sticky: fixed to the top, on a frosted strip of the page colour so
-// the sections read through it as they scroll under, with a faint bottom stroke once the page has scrolled. The mark is the SixLabs logo rendered in the tile glass (tools/tiles).
+// the sections read through it as they scroll under, with a faint bottom stroke once the page has scrolled. The mark is the SixLabs logo's own SVG (public/brand/sixlabs-mark.svg).
 "use client";
 
 import { useEffect, useState } from "react";
@@ -62,7 +62,7 @@ export function Header({ clear = false }: { clear?: boolean }) {
         <a {...linkTo("top")} className="flex items-center gap-2.5">
           {/* eslint-disable-next-line @next/next/no-img-element -- a fixed 32px mark, no optimisation needed */}
           <img
-            src="/brand/sixlabs-mark-3d.png"
+            src="/brand/sixlabs-mark.svg"
             alt=""
             width={32}
             height={32}
