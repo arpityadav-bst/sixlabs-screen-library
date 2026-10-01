@@ -93,11 +93,13 @@ export function WaveButton({
         className={
           "group flex items-center transition-colors duration-200 hover:text-accent " +
           (full
-            ? "h-10 rounded-full border border-slate-200/80 bg-white/90 px-3 text-[#0a1b33]/70 backdrop-blur-sm"
+            ? "h-10 rounded-full border border-slate-200/80 bg-white/90 px-3 text-[#0a1b33]/70"
             : "max-md:mr-0 p-1 gap-1.5 text-slate-400 -mr-10")
         }
       >
-        {/* full: the button is a filled pill round the icon; its label widens in inside it on hover */}
+        {/* full: the button is a filled pill round the icon; its label widens in inside it on hover. No backdrop
+            blur under it: any on screen makes Chrome on a Mac put every frame of the floor together itself, which
+            held the whole page at 30 fps there (website/perf.ts, ?off=fx) */}
         <span
           className={
             "text-[12px] leading-none opacity-0 transition-all duration-200 group-hover:opacity-100 whitespace-nowrap " +

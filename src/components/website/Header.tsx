@@ -1,6 +1,8 @@
 // Top header: layout and styling from the Halo prompt's navbar, recoloured to this site's light palette;
-// content from the 6labs.ai header. Sticky: fixed to the top, on a frosted strip of the page colour so
-// the sections read through it as they scroll under, with a faint bottom stroke once the page has scrolled. The mark is the SixLabs logo's own SVG (public/brand/sixlabs-mark.svg).
+// content from the 6labs.ai header. Sticky: fixed to the top, on a strip of the page colour at 92%, so the
+// sections show faintly through it as they scroll under, with a faint bottom stroke once the page has
+// scrolled. Not frosted (backdrop blur): any on screen makes Chrome on a Mac put every frame together itself,
+// which held the whole page at 30 fps there (website/perf.ts, ?off=fx). The mark is the SixLabs logo's own SVG (public/brand/sixlabs-mark.svg).
 "use client";
 
 import { useEffect, useState } from "react";
@@ -17,8 +19,8 @@ const LINKS: { label: string; to: Spot }[] = [
   { label: "FAQs", to: "faq" },
 ];
 
-// `clear` (the 6labs-fullview page, where the tile floor runs under the bar): no ground and no blur at the
-// top of the page, so the floor reads edge to edge; the usual frosted bar once the page has scrolled. There
+// `clear` (the 6labs-fullview page, where the tile floor runs under the bar): no ground at the top of the
+// page, so the floor reads edge to edge; the usual bar once the page has scrolled. There
 // it is also hidden while the hero's loader shows, from the first paint, and there at once, no fade, when
 // loading is done (hero-intro.ts).
 export function Header({ clear = false }: { clear?: boolean }) {
@@ -48,13 +50,13 @@ export function Header({ clear = false }: { clear?: boolean }) {
     <nav
       id="site-head"
       className={
-        "fixed top-0 left-0 right-0 z-40 px-6 py-5 max-md:px-4 max-md:py-4 backdrop-blur-md border-b transition-colors duration-300 " +
+        "fixed top-0 left-0 right-0 z-40 px-6 py-5 max-md:px-4 max-md:py-4 border-b transition-colors duration-300 " +
         (held ? "invisible " : "") +
         (onBlue
           ? "bg-white "
           : clear && !scrolled
-            ? "bg-transparent backdrop-blur-none "
-            : "bg-[rgb(var(--page-rgb)/0.75)] ") +
+            ? "bg-transparent "
+            : "bg-[rgb(var(--page-rgb)/0.92)] ") +
         (scrolled ? "border-slate-300/80" : "border-transparent")
       }
     >

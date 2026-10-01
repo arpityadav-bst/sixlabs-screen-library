@@ -63,11 +63,27 @@ export function SixLabsMark({ className }: { className?: string }) {
 
 // The SixLabs mark as the logo file itself draws it (public/brand/sixlabs-mark.svg): flat blue blades
 // (#1770EF) round a navy core (#030D2D). The footer's mark behind the wordmark (CopyLine.tsx).
-export function SixLabsLogo({ className }: { className?: string }) {
+// fade (the footer's crest, CopyLine.tsx): solid through its top 60%, then fading out over its last 40% on a
+// smoothstep curve, drawn in the logo's own fills (gradients down its height), so it needs no CSS mask
+const FADE = [[0, 1], [0.6, 1], [0.65, 0.96], [0.7, 0.84], [0.75, 0.68], [0.8, 0.5], [0.85, 0.32], [0.9, 0.16], [0.95, 0.04], [1, 0]];
+export function SixLabsLogo({ className, fade = false }: { className?: string; fade?: boolean }) {
+  const id = useId();
+  const fill = (color: string, k: string) => (fade ? `url(#${id}-${k})` : color);
   return (
     <svg viewBox="18 12.99 95.04 105.54" className={className} aria-hidden>
-      <circle cx="65.52" cy="65.76" r="15.41" fill="#030D2D" />
-      <g fill="#1770EF">
+      {fade && (
+        <defs>
+          {[["#030D2D", "c"], ["#1770EF", "a"]].map(([color, k]) => (
+            <linearGradient key={k} id={`${id}-${k}`} gradientUnits="userSpaceOnUse" x1="0" y1="12.99" x2="0" y2="118.53">
+              {FADE.map(([o, a]) => (
+                <stop key={o} offset={o} stopColor={color} stopOpacity={a} />
+              ))}
+            </linearGradient>
+          ))}
+        </defs>
+      )}
+      <circle cx="65.52" cy="65.76" r="15.41" fill={fill("#030D2D", "c")} />
+      <g fill={fill("#1770EF", "a")}>
         {ARCS.map((d, k) => (
           <path key={k} d={d} />
         ))}

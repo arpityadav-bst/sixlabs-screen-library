@@ -30,6 +30,14 @@ const LOAD_MS = 1300;
 const ease = [0.22, 1, 0.36, 1] as const;
 // the accent, lifted for the dark window (the answer only)
 const HI = "text-[#6ea8ff]";
+// The hint cursor's soft shadow, as its CSS drop-shadow drew it (0 2px 8px, 55% black: the pointer's own
+// shape, its 35% fill and 90% line, blurred and dropped 2px), drawn as a picture behind it instead: a CSS
+// filter on screen makes Chrome on a Mac put every frame together itself (perf.ts). lucide's mouse-pointer-2.
+const POINTER =
+  "M4.037 4.688a.495.495 0 0 1 .651-.651l16 6.5a.5.5 0 0 1-.063.947l-6.124 1.58a2 2 0 0 0-1.438 1.435l-1.579 6.126a.5.5 0 0 1-.947.063z";
+const HINT_SHADOW = `data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' viewBox='-14 -12 52 52' width='52' height='52'><filter id='b' filterUnits='userSpaceOnUse' x='-14' y='-12' width='52' height='52'><feGaussianBlur stdDeviation='4'/></filter><g filter='url(#b)' opacity='0.55'><path transform='translate(0 2)' d='${POINTER}' fill='#000' fill-opacity='0.35' stroke='#000' stroke-opacity='0.9' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></g></svg>`,
+)}`;
 const CURSOR =
   "inline-block h-[14px] w-[7px] translate-y-[2px] animate-pulse bg-slate-300";
 // the idle field's glyphs: slate, warming to the lifted accent toward the pool's middle, half strength
@@ -142,9 +150,11 @@ export function JobTerminal({ run, play }: { run: Step[]; play: boolean }) {
           <div ref={field} style={FIELD_TINT} className="absolute inset-0" />
           <div className="absolute inset-0 hidden items-center justify-center [@media(hover:hover)_and_(pointer:fine)]:flex">
             <span className="term-hint relative block">
+              {/* eslint-disable-next-line @next/next/no-img-element -- an inline SVG picture */}
+              <img src={HINT_SHADOW} alt="" aria-hidden className="pointer-events-none absolute left-[-14px] top-[-12px] h-[52px] w-[52px] max-w-none" />
               <span className="term-hint-ring absolute left-[3.5px] top-[3.5px] h-8 w-8 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/55" />
               <MousePointer2
-                className="h-6 w-6 fill-white/35 text-white/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
+                className="relative h-6 w-6 fill-white/35 text-white/90"
                 strokeWidth={1.5}
               />
             </span>
