@@ -1,4 +1,4 @@
-// The live floor's resting tiles without their see-through glass (governor.js applies it; still renders keep
+// The live floor's resting tiles without their see-through glass (floor.js applies it; still renders keep
 // the glass): opaque, and coloured to read as the glass did, matched against screenshots of the two side by
 // side (2026-10-01), and approved as identical to the eye. With nothing see-through left in the scene,
 // three.js skips the extra render of it each frame that the glass took (a full-resolution, 4x multisampled

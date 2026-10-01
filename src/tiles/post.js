@@ -4,16 +4,45 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { TAARenderPass } from 'three/addons/postprocessing/TAARenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 
-const GrainShader = {
-  uniforms: { tDiffuse: { value: null }, uAmt: { value: 0 } },
-  vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-  fragmentShader: `uniform sampler2D tDiffuse; uniform float uAmt; varying vec2 vUv;
+// The film grain, added in the output pass's own shader after its tone mapping and sRGB (it was a pass of its
+// own, a whole extra full-screen read and write a frame for the same result).
 // Sine-free hash: stays random at 4K pixel coordinates, where the sine version forms stripes.
-float h(vec2 p) { vec3 q = fract(vec3(p.xyx) * 0.1031); q += dot(q, q.yzx + 33.33); return fract((q.x + q.y) * q.z); }
-void main() { vec4 c = texture2D(tDiffuse, vUv); gl_FragColor = vec4(c.rgb + (h(gl_FragCoord.xy) - 0.5) * uAmt, c.a); }`,
-};
+const GRAIN = `uniform float uAmt;
+float grainHash(vec2 p) { vec3 q = fract(vec3(p.xyx) * 0.1031); q += dot(q, q.yzx + 33.33); return fract((q.x + q.y) * q.z); }`;
+function outputPass(amt) {
+  const pass = new OutputPass();
+  if (!(amt > 0)) return pass;
+  pass.uniforms.uAmt = { value: amt };
+  pass.material.fragmentShader = pass.material.fragmentShader
+    .replace('varying vec2 vUv;', `varying vec2 vUv;\n${GRAIN}`)
+    .replace(/\}\s*$/, 'gl_FragColor.rgb += (grainHash(gl_FragCoord.xy) - 0.5) * uAmt;\n}\n'); // the last line of main()
+  return pass;
+}
+
+// A moving frame is one plain sample. The anti-aliasing pass would copy it from its own (multisampled) target
+// into the composer's buffer for the next pass to read; here the next pass reads it where it is, which saves a
+// full-screen copy a frame and draws the same pixels (a single sample is copied at a weight of exactly 1).
+// Only where the output pass comes straight after it (no bloom between).
+function readInPlace(aa, next) {
+  const own = aa.render.bind(aa), oldClear = new THREE.Color();
+  aa.render = (renderer, writeBuffer, readBuffer, ...rest) => {
+    aa.inPlace = !aa.accumulate && aa.sampleLevel === 0 && !aa.renderToScreen;
+    if (!aa.inPlace) return own(renderer, writeBuffer, readBuffer, ...rest);
+    const autoClear = renderer.autoClear, oldAlpha = renderer.getClearAlpha();
+    renderer.getClearColor(oldClear);
+    renderer.autoClear = false;
+    renderer.setClearColor(aa.clearColor, aa.clearAlpha);
+    renderer.setRenderTarget(aa._sampleRenderTarget);
+    renderer.clear();
+    renderer.render(aa.scene, aa.camera);
+    renderer.autoClear = autoClear;
+    renderer.setClearColor(oldClear, oldAlpha);
+    aa.accumulateIndex = -1;
+  };
+  const nextRender = next.render.bind(next);
+  next.render = (renderer, writeBuffer, readBuffer, ...rest) => nextRender(renderer, writeBuffer, aa.inPlace ? aa._sampleRenderTarget : readBuffer, ...rest);
+}
 
 export function buildComposer(renderer, scene, camera, P) {
   const composer = new EffectComposer(renderer);
@@ -28,12 +57,9 @@ export function buildComposer(renderer, scene, camera, P) {
   aa._sampleRenderTarget = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: P.msaa ?? 4 });
   composer.addPass(aa);
   if (P.bloomS > 0) composer.addPass(new UnrealBloomPass(new THREE.Vector2(512, 512), P.bloomS, P.bloomR, P.bloomT));
-  composer.addPass(new OutputPass());
-  if (P.filmGrain > 0) {
-    const grain = new ShaderPass(GrainShader);
-    grain.uniforms.uAmt.value = P.filmGrain;
-    composer.addPass(grain);
-  }
+  const out = outputPass(P.filmGrain);
+  composer.addPass(out);
+  if (!(P.bloomS > 0)) readInPlace(aa, out);
   return composer;
 }
 

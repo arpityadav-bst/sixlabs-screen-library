@@ -6,7 +6,7 @@
 // floor on every frame for MEASURE_MS and keeps the frame times: the median, the slowest 5% and the fps,
 // each against the full setting. Alongside: the GPU, the screen and canvas size, the floor's draw calls,
 // triangles, textures and shader programs, and an estimate of its drawing buffers' memory. The panel's Copy
-// puts it all on the clipboard as text. The floor's parts come from window.__floorPerf (governor.js).
+// puts it all on the clipboard as text. The floor's parts come from window.__floorPerf (floor-perf.js).
 type Cfg = { r: number; aa: number };
 type Obj = {
   isInstancedMesh?: boolean;
@@ -36,8 +36,6 @@ type Floor = {
   scene: Obj;
   refiner?: { moving(): void };
   dpr: number;
-  level: number;
-  levels: Cfg[];
   set(cfg: Partial<Cfg>): void;
   restore(): void;
 };
@@ -68,8 +66,10 @@ function toggle(fp: Floor, what: "grain" | "busts" | "tiles") {
     fp.composer.passes
       .filter((p) => p.uniforms && "uAmt" in p.uniforms)
       .forEach((p) => {
-        p.enabled = false;
-        undo.push(() => (p.enabled = true));
+        const u = p.uniforms!.uAmt as { value: number },
+          v = u.value;
+        u.value = 0; // the grain is part of the output pass now (post.js): zeroed, not switched off
+        undo.push(() => (u.value = v));
       });
   each(fp.scene, (o, m) => {
     const bust = m.customProgramCacheKey?.().startsWith("char-");
@@ -149,7 +149,7 @@ function panel() {
   return el;
 }
 
-export async function runBench(gpu: string) {
+export async function runBench(gpuName: () => string) {
   const el = panel();
   const say = (t: string) => (el.textContent = t);
   say("perf bench: waiting for the floor…");
@@ -160,7 +160,7 @@ export async function runBench(gpu: string) {
   };
   while (!w.__floorPerf || !w.__floorReady) await sleep(250);
   const fp = w.__floorPerf;
-  const chosen = fp.levels[fp.level];
+  const gpu = gpuName(); // the floor's own GPU (perf.ts)
   await sleep(2500); // the tiles rise and their first pictures go up
   w.__benchHold = true;
   say("perf bench: pausing the auto-play… (keep the mouse off the floor)");
@@ -211,7 +211,6 @@ export async function runBench(gpu: string) {
     `6labs perf bench · ${new Date().toISOString().slice(0, 16)}`,
     `gpu ${gpu}`,
     `dpr ${fp.dpr} · screen ${screen.width}x${screen.height} · floor ${cw}x${ch} css px`,
-    `governor had chosen ${Math.min(fp.dpr, chosen.r).toFixed(2)}/${chosen.aa}`,
     `floor: ${info.calls} draw calls · ${(info.triangles / 1e6).toFixed(2)} M triangles · ${info.textures} textures · ${info.geometries} geometries · ${info.programs} programs`,
     `drawing buffers ~${buffersMB(cw * fp.dpr, ch * fp.dpr, FULL)} MB at full (estimate)`,
     `${navigator.userAgent.replace(/^Mozilla\/5\.0 /, "")}`,

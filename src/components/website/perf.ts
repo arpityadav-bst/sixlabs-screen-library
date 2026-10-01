@@ -3,8 +3,9 @@
 // ?perf in the address shows a small readout in the corner, for checking a machine from afar; nothing else
 // about the page changes. Every half second: the frame rate, the slowest 5% of the last two seconds' frames,
 // the frames over 50ms in the last ten, the main thread's long tasks in the last ten (where the browser
-// reports them), the hero floor's level as "resolution/anti-aliasing" (governor.js) and its canvas in
-// device px, the screen's pixel density, the JS heap (where reported) and the GPU; and on a second line the
+// reports them), the hero floor's drawing as "resolution/anti-aliasing" (floor-perf.js) and its canvas in
+// device px, the screen's pixel density, the JS heap (where reported) and the GPU the floor draws on (on a
+// laptop with two, it asks for the faster one: this says whether it got it); and on a second line the
 // players' clips (PlayerPortrait.tsx): which files play (webm or stacked), how long their seeks took to land
 // in the last ten seconds (the scrubbed turn: the average, the slowest and how many), and how long the last
 // clip to appear waited for its first frame. ?perf=bench also runs the floor benchmark (perf-bench.ts),
@@ -29,8 +30,16 @@ export function applyOff() {
   if (off) document.documentElement.dataset.off = off.split(",").join(" ");
 }
 
-function gpuName() {
-  const gl = document.createElement("canvas").getContext("webgl");
+// the hero floor's own context once it is up (?perf=bench waits for it), else a fresh one's
+export function gpuName() {
+  const fp = (
+    window as unknown as {
+      __floorPerf?: { renderer: { getContext(): WebGLRenderingContext } };
+    }
+  ).__floorPerf;
+  const gl =
+    fp?.renderer.getContext() ??
+    document.createElement("canvas").getContext("webgl");
   const ext = gl?.getExtension("WEBGL_debug_renderer_info");
   return (ext && gl?.getParameter(ext.UNMASKED_RENDERER_WEBGL)) || "unknown";
 }
@@ -87,8 +96,9 @@ export function perfReadout() {
   };
   const video: PerfVideo = { seeks: [], first: [] };
   (window as unknown as { __perfVideo?: PerfVideo }).__perfVideo = video;
-  const gpu = gpuName();
-  if (mode === "bench") import("./perf-bench").then((m) => m.runBench(gpu));
+  let gpu = gpuName(),
+    gpuFloor = false;
+  if (mode === "bench") import("./perf-bench").then((m) => m.runBench(gpuName));
 
   // the main thread's long tasks (Chrome reports them; elsewhere the count stays "-")
   const tasks: [number, number][] = [];
@@ -132,6 +142,10 @@ export function perfReadout() {
           __floorPerf?: { renderer: { domElement: HTMLCanvasElement } };
         }
       ).__floorPerf?.renderer.domElement;
+      if (fc && !gpuFloor) {
+        gpu = gpuName();
+        gpuFloor = true;
+      }
       const heap = (
         performance as unknown as { memory?: { usedJSHeapSize: number } }
       ).memory;

@@ -13,7 +13,7 @@ import { buildComposer, createRefiner } from './post.js';
 import { addCharacters } from './characters.js';
 import { planLoad } from './load-plan.js';
 import { idleUploader } from './upload.js';
-import { governFloor } from './governor.js';
+import { floorPerf } from './floor-perf.js'; import { opaqueGlass } from './opaque-glass.js';
 import { createCasts } from './casts.js';
 import { createFocusRig } from './focus-rig.js';
 import { startInteraction } from './interact.js';
@@ -33,7 +33,8 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
 
   // The scene is drawn into the composer's own multisampled target (post.js) and reaches the canvas as one flat
   // image, so the canvas needs no anti-aliasing of its own; its drawing buffer is kept only where it is read back.
-  const renderer = new THREE.WebGLRenderer({ antialias: isStatic, preserveDrawingBuffer: isStatic || expose });
+  // high-performance: on a laptop with two GPUs (a MacBook Pro's Radeon beside its Intel UHD 630) the browser otherwise draws on the weak one.
+  const renderer = new THREE.WebGLRenderer({ antialias: isStatic, preserveDrawingBuffer: isStatic || expose, powerPreference: 'high-performance' });
   renderer.toneMapping = THREE.NeutralToneMapping;
   renderer.toneMappingExposure = P.exposure;
   Object.assign(renderer.domElement.style, { display: 'block', width: '100%', height: '100%' });
@@ -81,7 +82,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   const U = floorUniforms(P, { glowX: ax, glowZ: azz, half });
   U.uGlowS.value = U.uGlowTint.value = 0;
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(600, 600), floorMaterial(P, U));
-  floor.rotation.x = -Math.PI / 2;
+  floor.rotation.x = -Math.PI / 2; floor.renderOrder = 1; // after the tiles, so the depth test skips its costly shading where they cover it
   scene.add(floor);
 
   // Glass tiles, instanced, one per cell. The first column gets its own material: its left edge faces the
@@ -209,7 +210,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   // Live: a one-sample frame straight away, then progressive smoothing (post.js). Static renders take
   // the full supersampled frame in one go. Resizes re-run it; an unchanged size is skipped (the
   // observer also fires once when it starts).
-  let size = '', clearTop = 0, tops = null, gov = null, disposed = false; // gov: the live floor's resolution (governor.js)
+  let size = '', clearTop = 0, tops = null, gov = null, disposed = false; // gov: the live floor's resolution (floor-perf.js)
   const draw = (force = false) => {
     const w = Math.max(1, container.clientWidth), h = Math.max(1, container.clientHeight);
     if (`${w}x${h}` === size && !force) return;
@@ -230,7 +231,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
     composer.render();
     refiner?.start();
   };
-  if (!isStatic) gov = governFloor(renderer, composer, () => { if (!disposed) draw(true); }, { scene, refiner, floorColor: P.floorColor }); // steps down on a slow GPU
+  if (!isStatic) { opaqueGlass(scene, P.floorColor); gov = floorPerf(renderer, composer, () => { if (!disposed) draw(true); }, { scene, refiner }); } // the resting tiles opaque (opaque-glass.js)
   // Rehearsal: one frame with a tile raised mid-activation (reflection, glow, spill all live), so any
   // first-use GPU work happens now rather than on the first hover. It is overwritten before it is shown.
   if (!isStatic) {
