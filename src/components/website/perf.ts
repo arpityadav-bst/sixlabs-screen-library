@@ -17,7 +17,7 @@ import type { PerfVideo } from "./PlayerPortrait";
 
 // ?off=… in the address turns parts of the page off for one visit, to find what a slow machine is paying
 // for: ascii (the ASCII field), wave (the accent water's halftone dots; its blue stays), liquid (the scroll
-// line's liquid), tiles (the floating tiles), doodles (the players' doodles), smooth (the smooth scrolling),
+// line's liquid), tiles (the floating tiles), doodles (the players' doodles),
 // grain (the page noise), fx (every backdrop blur, blend mode, CSS mask and filter on
 // the page: on a Mac, Chrome hands a frame's layers to the system as they are only when none is on screen).
 // Comma-separated, any number; <html data-off> carries them for the CSS ones (globals.css). Nothing changes

@@ -10,9 +10,12 @@ import { ArrowRight, Menu, X } from "lucide-react";
 import { LanguageMenu } from "./LanguageMenu";
 import { PrimaryCta } from "./PrimaryCta";
 import { jumpTo, type Spot } from "./jump";
-import { getLenis } from "./SmoothScroll";
 
 const ease = [0.22, 1, 0.36, 1] as const;
+// the page held still while the sheet is open (its overflow clipped), and free again
+const holdPage = (on: boolean) => {
+  document.documentElement.style.overflow = on ? "clip" : "";
+};
 
 export function MobileMenu({
   links,
@@ -23,21 +26,20 @@ export function MobileMenu({
 
   useEffect(() => {
     if (!open) return;
-    const lenis = getLenis();
-    lenis?.stop();
+    holdPage(true);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
     };
     window.addEventListener("keydown", onKey);
     return () => {
       window.removeEventListener("keydown", onKey);
-      lenis?.start();
+      holdPage(false);
     };
   }, [open]);
 
   const go = (to: Spot) => {
     setOpen(false);
-    getLenis()?.start();
+    holdPage(false); // free before the glide starts
     jumpTo(to);
   };
 

@@ -8,12 +8,11 @@
 // sits above the scroll line and below the players section and the header. When the view is full it
 // announces it (window event "accentwave", detail { filled }); the players section waits for that. Past
 // the players the light page rises back from the bottom over DRAIN_VH of a screen, pushing the blue up and
-// off (its edge the mirror of the entry arc), as the next section (Understands.tsx) comes up; one scroll
-// down from the players glides through that, and one
-// scroll up from the next section glides back into the players.
+// off (its edge the mirror of the entry arc), as the next section (Understands.tsx) comes up. All of it
+// follows the scroll as it is; a scroll that comes to rest near the players settles them in place, the
+// water full (the players' magnet, globals.css).
 import { useEffect, useRef } from "react";
-import { COMPLETE_AT, WAVE_VH } from "./ScrubLine";
-import { easeOut, glideTo, gliding, stopGlide } from "./glide";
+import { WAVE_VH } from "./ScrubLine";
 import { isOff } from "./perf";
 import { accentWaveGL } from "./accent-wave-gl";
 
@@ -21,13 +20,7 @@ const ACCENT = [26, 109, 255];
 const ARC = 90; // how much higher the middle of the edge is than its ends, px
 const BAND = 480; // depth of the halftone above the solid colour, px
 const GRAIN = 0.07; // noise strength on the blue
-// A nudge (NUDGE px) past where the line in the scroll line section finishes filling, the page glides
-// the rest of the way into the players by itself; the same the other way, and into and out of the
-// section after the players. Every one of those four glides is the same: GLIDE_S long, moving the moment
-// it starts and settling at the end (easeOut), so each one scroll is answered at once.
-const NUDGE = 8;
 const FULL_AT = 0.9; // how full the view is when it announces full (it counts as drained below 0.8)
-const GLIDE_S = 1.8;
 const DRAIN_VH = 1; // the way out past the players: a screen, as the next section comes up
 const PITCH = 6; // halftone grid, px; a dot of radius PITCH / 2 touches its neighbours
 
@@ -43,13 +36,6 @@ export function AccentWave() {
     const gpu = accentWaveGL(canvas, { accent: ACCENT, arc: ARC, band: BAND, pitch: PITCH, grain: GRAIN });
     const ctx = gpu ? null : canvas.getContext("2d");
     if (!gpu && !ctx) return;
-    let lastY = window.scrollY,
-      lastT = performance.now(),
-      speed = 0,
-      glided = false,
-      glidedUp = true, // disarmed until the view has been full once
-      drainGlided = false,
-      drainUpGlided = true; // disarmed until the drain has run once
     let p = 0, // the rise, 0..1
       q = 0, // the drain past the players, 0..1
       raf = 0,
@@ -163,8 +149,6 @@ export function AccentWave() {
       // full enough to call it (FULL_AT): the players start coming in while the last of the blue settles
       if (f >= FULL_AT) announce(true);
     };
-    const glide = (to: number, v0: number, seconds: number) =>
-      glideTo(to, seconds, easeOut, v0);
     const measure = () => {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       if (w !== window.innerWidth || h !== window.innerHeight) {
@@ -184,64 +168,12 @@ export function AccentWave() {
         1,
         Math.max(0, (window.scrollY - (end - WAVE_VH * h)) / (WAVE_VH * h)),
       );
-      // Where the line has just finished filling (ScrubLine.tsx): past it on the way down (a nudge is
-      // enough), the page glides by itself through the rest of the line's track and the whole rise, to
-      // where the water fills the view and the players are in place; it re-arms back at that point.
-      // Scrolling back up out of the players glides back to exactly that point (the line full, the water
-      // drained), so the very next scroll up starts emptying the line; it re-arms once the view is full.
-      const y = window.scrollY,
-        down = y > lastY,
-        now = performance.now();
-      const fillEnd =
-        end -
-        WAVE_VH * h -
-        (1 - COMPLETE_AT) * (line.offsetHeight - h * (1 + WAVE_VH));
-      // the visitor's scroll speed, px per ms, for the glide to carry on from
-      if (!gliding()) speed = (y - lastY) / Math.max(8, now - lastT);
-      const lastYBefore = lastY;
-      lastY = y;
-      lastT = now;
+      const y = window.scrollY;
       // the drain: from where the players section's foot meets the view's (on a phone it runs longer)
       const drainStart = players
         ? players.getBoundingClientRect().bottom + y - h
         : Infinity;
       q = Math.min(1, Math.max(0, (y - drainStart) / (DRAIN_VH * h)));
-      if (y <= drainStart + 1) drainGlided = false;
-      if (q >= 0.995) drainUpGlided = false;
-      if (y <= fillEnd + 1) glided = false;
-      if (p >= 0.995) glidedUp = false;
-      // no section glide starts while another glide is under way (back to the top, say)
-      if (gliding()) {
-        // passing through: nothing to start
-      } else if (down && !glided && y > fillEnd + NUDGE && p < 1) {
-        glided = true;
-        glide(end + 4, Math.min(Math.max(speed, 0), 2.5), GLIDE_S); // a few px past the end, so it lands full
-      } else if (!down && y < lastYBefore && !glidedUp && p < 0.97 && p > 0) {
-        glidedUp = true;
-        glide(fillEnd, Math.max(Math.min(speed, 0), -2.5), GLIDE_S); // back to the full line, drained
-      } else if (
-        down &&
-        !drainGlided &&
-        p >= 1 &&
-        y > drainStart + NUDGE &&
-        q < 1
-      ) {
-        drainGlided = true;
-        glide(
-          drainStart + DRAIN_VH * h + 2,
-          Math.min(Math.max(speed, 0), 2.5),
-          GLIDE_S,
-        ); // on to the next section
-      } else if (
-        !down &&
-        y < lastYBefore &&
-        !drainUpGlided &&
-        q < 0.97 &&
-        q > 0
-      ) {
-        drainUpGlided = true;
-        glide(drainStart, Math.max(Math.min(speed, 0), -2.5), GLIDE_S); // back into the players, full
-      }
       if (!raf) raf = requestAnimationFrame(draw);
     };
     measure();
@@ -251,7 +183,6 @@ export function AccentWave() {
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", measure);
       window.removeEventListener("resize", measure);
-      stopGlide();
     };
   }, []);
 

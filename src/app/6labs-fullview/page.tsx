@@ -11,7 +11,7 @@ import { Closing } from "@/components/website/Closing";
 import { Footer } from "@/components/website/Footer";
 import { AsciiBackdrop } from "@/components/website/AsciiBackdrop";
 import { AccentWave } from "@/components/website/AccentWave";
-import { SmoothScroll } from "@/components/website/SmoothScroll";
+import { PerfBoot } from "@/components/website/PerfBoot";
 import { ClickLock } from "@/components/website/ClickLock";
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function FullviewPage() {
     <main className="relative min-h-screen overflow-x-clip px-4 md:px-8 pt-24">
       <AsciiBackdrop />
       <AccentWave />
-      <SmoothScroll />
+      <PerfBoot />
       {/* for now, links and calls to action do nothing when clicked (ClickLock.tsx) */}
       <ClickLock />
       <Header clear />

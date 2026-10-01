@@ -4,12 +4,11 @@
 // BlueAI "own an AI" page's second section). The section is tall and its stage sticks to the viewport,
 // so you scroll through the sentence while each word fills from faint to full ink. The fill completes at
 // COMPLETE_AT of the track, so the finished line holds for a beat before the section leaves. Going
-// back up it empties faster (BACK), and once empty the page glides on up to the hero (TOP_S). The phrase
+// back up it empties faster (BACK). The phrase
 // in ACCENT fills to the accent blue. Reduced motion shows it filled. On desktops the words show through a
 // liquid the cursor stirs (LiquidLine.tsx).
 import { useEffect, useRef, useState } from "react";
 import { FloatingBadges } from "./FloatingBadges";
-import { easeOut, glideTo, gliding } from "./glide";
 import { LiquidLine } from "./LiquidLine";
 
 const LINE =
@@ -19,9 +18,6 @@ export const COMPLETE_AT = 0.82;
 // Scrolling back up empties the line BACK times faster than scrolling down fills it; scrolling down
 // again refills at that pace too, until it has caught up with where the scroll is.
 const BACK = 3;
-// Once scrolling up has emptied the line, the page glides the rest of the way up to the hero by itself
-// (TOP_S), so no stretch of the track is scrolled through with nothing happening.
-const TOP_S = 1.4;
 // The track runs WAVE_VH longer than the words need: the stage stays pinned while the accent water
 // (AccentWave.tsx) rises over it, and only then lets go.
 export const WAVE_VH = 1.3;
@@ -57,8 +53,7 @@ export function ScrubLine() {
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let queued = false,
       shown = -1, // words lit, fractional; -1 until the first paint
-      lastT = 0,
-      upArmed = false; // the glide up to the hero, armed once a word has been lit
+      lastT = 0;
     const paint = () => {
       queued = false;
       const el = track.current;
@@ -88,13 +83,7 @@ export function ScrubLine() {
         // up: empties BACK times as fast; down: refills as fast, never past where the scroll is
         shown = Math.max(0, Math.min(t, shown + d * BACK));
       }
-      const up = t < lastT;
       lastT = t;
-      if (shown >= 1) upArmed = true;
-      if (up && upArmed && shown <= 0 && p > 0 && !gliding()) {
-        upArmed = false;
-        glideTo(0, TOP_S, easeOut);
-      }
       setLit(Math.floor(shown));
     };
     const onScroll = () => {

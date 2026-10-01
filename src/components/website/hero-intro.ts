@@ -30,7 +30,7 @@ export function useHeroIntro(full: boolean, ready: boolean) {
   }, [full]);
 
   // The page holds still at its top while the full view loads. The scroll input is caught before the page
-  // or the smooth scroll (Lenis) sees it; the page's overflow is left alone, since hiding the scrollbar
+  // sees it; the page's overflow is left alone, since hiding the scrollbar
   // would shift everything sideways by half its width, and back again as loading ends.
   useEffect(() => {
     if (!full || go) return;

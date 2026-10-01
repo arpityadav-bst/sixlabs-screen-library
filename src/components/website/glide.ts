@@ -1,20 +1,16 @@
 "use client";
 
-// The page's own glides between sections (AccentWave.tsx): a slow eased scroll to a point, ours rather
-// than the browser's quick smooth scroll. With the site's smooth scrolling on (SmoothScroll.tsx) it runs
-// on that, which holds the visitor's input while it runs, so the two never fight and the transition is
-// always seen whole. Without it, a fallback of its own: it starts on the visitor's scroll speed (v0, px
-// per ms) and eases to rest at the point, holding the wheel, touch and keys meanwhile.
-import { getLenis } from "./SmoothScroll";
-
+// The in-page links' glide (jump.ts, BackToTop.tsx): a slow eased scroll to a point, ours rather than the
+// browser's quick smooth scroll. It holds the wheel, touch and keys while it runs, so it is always seen
+// whole, and turns the players' magnet (the page's scroll snap, globals.css) off meanwhile, so a glide that
+// passes the players is not caught by it. The page's own scrolling is the browser's, as it is.
 export const easeOut = (k: number) => 1 - (1 - k) ** 3; // a quick start that settles
 
 let raf = 0;
-let until = 0; // when a glide run on the smooth scrolling ends, ms
 let holding = false;
 const KEYS = [" ", "ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End"];
 
-// the fallback glide holds the page's own scrolling while it runs (added once, on the first glide)
+// the glide holds the page's own scrolling while it runs (added once, on the first glide)
 function holdInput() {
   if (holding) return;
   holding = true;
@@ -28,51 +24,23 @@ function holdInput() {
   });
 }
 
-// Is a glide under way? The page's other glides wait while one runs, so a long one (back to the top, say)
-// is never taken over by a section's glide it passes through.
-export const gliding = () => raf !== 0 || performance.now() < until;
-
-export function stopGlide() {
+export function glideTo(to: number, seconds: number, easing: (k: number) => number) {
   cancelAnimationFrame(raf);
-  raf = 0;
-}
-
-export function glideTo(
-  to: number,
-  seconds: number,
-  easing: (k: number) => number,
-  v0 = 0,
-) {
-  stopGlide();
-  const lenis = getLenis();
-  if (lenis) {
-    until = performance.now() + seconds * 1000;
-    lenis.scrollTo(to, { duration: seconds, easing, lock: true, force: true });
-    return;
-  }
   holdInput();
+  const root = document.documentElement;
+  root.style.scrollSnapType = "none";
   let from = 0,
-    t0 = 0,
-    v = 0;
+    t0 = 0;
   const T = seconds * 1000;
   const step = (now: number) => {
     if (!t0) {
       t0 = now;
       from = window.scrollY;
-      // capped so the curve only ever moves forward (a cubic like this overshoots past 3x the distance)
-      const reach = (1.5 * (to - from)) / T;
-      v =
-        reach >= 0
-          ? Math.min(Math.max(v0, 0), reach)
-          : Math.max(Math.min(v0, 0), reach);
     }
     const k = Math.min(1, (now - t0) / T);
-    const pos =
-      from +
-      (to - from) * (3 * k * k - 2 * k * k * k) +
-      v * T * (k * k * k - 2 * k * k + k);
-    window.scrollTo({ top: pos, behavior: "instant" });
+    window.scrollTo({ top: from + (to - from) * easing(k), behavior: "instant" });
     raf = k < 1 ? requestAnimationFrame(step) : 0;
+    if (!raf) root.style.scrollSnapType = "";
   };
   raf = requestAnimationFrame(step);
 }

@@ -17,6 +17,17 @@ body {
   background: rgb(var(--page-rgb));
 }
 
+/* The page scrolls as the browser scrolls it, with one magnet: a scroll that comes to rest near the players
+   section (Players.tsx) settles with it in place, its top at the view's, where the accent water has just
+   filled the view (AccentWave.tsx). "proximity", so only a scroll that ends close by is caught; the in-page
+   links' glide turns it off while it runs (glide.ts). */
+html {
+  scroll-snap-type: y proximity;
+}
+#players {
+  scroll-snap-align: start;
+}
+
 /* Hero loader (Hero.tsx): lays the logo on the tile floor and turns it about the floor's vertical axis.
    rotateZ spins it in its own plane, then rotateX tips that plane back 50 degrees, so it is seen from
    40 degrees up like the tiles; the long perspective matches the tile camera's narrow lens. */
