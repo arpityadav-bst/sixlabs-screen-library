@@ -79,13 +79,14 @@ export function Understands() {
           <Lines side="ours" />
         </motion.div>
         {/* the "vs" that joins them: over the gutter at the cards' middle (where the stacked cards meet, on a
-            phone), a ring of the page's own colour round it, so it reads as cut into both cards */}
+            phone), a ring of the page's own colour round it, so it reads as cut into both cards. The word is
+            lower case with no ascenders, so it is lifted a little (0.07em) to sit in the disc's optical middle */}
         <motion.span
           {...rise(0.3)}
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 z-10 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-[6px] border-[rgb(var(--page-rgb))] bg-white font-display text-[30px] font-normal tracking-tight text-[#0a1b33]/40 max-md:h-16 max-md:w-16 max-md:text-[24px]"
+          className="pointer-events-none absolute left-1/2 top-1/2 z-10 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-[6px] border-[rgb(var(--page-rgb))] bg-white font-display text-[34px] font-normal tracking-tight text-[#0a1b33]/30 max-md:h-16 max-md:w-16 max-md:text-[27px]"
         >
-          vs
+          <span className="relative -top-[0.07em] leading-none">vs</span>
         </motion.span>
       </div>
     </section>
