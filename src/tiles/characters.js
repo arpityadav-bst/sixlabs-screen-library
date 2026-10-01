@@ -37,13 +37,35 @@ diffuseColor.a *= clip * ${role === 'ai' ? 'uScan' : '(1.0 - uScan)'};`);
 // the one before it is in, so what the floor waits for is not slowed by what it does not need yet. A key in
 // more than one group goes with its first. Pictures come from P.picDir under their base (/512 on phones).
 // Returns { get: Map key -> Promise<Texture>, now: Map key -> Texture, for those already in }.
+// Each picture is decoded off the main thread (createImageBitmap), ready to go up to the GPU as it is: put up
+// from an <img>, the browser decoded it again on the main thread, about 15-20ms a picture on an Intel Mac and
+// some 120 of them over a visit, each a dropped frame. The bitmap is upside down already (WebGL cannot flip
+// one on upload), and its pixels are left as the <img> upload left them (no colour conversion, no premultiply);
+// once on the GPU it is closed, which frees its memory. Where createImageBitmap falls short (Safari before 17,
+// Firefox before 98, as three's GLTFLoader gates it) the pictures load as <img> as before.
+const bitmaps = typeof createImageBitmap !== 'undefined' && !(() => {
+  const ua = typeof navigator === 'undefined' ? '' : navigator.userAgent;
+  const safari = /^((?!chrome|android).)*safari/i.test(ua) && +(ua.match(/Version\/(\d+)/)?.[1] ?? 0) < 17;
+  return safari || +(ua.match(/Firefox\/(\d+)/)?.[1] ?? 99) < 98;
+})();
+function pictureLoader() {
+  if (!bitmaps) return (url) => new THREE.TextureLoader().loadAsync(url);
+  const loader = new THREE.ImageBitmapLoader().setOptions({ imageOrientation: 'flipY', premultiplyAlpha: 'none', colorSpaceConversion: 'none' });
+  return (url) => loader.loadAsync(url).then((bmp) => {
+    const t = new THREE.Texture(bmp);
+    t.flipY = false;
+    t.needsUpdate = true;
+    t.onUpdate = () => bmp.close();
+    return t;
+  });
+}
 export function planPictures(P, groups) {
-  const loader = new THREE.TextureLoader(), get = new Map(), now = new Map(), go = new Map();
+  const load = pictureLoader(), get = new Map(), now = new Map(), go = new Map();
   for (const g of groups) for (const k of g) {
     if (get.has(k)) continue;
     const [dir, name] = k.split('/'), base = dir === 'chars-ai' ? (P.aiAssetBase ?? P.assetBase) : P.assetBase;
     get.set(k, new Promise((r) => go.set(k, r))
-      .then(() => loader.loadAsync(`${base ?? ''}${P.picDir ?? ''}/${dir}/${name}`))
+      .then(() => load(`${base ?? ''}${P.picDir ?? ''}/${dir}/${name}`))
       .then((t) => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 16; now.set(k, t); return t; }));
   }
   (async () => {
