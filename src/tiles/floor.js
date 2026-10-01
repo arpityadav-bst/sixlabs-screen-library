@@ -286,6 +286,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
       intro?.cancel();
       stop();
       mirrorRT.dispose();
+      composer.dispose?.(); // the lean pipeline puts three's tone mapping chunk back (lean.js)
       renderer.dispose();
       renderer.forceContextLoss();
       renderer.domElement.remove();

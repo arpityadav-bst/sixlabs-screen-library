@@ -9,6 +9,11 @@
 // sharpened a floor held still over 32 frames, which the auto-play almost never stays still long enough for.
 import * as THREE from 'three';
 
+// three's own chunk, put back when the floor goes (dispose): what the floor captures before its pipeline is
+// built (the lighting's environment, the side-wall reflection) must be captured untouched, by a floor built
+// again as by the first
+const THREE_TONE = THREE.ShaderChunk.tonemapping_fragment;
+
 // three's NeutralToneMapping (tonemapping_pars_fragment), inline, so it runs whatever the target
 const toneChunk = (exposure) => `{
   vec3 tmC = gl_FragColor.rgb * ${exposure.toFixed(4)};
@@ -80,6 +85,12 @@ export function buildLean(renderer, scene, P) {
     setIntro(base, amount = 1) {
       final.uniforms.tBase.value = base;
       final.uniforms.uMix.value = base ? amount : 1;
+    },
+    dispose() {
+      rt.dispose();
+      final.dispose();
+      tri.dispose();
+      THREE.ShaderChunk.tonemapping_fragment = THREE_TONE;
     },
     render() {
       renderer.setRenderTarget(rt);
