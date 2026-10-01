@@ -49,63 +49,81 @@ void main() {
 }`;
 
 export function accentWaveGL(canvas: HTMLCanvasElement, k: Consts) {
-  const gl = canvas.getContext("webgl", { premultipliedAlpha: true, antialias: false });
+  // A lost context (the GPU switched, memory pressed) comes back rebuilt and drawn again. Safari gives a page
+  // the faster GPU only where both listeners are there before the context is made.
+  let restored = () => {};
+  canvas.addEventListener("webglcontextlost", (e) => e.preventDefault());
+  canvas.addEventListener("webglcontextrestored", () => restored());
+  // ?gpu=high: this canvas on the faster GPU too (a two-GPU Mac's Radeon, where the floor already is)
+  const high = /[?&]gpu=high/.test(location.search);
+  const gl = canvas.getContext("webgl", { premultipliedAlpha: true, antialias: false, powerPreference: high ? "high-performance" : "default" });
   if (!gl) return null;
-  const shader = (type: number, src: string) => {
-    const s = gl.createShader(type)!;
-    gl.shaderSource(s, src);
-    gl.compileShader(s);
-    return s;
+  const setup = () => {
+    const shader = (type: number, src: string) => {
+      const s = gl.createShader(type)!;
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      return s;
+    };
+    const prog = gl.createProgram()!;
+    gl.attachShader(prog, shader(gl.VERTEX_SHADER, VERT));
+    gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, FRAG));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+    gl.useProgram(prog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const at = gl.getAttribLocation(prog, "p");
+    gl.enableVertexAttribArray(at);
+    gl.vertexAttribPointer(at, 2, gl.FLOAT, false, 0, 0);
+    const where = new Map<string, WebGLUniformLocation | null>();
+    const u = (n: string) => {
+      if (!where.has(n)) where.set(n, gl.getUniformLocation(prog, n));
+      return where.get(n)!;
+    };
+    // the grain: one 160 px tile of random greys, as the canvas made it, smoothed when the view is drawn larger
+    const tile = new Uint8Array(160 * 160);
+    for (let i = 0; i < tile.length; i++) tile[i] = Math.random() * 256;
+    gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, 160, 160, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, tile);
+    for (const [p, v] of [[gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE], [gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR]])
+      gl.texParameteri(gl.TEXTURE_2D, p, v);
+    gl.uniform1i(u("tGrain"), 0);
+    gl.uniform3f(u("uAccent"), k.accent[0] / 255, k.accent[1] / 255, k.accent[2] / 255);
+    gl.uniform1f(u("uArc"), k.arc);
+    gl.uniform1f(u("uBand"), k.band);
+    gl.uniform1f(u("uPitch"), k.pitch);
+    gl.uniform1f(u("uGrain"), k.grain);
+    return u;
   };
-  const prog = gl.createProgram()!;
-  gl.attachShader(prog, shader(gl.VERTEX_SHADER, VERT));
-  gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, FRAG));
-  gl.linkProgram(prog);
-  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
-  gl.useProgram(prog);
-  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-  const at = gl.getAttribLocation(prog, "p");
-  gl.enableVertexAttribArray(at);
-  gl.vertexAttribPointer(at, 2, gl.FLOAT, false, 0, 0);
-  const where = new Map<string, WebGLUniformLocation | null>();
-  const u = (n: string) => {
-    if (!where.has(n)) where.set(n, gl.getUniformLocation(prog, n));
-    return where.get(n)!;
-  };
-  // the grain: one 160 px tile of random greys, as the canvas made it, smoothed when the view is drawn larger
-  const tile = new Uint8Array(160 * 160);
-  for (let i = 0; i < tile.length; i++) tile[i] = Math.random() * 256;
-  gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
-  gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, 160, 160, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, tile);
-  for (const [p, v] of [[gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE], [gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE], [gl.TEXTURE_MIN_FILTER, gl.LINEAR], [gl.TEXTURE_MAG_FILTER, gl.LINEAR]])
-    gl.texParameteri(gl.TEXTURE_2D, p, v);
-  gl.uniform1i(u("tGrain"), 0);
-  gl.uniform3f(u("uAccent"), k.accent[0] / 255, k.accent[1] / 255, k.accent[2] / 255);
-  gl.uniform1f(u("uArc"), k.arc);
-  gl.uniform1f(u("uBand"), k.band);
-  gl.uniform1f(u("uPitch"), k.pitch);
-  gl.uniform1f(u("uGrain"), k.grain);
+  let u = setup();
+  if (!u) return null;
   let drawn = ""; // what the canvas shows now: unchanged, nothing is drawn
-
-  return {
-    // null: nothing of the water in view
-    draw(f: WaveFrame | null, dpr: number) {
-      const key = f ? `${f.w}|${f.h}|${f.level}|${f.dir}|${f.dots}|${dpr}|${canvas.width}` : "";
-      if (key === drawn) return;
-      drawn = key;
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      gl.clearColor(0, 0, 0, 0);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-      if (!f) return;
-      gl.uniform2f(u("uRes"), canvas.width, canvas.height);
-      gl.uniform2f(u("uSize"), f.w, f.h);
-      gl.uniform1f(u("uDpr"), dpr);
-      gl.uniform1f(u("uLevel"), f.level);
-      gl.uniform1f(u("uDir"), f.dir);
-      gl.uniform1f(u("uDots"), f.dots ? 1 : 0);
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-    },
+  let last: [WaveFrame | null, number] = [null, 1];
+  restored = () => {
+    u = setup();
+    drawn = "";
+    draw(...last);
   };
+
+  // null: nothing of the water in view
+  function draw(f: WaveFrame | null, dpr: number) {
+    last = [f, dpr];
+    const key = f ? `${f.w}|${f.h}|${f.level}|${f.dir}|${f.dots}|${dpr}|${canvas.width}` : "";
+    if (!u || key === drawn) return;
+    drawn = key;
+    gl!.viewport(0, 0, canvas.width, canvas.height);
+    gl!.clearColor(0, 0, 0, 0);
+    gl!.clear(gl!.COLOR_BUFFER_BIT);
+    if (!f) return;
+    gl!.uniform2f(u("uRes"), canvas.width, canvas.height);
+    gl!.uniform2f(u("uSize"), f.w, f.h);
+    gl!.uniform1f(u("uDpr"), dpr);
+    gl!.uniform1f(u("uLevel"), f.level);
+    gl!.uniform1f(u("uDir"), f.dir);
+    gl!.uniform1f(u("uDots"), f.dots ? 1 : 0);
+    gl!.drawArrays(gl!.TRIANGLES, 0, 3);
+  }
+  return { draw };
 }

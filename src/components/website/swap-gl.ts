@@ -74,9 +74,13 @@ const BAND = 0.6, // the band's depth, a share of the portrait's height
 export const SWEEP = { band: BAND * SIZE.h, rise: DOME * SIZE.h };
 
 export function swapGL(canvas: HTMLCanvasElement): SwapGL | null {
-  // ?portraitgpu=high: this canvas on the faster GPU too (a two-GPU Mac's Radeon, where the floor already is),
-  // to compare against the default in Safari
-  const high = /[?&]portraitgpu=high/.test(location.search);
+  // A lost context (the GPU switched, memory pressed) comes back rebuilt, its frames to come again. Safari
+  // gives a page the faster GPU only where both listeners are there before the context is made.
+  let restored = () => {};
+  canvas.addEventListener("webglcontextlost", (e) => e.preventDefault());
+  canvas.addEventListener("webglcontextrestored", () => restored());
+  // ?gpu=high: this canvas on the faster GPU too (a two-GPU Mac's Radeon, where the floor already is)
+  const high = /[?&]gpu=high/.test(location.search);
   const gl = canvas.getContext("webgl", { premultipliedAlpha: true, antialias: false, powerPreference: high ? "high-performance" : "default" });
   if (!gl) return null;
   const setup = () => {
@@ -123,13 +127,10 @@ export function swapGL(canvas: HTMLCanvasElement): SwapGL | null {
   let st = setup();
   if (!st) return null;
   const has = [false, false];
-  // A lost context (the GPU switched, memory pressed) comes back rebuilt, its frames to come again; Safari gives
-  // a page the faster GPU only where it handles this.
-  canvas.addEventListener("webglcontextlost", (e) => e.preventDefault());
-  canvas.addEventListener("webglcontextrestored", () => {
+  restored = () => {
     st = setup();
     has[0] = has[1] = false;
-  });
+  };
 
   // A decoded frame goes up as it is where WebGL takes one; where it does not (an older WebKit), through a
   // 2D canvas, which every browser with WebCodecs draws one into.

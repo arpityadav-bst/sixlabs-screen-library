@@ -22,7 +22,7 @@ import type { PerfVideo } from "./PlayerPortrait";
 // the page: on a Mac, Chrome hands a frame's layers to the system as they are only when none is on screen).
 // Comma-separated, any number; <html data-off> carries them for the CSS ones (globals.css). Nothing changes
 // without it. ?gpu=low draws the floor and the liquid on a two-GPU laptop's low-power GPU (floor.js);
-// ?portraitgpu=high draws the players' portrait on its faster one (swap-gl.ts).
+// ?gpu=high draws the players' portrait and the accent water on its faster one (swap-gl.ts, accent-wave-gl.ts).
 export const isOff = (part: string) =>
   typeof location !== "undefined" &&
   (new URLSearchParams(location.search).get("off") ?? "")
