@@ -16,7 +16,7 @@ import { ClickLock } from "@/components/website/ClickLock";
 import { ArtProvider } from "@/components/website/art";
 
 export const metadata: Metadata = {
-  title: "6labs fullview hologram",
+  title: "6labs fullview digital AI",
   description: "Making models of human players.",
 };
 
