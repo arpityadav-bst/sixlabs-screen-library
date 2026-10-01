@@ -7,7 +7,7 @@
 // each against the full setting. Alongside: the GPU, the screen and canvas size, the floor's draw calls,
 // triangles, textures and shader programs, and an estimate of its drawing buffers' memory. The panel's Copy
 // puts it all on the clipboard as text. The floor's parts come from window.__floorPerf (governor.js).
-type Cfg = { r: number; glass: number; aa: number };
+type Cfg = { r: number; aa: number };
 type Obj = {
   isInstancedMesh?: boolean;
   visible: boolean;
@@ -15,7 +15,6 @@ type Obj = {
   traverse(f: (o: Obj) => void): void;
 };
 type Mat = {
-  transmission?: number;
   needsUpdate?: boolean;
   customProgramCacheKey?: () => string;
 };
@@ -45,7 +44,7 @@ type Floor = {
 
 const SETTLE_MS = 700,
   MEASURE_MS = 2200;
-const FULL: Cfg = { r: Infinity, glass: 1, aa: 4 };
+const FULL: Cfg = { r: Infinity, aa: 4 };
 
 const frame = () => new Promise<number>((r) => requestAnimationFrame(r));
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -63,7 +62,7 @@ function each(scene: Obj, f: (o: Obj, m: Mat) => void) {
 }
 
 // One thing switched off for a case, and its undo.
-function toggle(fp: Floor, what: "grain" | "glass" | "busts" | "tiles") {
+function toggle(fp: Floor, what: "grain" | "busts" | "tiles") {
   const undo: (() => void)[] = [];
   if (what === "grain")
     fp.composer.passes
@@ -73,15 +72,6 @@ function toggle(fp: Floor, what: "grain" | "glass" | "busts" | "tiles") {
         undo.push(() => (p.enabled = true));
       });
   each(fp.scene, (o, m) => {
-    if (what === "glass" && (m.transmission ?? 0) > 0) {
-      const t = m.transmission;
-      m.transmission = 0;
-      m.needsUpdate = true;
-      undo.push(() => {
-        m.transmission = t;
-        m.needsUpdate = true;
-      });
-    }
     const bust = m.customProgramCacheKey?.().startsWith("char-");
     if ((what === "busts" && bust) || (what === "tiles" && o.isInstancedMesh)) {
       if (o.visible) undo.push(() => (o.visible = true));
@@ -129,15 +119,13 @@ function sceneInfo(fp: Floor) {
   return out;
 }
 
-// the drawing buffers' memory, roughly: the scene's multisampled target, the glass pass (three.js keeps it at
-// 4 samples at least, plus its mipmapped copy), the composer's two and the anti-aliasing's hold, the canvas
+// the drawing buffers' memory, roughly: the scene's multisampled target (colour and depth), the composer's two
+// and the anti-aliasing's hold, the canvas
 function buffersMB(w: number, h: number, c: Cfg) {
-  const px = w * h,
-    g = px * c.glass * c.glass;
-  const scene = px * Math.max(1, c.aa) * (8 + 4),
-    glass = g * 4 * (8 + 4) + g * 8 * 1.34,
-    rest = px * 8 * 3 + px * 8;
-  return Math.round((scene + glass + rest) / 1e6);
+  const px = w * h;
+  return Math.round(
+    (px * Math.max(1, c.aa) * (8 + 4) + px * 8 * 3 + px * 8) / 1e6,
+  );
 }
 
 function panel() {
@@ -179,15 +167,12 @@ export async function runBench(gpu: string) {
   await sleep(3500); // the activation under way finishes
 
   const cases: [string, Partial<Cfg>, Parameters<typeof toggle>[1]?][] = [
-    ["full (dpr, glass 1, aa 4)", {}],
+    ["full (dpr, aa 4)", {}],
     ["aa 2", { aa: 2 }],
     ["aa 0 (no anti-aliasing)", { aa: 0 }],
-    ["glass pass 0.5", { glass: 0.5 }],
-    ["glass pass 0.25", { glass: 0.25 }],
     ["resolution 1.5", { r: 1.5 }],
     ["resolution 1", { r: 1 }],
     ["resolution 0.75", { r: 0.75 }],
-    ["glass effect off", {}, "glass"],
     ["film grain off", {}, "grain"],
     ["portraits hidden", {}, "busts"],
     ["floor tiles hidden", {}, "tiles"],
@@ -226,7 +211,7 @@ export async function runBench(gpu: string) {
     `6labs perf bench · ${new Date().toISOString().slice(0, 16)}`,
     `gpu ${gpu}`,
     `dpr ${fp.dpr} · screen ${screen.width}x${screen.height} · floor ${cw}x${ch} css px`,
-    `governor had chosen ${Math.min(fp.dpr, chosen.r).toFixed(2)}/${chosen.glass}/${chosen.aa}`,
+    `governor had chosen ${Math.min(fp.dpr, chosen.r).toFixed(2)}/${chosen.aa}`,
     `floor: ${info.calls} draw calls · ${(info.triangles / 1e6).toFixed(2)} M triangles · ${info.textures} textures · ${info.geometries} geometries · ${info.programs} programs`,
     `drawing buffers ~${buffersMB(cw * fp.dpr, ch * fp.dpr, FULL)} MB at full (estimate)`,
     `${navigator.userAgent.replace(/^Mozilla\/5\.0 /, "")}`,

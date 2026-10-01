@@ -3,7 +3,7 @@
 // ?perf in the address shows a small readout in the corner, for checking a machine from afar; nothing else
 // about the page changes. Every half second: the frame rate, the slowest 5% of the last two seconds' frames,
 // the frames over 50ms in the last ten, the main thread's long tasks in the last ten (where the browser
-// reports them), the hero floor's level as "resolution/glass/anti-aliasing" (governor.js) and its canvas in
+// reports them), the hero floor's level as "resolution/anti-aliasing" (governor.js) and its canvas in
 // device px, the screen's pixel density, the JS heap (where reported) and the GPU; and on a second line the
 // players' clips (PlayerPortrait.tsx): which files play (webm or stacked), how long their seeks took to land
 // in the last ten seconds (the scrubbed turn: the average, the slowest and how many), and how long the last
@@ -14,8 +14,7 @@ import type { PerfVideo } from "./PlayerPortrait";
 // ?off=… in the address turns parts of the page off for one visit, to find what a slow machine is paying
 // for: ascii (the ASCII field), wave (the accent water's halftone dots; its blue stays), liquid (the scroll
 // line's liquid), tiles (the floating tiles), doodles (the players' doodles), smooth (the smooth scrolling),
-// grain (the page noise), blur (the header's blur), glass (the floor tiles' see-through glass, governor.js).
-// Comma-separated, any number; <html data-off> carries them
+// grain (the page noise), blur (the header's blur). Comma-separated, any number; <html data-off> carries them
 // for the CSS ones (globals.css). Nothing changes without it.
 export const isOff = (part: string) =>
   typeof location !== "undefined" &&

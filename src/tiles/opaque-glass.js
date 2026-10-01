@@ -1,6 +1,8 @@
-// The resting tiles without their see-through glass (?off=glass, governor.js): opaque, and coloured to read
-// as the glass did, matched against screenshots of the two side by side (2026-10-01). Through the glass the
-// tops showed mostly the floor (about RGB 218-221-226) and the walls an even light grey (206-220) whichever
+// The live floor's resting tiles without their see-through glass (governor.js applies it; still renders keep
+// the glass): opaque, and coloured to read as the glass did, matched against screenshots of the two side by
+// side (2026-10-01), and approved as identical to the eye. With nothing see-through left in the scene,
+// three.js skips the extra render of it each frame that the glass took (a full-resolution, 4x multisampled
+// image). Through the glass the tops showed mostly the floor (about RGB 218-221-226) and the walls an even light grey (206-220) whichever
 // way they faced, since what showed there was the lit floor behind them. Opaque, the tops came out about 4%
 // brighter (the glass's own colour mixed toward the floor by its 82%) and the walls a dark band (135-142),
 // lit as solid walls facing away from the light with the walls' own shading on top. So the tops take the
