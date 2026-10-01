@@ -1,36 +1,63 @@
-// Keeps the live floor smooth on a weaker GPU (an Intel Mac's built-in graphics, say). It times the floor's
-// animated frames (the gaps between renders on consecutive frames) and, while their median over a stretch
-// runs slower than SLOW_MS (about 45 fps), steps the work down: first the glass's see-through pass to half
-// resolution (the frosted glass hides the difference), then the drawing resolution, x0.8 a step, down to
-// MIN_RATIO. A fast GPU never trips it and keeps everything at full. It never steps back up: a sharpness that
-// comes and goes reads worse than one that holds. onChange redraws the floor at the new resolution. In the
-// page's lite mode (<html data-lite>, website/perf.ts) the glass starts at half resolution.
-// <html data-floor> reads "ratio/glass" (?perf).
-const SLOW_MS = 22, WINDOW = 36, MIN_RATIO = 0.8;
+// Keeps the live floor smooth on a weak GPU (an Intel Mac's UHD 630 ran the full view at 2 fps). While the
+// floor is drawing (a render in the last second), it times the page's own frames and, about every second,
+// takes their median: slower than SLOW_MS (about 45 fps) steps the floor's work down LEVELS, further at once
+// the slower it is (two steps under 25 fps, three under 10). A level sets the drawing resolution, the glass's
+// see-through pass and the anti-aliasing samples. A fast GPU never trips it and keeps everything at full.
+// It never steps back up: a sharpness that comes and goes reads worse than one that holds. In the page's
+// lite mode (<html data-lite>, website/perf.ts) it starts a level down (the glass at half). onChange redraws
+// the floor at the new resolution; <html data-floor> reads "ratio/glass/aa" (?perf).
+const SLOW_MS = 22;
+const LEVELS = [
+  { r: Infinity, glass: 1, aa: 4 }, // r: the most device pixels it draws per CSS pixel
+  { r: Infinity, glass: 0.5, aa: 4 },
+  { r: 1.5, glass: 0.5, aa: 4 },
+  { r: 1.25, glass: 0.5, aa: 2 },
+  { r: 1, glass: 0.5, aa: 0 },
+  { r: 0.85, glass: 0.25, aa: 0 },
+  { r: 0.7, glass: 0.25, aa: 0 },
+  { r: 0.55, glass: 0.25, aa: 0 },
+];
 
 export function governFloor(renderer, composer, onChange) {
-  let ratio = window.devicePixelRatio || 1, last = 0, gaps = [];
-  const note = () => { document.documentElement.dataset.floor = `${ratio.toFixed(2)}/${renderer.transmissionResolutionScale}`; };
-  const stepDown = () => {
-    if (renderer.transmissionResolutionScale > 0.5) { renderer.transmissionResolutionScale = 0.5; return note(); }
-    if (ratio <= MIN_RATIO) return;
-    ratio = Math.max(MIN_RATIO, ratio * 0.8);
-    note();
-    onChange();
+  const dpr = window.devicePixelRatio || 1, aaPass = composer.passes[0];
+  let level = document.documentElement.dataset.lite === '1' ? 1 : 0;
+  let ratio = dpr, lastRender = 0, prev = 0, gaps = [], since = 0;
+  const apply = () => {
+    const L = LEVELS[level];
+    ratio = Math.min(dpr, L.r);
+    renderer.transmissionResolutionScale = L.glass;
+    const rt = aaPass?._sampleRenderTarget;
+    if (rt && rt.samples !== L.aa) { rt.samples = L.aa; rt.dispose(); } // rebuilt at its new samples on next use
+    document.documentElement.dataset.floor = `${ratio.toFixed(2)}/${L.glass}/${L.aa}`;
   };
-  if (document.documentElement.dataset.lite === '1') renderer.transmissionResolutionScale = 0.5;
-  note();
+  apply();
   const render = composer.render.bind(composer);
   composer.render = (...args) => {
-    const now = performance.now(), gap = now - last;
-    last = now;
-    if (gap >= 4 && gap < 120) gaps.push(gap); // consecutive frames only, not two renders in one frame
-    if (gaps.length >= WINDOW) {
-      const slow = gaps.sort((a, b) => a - b)[WINDOW >> 1] > SLOW_MS;
-      gaps = [];
-      if (slow) stepDown();
-    }
+    lastRender = performance.now();
     return render(...args);
   };
+  // the page's frames, timed only while the floor is drawing; a hidden tab or a long stall is not counted
+  const probe = (now) => {
+    if (!renderer.domElement.isConnected) return; // the floor is gone
+    const gap = prev ? now - prev : Infinity;
+    prev = now;
+    if (now - lastRender < 1000 && !document.hidden && gap < 5000) {
+      gaps.push(gap);
+      since ||= now;
+    }
+    if (gaps.length >= 3 && now - since >= 1000) {
+      const med = gaps.sort((a, b) => a - b)[gaps.length >> 1];
+      gaps = [];
+      since = 0;
+      const steps = med > 100 ? 3 : med > 40 ? 2 : med > SLOW_MS ? 1 : 0;
+      if (steps && level < LEVELS.length - 1) {
+        level = Math.min(LEVELS.length - 1, level + steps);
+        apply();
+        onChange();
+      }
+    }
+    requestAnimationFrame(probe);
+  };
+  requestAnimationFrame(probe);
   return { get ratio() { return ratio; } };
 }

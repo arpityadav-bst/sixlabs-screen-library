@@ -31,7 +31,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   const PF = Object.assign({}, common, RAW.states?.default ?? {}), PA = Object.assign({}, common, RAW.states?.shine ?? {});
   const P = PF;
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: isStatic || expose }); // kept only where a render is read back
   renderer.toneMapping = THREE.NeutralToneMapping;
   renderer.toneMappingExposure = P.exposure;
   Object.assign(renderer.domElement.style, { display: 'block', width: '100%', height: '100%' });
