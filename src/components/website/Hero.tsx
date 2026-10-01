@@ -108,6 +108,8 @@ export function Hero({ full = false }: { full?: boolean }) {
     <>
       <section
         ref={box}
+        // the full view's hero fills the screen: the page's ASCII field behind it rests meanwhile (AsciiBackdrop)
+        data-covers-view={full || undefined}
         className={
           "relative bg-[#e3e5e8] overflow-hidden flex flex-col " +
           (full

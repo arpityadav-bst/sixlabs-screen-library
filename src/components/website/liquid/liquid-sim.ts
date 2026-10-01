@@ -140,12 +140,14 @@ export function createLiquid(canvas: HTMLCanvasElement, picture: HTMLCanvasEleme
     renderer.setRenderTarget(null);
   }
 
+  let dirty = true; // a frame is owed (resized, back in view, first)
   function resize() {
     const w = Math.max(canvas.clientWidth, 1), h = Math.max(canvas.clientHeight, 1);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(w, h, false);
     aspect = w / h;
     comp.uniforms.uSize.value.set(w, h);
+    dirty = true;
   }
   const ro = new ResizeObserver(resize);
   ro.observe(canvas);
@@ -166,12 +168,14 @@ export function createLiquid(canvas: HTMLCanvasElement, picture: HTMLCanvasEleme
     return 0;
   }
 
-  let lastT = 0;
+  let lastT = 0, ampWas = 0;
   function tick(time: number) {
     const dt = lastT ? Math.min((time - lastT) / 1000, 0.05) : 0;
     lastT = time;
-    if (frame()) tex.needsUpdate = true;
-    if (dt > 0 && (queued.length || energy > 0.002)) step(Math.min(dt, SIM_STEP * 2));
+    const drawn = frame();
+    if (drawn) tex.needsUpdate = true;
+    const stepping = dt > 0 && (queued.length > 0 || energy > 0.002);
+    if (stepping) step(Math.min(dt, SIM_STEP * 2));
     glow += ((inside ? 1 : 0) - glow) * Math.min(dt * 6, 1);
     comp.uniforms.tField.value = field[0].texture;
     comp.uniforms.uTime.value = time * 0.001;
@@ -183,13 +187,20 @@ export function createLiquid(canvas: HTMLCanvasElement, picture: HTMLCanvasEleme
       comp.uniforms.uGlitchRect.value.set(...boxes[0]);
       comp.uniforms.uGlitchRect2.value.set(...(boxes[1] ?? ([-1, -1, -1, -1] as Box)));
     }
-    comp.uniforms.uGlitchAmp.value = glitchAmp(dt, !!boxes?.length);
+    const amp = glitchAmp(dt, !!boxes?.length), was = ampWas;
+    ampWas = amp;
+    comp.uniforms.uGlitchAmp.value = amp;
     comp.uniforms.uGlitchSeed.value = Math.floor(gT * 24) + burstSeed;
+    // Nothing moving and nothing new (no flow, no cursor lens, no glitch, the words unchanged): the canvas
+    // already shows this frame, so none is drawn, and a still line costs the GPU nothing.
+    if (!(dirty || drawn || stepping || glow > 0.001 || amp > 0 || was > 0)) return;
+    dirty = false;
     run(comp, null);
   }
   // runs only while the canvas is on screen
   const io = new IntersectionObserver(([e]) => {
     lastT = 0;
+    dirty = true;
     renderer.setAnimationLoop(e.isIntersecting ? tick : null);
   });
   io.observe(canvas);

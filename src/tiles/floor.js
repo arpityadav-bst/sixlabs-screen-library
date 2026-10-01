@@ -13,6 +13,7 @@ import { buildComposer, createRefiner } from './post.js';
 import { addCharacters } from './characters.js';
 import { planLoad } from './load-plan.js';
 import { idleUploader } from './upload.js';
+import { governFloor } from './governor.js';
 import { createCasts } from './casts.js';
 import { createFocusRig } from './focus-rig.js';
 import { startInteraction } from './interact.js';
@@ -206,7 +207,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   // Live: a one-sample frame straight away, then progressive smoothing (post.js). Static renders take
   // the full supersampled frame in one go. Resizes re-run it; an unchanged size is skipped (the
   // observer also fires once when it starts).
-  let size = '', clearTop = 0, tops = null;
+  let size = '', clearTop = 0, tops = null, gov = null; // gov: the live floor's resolution (governor.js)
   const draw = (force = false) => {
     const w = Math.max(1, container.clientWidth), h = Math.max(1, container.clientHeight);
     if (`${w}x${h}` === size && !force) return;
@@ -218,15 +219,16 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
       tops ??= cells.flatMap(([i, j]) => [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([a, b]) => new THREE.Vector3(cx(i) + a * half, tileH, cz(j) + b * half)));
       lowerView(camera, tops, h, clearTop);
     }
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(gov?.ratio ?? window.devicePixelRatio);
     renderer.setSize(w, h, false);
-    composer.setPixelRatio(window.devicePixelRatio);
+    composer.setPixelRatio(gov?.ratio ?? window.devicePixelRatio);
     composer.setSize(w, h);
     refiner?.resized();
     refiner?.moving();
     composer.render();
     refiner?.start();
   };
+  if (!isStatic) gov = governFloor(renderer, composer, () => draw(true)); // steps down on a slow GPU
   // Rehearsal: one frame with a tile raised mid-activation (reflection, glow, spill all live), so any
   // first-use GPU work happens now rather than on the first hover. It is overwritten before it is shown.
   if (!isStatic) {
