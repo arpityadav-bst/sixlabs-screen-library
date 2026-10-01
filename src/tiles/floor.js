@@ -31,7 +31,9 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   const PF = Object.assign({}, common, RAW.states?.default ?? {}), PA = Object.assign({}, common, RAW.states?.shine ?? {});
   const P = PF;
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: isStatic || expose }); // kept only where a render is read back
+  // The scene is drawn into the composer's own multisampled target (post.js) and reaches the canvas as one flat
+  // image, so the canvas needs no anti-aliasing of its own; its drawing buffer is kept only where it is read back.
+  const renderer = new THREE.WebGLRenderer({ antialias: isStatic, preserveDrawingBuffer: isStatic || expose });
   renderer.toneMapping = THREE.NeutralToneMapping;
   renderer.toneMappingExposure = P.exposure;
   Object.assign(renderer.domElement.style, { display: 'block', width: '100%', height: '100%' });

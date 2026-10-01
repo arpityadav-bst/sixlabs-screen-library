@@ -3,9 +3,8 @@
 // takes their median: slower than SLOW_MS (about 45 fps) steps the floor's work down LEVELS, further at once
 // the slower it is (two steps under 25 fps, three under 10). A level sets the drawing resolution, the glass's
 // see-through pass and the anti-aliasing samples. A fast GPU never trips it and keeps everything at full.
-// It never steps back up: a sharpness that comes and goes reads worse than one that holds. In the page's
-// lite mode (<html data-lite>, website/perf.ts) it starts a level down (the glass at half). onChange redraws
-// the floor at the new resolution; <html data-floor> reads "ratio/glass/aa" (?perf).
+// It never steps back up: a sharpness that comes and goes reads worse than one that holds. onChange redraws
+// the floor at the new resolution; <html data-floor> reads "ratio/glass/aa" (?perf, website/perf.ts).
 const SLOW_MS = 22;
 const LEVELS = [
   { r: Infinity, glass: 1, aa: 4 }, // r: the most device pixels it draws per CSS pixel
@@ -20,7 +19,7 @@ const LEVELS = [
 
 export function governFloor(renderer, composer, onChange) {
   const dpr = window.devicePixelRatio || 1, aaPass = composer.passes[0];
-  let level = document.documentElement.dataset.lite === '1' ? 1 : 0;
+  let level = 0;
   let ratio = dpr, lastRender = 0, prev = 0, gaps = [], since = 0;
   const apply = () => {
     const L = LEVELS[level];

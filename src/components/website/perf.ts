@@ -1,24 +1,16 @@
 "use client";
 
-// Lite mode, on for everyone (the page as smooth as it runs on any machine, an Intel Mac's built-in graphics
-// included): <html data-lite="1"> from the server's first paint (layout.tsx), which the page's heavy parts
-// answer: scrolling is the browser's own, not smoothed (SmoothScroll.tsx), the ASCII field stays off
-// (AsciiBackdrop.tsx), the accent water's halftone is coarser (AccentWave.tsx), the floor's glass pass runs
-// at half resolution (governor.js, which still lowers the floor's resolution where it runs slow), and the
-// page noise, the header's blur and the floating tiles' shadow are off (globals.css).
-// ?full in the address turns it off, for the full version; ?perf shows a small readout (frame rate, lite,
-// the floor's resolution, the GPU), for checking a machine from afar.
-export const isLite = () =>
-  typeof document !== "undefined" &&
-  document.documentElement.dataset.lite === "1";
-
+// ?perf in the address shows a small readout in the corner (the page's frame rate, the hero floor's level as
+// "resolution/glass/anti-aliasing" from governor.js, the screen's pixel density and the GPU), for checking a
+// machine from afar. Nothing else about the page changes.
 function gpuName() {
   const gl = document.createElement("canvas").getContext("webgl");
   const ext = gl?.getExtension("WEBGL_debug_renderer_info");
   return (ext && gl?.getParameter(ext.UNMASKED_RENDERER_WEBGL)) || "unknown";
 }
 
-function readout() {
+export function perfReadout() {
+  if (!new URLSearchParams(location.search).has("perf")) return;
   if (document.getElementById("perf-readout")) return;
   const el = document.createElement("div");
   el.id = "perf-readout";
@@ -42,19 +34,12 @@ function readout() {
   const tick = (now: number) => {
     n++;
     if (now - t >= 500) {
-      const d = document.documentElement.dataset;
-      el.textContent = `${Math.round((n * 1000) / (now - t))} fps · lite ${d.lite === "1" ? "on" : "off"} · floor ${d.floor ?? "-"} · dpr ${window.devicePixelRatio} · ${gpu}`;
+      const floor = document.documentElement.dataset.floor ?? "-";
+      el.textContent = `${Math.round((n * 1000) / (now - t))} fps · floor ${floor} · dpr ${window.devicePixelRatio} · ${gpu}`;
       n = 0;
       t = now;
     }
     requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
-}
-
-// Reads the address once, on the first page (SmoothScroll.tsx runs it before it starts): ?full, ?perf.
-export function readPerfFlags() {
-  const q = new URLSearchParams(location.search);
-  if (q.has("full")) delete document.documentElement.dataset.lite;
-  if (q.has("perf")) readout();
 }

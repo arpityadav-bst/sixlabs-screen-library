@@ -14,7 +14,6 @@
 import { useEffect, useRef } from "react";
 import { COMPLETE_AT, WAVE_VH } from "./ScrubLine";
 import { easeOut, glideTo, gliding, stopGlide } from "./glide";
-import { isLite } from "./perf";
 
 const ACCENT = [26, 109, 255];
 const ARC = 90; // how much higher the middle of the edge is than its ends, px
@@ -29,7 +28,6 @@ const FULL_AT = 0.9; // how full the view is when it announces full (it counts a
 const GLIDE_S = 1.8;
 const DRAIN_VH = 1; // the way out past the players: a screen, as the next section comes up
 const PITCH = 6; // halftone grid, px; a dot of radius PITCH / 2 touches its neighbours
-const LITE_PITCH = 10;
 
 export function AccentWave() {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -85,8 +83,6 @@ export function AccentWave() {
 
     const draw = () => {
       raf = 0;
-      // lite mode (perf.ts): a coarser grid, about a third of the dots to draw each frame
-      const pitch = isLite() ? LITE_PITCH : PITCH;
       // some slack before it counts as drained, so scrolling back a step does not undo the players
       const f = Math.min(p, 1 - q); // how full the view is: risen, less pushed out
       if (f < 0.8) announce(false);
@@ -99,8 +95,8 @@ export function AccentWave() {
       const k = out ? q : p,
         ke = k * k * (3 - 2 * k);
       const level = out
-        ? h + ARC + pitch * 2 - ke * (h + ARC + BAND + pitch * 5)
-        : h + BAND - ke * (h + BAND + ARC + pitch * 3);
+        ? h + ARC + PITCH * 2 - ke * (h + ARC + BAND + PITCH * 5)
+        : h + BAND - ke * (h + BAND + ARC + PITCH * 3);
       if (f > 0) {
         ctx.fillStyle = fill;
         ctx.beginPath();
@@ -108,31 +104,31 @@ export function AccentWave() {
         const from = out ? 0 : h;
         ctx.moveTo(0, from);
         for (let x = 0; x <= w; x += 12)
-          ctx.lineTo(x, edge(x, level, dir) + dir * pitch * 2);
-        ctx.lineTo(w, edge(w, level, dir) + dir * pitch * 2);
+          ctx.lineTo(x, edge(x, level, dir) + dir * PITCH * 2);
+        ctx.lineTo(w, edge(w, level, dir) + dir * PITCH * 2);
         ctx.lineTo(w, from);
         ctx.closePath();
         ctx.fill();
         // the halftone on the far side of the edge: s runs 0 (the band's outer side) to 1 (at the edge).
-        // The dots keep growing past touching (radius pitch / 2) to covering their whole cell (pitch *
+        // The dots keep growing past touching (radius PITCH / 2) to covering their whole cell (PITCH *
         // 0.72, over half the diagonal) and carry on a few rows into the solid, so it melts in, no seam.
-        for (let gx = pitch / 2; gx < w; gx += pitch) {
+        for (let gx = PITCH / 2; gx < w; gx += PITCH) {
           const e = edge(gx, level, dir);
           const a = e - dir * BAND,
-            b = e + dir * pitch * 3;
+            b = e + dir * PITCH * 3;
           for (
-            let gy = Math.floor(Math.min(a, b) / pitch) * pitch + pitch / 2;
+            let gy = Math.floor(Math.min(a, b) / PITCH) * PITCH + PITCH / 2;
             gy < Math.max(a, b);
-            gy += pitch
+            gy += PITCH
           ) {
             const s = Math.min(1, 1 - (dir * (e - gy)) / BAND);
-            if (s <= 0 || gy < -pitch || gy > h + pitch) continue;
+            if (s <= 0 || gy < -PITCH || gy > h + PITCH) continue;
             ctx.globalAlpha = Math.min(1, 0.15 + s * 0.95);
             ctx.beginPath();
             ctx.arc(
               gx,
               gy,
-              0.35 + (pitch * 0.72 - 0.35) * s ** 1.4,
+              0.35 + (PITCH * 0.72 - 0.35) * s ** 1.4,
               0,
               Math.PI * 2,
             );

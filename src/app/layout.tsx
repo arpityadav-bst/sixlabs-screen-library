@@ -32,8 +32,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      // lite mode, for everyone from the first paint (website/perf.ts; ?full turns it off)
-      data-lite="1"
       className={`${inter.variable} ${outfit.variable} ${jbmono.variable} h-full antialiased`}
     >
       <body className="min-h-full font-sans">{children}</body>

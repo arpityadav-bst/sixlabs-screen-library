@@ -163,7 +163,7 @@ function FloatingBadge({
       <div className="badge-bob" style={{ animationDelay: `${-b.delay}s` }}>
         <div style={{ perspective: 900 }}>
           <motion.div
-            className="float-tile drop-shadow-[0_6px_8px_rgba(10,27,51,0.05)] w-(--s) max-md:w-[calc(var(--s)*0.5)] md:max-xl:w-[calc(var(--s)*0.65)] xl:max-[1600px]:w-[calc(var(--s)*0.8)]"
+            className="drop-shadow-[0_6px_8px_rgba(10,27,51,0.05)] w-(--s) max-md:w-[calc(var(--s)*0.5)] md:max-xl:w-[calc(var(--s)*0.65)] xl:max-[1600px]:w-[calc(var(--s)*0.8)]"
             style={
               {
                 "--s": `${b.size}px`,
