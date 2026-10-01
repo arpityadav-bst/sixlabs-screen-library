@@ -1,18 +1,13 @@
-// The lean pipeline for the live floor, behind ?pipeline=lean while it is checked against the usual one
-// (post.js). The usual one draws the scene into a half-float target with 4x multisampling, copies it on to
-// the composer's half-float buffers and tone maps, encodes and grains it there in a last full-screen pass:
-// some 600 MB of drawing buffers at a Retina screen's size, every pixel written and read several times a
-// frame. This one tone maps in each material as it draws (three's own Neutral curve, the same maths, written
-// into the materials' tonemapping chunk), into one target of 8-bit sRGB with 4x multisampling (the GPU
-// blends in linear light there, as the half-float target did, and encodes on write), then one pass puts it
-// on the canvas, encoded as the usual pipeline's last pass encoded it, with the same film grain. About 300 MB
-// at that size, and half the data moved a frame. What it leaves out: the progressive smoothing a still
-// floor gets (createRefiner, post.js), which the auto-play almost never stays still long enough to reach.
-// Tone mapping before blending instead of after, and resolving the multisampling after it, differ from
-// the usual pipeline only where see-through layers cross the curve's bright end, by a level or so.
+// The live floor's pipeline (post.js keeps the composer for still renders). It tone maps in each material as
+// it draws (three's own Neutral curve, the same maths, written into the materials' tonemapping chunk), into
+// one target of 8-bit sRGB with 4x multisampling (the GPU blends in linear light there and encodes on write),
+// then one pass puts it on the canvas, encoded as three's OutputPass encodes, with the film grain. It replaced
+// (2026-10-01) a half-float multisampled target copied on to the composer's half-float buffers and tone
+// mapped, encoded and grained there: some 600 MB of drawing buffers at a Retina screen's size against about
+// 300 MB here, half the data moved a frame, the same look. Tone mapping before blending instead of after
+// differs only where see-through layers cross the curve's bright end, by a level or so. That pipeline also
+// sharpened a floor held still over 32 frames, which the auto-play almost never stays still long enough for.
 import * as THREE from 'three';
-
-export const leanWanted = () => typeof location !== 'undefined' && /[?&]pipeline=lean/.test(location.search);
 
 // three's NeutralToneMapping (tonemapping_pars_fragment), inline, so it runs whatever the target
 const toneChunk = (exposure) => `{
@@ -56,8 +51,7 @@ void main() {
 }`,
 };
 
-// The lean composer: what floor.js, the floor's auto-play and ?perf (floor-perf.js, perf-bench.ts) call on a
-// composer. passes[0] carries the target (its samples are the bench's anti-aliasing setting) and the grain.
+// What floor.js, the floor's auto-play and ?perf (floor-perf.js, perf-bench.ts) call on a composer. passes[0] carries the target (its samples are the bench's anti-aliasing setting) and the grain.
 export function buildLean(renderer, scene, P) {
   const exposure = P.exposure ?? 1;
   THREE.ShaderChunk.tonemapping_fragment = toneChunk(exposure);
@@ -96,5 +90,3 @@ export function buildLean(renderer, scene, P) {
     },
   };
 }
-
-export const leanRefiner = () => ({ moving() {}, start() {}, resized() {}, stop() {} });

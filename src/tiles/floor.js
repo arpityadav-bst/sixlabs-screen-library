@@ -9,7 +9,7 @@ import * as THREE from 'three';
 import { studioEnvironment, glassMaterials } from './materials.js';
 import { nearShadeUniforms, applyNearShade } from './near-shade.js';
 import { floorMaterial, floorUniforms } from './floor-material.js';
-import { buildComposer, createRefiner } from './post.js';
+import { buildComposer } from './post.js';
 import { addCharacters } from './characters.js';
 import { planLoad } from './load-plan.js';
 import { idleUploader } from './upload.js';
@@ -24,14 +24,14 @@ import { startAutoplay } from './autoplay.js';
 
 // distScale pulls the camera back (smaller tiles, more of them: the grid is built to what it sees); mixWaves
 // casts the second wave's characters on the middle tiles and the first wave's around them (casts.js).
-export async function createFloor(container, { params, base = '/tiles', aiBase = base, res = 768, isStatic = false, expose = false, introDelay = 0, onConvert = () => {}, distScale = 1, mixWaves = false, spentTint = '' } = {}) {
+export async function createFloor(container, { params, base = '/tiles', aiBase = base, res = 768, isStatic = false, expose = false, introDelay = 0, introSeconds = 0.9, onConvert = () => {}, distScale = 1, mixWaves = false, spentTint = '' } = {}) {
   const RAW0 = params ?? await fetch(`${base}/floor-params.json`).then((r) => r.json());
   const RAW = distScale === 1 ? RAW0 : { ...RAW0, dist: RAW0.dist * distScale };
   const common = Object.assign({ W: 1920, H: 1080, assetBase: base, aiAssetBase: aiBase, picDir: res === 768 ? '' : `/${res}` }, RAW, spentTint && { spentTint }); // aiBase: where chars-ai/ is read from (the hologram copies live in /tiles-holo)
   const PF = Object.assign({}, common, RAW.states?.default ?? {}), PA = Object.assign({}, common, RAW.states?.shine ?? {});
   const P = PF;
 
-  // The scene is drawn into the composer's own multisampled target (post.js) and reaches the canvas as one flat
+  // The scene is drawn into the pipeline's own multisampled target (lean.js, post.js) and reaches the canvas as one flat
   // image, so the canvas needs no anti-aliasing of its own; its drawing buffer is kept only where it is read back.
   // high-performance: on a laptop with two GPUs (a MacBook Pro's Radeon beside its Intel UHD 630) the browser otherwise draws on the weak one; ?gpu=low tries that one (website/perf.ts).
   const renderer = new THREE.WebGLRenderer({ antialias: isStatic, preserveDrawingBuffer: isStatic || expose, powerPreference: /[?&]gpu=low/.test(globalThis.location?.search ?? '') ? 'low-power' : 'high-performance' });
@@ -192,8 +192,7 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
 
   // The canvas fills its container; its buffer matches the displayed size exactly, so the browser never
   // rescales it. The camera reframes for the container's shape (viewport.js).
-  const composer = buildComposer(renderer, scene, camera, P);
-  const refiner = isStatic ? null : createRefiner(composer);
+  const composer = buildComposer(renderer, scene, camera, P, !isStatic);
 
   // Shader warm-up: compile every material up front, in parallel where the GPU driver allows, including
   // the raised-tile parts that start hidden. It compiles against a render target because the effects
@@ -207,8 +206,8 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   rigs.forEach((r) => r.preview(false));
   warmTarget.dispose();
 
-  // Live: a one-sample frame straight away, then progressive smoothing (post.js). Static renders take
-  // the full supersampled frame in one go. Resizes re-run it; an unchanged size is skipped (the
+  // Live: one multisampled frame (lean.js). Static renders take the full supersampled frame in one go
+  // (post.js). Resizes re-run it; an unchanged size is skipped (the
   // observer also fires once when it starts).
   let size = '', clearTop = 0, tops = null, gov = null, disposed = false; // gov: the live floor's resolution (floor-perf.js)
   const draw = (force = false) => {
@@ -226,12 +225,9 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
     renderer.setSize(w, h, false);
     composer.setPixelRatio(gov?.ratio ?? window.devicePixelRatio);
     composer.setSize(w, h);
-    refiner?.resized();
-    refiner?.moving();
     composer.render();
-    refiner?.start();
   };
-  if (!isStatic) { opaqueGlass(scene, P.floorColor); gov = floorPerf(renderer, composer, () => { if (!disposed) draw(true); }, { scene, refiner }); } // the resting tiles opaque (opaque-glass.js)
+  if (!isStatic) { opaqueGlass(scene, P.floorColor); gov = floorPerf(renderer, composer, () => { if (!disposed) draw(true); }, { scene }); } // the resting tiles opaque (opaque-glass.js)
   // Rehearsal: one frame with a tile raised mid-activation (reflection, glow, spill all live), so any
   // first-use GPU work happens now rather than on the first hover. It is overwritten before it is shown.
   if (!isStatic) {
@@ -241,14 +237,13 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
     rig.apply();
     rig.drive(U, nearU);
     draw(true);
-    refiner.stop();
     rig.clear();
     nearU.uShadowAmt.value = nearU.uSpillAmt.value = 0;
     U.uGlowS.value = U.uGlowTint.value = 0;
   }
   draw(true);
   // Live: the tiles fade in and rise out of the floor; a resize mid-way snaps them into place.
-  const intro = isStatic ? null : playIntro({ renderer, composer, refiner, field, rise: tileH, delay: introDelay });
+  const intro = isStatic ? null : playIntro({ renderer, composer, field, rise: tileH, delay: introDelay, seconds: introSeconds });
   const resize = new ResizeObserver(() => { const w = `${Math.max(1, container.clientWidth)}x${Math.max(1, container.clientHeight)}`; if (w !== size) intro?.cancel(); draw(); });
   resize.observe(container);
 
@@ -262,9 +257,9 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
   let stop = () => {}, reset = () => {};
   if (!isStatic) intro.done.then(() => {
     if (disposed) return;
-    const ctl = startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU: U, nearU, P, expose, onConvert });
+    const ctl = startInteraction({ renderer, camera, composer, rigs, chars, cellAt, tint, floorU: U, nearU, P, expose, onConvert });
     const cast = createCasts({ P, renderer, chars, bustTiles, pictures: pictures.get, gone: () => disposed, mixWaves, warm });
-    const auto = startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, cast, half });
+    const auto = startAutoplay({ ctl, camera, chars, flipTile, composer, cast, half });
     // Off screen (scrolled past) or in a hidden tab, the auto-play holds, so the floor draws nothing
     // while the visitor is elsewhere on the page; it carries on when they come back.
     let onScreen = true;
@@ -290,7 +285,6 @@ export async function createFloor(container, { params, base = '/tiles', aiBase =
       resize.disconnect();
       intro?.cancel();
       stop();
-      refiner?.stop();
       mirrorRT.dispose();
       renderer.dispose();
       renderer.forceContextLoss();

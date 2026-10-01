@@ -39,7 +39,6 @@ type Floor = {
     passes: { enabled: boolean; uniforms?: Record<string, unknown> }[];
   };
   scene: Obj;
-  refiner?: { moving(): void };
   dpr: number;
   set(cfg: Partial<Cfg>): void;
   restore(): void;
@@ -101,10 +100,7 @@ function toggle(fp: Floor, what: "grain" | "busts" | "tiles" | "alone") {
 
 // the floor drawn on every frame for ms (or `draw`, a case's own frame); the frame times, and the main
 // thread's time to issue each frame
-const drawFloor = (fp: Floor) => () => {
-  fp.refiner?.moving();
-  fp.composer.render();
-};
+const drawFloor = (fp: Floor) => () => fp.composer.render();
 async function measure(fp: Floor, ms: number, draw = drawFloor(fp)) {
   const gaps: number[] = [],
     cpu: number[] = [];
@@ -132,7 +128,6 @@ function sceneInfo(fp: Floor) {
   const info = fp.renderer.info;
   info.autoReset = false;
   info.reset();
-  fp.refiner?.moving();
   fp.composer.render();
   const out = {
     calls: info.render.calls,

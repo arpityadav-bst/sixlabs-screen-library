@@ -8,8 +8,8 @@
 //   move away         : focused -> back down into the grid, the same smooth motion reversed
 //   R                 : every character back to human, every spent tile live again
 // Every value eases toward its target with an exponential ease-out, so any change can interrupt any
-// other smoothly. Two rigs let one tile settle while the next one rises. Frames render at one sample
-// while anything moves, then sharpen progressively once the scene comes to rest (post.js).
+// other smoothly. Two rigs let one tile settle while the next one rises. A frame is drawn only
+// while anything moves.
 import * as THREE from 'three';
 import { ACT_SECONDS, DEACT_SECONDS, COMMIT_SECONDS } from './sweep.js';
 
@@ -17,7 +17,7 @@ import { ACT_SECONDS, DEACT_SECONDS, COMMIT_SECONDS } from './sweep.js';
 // click, busy, spent, unspend and inert let the auto-play (autoplay.js) drive the same tiles; onUser, when
 // set, hears whether the visitor's pointer is on a live tile.
 // onConvert fires once each time a character becomes their AI copy.
-export function startInteraction({ renderer, camera, composer, refiner, rigs, chars, cellAt, tint, floorU, nearU, P, expose = false, onConvert }) {
+export function startInteraction({ renderer, camera, composer, rigs, chars, cellAt, tint, floorU, nearU, P, expose = false, onConvert }) {
   // fl: linear fade, eased into state.F. locked: clicked, so the activation runs to its end regardless.
   const T = rigs.map((rig) => ({ rig, tL: 0, tA: 0, fl: 0, leaving: false, locked: false }));
   const spent = new Set(); // "i,j" of tiles that have been activated
@@ -76,11 +76,10 @@ export function startInteraction({ renderer, camera, composer, refiner, rigs, ch
     if (lead) lead.rig.drive(floorU, nearU);
     else { nearU.uShadowAmt.value = nearU.uSpillAmt.value = 0; floorU.uGlowS.value = floorU.uGlowTint.value = 0; }
 
-    refiner.moving();
     composer.render();
     running = moving;
     if (running) requestAnimationFrame(frame);
-    else { last = 0; refiner.start(); } // at rest: sharpen progressively
+    else last = 0;
   }
   const kick = () => { if (!running) { running = true; requestAnimationFrame(frame); } };
 

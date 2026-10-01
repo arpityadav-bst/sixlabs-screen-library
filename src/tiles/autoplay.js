@@ -13,7 +13,7 @@ const WAVE_SPREAD = 1.3, FLIP_SECONDS = 0.75; // stagger across the screen, one 
 const PREPARE_AT = 0.7; // the share of the tiles on screen played when the next cast starts to load
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner, cast, half }) {
+export function startAutoplay({ ctl, camera, chars, flipTile, composer, cast, half }) {
   let stopped = false, paused = false, resumeTimer = 0, first = true, resetReq = false, waving = false;
   let held = false; // the floor is off screen or the tab hidden (floor.js): nothing is played, nothing drawn
   const waiters = []; // the wave button's calls waiting on their wave's start (reset)
@@ -54,7 +54,6 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner,
     if (window.__floorEvents) window.__floorEvents.wave = true; // ?perf's log marks the wave (website/perf.ts)
     const x0 = Math.min(...tiles.map((t) => t.x)), span = Math.max(1e-3, Math.max(...tiles.map((t) => t.x)) - x0);
     const swapped = new Set(), target = cast.next();
-    refiner.moving();
     await new Promise((resolve) => {
       let start = 0;
       const frame = (now) => {
@@ -78,7 +77,6 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner,
           flipTile(t.key, p >= 1 ? null : a < Math.PI / 2 ? -a : Math.PI - a);
           if (p < 1) busy = true;
         }
-        refiner.moving();
         composer.render();
         if (busy) requestAnimationFrame(frame);
         else resolve();
@@ -86,7 +84,6 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, refiner,
       requestAnimationFrame(frame);
     });
     cast.done(target);
-    refiner.start();
     waving = false;
     if (window.__floorEvents) window.__floorEvents.wave = false;
     ctl.inert = false;
