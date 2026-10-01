@@ -21,7 +21,8 @@ const ease = [0.22, 1, 0.36, 1] as const;
 const card =
   "flex flex-col rounded-[36px] max-md:rounded-[28px] border p-7 md:p-9 md:row-span-3 md:grid md:grid-rows-subgrid md:gap-y-0";
 const theirs = card + " border-slate-200/50 bg-[#e3e5e8] text-[#0a1b33]";
-const ours = card + " border-transparent bg-[#0a152d] text-white";
+// the left padding a step wider than the card's own (64px from md), for room from the "vs" over the gutter
+const ours = card + " border-transparent bg-[#0a152d] text-white md:pl-16";
 // the maker's mark and name, side by side, at the top of each card
 const lockup = "flex items-center gap-2.5";
 // the names at one visible weight: white on the navy reads heavier than navy on the grey, so 6labs sits a
@@ -83,7 +84,7 @@ export function Understands() {
         <motion.span
           {...rise(0.3)}
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 z-10 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-[6px] border-[rgb(var(--page-rgb))] bg-white font-display text-[17px] font-medium tracking-tight text-[#0a1b33] max-md:h-14 max-md:w-14 max-md:text-[15px]"
+          className="pointer-events-none absolute left-1/2 top-1/2 z-10 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-[6px] border-[rgb(var(--page-rgb))] bg-white font-display text-[20px] font-normal tracking-tight text-[#0a1b33]/40 max-md:h-16 max-md:w-16 max-md:text-[17px]"
         >
           vs
         </motion.span>
