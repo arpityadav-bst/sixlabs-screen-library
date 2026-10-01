@@ -10,6 +10,7 @@
 // the dome's line where it crosses her, like a plane of light passing through the body. Reduced motion swaps at once.
 import { useEffect, useRef } from "react";
 import { PlayerPortrait } from "./PlayerPortrait";
+import { StackedSwap } from "./StackedSwap";
 import type { Mode } from "./ModeToggle";
 import type { ClipFormat } from "./useClipFormat";
 
@@ -50,8 +51,6 @@ export function PortraitSwap({
   const aiVideo = useRef<HTMLVideoElement>(null);
   const humanStill = useRef<HTMLImageElement>(null);
   const aiStill = useRef<HTMLImageElement>(null);
-  const humanFrame = useRef<HTMLCanvasElement>(null);
-  const aiFrame = useRef<HTMLCanvasElement>(null);
   const still = format === "still",
     stacked = format === "stacked";
   const humanLayer = useRef<HTMLDivElement>(null);
@@ -73,12 +72,10 @@ export function PortraitSwap({
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    // the sweep draws from whatever the new copy is showing: its clip, its stacked clip's canvas, its still
+    // the sweep draws from whatever the new copy is showing: its clip or its still
     const incoming = still
       ? (mode === "ai" ? aiStill : humanStill).current
-      : stacked
-        ? (mode === "ai" ? aiFrame : humanFrame).current
-        : (mode === "ai" ? aiVideo : humanVideo).current;
+      : (mode === "ai" ? aiVideo : humanVideo).current;
     const ctx = cv.getContext("2d");
     // Only a change from the copy on screen sweeps; the first showing (and React running an effect twice
     // in development) just settles.
@@ -88,22 +85,13 @@ export function PortraitSwap({
       return settle();
     }
     const W =
-        (incoming instanceof HTMLVideoElement
-          ? incoming.videoWidth
-          : incoming instanceof HTMLImageElement
-            ? incoming.naturalWidth
-            : incoming.width) || 810,
+        (incoming instanceof HTMLVideoElement ? incoming.videoWidth : incoming.naturalWidth) || 810,
       H =
-        (incoming instanceof HTMLVideoElement
-          ? incoming.videoHeight
-          : incoming instanceof HTMLImageElement
-            ? incoming.naturalHeight
-            : incoming.height) || 1080;
+        (incoming instanceof HTMLVideoElement ? incoming.videoHeight : incoming.naturalHeight) || 1080;
     cv.width = W;
     cv.height = H;
-    // The new copy's frame, copied here once a frame (the band's rows only) and every step below reads the copy:
-    // reading the copy's own canvas or video six times a frame cost a readback each in Safari, where the clips
-    // are WebGL canvases (stacked-alpha.ts), and held the switch to a few frames a second there.
+    // The new copy's frame, copied here once a frame (the band's rows only) and every step below reads the copy
+    // (reading a video or canvas six times a frame cost a readback each in Safari).
     const snap = document.createElement("canvas");
     snap.width = W;
     snap.height = H;
@@ -214,6 +202,9 @@ export function PortraitSwap({
     return () => cancelAnimationFrame(raf);
   }, [mode, still, stacked]);
 
+  // the stacked clips (Chrome and Safari): both copies and the switch on one canvas, drawn on the GPU
+  if (stacked)
+    return <StackedSwap human={human} ai={ai} mode={mode} label={label} className={className} load={load} />;
   return (
     <div className="relative">
       <div ref={humanLayer}>
@@ -235,8 +226,6 @@ export function PortraitSwap({
             className={"block " + (className ?? "")}
             videoRef={humanVideo}
             load={load}
-            stacked={stacked ? human.stacked : undefined}
-            frameRef={humanFrame}
             poster={human.still}
           />
         )}
@@ -264,8 +253,6 @@ export function PortraitSwap({
             className="block h-full w-full"
             videoRef={aiVideo}
             load={load}
-            stacked={stacked ? ai.stacked : undefined}
-            frameRef={aiFrame}
             poster={ai.still}
           />
         )}

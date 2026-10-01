@@ -8,22 +8,22 @@
 // portrait that appears later already faces the cursor. One seek runs at a time and the next is queued
 // when it lands (onSeeked, after the Mainframe hero prompt), so seeks never flood. Before the pointer has
 // moved at all they look straight ahead. Never autoplays. With `stacked` (Safari and iPhones, where a
-// WebM's transparency shows black) the clip is the stacked-alpha MP4, playing unseen, and each frame it
-// lands on is put together on a canvas (stacked-alpha.ts), which is what shows. A touch screen has no
+// WebM's transparency shows black, and wherever the clips are decoded directly) the clip is the stacked-alpha
+// MP4, unseen, and each frame it lands on goes to drawTo: the swap's one canvas (StackedSwap.tsx, swap-gl.ts),
+// which is what shows. A touch screen has no
 // cursor to follow: there, while the portrait is on screen, the player looks slowly from side to side by
 // themselves (SWAY of the turn each way, a full look left and right every SWAY_S seconds, eased at the
 // ends like a head turning), on one clock for every portrait so a player and their AI copy move as one.
 // Reduced motion keeps them looking straight ahead. With `poster` (the clip's straight-ahead still) the
-// portrait is there from the start: the WebM shows it until its first seek lands (the video's own poster),
-// the stacked canvas carries it as its background until the first frame is drawn on it, so switching to a
-// player whose clip is still loading shows them at once instead of an empty space. With ?perf each seek's
+// portrait is there from the start: the WebM shows it until its first seek lands (the video's own poster;
+// the swap's canvas carries it the same way), so switching to a player whose clip is still loading shows them
+// at once instead of an empty space. With ?perf each seek's
 // time to land and the first frame's wait are noted for the readout (window.__perfVideo, perf.ts).
 // Where the browser can decode it itself (WebCodecs, clip-frames.ts), a stacked clip is not seeked at all:
-// each step of the turn is decoded straight onto the canvas, in a few ms instead of a seek's 70 to 190; the
+// each step of the turn is decoded straight to the canvas, in a few ms instead of a seek's 70 to 190; the
 // hidden <video> takes the clip only where that cannot run. The turn follows the cursor only while the
 // portrait is on (or about to come on) screen, so moving the mouse elsewhere on the page decodes nothing.
 import { useEffect, useRef, type RefObject } from "react";
-import { stackedAlpha } from "./stacked-alpha";
 import { canDecode, clipFrames, type ClipFrames } from "./clip-frames";
 
 const REACH = 0.5;
@@ -55,8 +55,11 @@ export function PlayerPortrait({
   videoRef,
   load = true,
   stacked,
-  frameRef,
   poster,
+  drawTo,
+  boxRef,
+  active,
+  wakeRef,
 }: {
   src: string;
   straight?: number;
@@ -64,21 +67,24 @@ export function PlayerPortrait({
   label: string;
   videoRef?: RefObject<HTMLVideoElement | null>; // for a caller that reads its frames (PortraitSwap.tsx)
   load?: boolean; // false keeps the clip from downloading until it is wanted
-  stacked?: string; // the stacked-alpha MP4 to play instead, drawn to a canvas
-  frameRef?: RefObject<HTMLCanvasElement | null>; // that canvas, for a caller that reads its frames
-  poster?: string; // the still shown until the clip's first frame is
+  stacked?: string; // the stacked-alpha MP4 to play instead, its frames handed to drawTo
+  poster?: string; // the still the clip's video shows until its first frame is
+  // stacked (StackedSwap.tsx): where each frame goes (the swap's shared canvas), and the box it shows in, to
+  // aim from; active: whether this copy follows the cursor now (the one on screen, or both while they swap;
+  // a resting copy keeps its last frame); wakeRef: set to make it turn to the cursor at once when it is wanted
+  drawTo?: (frame: HTMLVideoElement | VideoFrame) => void;
+  boxRef?: RefObject<HTMLElement | null>;
+  active?: () => boolean;
+  wakeRef?: RefObject<(() => void) | null>;
 }) {
   const own = useRef<HTMLVideoElement>(null);
   const ref = videoRef ?? own;
-  const ownFrame = useRef<HTMLCanvasElement>(null);
-  const frame = frameRef ?? ownFrame;
 
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
-    // stacked: what shows is the canvas, drawn from each frame the hidden clip lands on
-    const canvas = stacked ? frame.current : null;
-    const draw = canvas ? stackedAlpha(canvas) : null;
+    // stacked: what shows is the swap's canvas, drawn from each frame the hidden clip lands on (or is decoded)
+    const draw = stacked ? (drawTo ?? null) : null;
     const decode = !!(stacked && draw && load && canDecode());
     const perf = (window as unknown as { __perfVideo?: PerfVideo }).__perfVideo;
     if (perf) perf.format = stacked ? (decode ? "decoder starting" : "stacked") : "webm";
@@ -92,13 +98,14 @@ export function PlayerPortrait({
       if (!reported) perf.first.push([performance.now(), performance.now() - born]);
       reported = true;
     };
+    let painted = false;
     const paint = (from: HTMLVideoElement | VideoFrame = video) => {
       if (!draw) return;
       draw(from);
-      if (canvas) canvas.style.backgroundImage = ""; // the first frame is in: the still steps aside
+      painted = true;
     };
     const paintVideo = () => paint(video); // as a listener: its argument is the event
-    const shown = canvas ?? video;
+    const shown = boxRef?.current ?? video;
     let target = 0,
       seeking = false,
       onScreen = false,
@@ -166,6 +173,7 @@ export function PlayerPortrait({
     };
     const aim = () => {
       if (!duration() || !onScreen) return;
+      if (active && !active() && painted) return; // resting: its last frame stays (one first, to swap to)
       const d = look();
       goal = d < 0 ? straight * (1 + d) : straight + d * (1 - straight);
       // the first step at once, on the move itself, not a frame later; the rest frame by frame
@@ -217,7 +225,9 @@ export function PlayerPortrait({
       { rootMargin: "200px" },
     );
     io.observe(shown);
+    if (wakeRef) wakeRef.current = aim;
     return () => {
+      if (wakeRef) wakeRef.current = null;
       gone.abort();
       frames?.close();
       video.removeEventListener("seeked", onSeeked);
@@ -228,7 +238,7 @@ export function PlayerPortrait({
       cancelAnimationFrame(raf);
       cancelAnimationFrame(easing);
     };
-  }, [src, straight, ref, load, stacked, frame]);
+  }, [src, straight, ref, load, stacked, drawTo, boxRef, active, wakeRef]);
 
   if (stacked)
     return (
@@ -241,22 +251,6 @@ export function PlayerPortrait({
           preload="auto"
           aria-hidden
           className="pointer-events-none absolute left-0 top-0 h-px w-px opacity-0"
-        />
-        <canvas
-          ref={frame}
-          width={810}
-          height={1080}
-          role="img"
-          aria-label={label}
-          className={className}
-          style={
-            poster
-              ? {
-                  backgroundImage: `url(${poster})`,
-                  backgroundSize: "100% 100%",
-                }
-              : undefined
-          }
         />
       </>
     );

@@ -3,7 +3,7 @@
 // Which of a player's clip files this browser plays (players-data.ts). Most play the see-through WebM
 // directly ("webm"). Safari, and every browser on iPhone and iPad (all WebKit underneath), plays WebM but
 // draws its transparency black, so there the clips are the "stacked" MP4s (colour above, transparency
-// below, put together by stacked-alpha.ts), or the stills if WebGL is missing ("still"). The server and the
+// below, put together by swap-gl.ts), or the stills if WebGL is missing ("still"). The server and the
 // first render assume WebM; the check runs in the browser. Where the browser decodes the clips itself
 // (WebCodecs with an H.264 decoder, clip-frames.ts), every browser takes the stacked MP4s, Chrome too: their
 // frames go straight onto a canvas with no seeking, which is what made the turn step on a slow machine. That
