@@ -31,7 +31,7 @@ const REACH = 0.5;
 // following the cursor, just enough that the steps between the frames it can show read as one motion (more
 // read as lag); a player whose clip has just come in turns from straight ahead (its still) toward the cursor
 // at the gentler ARRIVE_S instead of snapping there.
-const FOLLOW_S = 0.035;
+const FOLLOW_S = 0.025;
 const ARRIVE_S = 0.12;
 const SWAY = 0.85;
 const SWAY_S = 9;
@@ -87,6 +87,7 @@ export function PlayerPortrait({
       reported = false;
     const landed = (ms: number) => {
       if (!perf) return;
+      if (frames) perf.format = `decoded ${frames.kind}`; // and whether the decoder holds frames back
       perf.seeks.push([performance.now(), ms]);
       if (!reported) perf.first.push([performance.now(), performance.now() - born]);
       reported = true;
@@ -167,7 +168,8 @@ export function PlayerPortrait({
       if (!duration() || !onScreen) return;
       const d = look();
       goal = d < 0 ? straight * (1 + d) : straight + d * (1 - straight);
-      if (!easing) easing = requestAnimationFrame(follow);
+      // the first step at once, on the move itself, not a frame later; the rest frame by frame
+      if (!easing) follow(performance.now());
     };
     // the decoded frames, once the clip is in; where they cannot run (or give up), the hidden <video> takes the
     // clip, and ?perf says why

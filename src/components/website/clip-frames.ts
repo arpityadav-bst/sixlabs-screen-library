@@ -199,7 +199,9 @@ export async function clipFrames(
   };
   return {
     duration: clip.duration,
-    kind: setup.kind,
+    get kind() {
+      return setup.kind + (holds ? " holds" : "");
+    },
     // the frame showing at t, as a <video> at that currentTime would show it
     show(t: number) {
       let k = 0;

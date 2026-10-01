@@ -10,7 +10,8 @@ import type { Stroke } from "./player-doodles";
 export const SIZE = 0.7; // each drawing's size against how its strokes are written, about its own centre
 const WOBBLE = 6;
 const ROUGH_FREQ = 0.03;
-const STEP = 3; // frame px between the points a wavering line is drawn through
+const STEP = 2; // frame px between the points a wavering line is drawn through
+const MIN_POINTS = 32; // and at least this many a piece, so a small circle stays round
 export const DOT_GAP = 15; // frame px between a dotted stroke's dots
 
 // smooth noise in about -1..1: gradient noise on a shuffled lattice (seeded, so every visit wavers alike)
@@ -55,28 +56,35 @@ const place = (s: Stroke) => {
 };
 
 let probe: SVGPathElement | null = null;
-// points every `step` along a path as written, and its length
+// points every `step` along one piece of a path (one moveto's worth), at least MIN_POINTS
 function along(d: string, step: number) {
   probe ??= document.createElementNS("http://www.w3.org/2000/svg", "path");
   probe.setAttribute("d", d);
   const L = probe.getTotalLength(),
-    n = Math.max(1, Math.round(L / step));
+    n = Math.max(MIN_POINTS, Math.round(L / step));
   return Array.from({ length: n + 1 }, (_, i) => {
     const q = probe!.getPointAtLength((i / n) * L);
     return [q.x, q.y] as const;
   });
 }
 
-// the hand's line through the frame, wavering, as an SVG path
+// the hand's line through the frame, wavering, as an SVG path: each of a stroke's pieces (a tick mark, an
+// eye, a dash of a clock face: every moveto starts one) traced on its own, never joined to the next
 export function waveredPath(s: Stroke) {
   const to = place(s),
     k = scaleOf(s);
-  return along(s.d, STEP / k)
-    .map(([x, y], i) => {
-      const [fx, fy] = to(x, y),
-        w = push(fx, fy);
-      return `${i ? "L" : "M"}${(fx - w).toFixed(1)} ${(fy - w).toFixed(1)}`;
-    })
+  return s.d
+    .split(/(?=M)/)
+    .filter((piece) => piece.trim())
+    .map((piece) =>
+      along(piece, STEP / k)
+        .map(([x, y], i) => {
+          const [fx, fy] = to(x, y),
+            w = push(fx, fy);
+          return `${i ? "L" : "M"}${(fx - w).toFixed(1)} ${(fy - w).toFixed(1)}`;
+        })
+        .join(""),
+    )
     .join("");
 }
 
