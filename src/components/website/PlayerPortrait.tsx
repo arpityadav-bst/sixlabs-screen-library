@@ -13,7 +13,11 @@
 // cursor to follow: there, while the portrait is on screen, the player looks slowly from side to side by
 // themselves (SWAY of the turn each way, a full look left and right every SWAY_S seconds, eased at the
 // ends like a head turning), on one clock for every portrait so a player and their AI copy move as one.
-// Reduced motion keeps them looking straight ahead.
+// Reduced motion keeps them looking straight ahead. With `poster` (the clip's straight-ahead still) the
+// portrait is there from the start: the WebM shows it until its first seek lands (the video's own poster),
+// the stacked canvas carries it as its background until the first frame is drawn on it, so switching to a
+// player whose clip is still loading shows them at once instead of an empty space. With ?perf each seek's
+// time to land and the first frame's wait are noted for the readout (window.__perfVideo, perf.ts).
 import { useEffect, useRef, type RefObject } from "react";
 import { stackedAlpha } from "./stacked-alpha";
 
@@ -41,6 +45,7 @@ export function PlayerPortrait({
   load = true,
   stacked,
   frameRef,
+  poster,
 }: {
   src: string;
   straight?: number;
@@ -50,6 +55,7 @@ export function PlayerPortrait({
   load?: boolean; // false keeps the clip from downloading until it is wanted
   stacked?: string; // the stacked-alpha MP4 to play instead, drawn to a canvas
   frameRef?: RefObject<HTMLCanvasElement | null>; // that canvas, for a caller that reads its frames
+  poster?: string; // the still shown until the clip's first frame is
 }) {
   const own = useRef<HTMLVideoElement>(null);
   const ref = videoRef ?? own;
@@ -62,7 +68,16 @@ export function PlayerPortrait({
     // stacked: what shows is the canvas, drawn from each frame the hidden clip lands on
     const canvas = stacked ? frame.current : null;
     const draw = canvas ? stackedAlpha(canvas) : null;
-    const paint = () => draw?.(video);
+    const perf = (window as unknown as { __perfVideo?: PerfVideo }).__perfVideo;
+    if (perf) perf.format = stacked ? "stacked" : "webm";
+    const born = performance.now();
+    let asked = 0,
+      reported = false;
+    const paint = () => {
+      if (!draw) return;
+      draw(video);
+      if (canvas) canvas.style.backgroundImage = ""; // the first frame is in: the still steps aside
+    };
     const shown = canvas ?? video;
     let target = 0,
       seeking = false;
@@ -74,9 +89,16 @@ export function PlayerPortrait({
       )
         return;
       seeking = true;
+      asked = performance.now();
       video.currentTime = target;
     };
     const onSeeked = () => {
+      if (perf && asked) {
+        perf.seeks.push([performance.now(), performance.now() - asked]);
+        if (!reported)
+          perf.first.push([performance.now(), performance.now() - born]);
+        reported = true;
+      }
       paint();
       seeking = false;
       seek(); // the target may have moved while that seek ran
@@ -161,6 +183,14 @@ export function PlayerPortrait({
           role="img"
           aria-label={label}
           className={className}
+          style={
+            poster
+              ? {
+                  backgroundImage: `url(${poster})`,
+                  backgroundSize: "100% 100%",
+                }
+              : undefined
+          }
         />
       </>
     );
@@ -171,8 +201,17 @@ export function PlayerPortrait({
       muted
       playsInline
       preload="auto"
+      poster={poster}
       aria-label={label}
       className={className}
     />
   );
 }
+
+// the readout's clip timings (perf.ts): when and how long each seek took to land, and each clip's wait
+// from mounting to its first landed frame
+export type PerfVideo = {
+  seeks: [number, number][];
+  first: [number, number][];
+  format?: string;
+};

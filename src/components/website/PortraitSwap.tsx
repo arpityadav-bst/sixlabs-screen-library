@@ -228,6 +228,7 @@ export function PortraitSwap({
             load={load}
             stacked={stacked ? human.stacked : undefined}
             frameRef={humanFrame}
+            poster={human.still}
           />
         )}
       </div>
@@ -256,6 +257,7 @@ export function PortraitSwap({
             load={load}
             stacked={stacked ? ai.stacked : undefined}
             frameRef={aiFrame}
+            poster={ai.still}
           />
         )}
       </div>

@@ -17,6 +17,7 @@ import { PlayerDoodles } from "./PlayerDoodles";
 import { PlayerTraits } from "./PlayerTraits";
 import { PlayerArrows, PlayerCarousel } from "./PlayerCarousel";
 import { useClipFormat } from "./useClipFormat";
+import { usePrefetchClips } from "./usePrefetchClips";
 import { useArt } from "./art";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -89,6 +90,7 @@ export function Players() {
   // the real player or their AI copy, per player, switching by itself until the visitor picks one
   // Safari and iPhones draw a WebM's transparency black: they get the stacked clips (useClipFormat.ts)
   const format = useClipFormat();
+  usePrefetchClips(near, active, holo, format); // the other players' clips, fetched ahead
   const [mode, setMode] = usePlayerMode(player.id, shown && !!player.aiVideo);
 
   return (
