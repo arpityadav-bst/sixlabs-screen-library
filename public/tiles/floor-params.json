@@ -151,6 +151,9 @@
  "sideRough": 0.03,
  "sideShadow": 0.18,
  "sideShadowBand": 0.03,
+ "footShade": 0.12,
+ "footBand": 0.07,
+ "actFootHold": 0.3,
  "ssaa": 4,
  "states": {
   "default": {
@@ -316,7 +319,7 @@
    "actUpperAt": -0.35,
    "actSideMirror": 0,
    "actCreaseCol": "#3b7ad8",
-   "actWallShade": 0,
+   "actWallShade": 0.12,
    "actLowBand": 0.012,
    "nearShadow": 0.1,
    "nearShadowW": 0.15,

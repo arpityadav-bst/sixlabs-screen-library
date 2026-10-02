@@ -73,6 +73,7 @@ export function glassMaterials(P, frostOpts) {
     uRim: { value: P.rimLine }, uRimTB: { value: P.rimTopBottom }, uShadow: { value: P.sideShadow },
     uBand: { value: P.sideShadowBand }, uCornerShade: { value: P.cornerShade },
     uFadeStart: { value: P.ghostFadeStart }, uFadeEnd: { value: P.ghostFadeEnd },
+    uFootShade: { value: P.footShade ?? 0 }, uFootBand: { value: P.footBand ?? 0.07 },
   }, `
     float tilt = length(vObjN.xz);                                   // 0 facing up, 1 on the vertical wall
     vec2 hd = vObjN.xz / max(tilt, 1e-4);
@@ -83,6 +84,8 @@ export function glassMaterials(P, frostOpts) {
       * (1.0 - smoothstep(uFadeStart, uFadeEnd, abs(vLocalXZ.x)));
     float foot = 1.0 - smoothstep(0.0, uBand, vLocalY);
     outgoingLight *= 1.0 - uShadow * bottom * mix(0.35, 1.0, foot);
+    // every wall a touch darker toward its foot (footShade over footBand of its height), lighter at the top
+    outgoingLight *= 1.0 - uFootShade * smoothstep(0.6, 0.9, tilt) * (1.0 - smoothstep(0.0, uFootBand, vLocalY));
     float topLeftCorner = smoothstep(0.88, 0.99, dot(hd, vec2(-0.70711)));
     outgoingLight *= 1.0 - uCornerShade * topLeftCorner * smoothstep(0.3, 0.9, tilt);`);
   return [top, side];
@@ -107,7 +110,8 @@ export function activeMaterials(P, rearEnv, beamU = {}) {
     color: P.actSide, metalness: P.actSideMetal, roughness: 0.04, transmission: 0, ior: 1.5, transparent: true, polygonOffset: true, polygonOffsetFactor: -1, clearcoat: 1,
     clearcoatRoughness: 0.03, envMap: rearEnv, envMapIntensity: P.actSideEnv * P.envI, dithering: true,
   });
-  const yMin = -P.bevelT, yMax = P.core + P.bevelT;
+  // the foot's dark holds over actFootHold of the wall before it ramps to the light at the top
+  const yMin = -P.bevelT, yMax = P.core + P.bevelT, yHold = yMin + (P.actFootHold ?? 0) * (yMax - yMin);
   const col = (c, k) => new THREE.Color(c).multiplyScalar(k);
   const inv = (1 / P.tile).toFixed(4), apex = (P.tile / 2 - P.tile * P.radius * (1 - Math.SQRT1_2)).toFixed(4);
   patchSide(side, {
@@ -117,7 +121,7 @@ export function activeMaterials(P, rearEnv, beamU = {}) {
     uCornerShine: { value: col(P.glintRimCol, P.glintRim) }, uLowRim: { value: col(P.actLowRimCol, P.actLowRim) },
     uRimDark: { value: P.actRimDark }, uCrease: { value: new THREE.Color(P.actCreaseCol) }, uWallShade: { value: P.actWallShade }, uLowBand: { value: P.actLowBand },
   }, `
-    outgoingLight += mix(uDark, uLight, smoothstep(${yMin.toFixed(4)}, ${yMax.toFixed(4)}, vLocalY)) * uGlowI;
+    outgoingLight += mix(uDark, uLight, smoothstep(${yHold.toFixed(4)}, ${yMax.toFixed(4)}, vLocalY)) * uGlowI;
     float tilt = length(vObjN.xz);
     vec2 hd = vObjN.xz / max(tilt, 1e-4);
     float line = smoothstep(0.25, 0.45, tilt) * (1.0 - smoothstep(0.7, 0.9, tilt));
@@ -128,7 +132,7 @@ export function activeMaterials(P, rearEnv, beamU = {}) {
     // Default state: the whole top bevel settles to a crease colour a touch darker than the top face,
     // and the wall darkens toward its foot so it runs light at the top to darker at the bottom.
     float topBevel = smoothstep(0.0, 0.08, tilt) * (1.0 - smoothstep(0.9, 0.99, tilt)) * step(0.0, vObjN.y);
-    float wallFoot = smoothstep(0.9, 0.99, tilt) * (1.0 - smoothstep(${yMin.toFixed(4)}, ${yMax.toFixed(4)}, vLocalY));
+    float wallFoot = smoothstep(0.9, 0.99, tilt) * (1.0 - smoothstep(${yHold.toFixed(4)}, ${yMax.toFixed(4)}, vLocalY));
     outgoingLight = mix(outgoingLight, uCrease, uRimDark * topBevel);
     outgoingLight *= 1.0 - uWallShade * wallFoot;
     // Rim beam. u runs along the rim: +0.92 at the front corner, 0 at both side corners, -0.92 at the rear.
