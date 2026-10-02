@@ -45,7 +45,7 @@ export function HeroLoader({ show }: { show: boolean }) {
               </div>
             ))}
           </div>
-          <span className="font-sans text-[11px] font-medium uppercase tracking-[0.18em] text-slate-400">
+          <span className="font-sans text-[11px] font-medium uppercase tracking-[0.18em] text-slate-500">
             Loading
           </span>
         </motion.div>
