@@ -8,7 +8,7 @@
 import { useEffect, useState } from "react";
 import type { Mode } from "./ModeToggle";
 
-const AUTO_S = 10;
+const AUTO_S = 5;
 
 export function usePlayerMode(id: string, auto: boolean) {
   const [modes, setModes] = useState<Record<string, Mode>>({});

@@ -16,7 +16,7 @@ import { DOODLES } from "./player-doodles";
 import { DoodleStroke } from "./DoodleStroke";
 import type { Mode } from "./ModeToggle";
 
-const DELAY_S = 5;
+const DELAY_S = 1;
 const AI_LEAD_S = 0.6; // after the switch, while the portrait's sweep is under way, the copying begins
 const AI_PACE = 0.5; // the copy's timing against the hand's: twice as fast
 // the hand's pace against the drawings' written timing (player-doodles.ts), first time and again after
