@@ -1,0 +1,83 @@
+/* Guide chrome for the input sections (fields, select and search, choice, slider): widths and stacks that
+   hold the specimens, and the white card the fields are judged on. Nothing here reaches a specimen's own
+   look. Values come from the --ds-* properties TokenStyle prints. */
+
+.ds-in-w240 {
+  width: 240px;
+  max-width: 100%;
+}
+
+.ds-in-w320 {
+  width: 320px;
+  max-width: 100%;
+}
+
+.ds-in-w360 {
+  width: 360px;
+  max-width: 100%;
+}
+
+.ds-in-w440 {
+  width: 440px;
+  max-width: 100%;
+}
+
+.ds-in-fill {
+  width: 100%;
+  min-width: 0;
+}
+
+.ds-in-stack {
+  display: grid;
+  gap: 20px;
+  width: 360px;
+  max-width: 100%;
+}
+
+.ds-in-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 24px 32px;
+}
+
+.ds-in-col {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+}
+
+/* The white card a field sits in on the page: the job cards' surface, line and radius. */
+.ds-in-card {
+  display: grid;
+  gap: 20px;
+  width: 400px;
+  max-width: 100%;
+  padding: 24px;
+  border: 1px solid var(--ds-color-line);
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-color-surface);
+}
+
+/* contrast badges under a specimen, one row that wraps */
+.ds-in-badge {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* The select grid's open cell: the trigger plus the room its panel drops into. */
+.ds-in-open {
+  min-height: 300px;
+}
+
+/* A unit in a field's trailing slot, in the muted text colour. */
+.ds-in-unit {
+  color: var(--ds-color-text-muted);
+}
+
+/* A child row under a parent checkbox: the parent's box plus its 10px gap. */
+.ds-in-indent {
+  margin-left: 28px;
+}

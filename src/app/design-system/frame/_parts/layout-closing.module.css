@@ -1,0 +1,9 @@
+/* the page's side gutter, from the layout tokens (16 on phones, 32 from md) */
+.ds-frame-gutter {
+  padding-inline: var(--ds-gutter-page);
+}
+@media (width >= 768px) {
+  .ds-frame-gutter {
+    padding-inline: var(--ds-gutter-page-md);
+  }
+}

@@ -1,0 +1,69 @@
+/* Progress motion: what a Tailwind class cannot hold. The determinate fill eases its width over 700ms,
+   the indeterminate segment and arc move by transform alone, and paused holds them where they are. Under
+   reduced motion the fill jumps, the segment rests at the rail's middle and the arc stands still. */
+.ds-progress-fill {
+  transition:
+    width var(--ds-dur-rise) var(--ds-ease-out),
+    background-color var(--ds-dur-ui) var(--ds-ease-out);
+}
+
+/* 35% of the rail wide: from just off the left edge to just off the right */
+.ds-progress-run {
+  width: 35%;
+  animation: ds-progress-run 1.4s var(--ds-ease-in-out) infinite;
+}
+@keyframes ds-progress-run {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(286%);
+  }
+}
+
+.ds-progress-arc {
+  transition:
+    stroke-dashoffset var(--ds-dur-rise) var(--ds-ease-out),
+    stroke var(--ds-dur-ui) var(--ds-ease-out);
+}
+.ds-progress-spin {
+  transform-origin: 50% 50%;
+  animation: ds-progress-spin 1.4s linear infinite;
+}
+@keyframes ds-progress-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+[data-paused] .ds-progress-run,
+[data-paused] .ds-progress-spin {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-progress-fill,
+  .ds-progress-arc {
+    transition: none;
+  }
+  .ds-progress-run {
+    animation: none;
+    transform: translateX(93%);
+  }
+  .ds-progress-spin {
+    animation: none;
+  }
+}
+
+/* forced colours: an inline fill alone would vanish, so the rail keeps a CanvasText outline and the done
+   part and the running segment fill Highlight */
+@media (forced-colors: active) {
+  .ds-progress-rail {
+    outline: 1px solid CanvasText;
+  }
+  .ds-progress-fill[data-on],
+  .ds-progress-run {
+    forced-color-adjust: none;
+    background-color: Highlight !important;
+  }
+}

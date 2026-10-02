@@ -1,0 +1,50 @@
+/* Guide chrome for the shell sections: hosts for the real parts, never a restyle of them. Every class is
+   ds- prefixed and reads the --ds-* tokens TokenStyle prints. */
+
+/* a captioned frame, full width, so a ViewportPreview never collapses inside a flex row */
+.ds-shot {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+}
+
+/* frames side by side, each its own column */
+.ds-shots {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+/* a full-width cell for a frame inside a StateGrid */
+.ds-cell {
+  width: 100%;
+  min-width: 0;
+}
+
+/* the type a bare Word needs around it: the wordmark's family, weight, tracking and ink */
+.ds-word {
+  font-family: var(--ds-font-display);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--ds-color-ink);
+}
+.ds-word-24 { font-size: 24px; }
+.ds-word-56 { font-size: 56px; }
+
+/* clear space round a lockup: a dashed box the core circle's diameter out from it */
+.ds-clear {
+  display: inline-flex;
+  outline: 1px dashed var(--ds-color-ink-40);
+  outline-offset: var(--ds-clear, 9px);
+}
+.ds-clear-inverse { outline-color: var(--ds-color-on-blue-50); }
+
+/* two marks side by side at one size, in the ink */
+.ds-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--ds-color-ink);
+}

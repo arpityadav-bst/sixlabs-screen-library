@@ -1,0 +1,113 @@
+/* The exploded layer diagram: one flat square per plane, turned and tilted by transform only (no filter,
+   blend or mask), stacked with the ground at the bottom. Rows run in column-reverse, so the ground comes
+   first in the DOM and every plane above paints over the one below, as the page does. */
+.ds-ls {
+  display: flex;
+  flex-direction: column-reverse;
+  padding: 48px 32px 56px;
+}
+.ds-ls--mini {
+  padding: 28px 8px 36px;
+}
+.ds-ls-row {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  column-gap: 24px;
+  align-items: center;
+  min-height: 60px;
+}
+.ds-ls--mini .ds-ls-row {
+  grid-template-columns: 120px minmax(0, 1fr);
+  column-gap: 12px;
+  min-height: 40px;
+}
+.ds-ls-stage {
+  display: grid;
+  place-items: center;
+  height: 60px;
+}
+.ds-ls--mini .ds-ls-stage {
+  height: 40px;
+}
+.ds-ls-plane {
+  width: 128px;
+  height: 128px;
+  border: 1px solid color-mix(in srgb, var(--ds-color-ink) 16%, transparent);
+  border-radius: 12px;
+  background: var(--ds-color-page);
+  transform: rotateX(62deg) rotateZ(-45deg);
+}
+.ds-ls--mini .ds-ls-plane {
+  width: 76px;
+  height: 76px;
+  border-radius: 8px;
+}
+.ds-ls-glyphs {
+  background-color: var(--ds-color-page);
+  background-image: radial-gradient(circle, var(--ds-color-ink-30) 1px, transparent 1.6px);
+  background-size: 10px 10px;
+}
+.ds-ls-flow {
+  background: var(--ds-color-container);
+  box-shadow:
+    inset 0 0 0 14px var(--ds-color-container),
+    inset 0 0 0 15px color-mix(in srgb, var(--ds-color-ink) 12%, transparent);
+}
+.ds-ls-water {
+  border: 1.5px solid var(--ds-color-accent);
+  background: transparent;
+}
+.ds-ls-players {
+  border-color: var(--ds-color-primary);
+  background: var(--ds-color-surface);
+}
+.ds-ls-chrome {
+  background: var(--ds-color-surface);
+  box-shadow: inset 0 5px 0 var(--ds-color-primary);
+}
+.ds-ls-readout {
+  border-color: var(--ds-color-terminal-bg);
+  background: var(--ds-color-terminal-bg);
+}
+.ds-ls-hot {
+  border: 2px solid var(--ds-color-primary);
+}
+.ds-ls-text {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  min-width: 0;
+  color: var(--dsg-ink);
+  font: 500 14px/20px var(--dsg-sans);
+}
+.ds-ls-num {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ds-color-primary);
+  color: var(--ds-color-surface);
+  font: 600 11px/1 var(--dsg-sans);
+  transform: translateY(-1px);
+}
+.ds-ls-holds {
+  flex-basis: 100%;
+  color: var(--dsg-muted);
+  font: 400 13px/20px var(--dsg-sans);
+}
+@media (max-width: 767px) {
+  .ds-ls {
+    padding: 32px 16px 40px;
+  }
+  .ds-ls-row {
+    grid-template-columns: 112px minmax(0, 1fr);
+    column-gap: 12px;
+  }
+  .ds-ls-plane {
+    width: 76px;
+    height: 76px;
+    border-radius: 8px;
+  }
+}

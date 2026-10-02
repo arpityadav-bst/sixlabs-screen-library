@@ -1,0 +1,22 @@
+/* The comparison crop, shared by the Comparison section's direct specimen and the section-understands frame.
+   Understands opens with its section padding (calc(70px + 96px), and from md calc(89px + clamp(96px, 9vw,
+   144px)), Understands.tsx), the room the fixed header and the section above need on the page. The crop pulls
+   the section up by that padding, so the specimen opens on the cards, and clips what moved out. Read in the
+   same window as the section, so the clamp agrees. */
+.ds-crop {
+  overflow: clip;
+}
+.ds-crop > section {
+  margin-top: calc(-1 * (70px + 96px));
+}
+@media (min-width: 768px) {
+  .ds-crop > section {
+    margin-top: calc(-1 * (89px + clamp(96px, 9vw, 144px)));
+  }
+}
+
+/* in a frame there is no canvas padding round it, so the crop keeps 32px above and below (block only, so the
+   page column's side padding stands) */
+.ds-crop--frame {
+  padding-block: 32px;
+}

@@ -1,0 +1,94 @@
+/* Accessibility section chrome: the target meter's overlay. Solid is the part's own box, dotted the 24px
+   minimum, dashed the 44px touch size, all at true scale. */
+
+.ds-target {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+}
+
+.ds-target--block {
+  display: flex;
+  width: 100%;
+}
+
+.ds-target-stage {
+  position: relative;
+}
+
+.ds-target--block .ds-target-stage {
+  width: 100%;
+}
+
+.ds-target-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ds-target-part,
+.ds-target-min,
+.ds-target-touch {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
+.ds-target-part {
+  border: 1px solid rgb(10 27 51 / 0.55);
+}
+
+.ds-target-min {
+  border: 1px dotted var(--ds-color-ink-70);
+}
+
+.ds-target-touch {
+  border: 1px dashed var(--ds-color-ink-45);
+}
+
+:global(.ds-canvas--navy) .ds-target-part,
+:global(.ds-canvas--terminal) .ds-target-part,
+:global(.ds-canvas--on-blue) .ds-target-part {
+  border-color: rgb(255 255 255 / 0.7);
+}
+
+:global(.ds-canvas--navy) .ds-target-min,
+:global(.ds-canvas--terminal) .ds-target-min,
+:global(.ds-canvas--on-blue) .ds-target-min {
+  border-color: rgb(255 255 255 / 0.85);
+}
+
+:global(.ds-canvas--navy) .ds-target-touch,
+:global(.ds-canvas--terminal) .ds-target-touch,
+:global(.ds-canvas--on-blue) .ds-target-touch {
+  border-color: rgb(255 255 255 / 0.6);
+}
+
+.ds-target-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 32px 48px;
+}
+
+/* the arrows sit at the sides of the portrait's box on the site, this box stands in for it */
+.ds-arrows-box {
+  position: relative;
+  width: 240px;
+  height: 56px;
+}
+
+.ds-carousel-box {
+  width: min(100%, 560px);
+  margin: 0 auto;
+}
+
+/* the bare wave button pulls 40px into the space to its right on wide screens */
+.ds-wave-box {
+  padding-right: 40px;
+}
+
+/* the site targets' verdicts, under the canvases in the panel's own ink */
+.ds-target-lines p { margin: 0; }

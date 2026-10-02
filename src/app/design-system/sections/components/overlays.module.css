@@ -1,0 +1,79 @@
+/* Guide chrome for the Feedback and Overlays sections: room round open tooltips, the fixed-width boxes that
+   stand in for a phone or a narrow card, and the swap cell. Every class is ds- prefixed and none reaches
+   the site. No blur, blend, mask or filter. */
+
+/* room for an open tooltip on every side of its trigger */
+.ds-room {
+  display: inline-grid;
+  place-items: center;
+  padding: 44px 120px;
+}
+.ds-room-top {
+  display: inline-grid;
+  place-items: center;
+  padding-top: 40px;
+}
+.ds-room-row {
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 12px;
+  padding-top: 40px;
+}
+
+/* a 375 phone column and a 343 card column (375 less the 16px gutters) */
+.ds-phone {
+  width: 375px;
+  max-width: 100%;
+}
+.ds-narrow {
+  width: 343px;
+  max-width: 100%;
+}
+.ds-wide {
+  width: 720px;
+  max-width: 100%;
+}
+
+/* the toast's own width, for toasts shown in the flow */
+.ds-toast-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 420px;
+  max-width: 100%;
+}
+
+/* skeleton and content in one grid cell, crossfading over 300ms, so the swap moves nothing */
+.ds-swap {
+  display: grid;
+  width: 300px;
+  max-width: 100%;
+}
+.ds-swap > * {
+  grid-area: 1 / 1;
+  transition: opacity var(--ds-dur-line) var(--ds-ease-out);
+}
+.ds-swap > [data-off] {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-swap > * {
+    transition: none;
+  }
+}
+
+/* a sheet seen in a phone-height box, attached to its foot */
+.ds-sheet-box {
+  display: flex;
+  align-items: flex-end;
+  height: 460px;
+  overflow: hidden;
+  border-radius: 24px;
+  background: var(--ds-color-veil-modal);
+}
+
+@media (max-width: 599px) {
+  .ds-room {
+    padding: 44px 16px;
+  }
+}

@@ -1,0 +1,86 @@
+/* Light sections: the closing crop and the rhythm map. Kit and token colours only. */
+
+/* The closing opens and ends with its section padding, the room it needs on the page. The crop takes both
+   back, so the specimen sits in the canvas padding. Read in the same window as the section, so the clamps
+   agree. */
+.ds-ls-crop {
+  width: 100%;
+  overflow: clip;
+}
+.ds-ls-crop > section {
+  margin-top: calc(-1 * clamp(40px, 4vw, 72px));
+  margin-bottom: calc(-1 * clamp(92px, 10vw, 150px));
+}
+
+.ds-ls-heads {
+  display: grid;
+  width: 100%;
+  gap: 32px;
+}
+
+.ds-rh {
+  display: grid;
+  gap: 0;
+  margin: 16px;
+  padding: 0;
+  list-style: none;
+}
+.ds-rh-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 200px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.ds-rh-name {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding-top: 4px;
+  color: var(--dsg-ink);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+}
+.ds-rh-col {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  border-inline: 1px solid var(--dsg-line);
+}
+.ds-rh-pad {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  overflow: hidden;
+  background: repeating-linear-gradient(135deg, rgb(10 27 51 / 0.08) 0 1px, transparent 1px 7px);
+  color: var(--dsg-body);
+  font-family: var(--dsg-mono);
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+.ds-rh-body {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  padding: 0 12px;
+  border-block: 1px solid var(--dsg-line);
+  background: var(--dsg-panel);
+  color: var(--dsg-ink);
+  font-size: 13px;
+  line-height: 20px;
+}
+@media (max-width: 640px) {
+  .ds-rh-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .ds-rh-name {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+}

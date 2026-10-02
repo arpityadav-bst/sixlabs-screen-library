@@ -1,0 +1,53 @@
+/* Page composition: the strip of grounds. Light grounds read from the tokens, the water and the grain are
+   kit canvases. */
+.ds-strip {
+  display: flex;
+  width: 100%;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ds-strip-seg {
+  display: flex;
+  min-width: 0;
+  flex-basis: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+.ds-strip-fill {
+  position: relative;
+  display: grid;
+  height: 56px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--ds-color-line);
+}
+.ds-strip-fill[data-ground="hero"],
+.ds-strip-fill[data-ground="page"] {
+  background: var(--ds-color-page);
+}
+.ds-strip-fill[data-ground="footer"] {
+  background: linear-gradient(var(--ds-color-footer), var(--ds-color-footer)), var(--ds-color-page);
+}
+.ds-strip-box {
+  width: 78%;
+  height: 64%;
+  border: 1px solid var(--ds-color-line-faint);
+  border-radius: 10px;
+  background: var(--ds-color-container);
+}
+.ds-strip-name {
+  overflow: hidden;
+  color: var(--dsg-body);
+  font-size: 12px;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ds-strip-wrap {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 12px;
+}

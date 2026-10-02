@@ -1,0 +1,22 @@
+/* The scroll set-piece frame's page box: the site's main column (its relative box, its horizontal clip and
+   the page gutter, 16 then 32 from 768) and the grained block's full bleed, read from the gutter tokens.
+   Nothing here styles a site part. */
+.ds-setpiece {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: clip;
+  padding-inline: var(--ds-gutter-page, 16px);
+}
+.ds-setpiece-grain {
+  margin-inline: calc(-1 * var(--ds-gutter-page, 16px));
+  padding-inline: var(--ds-gutter-page, 16px);
+}
+@media (min-width: 768px) {
+  .ds-setpiece {
+    padding-inline: var(--ds-gutter-page-md, 32px);
+  }
+  .ds-setpiece-grain {
+    margin-inline: calc(-1 * var(--ds-gutter-page-md, 32px));
+    padding-inline: var(--ds-gutter-page-md, 32px);
+  }
+}

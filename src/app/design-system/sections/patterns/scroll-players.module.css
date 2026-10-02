@@ -1,0 +1,22 @@
+/* Scroll line to players: the Do / Don't player block on the water. Type colours come from tokens. */
+.ds-sp-player {
+  display: flex;
+  max-width: 480px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+.ds-sp-title,
+.ds-sp-body {
+  margin: 0;
+}
+.ds-sp-player[data-tone="white"] .ds-sp-title {
+  color: #fff;
+}
+.ds-sp-player[data-tone="white"] .ds-sp-body {
+  color: var(--ds-color-on-blue-80);
+}
+.ds-sp-player[data-tone="ink"] .ds-sp-title,
+.ds-sp-player[data-tone="ink"] .ds-sp-body {
+  color: var(--ds-color-ink);
+}

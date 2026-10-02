@@ -1,0 +1,14 @@
+### Coverage
+
+**What it is.** A measure of how much of the code the guide shows, taken when the page builds. It is computed, never typed: the catalog's covers on one side, a scan of the source on the other.
+
+**The method.** Coverage counts components, states and assertions. It does not count CSS classes, because the site is written in Tailwind utilities and a class count says nothing about whether a part has been shown.
+
+- **Components.** Every exported function component, and every exported arrow, forwardRef or memo component, in the `.tsx` files of `src/components/website`, `src/components/tiles` and `src/components/design-system`. A part counts as specimened when a catalog section lists it in its covers.
+- **Controls and owed states.** A part that renders a native control or a control role itself owes five states: rest, hover, focus-visible, pressed and disabled. A page section that only holds other parts owes none, since its controls are counted on their own. Rest is shown by any specimen. The others are matched by name, with the synonyms sections use (focus for focus-visible, dragging for pressed).
+- **Ships on.** A shipped part's pages come from the import graph of `src/app/website/page.tsx` and `src/app/6labs-fullview/page.tsx`. System parts ship on no page yet.
+- **Assertions.** Two kinds. A transcribed value (a class string, a timing the source keeps private) must still be in its file as exact text. A token that cites a `file:line` must still find its value or its Tailwind class on that line or the one either side, with spacing, quotes and number formats normalised. A token whose site value is computed (a next/font family, a JS curve, a height that comes from padding) is listed as derived with its reason, never counted as passing.
+
+**Reading the worklist.** The owed column is the one to work from. A shipped part short of focus-visible is a real gap on the live site, not a guide gap, since no shipped part styles focus. A system part short of a state means a section has not shown it yet. The Not specimened chips are exports no section covers: internal parts (a card's title slot, a dialog's panel) can stay there by choice, a new public part should not. A cover that matches no export is a rename the catalog missed, and shows as a warning.
+
+**Why at build.** The guide page is prerendered, so the scan costs nothing at runtime and the numbers are exactly the source's at that build. A green assertions count means every written value still matches. It does not mean the parts draw the same, which Known gaps (10.2) lists as a blind spot.

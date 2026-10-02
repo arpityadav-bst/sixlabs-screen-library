@@ -1,0 +1,37 @@
+/* The spacing section's chrome: the rhythm ruler and its bands. ds- prefixed, guide only. */
+
+.ds-ruler { position: relative; width: 100%; max-width: 680px; margin: 0 auto; padding-right: 64px; }
+.ds-ruler-stage { display: flex; flex-direction: column; align-items: flex-start; }
+.ds-ruler-marks { position: absolute; inset: 0; pointer-events: none; }
+.ds-ruler-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-block: 1px dashed rgb(10 27 51 / 0.3);
+  background: rgb(10 27 51 / 0.06);
+}
+.ds-ruler-band b {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  padding: 0 6px;
+  border-radius: 4px;
+  background: var(--ds-color-primary);
+  color: #fff;
+  font: 600 12px/18px var(--ds-font-mono);
+  transform: translateY(-50%);
+}
+
+/* rhythm specimen copy */
+.ds-rhythm-h1 { margin: 0; color: var(--ds-color-ink); }
+.ds-rhythm-lede { max-width: var(--ds-measure-lede); margin: 0; color: var(--ds-color-text-body); }
+.ds-rhythm-proof { color: var(--ds-color-text-body); }
+.ds-rhythm-proof p { margin: 0; }
+.ds-rhythm-next { grid-column-start: 2; font-weight: 500; }
+
+/* the Do / Don't heads */
+.ds-head { max-width: var(--ds-measure-subline); }
+.ds-head > p { margin: 0; }
+.ds-head-h { color: var(--ds-color-ink); }
+.ds-head-sub { color: var(--ds-color-text-muted); }
+.ds-pair { display: flex; flex-wrap: wrap; }

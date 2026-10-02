@@ -1,0 +1,209 @@
+/* The accordion's look, states and sizes. The card is the FAQ row (Faq.tsx): white, radius 14, a hairline
+   that firms on hover and while open. Every pseudo-class has a [data-force] twin, so a forced StateGrid cell
+   looks like the real state. Values come from the --ds-* properties TokenStyle prints. Colour, opacity and
+   rotate only, no filter, blend or mask. A flush row's question rests in the body colour and turns ink on
+   hover and while open, so the last row (which has no divider below it) still answers the pointer. */
+
+.ds-acc {
+  display: grid;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: start;
+}
+.ds-acc[data-variant="card"] {
+  gap: var(--ds-space-2-5);
+}
+
+.ds-acc-item {
+  position: relative;
+  transition:
+    border-color var(--ds-dur-line) var(--ds-ease-out),
+    background-color var(--ds-dur-ui) var(--ds-ease-out);
+}
+.ds-acc[data-variant="card"] .ds-acc-item {
+  border: 1px solid var(--ds-color-line);
+  border-radius: var(--ds-radius-row);
+  background: var(--ds-color-surface);
+}
+.ds-acc[data-variant="flush"] .ds-acc-item {
+  border-bottom: 1px solid var(--ds-color-line-divider);
+}
+.ds-acc[data-variant="flush"] .ds-acc-item:last-child {
+  border-bottom-width: 0;
+}
+
+/* hover firms the hairline, and an open row keeps it firm */
+.ds-acc-item:not([data-disabled]):hover,
+.ds-acc-item[data-force="hover"],
+.ds-acc-item[data-force="pressed"],
+.ds-acc-item[data-open] {
+  border-color: var(--ds-color-line-strong);
+}
+/* a press tints the row for as long as it is held */
+.ds-acc-item:not([data-disabled]):has(.ds-acc-trigger:active),
+.ds-acc-item[data-force="pressed"] {
+  background-color: var(--ds-color-fill-hover);
+}
+.ds-acc-item[data-disabled] {
+  opacity: 0.4;
+}
+
+.ds-acc-h {
+  margin: 0;
+  font: inherit;
+}
+
+.ds-acc-trigger {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.ds-acc-trigger:disabled {
+  cursor: not-allowed;
+}
+.ds-acc-trigger:focus-visible {
+  outline: none;
+}
+
+/* focus: the card rings the whole row on its radius, a flush row rings its trigger */
+.ds-acc[data-variant="card"] .ds-acc-item:has(.ds-acc-trigger:focus-visible),
+.ds-acc[data-variant="card"] .ds-acc-item[data-force="focus"] {
+  outline: var(--ds-focus-width) solid var(--ds-focus-color);
+  outline-offset: var(--ds-focus-offset);
+}
+.ds-acc[data-variant="flush"] .ds-acc-trigger {
+  border-radius: var(--ds-radius-xs);
+}
+.ds-acc[data-variant="flush"] .ds-acc-trigger:focus-visible,
+.ds-acc[data-variant="flush"] [data-force="focus"] .ds-acc-trigger {
+  outline: var(--ds-focus-width) solid var(--ds-focus-color);
+  outline-offset: var(--ds-focus-offset);
+}
+@media (forced-colors: active) {
+  .ds-acc-item:has(.ds-acc-trigger:focus-visible),
+  .ds-acc-trigger:focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+.ds-acc-q {
+  color: var(--ds-color-ink);
+  font-family: var(--ds-font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  transition: color var(--ds-dur-ui) var(--ds-ease-out);
+}
+.ds-acc[data-variant="flush"] .ds-acc-q {
+  color: var(--ds-color-text-body);
+}
+.ds-acc[data-variant="flush"] .ds-acc-item:not([data-disabled]):hover .ds-acc-q,
+.ds-acc[data-variant="flush"] .ds-acc-item[data-force="hover"] .ds-acc-q,
+.ds-acc[data-variant="flush"] .ds-acc-item[data-force="pressed"] .ds-acc-q,
+.ds-acc[data-variant="flush"] .ds-acc-item[data-open] .ds-acc-q {
+  color: var(--ds-color-ink);
+}
+
+/* the plus, its second bar turning away into a minus */
+.ds-acc-plus {
+  position: relative;
+  display: block;
+  flex-shrink: 0;
+}
+.ds-acc-bar {
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: 1.5px;
+  margin-top: -0.75px;
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-color-ink);
+}
+.ds-acc-bar + .ds-acc-bar {
+  rotate: 90deg;
+  transition:
+    rotate var(--ds-dur-line) var(--ds-ease-out),
+    opacity var(--ds-dur-line) var(--ds-ease-out);
+}
+[data-open] .ds-acc-bar + .ds-acc-bar {
+  rotate: 0deg;
+  opacity: 0;
+}
+.ds-acc-chev {
+  flex-shrink: 0;
+  color: var(--ds-color-ink);
+  transition: rotate var(--ds-dur-line) var(--ds-ease-out);
+}
+[data-open] .ds-acc-chev {
+  rotate: 180deg;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-acc-item,
+  .ds-acc-q,
+  .ds-acc-bar + .ds-acc-bar,
+  .ds-acc-chev {
+    transition: none;
+  }
+}
+/* forced colours: the bars are fills, which would vanish, so they take CanvasText */
+@media (forced-colors: active) {
+  .ds-acc-bar {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+}
+
+.ds-acc-panel {
+  overflow: hidden;
+}
+.ds-acc-a {
+  max-width: 680px;
+  color: var(--ds-color-text-body);
+  font-family: var(--ds-font-sans);
+  line-height: 1.6;
+}
+.ds-acc-a p {
+  margin: 0;
+}
+
+/* sizes: trigger padding and gap, question type, icon box, answer type and padding */
+.ds-acc[data-size="sm"] .ds-acc-trigger { gap: var(--ds-space-4); padding: var(--ds-space-3-5) var(--ds-space-4); }
+.ds-acc[data-size="sm"] .ds-acc-q { font-size: var(--ds-text-15); line-height: 20px; }
+.ds-acc[data-size="sm"] .ds-acc-plus { width: 14px; height: 14px; }
+.ds-acc[data-size="sm"] .ds-acc-a { padding: 0 var(--ds-space-4) var(--ds-space-4); font-size: var(--ds-text-14); }
+
+.ds-acc[data-size="md"] .ds-acc-trigger { gap: var(--ds-space-6); padding: var(--ds-space-5) var(--ds-space-6); }
+.ds-acc[data-size="md"] .ds-acc-q {
+  font-size: var(--ds-type-question-size);
+  line-height: var(--ds-type-question-leading);
+}
+.ds-acc[data-size="md"] .ds-acc-plus { width: 16px; height: 16px; }
+.ds-acc[data-size="md"] .ds-acc-a { padding: 0 var(--ds-space-6) var(--ds-space-6); font-size: var(--ds-text-15); }
+
+.ds-acc[data-size="lg"] .ds-acc-trigger { gap: var(--ds-space-6); padding: var(--ds-space-6) var(--ds-space-7); }
+.ds-acc[data-size="lg"] .ds-acc-q { font-size: var(--ds-text-20); line-height: 28px; }
+.ds-acc[data-size="lg"] .ds-acc-plus { width: 18px; height: 18px; }
+.ds-acc[data-size="lg"] .ds-acc-a { padding: 0 var(--ds-space-7) var(--ds-space-7); font-size: var(--ds-text-16); }
+
+/* phones: the FAQ's own step, one size down in padding and type */
+@media (width < 48rem) {
+  .ds-acc[data-variant="card"] { gap: var(--ds-space-2); }
+  .ds-acc[data-size="md"] .ds-acc-trigger { gap: var(--ds-space-4); padding: var(--ds-space-4) var(--ds-space-5); }
+  .ds-acc[data-size="md"] .ds-acc-a { padding: 0 var(--ds-space-5) var(--ds-space-5); font-size: var(--ds-text-14); }
+  .ds-acc[data-size="lg"] .ds-acc-trigger { gap: var(--ds-space-4); padding: var(--ds-space-5) var(--ds-space-6); }
+  .ds-acc[data-size="lg"] .ds-acc-q { font-size: var(--ds-text-18); line-height: 1.375; }
+  .ds-acc[data-size="lg"] .ds-acc-a { padding: 0 var(--ds-space-6) var(--ds-space-6); font-size: var(--ds-text-15); }
+}
+
+/* a flush row sits on its container's text edge */
+.ds-acc[data-variant="flush"] .ds-acc-trigger { padding-inline: 0; }
+.ds-acc[data-variant="flush"] .ds-acc-a { padding-inline: 0; }

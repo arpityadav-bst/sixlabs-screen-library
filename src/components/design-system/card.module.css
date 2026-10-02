@@ -1,0 +1,118 @@
+/* The card's interaction layer: what a Tailwind class cannot hold. The line and fill are registered colours
+   and the sheen strength a registered number, so all three transition. The sheen is drawn with background
+   layers only (a white padding-box over a radial light and the hairline, both border-box, under a
+   transparent stroke), never with a mask or a filter. Class names keep the ds- prefix. */
+@property --ds-card-line {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: transparent;
+}
+@property --ds-card-fill {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: transparent;
+}
+@property --ds-sheen {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.ds-card {
+  position: relative;
+  border: var(--ds-stroke-hairline) solid var(--ds-card-line);
+  background-color: var(--ds-card-fill);
+  transition:
+    --ds-card-line var(--ds-dur-ui) var(--ds-ease-out),
+    --ds-card-fill var(--ds-dur-ui) var(--ds-ease-out),
+    translate var(--ds-dur-line) var(--ds-ease-out),
+    box-shadow var(--ds-dur-line) var(--ds-ease-out),
+    scale var(--ds-dur-press) var(--ds-ease-out),
+    opacity var(--ds-dur-ui) var(--ds-ease-out),
+    --ds-sheen var(--ds-dur-sheen) ease;
+}
+
+/* tones: the fill and the line each tone starts from */
+.ds-card[data-tone="surface"] { --ds-card-fill: var(--ds-color-surface); --ds-card-line: var(--ds-color-line); }
+.ds-card[data-tone="container"] { --ds-card-fill: var(--ds-color-container); --ds-card-line: var(--ds-color-line-faint); }
+.ds-card[data-tone="inverse"] { --ds-card-fill: var(--ds-color-primary); --ds-card-line: transparent; }
+.ds-card[data-tone="onBlue"] {
+  --ds-card-fill: var(--ds-color-surface);
+  --ds-card-line: transparent;
+  box-shadow: var(--ds-shadow-player);
+}
+/* on blue an unpicked card dims its surface to white 60%, never its text (CardBody takes ink 70% on blue) */
+.ds-card[data-tone="onBlue"][data-selectable]:not([data-selected]) {
+  --ds-card-fill: color-mix(in srgb, var(--ds-color-surface) 60%, transparent);
+}
+
+/* hover: a pointer that can hover, or a forced cell */
+@media (hover: hover) {
+  .ds-card[data-interactive]:not([data-disabled]):hover { --ds-card-line: var(--ds-color-line-strong); }
+  .ds-card[data-tone="inverse"][data-interactive]:not([data-disabled]):hover { --ds-card-line: transparent; --ds-card-fill: var(--ds-color-primary-hover); }
+  .ds-card[data-tone="onBlue"][data-interactive]:not([data-disabled]):hover { --ds-card-line: transparent; --ds-card-fill: var(--ds-color-surface-85); }
+  .ds-card[data-lift]:not([data-disabled]):hover { translate: 0 calc(var(--ds-lift-y) * -1); box-shadow: var(--ds-shadow-lift); }
+  .ds-card[data-sheen]:not([data-disabled]):hover { --ds-sheen: 1; }
+}
+/* a forced press shows the hover too, as a real press does. The on-blue twin carries the real rule's weight
+   (0,5,0), so it outranks the unpicked dim (0,4,0) as a real hover does */
+.ds-card[data-interactive]:is([data-force="hover"], [data-force="pressed"]) { --ds-card-line: var(--ds-color-line-strong); }
+.ds-card[data-tone="inverse"]:is([data-force="hover"], [data-force="pressed"]) { --ds-card-line: transparent; --ds-card-fill: var(--ds-color-primary-hover); }
+.ds-card[data-tone="onBlue"][data-interactive]:not([data-disabled]):is([data-force="hover"], [data-force="pressed"]) {
+  --ds-card-line: transparent;
+  --ds-card-fill: var(--ds-color-surface-85);
+}
+.ds-card[data-lift]:is([data-force="hover"], [data-force="pressed"]) { translate: 0 calc(var(--ds-lift-y) * -1); box-shadow: var(--ds-shadow-lift); }
+.ds-card[data-sheen]:is([data-force="hover"], [data-force="pressed"]) { --ds-sheen: 1; --gx: 50%; --gy: 50%; }
+
+/* pressed: the card press scale (scale-press-card, SCALE.pressCard) */
+.ds-card[data-interactive]:not([data-disabled]):active,
+.ds-card[data-interactive][data-force="pressed"] { scale: var(--ds-scale-press-card); }
+
+/* selected: the navy line doubled by a 1px inset ring, so it reads at 2px without a layout shift */
+.ds-card[data-selected] { --ds-card-line: var(--ds-color-primary); box-shadow: inset 0 0 0 1px var(--ds-color-primary); }
+.ds-card[data-selected][data-tone="onBlue"] {
+  --ds-card-fill: var(--ds-color-surface);
+  box-shadow: inset 0 0 0 1px var(--ds-color-primary), var(--ds-shadow-player-selected);
+}
+@media (hover: hover) {
+  .ds-card[data-selected]:not([data-disabled]):hover { --ds-card-line: var(--ds-color-primary); }
+  .ds-card[data-selected][data-tone="onBlue"][data-interactive]:hover { --ds-card-line: var(--ds-color-primary); --ds-card-fill: var(--ds-color-surface); }
+}
+.ds-card[data-selected]:is([data-force="hover"], [data-force="pressed"]) { --ds-card-line: var(--ds-color-primary); }
+/* weighed past the on-blue forced hover above (0,5,0), as the real selected hover is */
+.ds-card[data-selected][data-tone="onBlue"][data-interactive]:is([data-force="hover"], [data-force="pressed"]) {
+  --ds-card-line: var(--ds-color-primary);
+  --ds-card-fill: var(--ds-color-surface);
+}
+
+/* selected on navy: the line and ring turn white, since navy on the navy fill would not show */
+.ds-card[data-selected][data-tone="inverse"] { --ds-card-line: var(--ds-color-surface); box-shadow: inset 0 0 0 1px var(--ds-color-surface); }
+@media (hover: hover) {
+  .ds-card[data-selected][data-tone="inverse"]:not([data-disabled]):hover { --ds-card-line: var(--ds-color-surface); }
+}
+.ds-card[data-selected][data-tone="inverse"]:is([data-force="hover"], [data-force="pressed"]) { --ds-card-line: var(--ds-color-surface); }
+
+.ds-card[data-disabled] { opacity: 0.4; cursor: not-allowed; }
+.ds-card[aria-busy="true"] { cursor: progress; }
+
+/* the sheen: light along the stroke only, from background layers */
+.ds-card[data-sheen] {
+  border: var(--ds-stroke-sheen) solid transparent;
+  background:
+    linear-gradient(var(--ds-card-fill), var(--ds-card-fill)) padding-box,
+    radial-gradient(
+        260px circle at var(--gx, 50%) var(--gy, 50%),
+        color-mix(in srgb, var(--ds-color-accent) calc(var(--ds-sheen) * 100%), transparent),
+        color-mix(in srgb, var(--ds-color-accent) calc(var(--ds-sheen) * 30%), transparent) 34%,
+        transparent 68%
+      )
+      border-box,
+    linear-gradient(var(--ds-card-line), var(--ds-card-line)) border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-card { transition-duration: 0ms; }
+  .ds-card[data-lift]:hover,
+  .ds-card[data-lift][data-force="hover"] { translate: none; }
+}

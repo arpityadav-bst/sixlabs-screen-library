@@ -1,0 +1,130 @@
+/* Loading, empty and failure: the jobs row, the hero fallback and the offline view. Token values only. */
+.ds-ss-stack {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+.ds-ss-row {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.ds-ss-card {
+  width: 340px;
+  max-width: 100%;
+  flex: none;
+}
+.ds-ss-wait {
+  display: grid;
+  min-height: 420px;
+  place-items: center;
+}
+.ds-ss-terminal {
+  margin-top: 26px;
+}
+.ds-ss-tags {
+  margin-top: 24px;
+}
+
+/* the hero container, as Hero.tsx:125 draws it: 664 tall, 720 under md */
+.ds-fb-wrap {
+  width: 100%;
+}
+.ds-fb {
+  position: relative;
+  width: 100%;
+  height: 664px;
+  overflow: hidden;
+  border: 1px solid var(--ds-color-line-faint);
+  border-radius: var(--ds-radius-container-sm);
+  background: var(--ds-color-container);
+  box-shadow: var(--ds-shadow-container);
+}
+/* where FloorLogo lies (HeroBits.tsx:137), the static tilt of .floor-spin with no turn */
+.ds-fb-still {
+  position: absolute;
+  top: 77%;
+  left: 80%;
+  width: 70%;
+  height: auto;
+  aspect-ratio: 1;
+  opacity: 0.6;
+  pointer-events: none;
+  transform: translate(-50%, -50%) perspective(2400px) rotateX(50deg);
+}
+/* the copy layer, Hero.tsx:170: px 24 pt 40 pb 40, px 64 pt 64 pb 48 from md */
+.ds-fb-copy {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 64px 64px 48px;
+}
+.ds-fb-title {
+  margin: 0;
+  color: var(--ds-color-ink);
+}
+.ds-fb-lede {
+  max-width: var(--ds-measure-lede, 440px);
+  margin: 20px 0 0;
+  color: var(--ds-color-text-body);
+}
+.ds-fb-cta {
+  margin-top: 32px;
+}
+.ds-fb-note {
+  margin: 16px 0 0;
+  color: var(--ds-color-text-body);
+}
+/* the social proof, Hero.tsx:236: grid 8px 1fr, gap 10, 13px, 32 under the call (24 under md) */
+.ds-fb-proof {
+  display: grid;
+  grid-template-columns: 8px 1fr;
+  align-items: center;
+  column-gap: 10px;
+  margin-top: 32px;
+  font-size: 13px;
+  line-height: 1.625;
+}
+.ds-fb-proof p {
+  margin: 0;
+}
+.ds-fb-proof-line {
+  color: var(--ds-color-text-body);
+}
+.ds-fb-proof-next {
+  grid-column: 2;
+  color: var(--ds-color-accent);
+  font-weight: 500;
+}
+/* the row under the container, Hero.tsx:101: mt 40 (32), the numbers centred */
+.ds-fb-under {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+@media (max-width: 767px) {
+  .ds-fb {
+    height: 720px;
+  }
+  .ds-fb-copy {
+    padding: 40px 24px;
+  }
+  .ds-fb-cta,
+  .ds-fb-proof {
+    margin-top: 24px;
+  }
+  .ds-fb-under {
+    margin-top: 32px;
+  }
+}
+@media (min-width: 768px) {
+  .ds-fb {
+    border-radius: var(--ds-radius-2xl);
+  }
+}

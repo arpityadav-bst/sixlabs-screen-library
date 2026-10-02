@@ -1,0 +1,58 @@
+/* Content and voice: the rules in context, the labels row and the filler Do / Don't card width. */
+.ds-vc-card {
+  width: 100%;
+  max-width: 300px;
+}
+
+.ds-vc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 16px;
+  list-style: none;
+}
+.ds-vc-cell {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.ds-vc-sample {
+  display: flex;
+  width: 100%;
+  min-height: 112px;
+  align-items: center;
+  overflow-wrap: anywhere;
+  padding: 20px;
+  border: 1px solid var(--dsg-line);
+  border-radius: 16px;
+  background: var(--ds-color-page);
+}
+.ds-vc-sample[data-ground="container"] {
+  border-color: var(--ds-color-line-faint);
+  background: var(--ds-color-container);
+}
+.ds-vc-sample > * {
+  margin: 0;
+}
+.ds-vc-ink {
+  color: var(--ds-color-ink);
+}
+.ds-vc-body {
+  color: var(--ds-color-text-body);
+}
+.ds-vc-rule {
+  margin: 0;
+  color: var(--dsg-body);
+  font-size: 13px;
+  line-height: 20px;
+}
+.ds-vc-labels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 16px;
+}

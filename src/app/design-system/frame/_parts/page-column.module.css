@@ -1,0 +1,30 @@
+/* The site's main column round a light section (app/website/page.tsx:25 and :37): main's horizontal clip and
+   its page gutter, 16 then 32 from 768, and the grained block that bleeds back over the gutter. Read from the
+   gutter tokens, so a section frame keeps the page's width chain. Nothing here styles a site part. */
+.ds-col {
+  position: relative;
+  overflow-x: clip;
+  padding-inline: var(--ds-gutter-page, 16px);
+}
+.ds-col-grain {
+  margin-inline: calc(-1 * var(--ds-gutter-page, 16px));
+  padding-inline: var(--ds-gutter-page, 16px);
+}
+@media (min-width: 768px) {
+  .ds-col {
+    padding-inline: var(--ds-gutter-page-md, 32px);
+  }
+  .ds-col-grain {
+    margin-inline: calc(-1 * var(--ds-gutter-page-md, 32px));
+    padding-inline: var(--ds-gutter-page-md, 32px);
+  }
+}
+
+/* The grain's lead-in. .page-grain fades its noise in over its first 240px (globals.css), and on the site
+   only Understands opens that block: Jobs, the FAQ, the closing and the footer sit deep in it. So a frame of
+   one of those starts its grain 240px above the frame's top, where the fade runs out of view, and the part
+   stands on the full grain at y 0, as on the page. */
+.ds-grain-lead {
+  margin-top: -240px;
+  padding-top: 240px;
+}

@@ -1,0 +1,146 @@
+/* Guide chrome for the floor sections: the boxes the live floor and the loaders sit in, the state sheet,
+   the hologram pairs and the small diagrams. Transform and gradients only, no filter, blend or mask. */
+
+/* the live floor */
+.ds-fl-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 16px 0;
+}
+.ds-fl-bar :global(.ds-label) { margin: 0; }
+.ds-fl-box {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 48px;
+  background: var(--ds-color-container);
+}
+.ds-fl-box[data-shape="design"] { width: min(100%, 924px); }
+.ds-fl-box[data-shape="phone"] { width: min(100%, 240px); border-radius: 32px; }
+.ds-fl-wave {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  z-index: 20;
+}
+
+/* a loader's box, as the full view it ships in (Hero.tsx:124): edge to edge with no radius, the hero grey,
+   a hairline at ink 8% along its foot */
+.ds-fl-loader {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--ds-color-ink-08);
+  background: var(--ds-color-container);
+}
+.ds-fl-loader--white { background: var(--ds-color-surface); box-shadow: inset 0 0 0 1px var(--ds-color-line); }
+.ds-fl-logo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1400 / 664;
+  overflow: hidden;
+  border-radius: 48px;
+  background: var(--ds-color-container);
+}
+.ds-fl-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+}
+.ds-fl-toggle :global(.ds-label) { margin: 0; }
+
+/* the state sheet: one column per tile state */
+.ds-st-sheet {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(168px, 1fr));
+  gap: 16px;
+  min-width: 920px;
+}
+.ds-st-scroll { overflow-x: auto; padding: 32px; }
+.ds-st-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.ds-st-name {
+  margin: 0;
+  color: var(--dsg-ink);
+  font: 500 15px/22px var(--dsg-display);
+}
+.ds-st-top {
+  display: grid;
+  place-items: center;
+  height: 132px;
+  border-radius: 14px;
+  background: var(--ds-color-container);
+}
+.ds-st-face {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  transform: rotateX(56deg) rotateZ(45deg);
+}
+.ds-st-top img { width: 132px; height: auto; }
+.ds-st-ramp { display: flex; flex-wrap: wrap; gap: 6px; }
+.ds-st-chip {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ds-color-ink) 12%, transparent);
+}
+.ds-st-facts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--dsg-body);
+  font: 400 13px/20px var(--dsg-sans);
+}
+.ds-st-facts li + li { margin-top: 4px; }
+.ds-st-facts code { color: var(--dsg-ink); font: 12px/20px var(--dsg-mono); }
+
+/* a baked glint picture and its name (tile-activation.tsx) */
+.ds-glint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+.ds-glint img { display: block; width: 200px; height: 200px; }
+
+/* the small diagrams (state machine, rim, decal) */
+.ds-dg-scroll { overflow-x: auto; }
+.ds-dg { display: block; margin-inline: auto; }
+.ds-dg text { font-family: var(--dsg-sans); }
+.ds-dg .ds-dg-mono { font-family: var(--dsg-mono); }
+
+/* the hologram pairs */
+.ds-holo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(212px, 1fr));
+  gap: 20px 16px;
+  width: 100%;
+}
+.ds-holo-pair { margin: 0; }
+.ds-holo-imgs { display: flex; justify-content: center; gap: 8px; }
+.ds-holo-imgs img { display: block; width: 96px; height: 96px; }
+.ds-holo-players {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px 16px;
+  width: 100%;
+}
+.ds-holo-players .ds-holo-imgs img { width: 180px; height: 240px; }
+@media (max-width: 599px) {
+  .ds-holo-players { grid-template-columns: minmax(0, 1fr); }
+  .ds-holo-players .ds-holo-imgs img { width: 132px; height: 176px; }
+}

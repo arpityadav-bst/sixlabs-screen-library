@@ -1,0 +1,247 @@
+/* The guide's shell: sidebar nav, sticky toolbar, jump field and the phone drawer. Part of the guide
+   chrome with ds.css (which holds the shared custom properties on .ds-root) and ds-spec.css. */
+
+/* sidebar */
+.ds-side {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-right: 1px solid var(--dsg-line);
+  background: var(--dsg-page);
+}
+.ds-nav { padding: 18px 16px 48px; }
+.ds-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  color: var(--dsg-ink);
+  font-family: var(--dsg-display);
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+.ds-brand span { color: var(--dsg-muted); font-family: var(--dsg-sans); font-size: 13px; letter-spacing: 0; }
+/* the way out of the guide, apart from the brand (which goes to the guide's top) */
+.ds-nav-home {
+  display: inline-block;
+  margin: 2px 0 0 10px;
+  border-radius: 4px;
+  color: var(--dsg-muted);
+  font-size: 12px;
+  line-height: 16px;
+  text-decoration: underline;
+  text-decoration-color: var(--dsg-line-strong);
+  text-underline-offset: 3px;
+}
+.ds-nav-home:hover { color: var(--dsg-ink); text-decoration-color: currentColor; }
+.ds-nav-group {
+  margin: 20px 0 6px;
+  padding: 0 10px;
+  color: var(--dsg-muted);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.ds-nav-sub { margin: 12px 0 2px; padding: 0 10px; color: var(--dsg-muted); font-size: 12px; line-height: 16px; }
+.ds-nav-list { margin: 0; padding: 0; list-style: none; }
+.ds-nav-link {
+  position: relative;
+  display: block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: var(--dsg-body);
+  font-size: 13px;
+  line-height: 20px;
+  text-decoration: none;
+  transition: background-color 200ms var(--dsg-ease), color 200ms var(--dsg-ease);
+}
+.ds-nav-link:hover { background: var(--dsg-hover); color: var(--dsg-ink); }
+.ds-nav-link[aria-current] { color: var(--dsg-ink); font-weight: 500; }
+.ds-nav-link[aria-current]::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 0;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--dsg-navy);
+}
+
+/* main column and toolbar */
+.ds-main { min-width: 0; padding: 0 40px 160px; }
+.ds-content { max-width: 1180px; margin: 0 auto; }
+.ds-content:focus { outline: none; }
+.ds-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 56px;
+  margin: 0 -40px 40px;
+  padding: 0 40px;
+  border-bottom: 1px solid var(--dsg-line);
+  background: var(--dsg-page);
+}
+.ds-menu-btn { display: none; }
+.ds-crumb {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  color: var(--dsg-muted);
+  font-size: 13px;
+  line-height: 20px;
+  white-space: nowrap;
+}
+.ds-crumb b { min-width: 0; overflow: hidden; color: var(--dsg-ink); font-weight: 500; text-overflow: ellipsis; }
+/* the group name gives way first, so a long one never runs under the jump field */
+.ds-crumb-name { flex-shrink: 3; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.ds-crumb-sep { flex: none; }
+.ds-toolbar-end { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.ds-pill {
+  padding: 4px 10px;
+  border: 1px solid var(--dsg-line);
+  border-radius: 999px;
+  background: var(--dsg-panel);
+  color: var(--dsg-body);
+  font: 12px/16px var(--dsg-mono);
+  white-space: nowrap;
+}
+
+/* jump field */
+.ds-jump { position: relative; width: 240px; }
+.ds-jump-input {
+  width: 100%;
+  height: 32px;
+  padding: 0 34px 0 32px;
+  border: 1px solid var(--dsg-line-strong);
+  border-radius: 999px;
+  background: var(--dsg-panel);
+  color: var(--dsg-ink);
+  font: 13px/20px var(--dsg-sans);
+  transition: border-color 200ms var(--dsg-ease);
+}
+.ds-jump-input::placeholder { color: var(--dsg-muted); }
+.ds-jump-input:hover { border-color: var(--dsg-line-hover); }
+.ds-jump-input:focus-visible { outline: 2px solid var(--dsg-accent); outline-offset: 2px; }
+.ds-jump-icon { position: absolute; top: 8px; left: 11px; color: var(--dsg-muted); pointer-events: none; }
+.ds-jump-key {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  padding: 0 6px;
+  border: 1px solid var(--dsg-line);
+  border-radius: 6px;
+  color: var(--dsg-muted);
+  font: 12px/18px var(--dsg-mono);
+  pointer-events: none;
+}
+.ds-jump-list {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
+  z-index: 45;
+  max-height: 336px;
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  border: 1px solid var(--dsg-line);
+  border-radius: 12px;
+  background: var(--dsg-panel);
+  box-shadow: 0 1px 2px rgb(10 27 51 / 0.05), 0 16px 32px -16px rgb(10 27 51 / 0.25);
+  list-style: none;
+}
+.ds-jump-opt {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: var(--dsg-body);
+  font-size: 13px;
+  line-height: 20px;
+  cursor: pointer;
+}
+.ds-jump-opt span { color: var(--dsg-muted); font-size: 12px; }
+.ds-jump-opt[aria-selected="true"] { background: var(--dsg-hover); color: var(--dsg-ink); }
+.ds-jump-none { padding: 6px 10px; color: var(--dsg-muted); font-size: 13px; line-height: 20px; }
+
+/* the phone drawer: a native modal dialog in the top layer, its veil the ::backdrop (ink 40%), never a blur.
+   The dialog's own box, margin and size limits are reset to the sheet's. */
+.ds-drawer {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: min(320px, 86vw);
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 0;
+  border-right: 1px solid var(--dsg-line);
+  background: var(--dsg-page);
+  color: var(--dsg-ink);
+  box-shadow: 0 24px 48px -24px rgb(10 27 51 / 0.3);
+}
+.ds-drawer[open] { animation: ds-slide 300ms var(--dsg-ease); }
+.ds-drawer::backdrop { background: rgb(10 27 51 / 0.4); }
+.ds-drawer[open]::backdrop { animation: ds-fade 200ms var(--dsg-ease); }
+.ds-drawer-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 16px 0 26px;
+  border-bottom: 1px solid var(--dsg-line);
+  background: var(--dsg-page);
+  font-size: 13px;
+  font-weight: 500;
+}
+.ds-drawer .ds-nav { padding-top: 8px; }
+/* the jump field rides in the drawer only where the toolbar has no room for it */
+.ds-drawer-jump { display: none; padding: 12px 16px 0; }
+.ds-drawer-jump .ds-jump { width: auto; }
+@keyframes ds-slide { from { transform: translateX(-100%); } }
+@keyframes ds-fade { from { opacity: 0; } }
+
+/* 899px: one under GUIDE_NAV_BP (guide-metrics.ts), where the sidebar gives way to the drawer */
+@media (max-width: 899px) {
+  .ds-root { grid-template-columns: minmax(0, 1fr); }
+  .ds-side { display: none; }
+  .ds-main { padding: 0 24px 120px; }
+  .ds-toolbar { margin: 0 -24px 32px; padding: 0 24px; }
+  /* the Sections button is the only way into the nav here, so it takes the full 44px the guide teaches */
+  .ds-menu-btn { display: inline-flex; height: 44px; padding: 0 14px; }
+  .ds-toolbar .ds-jump { width: 200px; }
+  /* the drawer is for thumbs: links and the close reach the 44px the guide teaches */
+  .ds-drawer .ds-nav-link { padding: 12px 10px; }
+  .ds-drawer [data-drawer-close] { width: 44px; height: 44px; }
+}
+@media (max-width: 599px) {
+  .ds-main { padding: 0 16px 96px; }
+  .ds-toolbar { margin: 0 -16px 24px; padding: 0 16px; }
+  .ds-toolbar .ds-jump, .ds-crumb-group { display: none; }
+  .ds-drawer-jump { display: block; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-drawer[open], .ds-drawer[open]::backdrop { animation: none; }
+}
+

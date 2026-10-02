@@ -1,0 +1,166 @@
+/* The design system guide's chrome, in five files: this one (the custom properties on .ds-root, the kit
+   button, focus ring and section type), ds-shell.css (sidebar, toolbar, jump field, drawer), ds-spec.css
+   (panels, canvases, captions, notes, tables, drawers), ds-measure.css and ds-chart.css (the measuring kit).
+   Every class is ds- prefixed, so nothing here reaches the site's own parts. Built from the site's palette but
+   quieter, so the specimens carry the colour. Grounds that are tokens are written as var(--ds-color-*), and
+   --dsg-* holds only the chrome colours no token has. No backdrop-filter, blend, mask, filter or blur, and no
+   chrome text under 12px. (guide)/layout.tsx imports all five in that order, frame/layout.tsx only this one. */
+
+/* the site's document scroll snap (globals.css) is off only where the guide is */
+html:has(.ds-root) {
+  scroll-snap-type: none;
+}
+
+/* the chrome's palette is the system's own tokens under chrome names (the sections' CSS writes these), so
+   no colour is typed twice. Only the ease and the font stacks are the chrome's own. */
+.ds-root {
+  --dsg-ink: var(--ds-color-ink);
+  --dsg-body: var(--ds-color-text-body);
+  --dsg-muted: var(--ds-color-text-muted);
+  --dsg-page: var(--ds-color-page);
+  --dsg-panel: var(--ds-color-surface);
+  --dsg-sunken: var(--ds-color-surface-sunken);
+  --dsg-line: var(--ds-color-line);
+  --dsg-line-strong: var(--ds-color-line-strong);
+  --dsg-line-hover: var(--ds-color-line-hover);
+  --dsg-hover: var(--ds-color-fill-open);
+  --dsg-navy: var(--ds-color-primary);
+  --dsg-accent: var(--ds-color-accent);
+  --dsg-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dsg-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --dsg-display: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --dsg-mono: var(--font-jbmono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr);
+  align-items: start;
+  min-height: 100vh;
+  background: var(--dsg-page);
+  color: var(--dsg-ink);
+  font-family: var(--dsg-sans);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* one focus ring for every kit control, the prose links below and a scroll box or slot that takes focus */
+.ds-root :is(.ds-btn, .ds-nav-link, .ds-nav-home, .ds-brand, .ds-chip, .ds-skip, .ds-sd > summary):focus-visible,
+.ds-root :is(.ds-lead, .ds-group-lead, .ds-sub-lead, .ds-role, .ds-note, .ds-dd-reason, .ds-keyrow > dd, .ds-table td) a:not([class]):focus-visible,
+.ds-root :is([data-ds-scroll], .ds-heavy):focus-visible {
+  outline: 2px solid var(--dsg-accent);
+  outline-offset: 2px;
+}
+
+/* a link inside the guide's own prose (leads, role lines, notes, key rows, tables) is ink with an underline, so
+   it never reads as plain body text (WCAG 1.4.1). Only unclassed links: a specimen's link keeps its own look. */
+.ds-root :is(.ds-lead, .ds-group-lead, .ds-sub-lead, .ds-role, .ds-note, .ds-dd-reason, .ds-keyrow > dd, .ds-table td) a:not([class]) {
+  color: var(--dsg-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--dsg-line-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 200ms var(--dsg-ease);
+}
+.ds-root :is(.ds-lead, .ds-group-lead, .ds-sub-lead, .ds-role, .ds-note, .ds-dd-reason, .ds-keyrow > dd, .ds-table td) a:not([class]):hover {
+  text-decoration-color: currentColor;
+}
+
+.ds-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.ds-skip {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 70;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--dsg-navy);
+  color: #fff;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 500;
+  text-decoration: none;
+  transform: translateY(-64px);
+}
+.ds-skip:focus { transform: none; }
+
+/* kit button: ghost xs (28 tall, 12px label). Guide chrome only, the system Button is a specimen. */
+.ds-btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--dsg-body);
+  font: 500 12px/16px var(--dsg-sans);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 200ms var(--dsg-ease), color 200ms var(--dsg-ease), border-color 200ms var(--dsg-ease);
+}
+.ds-btn:hover { background: var(--dsg-hover); color: var(--dsg-ink); }
+.ds-btn--line { border-color: var(--dsg-line-strong); background: var(--dsg-panel); }
+.ds-btn--line:hover { border-color: var(--dsg-line-hover); background: var(--dsg-panel); }
+
+/* page and section type. --dsg-top is the scroll offset under the toolbar, set from GUIDE_TOP (guide-metrics.ts)
+   on .ds-root by GuideShell, so the spy and the scroll margin read one number. */
+.ds-group { scroll-margin-top: var(--dsg-top, 72px); }
+.ds-group + .ds-group { margin-top: 144px; }
+/* a group opens on its own title (Outfit 38/46), a step above the 28px section titles inside it, so a group
+   never reads like the 12px caps of a run or part label */
+.ds-group-label {
+  margin: 0 0 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--dsg-line);
+  color: var(--dsg-ink);
+  font-family: var(--dsg-display);
+  font-size: 38px;
+  line-height: 46px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.ds-group-lead { max-width: 68ch; margin: 0 0 40px; color: var(--dsg-body); font-size: 14px; line-height: 1.6; }
+/* a Components sub-label (Actions, Inputs and so on) over the first section of its run */
+.ds-h4.ds-run-label { margin: 0 0 16px; }
+.ds-section + .ds-h4.ds-run-label { margin-top: 96px; }
+.ds-run-label + .ds-section { margin-top: 0; }
+.ds-section { scroll-margin-top: var(--dsg-top, 72px); }
+.ds-section + .ds-section { margin-top: 96px; }
+.ds-section-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 12px; margin-bottom: 8px; }
+.ds-h2 { margin: 0; font-family: var(--dsg-display); font-size: 28px; line-height: 34px; font-weight: 500; letter-spacing: -0.02em; }
+/* the h2 takes focus after a jump, so the reader's place moves with the scroll */
+.ds-h2:focus { outline: none; }
+.ds-h2:focus-visible { outline: 2px solid var(--dsg-accent); outline-offset: 4px; border-radius: 4px; }
+.ds-lead { max-width: 68ch; margin: 0 0 32px; color: var(--dsg-body); font-size: 15px; line-height: 1.6; }
+.ds-sub { margin-top: 48px; }
+.ds-h3 { margin: 0 0 6px; font-family: var(--dsg-display); font-size: 20px; line-height: 28px; font-weight: 500; letter-spacing: -0.01em; }
+.ds-sub-lead { max-width: 68ch; margin: 0 0 20px; color: var(--dsg-body); font-size: 14px; line-height: 1.6; }
+.ds-h4 {
+  margin: 24px 0 10px;
+  color: var(--dsg-muted);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 599px) {
+  .ds-h2 { font-size: 24px; line-height: 30px; }
+  .ds-group-label { font-size: 30px; line-height: 38px; }
+  .ds-group + .ds-group { margin-top: 112px; }
+}

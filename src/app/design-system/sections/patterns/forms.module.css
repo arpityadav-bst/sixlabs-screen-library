@@ -1,0 +1,76 @@
+/* Forms: layout only. Labels sit above their fields, 20 between fields, 32 before the actions, all read
+   from the space tokens. The parts bring their own looks. */
+.ds-fm-w {
+  display: grid;
+  width: 100%;
+  max-width: 640px;
+  gap: 16px;
+}
+.ds-fm-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.ds-fm-grow {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+/* centred on the field: the label's 18px line and 8px gap (field-styles.ts:81), less half the 4px the
+   52 button stands over the 48 field */
+.ds-fm-submit {
+  flex: none;
+  margin-top: 24px;
+}
+@media (max-width: 560px) {
+  .ds-fm-line {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .ds-fm-submit {
+    margin-top: 0;
+  }
+}
+.ds-fm-toast {
+  max-width: 420px;
+}
+.ds-fm-stack {
+  display: grid;
+  gap: var(--ds-space-5, 20px);
+}
+.ds-fm-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.ds-fm-actions {
+  margin-top: var(--ds-space-8, 32px);
+}
+.ds-fm-contact {
+  width: 100%;
+  max-width: 480px;
+}
+.ds-fm-dialog {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+.ds-fm-flow {
+  display: grid;
+  width: 100%;
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ds-fm-step {
+  display: grid;
+  gap: 4px;
+}
+.ds-fm-bare {
+  display: grid;
+  width: 100%;
+  max-width: 420px;
+  gap: var(--ds-space-5, 20px);
+}

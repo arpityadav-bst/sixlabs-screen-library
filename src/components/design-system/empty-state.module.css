@@ -1,0 +1,18 @@
+/* EmptyState's entrance: 12px up and in over 500ms on the one ease, transform and opacity only. Nothing
+   moves under reduced motion. The class keeps the ds- prefix. */
+.ds-rise {
+  animation: ds-rise var(--ds-dur-reveal) var(--ds-ease-out) both;
+}
+
+@keyframes ds-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ds-rise {
+    animation: none;
+  }
+}

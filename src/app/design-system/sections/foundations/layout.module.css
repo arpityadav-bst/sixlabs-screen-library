@@ -1,0 +1,51 @@
+/* The layout section's chrome: the nesting bars and the breakpoint ruler. ds- prefixed, guide only. Hatching
+   is a repeating gradient, so nothing here needs a mask or a filter. */
+
+.ds-nests { display: grid; gap: 28px; width: 100%; }
+.ds-nest { margin: 0; }
+.ds-nest-head { margin: 0 0 8px; color: var(--ds-color-ink); font: 500 12px/16px var(--ds-font-mono); }
+.ds-nest-bar {
+  position: relative;
+  display: flex;
+  height: 56px;
+  border: 1px solid var(--ds-color-ink-20);
+  background: var(--ds-color-surface);
+}
+.ds-nest-bar > span { flex-basis: 0; min-width: 0; }
+.ds-seg-gutter { background: repeating-linear-gradient(135deg, rgb(10 27 51 / 0.28) 0 1px, transparent 1px 6px); }
+.ds-seg-margin { background: var(--ds-color-surface-sunken); }
+.ds-seg-box { display: flex; outline: 1.5px solid var(--ds-color-ink); outline-offset: -1.5px; }
+.ds-seg-box > span { flex-basis: 0; min-width: 0; }
+.ds-seg-inner { background: repeating-linear-gradient(135deg, rgb(10 27 51 / 0.12) 0 1px, transparent 1px 6px); }
+.ds-seg-content { background: rgb(10 27 51 / 0.1); }
+.ds-seg-full { position: absolute; top: -6px; bottom: -6px; border: 1px dashed var(--ds-color-ink-40); pointer-events: none; }
+
+.ds-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 10px 0 0; padding: 0; list-style: none; }
+.ds-legend li { display: flex; align-items: center; gap: 6px; color: var(--ds-color-text-muted); font: 12px/16px var(--ds-font-mono); }
+.ds-legend i { display: block; width: 14px; height: 14px; border: 1px solid var(--ds-color-ink-20); }
+.ds-legend .ds-key-box { border: 1.5px solid var(--ds-color-ink); }
+.ds-legend .ds-key-full { border: 1px dashed var(--ds-color-ink-40); }
+
+/* the breakpoint ruler, scrolling in its own box below 600 */
+.ds-bp-wrap { width: 100%; overflow-x: auto; }
+.ds-bp { display: grid; gap: 4px; min-width: 600px; padding-right: 24px; }
+.ds-bp-lane { display: grid; grid-template-columns: 84px minmax(0, 1fr); align-items: center; gap: 12px; }
+.ds-bp-name { color: var(--ds-color-text-muted); font: 500 12px/16px var(--ds-font-sans); }
+.ds-bp-track { position: relative; height: 44px; border-bottom: 1px solid var(--ds-color-line-strong); }
+.ds-bp-tick { position: absolute; bottom: -1px; display: flex; flex-direction: column; align-items: center; transform: translateX(-50%); }
+.ds-bp-tick::after { content: ""; width: 1px; height: 10px; background: var(--ds-color-ink); }
+.ds-bp-tick b { color: var(--ds-color-ink); font: 500 12px/16px var(--ds-font-mono); }
+.ds-bp-tick small { color: var(--ds-color-text-muted); font: 12px/14px var(--ds-font-mono); }
+.ds-bp-tick--dim::after { background: var(--ds-color-ink-30); }
+
+/* Do / Don't: a phone-wide column of copy */
+.ds-phone {
+  width: 100%;
+  max-width: 280px;
+  border: 1px solid var(--ds-color-line-strong);
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-color-page);
+}
+.ds-phone p { margin: 0; color: var(--ds-color-ink); }
+.ds-phone-gutter { padding: var(--ds-space-6) var(--ds-gutter-page); }
+.ds-phone-flush { padding: var(--ds-space-6) 0; }

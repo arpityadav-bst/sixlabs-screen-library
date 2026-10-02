@@ -1,0 +1,57 @@
+/* What the atoms need that a Tailwind class cannot hold: keyframes and pseudo-elements. Class names keep
+   the ds- prefix. Values come from the --ds-* properties TokenStyle prints. Transform and opacity only. */
+
+/* Spinner: hidden until its delay (set inline) has passed, so a quick load never flashes it. */
+.ds-delay-in {
+  opacity: 0;
+  animation: ds-delay-in 0s linear forwards;
+}
+@keyframes ds-delay-in {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Skeleton: a 40% band of light crossing the shape, moved by transform alone. */
+.ds-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--ds-color-skeleton);
+}
+.ds-skeleton[data-ground="container"] {
+  background: var(--ds-color-skeleton-container);
+}
+.ds-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, var(--ds-color-shimmer), transparent);
+  transform: translateX(-100%);
+  animation: ds-shimmer var(--ds-dur-shimmer) linear infinite;
+}
+@keyframes ds-shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-skeleton::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Chip remove: a 24px hit area round the 20px circle, without growing the chip. */
+.ds-hit {
+  position: relative;
+}
+.ds-hit::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 9999px;
+}

@@ -1,0 +1,118 @@
+/* Icons section chrome. The keyline overlay is guide drawing, never part of an icon. */
+
+.ds-icon-tools {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--dsg-line);
+}
+
+.ds-icon-tools button[aria-pressed="true"] {
+  border-color: var(--dsg-navy);
+  background: var(--dsg-navy);
+  color: #fff;
+}
+
+.ds-icon-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.ds-icon-set {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 12px;
+  color: var(--ds-color-ink);
+}
+
+.ds-icon-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.ds-icon-stroke {
+  margin: 0;
+  color: var(--dsg-muted);
+  font: 11px/14px var(--dsg-mono);
+  white-space: nowrap;
+}
+
+.ds-keylines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: rgb(10 27 51 / 0.14);
+  stroke-width: 0.5px;
+}
+
+.ds-keylines line,
+.ds-keylines rect,
+.ds-keylines circle {
+  vector-effect: non-scaling-stroke;
+}
+
+.ds-keyline {
+  stroke: var(--ds-color-accent);
+  stroke-opacity: 0.55;
+}
+
+/* a row of specimens with captions, wrapping */
+.ds-icon-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 32px 40px;
+}
+
+.ds-icon-pair {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ds-color-ink);
+  font-family: var(--ds-font-sans);
+  line-height: 20px;
+}
+
+.ds-icon-shipped {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 28px 20px;
+  width: 100%;
+}
+
+.ds-icon-glyphs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  min-height: 24px;
+  align-items: center;
+}
+
+.ds-icon-fix {
+  color: var(--ds-color-warning);
+}
+
+:global(.ds-canvas--navy) .ds-icon-fix,
+:global(.ds-canvas--terminal) .ds-icon-fix,
+:global(.ds-canvas--on-blue) .ds-icon-fix {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* the off-scale menu button, drawn for the Don't panel */
+.ds-icon-circle {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  color: var(--ds-color-ink);
+}

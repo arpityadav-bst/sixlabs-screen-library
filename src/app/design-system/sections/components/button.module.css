@@ -1,0 +1,49 @@
+/* Guide chrome for the Button and Icon button sections. Every class is ds- prefixed and reaches only
+   specimens inside these sections. ds-dont-accent paints a Don't panel's accent fill on purpose, the one
+   place the guide shows the accent as a control fill. */
+
+/* A still of the sweep band alone: a 220 by 52 navy stage holding the real CtaDots at one moment of its
+   run, with no shifted fill and no label. */
+.ds-cta-stage {
+  position: relative;
+  width: 220px;
+  height: 52px;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: var(--ds-color-primary);
+}
+
+/* One row of the variant by size matrix: the variant's name, then its five sizes on one baseline. */
+.ds-bm-row {
+  display: grid;
+  grid-template-columns: 136px repeat(5, max-content);
+  align-items: center;
+  gap: 16px 20px;
+}
+.ds-bm-name {
+  color: currentColor;
+  opacity: 0.7;
+  font: 12px/16px var(--dsg-mono);
+}
+.ds-bm-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Fixed-width boxes for fullWidth and group specimens. */
+.ds-box-320 {
+  width: 320px;
+  max-width: 100%;
+}
+.ds-box-wide {
+  width: 100%;
+  max-width: 560px;
+}
+
+/* The Don't panel's accent fill. Unlayered, so it wins over the part's layered utilities. */
+.ds-dont-accent button,
+.ds-dont-accent a {
+  border-color: var(--ds-color-accent);
+  background-color: var(--ds-color-accent);
+  color: #fff;
+}

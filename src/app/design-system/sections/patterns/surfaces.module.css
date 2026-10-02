@@ -1,0 +1,122 @@
+/* Surfaces: the catalogue tiles, the container look as a composition, and the Don't panel's flood. Every
+   value is a --ds-* token, so a tile shows the system's value rather than a copy of it. */
+.ds-sf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+.ds-sf-grid > .ds-sf-tile {
+  display: flex;
+  min-height: 176px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  color: var(--ds-color-ink);
+}
+.ds-sf-tile[data-kind="page"] {
+  border: 1px dashed var(--ds-color-line-strong);
+  background: var(--ds-color-page);
+}
+.ds-sf-tile[data-kind="card"] {
+  border: 1px solid var(--ds-color-line);
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-color-surface);
+}
+.ds-sf-tile[data-kind="container"] {
+  border: 1px solid var(--ds-color-line-faint);
+  border-radius: var(--ds-radius-2xl);
+  background: var(--ds-color-container);
+  box-shadow: var(--ds-shadow-container);
+}
+.ds-sf-tile[data-kind="navy"] {
+  border-radius: var(--ds-radius-xl);
+  background: var(--ds-color-primary);
+  color: #fff;
+}
+.ds-sf-tile[data-kind="terminal"] {
+  border-radius: var(--ds-radius-sm);
+  background: var(--ds-color-terminal-bg);
+  color: #fff;
+}
+.ds-sf-name {
+  margin: 0;
+  font-family: var(--ds-font-display);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: -0.01em;
+}
+.ds-sf-value {
+  margin: 4px 0 0;
+  font-family: var(--dsg-mono);
+  font-size: 12px;
+  line-height: 16px;
+  opacity: 0.8;
+}
+.ds-sf-where {
+  margin: 0;
+  font-size: 13px;
+  line-height: 20px;
+  opacity: 0.8;
+}
+
+/* the container look, as the hero draws it: the copy layer's padding, 40 / 24 then 64 from md, the lede
+   at 20 under the headline and Try now at 32 (24 under md), the numbers 40 (32) under the box */
+.ds-sf-recipe {
+  width: 100%;
+  max-width: 880px;
+}
+.ds-sf-box {
+  width: 100%;
+  max-width: 880px;
+  padding: 40px 24px;
+  border: 1px solid var(--ds-color-line-faint);
+  border-radius: var(--ds-radius-container-sm);
+  background: var(--ds-color-container);
+  box-shadow: var(--ds-shadow-container);
+}
+@media (min-width: 768px) {
+  .ds-sf-box {
+    padding: 64px;
+    border-radius: var(--ds-radius-2xl);
+  }
+}
+.ds-sf-box--small {
+  padding: 32px;
+}
+@media (min-width: 768px) {
+  .ds-sf-box--small {
+    padding: 40px;
+  }
+}
+.ds-sf-lede {
+  max-width: var(--ds-measure-lede);
+  margin: 20px 0 0;
+  color: var(--ds-color-text-body);
+}
+.ds-sf-cta {
+  margin-top: 24px;
+}
+.ds-sf-numbers {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+@media (min-width: 768px) {
+  .ds-sf-cta {
+    margin-top: 32px;
+  }
+  .ds-sf-numbers {
+    margin-top: 40px;
+  }
+}
+
+/* the Don't: a section filled with the accent, the one place outside the water it may show */
+.ds-sf-flood {
+  width: 100%;
+  padding: 40px;
+  border-radius: var(--ds-radius-2xl);
+  background: var(--ds-color-accent);
+}

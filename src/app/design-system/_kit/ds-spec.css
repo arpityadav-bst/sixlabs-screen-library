@@ -1,0 +1,248 @@
+/* The spec family: the panel, its head and chips, the canvas grounds, captions, notes, key rows, tables,
+   the values drawer, Do / Don't and Replay. Part of the guide chrome with ds.css and ds-shell.css. */
+
+/* The panel. transform: translate(0) makes it the containing block, so a position:fixed part (a header,
+   a toast) stays inside its frame. overflow: clip keeps it there without making a scroll box. */
+.ds-spec {
+  position: relative;
+  margin-bottom: 20px;
+  overflow: clip;
+  border: 1px solid var(--dsg-line);
+  border-radius: 16px;
+  background: var(--dsg-panel);
+  transform: translate(0);
+}
+.ds-spec-head { padding: 12px 16px; border-bottom: 1px solid var(--dsg-line); }
+.ds-spec-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; }
+.ds-spec-title { margin: 0 4px 0 0; font-family: var(--dsg-display); font-size: 16px; line-height: 24px; font-weight: 500; }
+.ds-role { max-width: 76ch; margin: 4px 0 0; color: var(--dsg-body); font-size: 13px; line-height: 20px; }
+.ds-spec-caption {
+  margin: 0;
+  padding: 10px 16px;
+  border-top: 1px solid var(--dsg-line);
+  color: var(--dsg-muted);
+  font: 12px/16px var(--dsg-mono);
+}
+.ds-spec > .ds-keyrows, .ds-spec > .ds-table-wrap { margin: 16px; }
+
+/* chips: mono, quiet, copy on click */
+.ds-chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 2px 6px;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--dsg-line);
+  border-radius: 6px;
+  background: var(--dsg-sunken);
+  color: var(--dsg-body);
+  font: 12px/16px var(--dsg-mono);
+  text-align: left;
+  cursor: copy;
+  transition: border-color 200ms var(--dsg-ease), color 200ms var(--dsg-ease);
+}
+.ds-chip:hover { border-color: var(--dsg-line-strong); color: var(--dsg-ink); }
+.ds-chip[data-copied] { border-color: #15803d; color: #15803d; }
+.ds-chip--static { cursor: default; }
+/* a chip that is a link (the DESIGN.md chapter) opens rather than copies */
+.ds-chip--link { cursor: pointer; text-decoration: none; }
+.ds-chip--static:hover { border-color: var(--dsg-line); color: var(--dsg-body); }
+
+/* canvases: the product ground a part ships on, each read from its token (TokenStyle is mounted in both
+   layouts), so a ground can never drift from the value the site ships */
+/* --ds-canvas-bg holds each ground as one background value, so a part that has to paint the ground itself (the
+   state grid's sticky row heads) paints the same one */
+.ds-canvas {
+  --ds-canvas-bg: var(--ds-color-page);
+  position: relative;
+  padding: 32px;
+  background: var(--ds-canvas-bg);
+  color: var(--ds-color-ink);
+}
+.ds-canvas + .ds-canvas { border-top: 1px solid var(--dsg-line); }
+.ds-canvas--flow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px; }
+.ds-canvas--grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.ds-canvas--stack { display: flex; flex-direction: column; gap: 16px; }
+.ds-canvas--bleed { padding: 0; }
+.ds-canvas--tall { min-height: 320px; }
+.ds-canvas--surface { --ds-canvas-bg: var(--ds-color-surface); }
+.ds-canvas--container { --ds-canvas-bg: var(--ds-color-container); }
+.ds-canvas--footer { --ds-canvas-bg: linear-gradient(var(--ds-color-footer), var(--ds-color-footer)), var(--ds-color-page); }
+.ds-canvas.ds-canvas--grain { min-height: 480px; background-color: var(--ds-color-page); }
+.ds-canvas--navy { --ds-canvas-bg: var(--ds-color-primary); color: #fff; }
+.ds-canvas--terminal { --ds-canvas-bg: var(--ds-color-terminal-bg); color: #fff; }
+/* the accent under the water's 160px grey noise tile at 7% alpha (noise-tile.ts draws it once), as
+   AccentWave's GRAIN 0.07 reads. Alpha compositing only, no blend. */
+.ds-canvas--on-blue { --ds-canvas-bg: var(--ds-color-accent); background-color: var(--ds-color-accent); background-size: 160px 160px; color: #fff; }
+
+/* captions and items */
+.ds-item { display: flex; flex-direction: column; align-items: center; margin: 0; }
+.ds-item--start { align-items: flex-start; }
+.ds-label { margin: 8px 0 0; color: var(--dsg-muted); font: 12px/16px var(--dsg-mono); }
+/* on the container grey and the footer ground the muted caption falls under 4.5:1 (about 4.17:1 on the
+   footer), so a 12px caption or state grid head there takes the body ink */
+:is(.ds-canvas--container, .ds-canvas--footer) :is(.ds-label, .ds-sg th) { color: var(--dsg-body); }
+:is(.ds-canvas--navy, .ds-canvas--terminal) .ds-label { color: rgb(255 255 255 / 0.72); }
+/* no 12px text passes on the blue, not even white (4.49:1), so a caption or a state grid head there sits on a
+   white pill */
+.ds-canvas--on-blue :is(.ds-label, .ds-sg-head) {
+  width: fit-content;
+  max-width: 100%;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--dsg-body);
+}
+
+/* notes: a quiet sunken panel for a fact the specimen cannot show, so the page never reads as a list of
+   warnings. Red is kept for real traps (Warn), so it stays loud. */
+.ds-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: -4px 0 20px;
+  padding: 12px 14px;
+  border: 1px solid var(--dsg-line);
+  border-radius: 12px;
+  background: var(--dsg-sunken);
+  color: var(--dsg-body);
+  font-size: 13px;
+  line-height: 20px;
+}
+.ds-note > svg { flex: none; margin-top: 2px; }
+.ds-note > div > :is(p, ul) { margin: 0; }
+.ds-note > div > * + * { margin-top: 6px; }
+.ds-note strong { font-weight: 600; }
+.ds-note--warn { border-color: #f3c1bd; background: #fdf1f0; color: #8a1f17; }
+
+/* key rows and tables */
+.ds-keyrows { margin: 0; border-top: 1px solid var(--dsg-line); }
+.ds-keyrow {
+  display: grid;
+  grid-template-columns: minmax(160px, 0.7fr) 2fr;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--dsg-line);
+}
+.ds-keyrow > dt { overflow-wrap: anywhere; color: var(--dsg-ink); font: 12px/20px var(--dsg-mono); }
+.ds-keyrow > dd { margin: 0; color: var(--dsg-body); font-size: 13px; line-height: 20px; }
+.ds-src { margin-left: 8px; color: var(--dsg-muted); font: 12px/20px var(--dsg-mono); white-space: nowrap; }
+.ds-table-wrap { max-width: 100%; overflow-x: auto; }
+.ds-table { width: 100%; border-collapse: collapse; color: var(--dsg-body); font-size: 13px; line-height: 20px; }
+.ds-table th {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--dsg-line-strong);
+  color: var(--dsg-muted);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.ds-table td { padding: 8px 12px; border-bottom: 1px solid var(--dsg-line); vertical-align: top; }
+/* a stacking table (the values drawer) keeps its column labels for the phone layout below */
+.ds-table-label { display: none; }
+.ds-table :is(th, td):first-child { padding-left: 0; }
+.ds-table :is(th, td):last-child { padding-right: 0; }
+.ds-mono { color: var(--dsg-ink); font: 12px/20px var(--dsg-mono); }
+
+/* the values drawer: closed by default, the only place exact values pile up */
+.ds-sd { border-top: 1px solid var(--dsg-line); }
+.ds-sd > summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  color: var(--dsg-body);
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 500;
+  list-style: none;
+  cursor: pointer;
+}
+.ds-sd > summary::-webkit-details-marker { display: none; }
+.ds-sd > summary:hover { color: var(--dsg-ink); }
+.ds-root .ds-sd > summary:focus-visible { outline-offset: -2px; }
+.ds-sd > summary > svg { transition: transform 200ms var(--dsg-ease); }
+.ds-sd[open] > summary > svg { transform: rotate(90deg); }
+.ds-sd-body { display: grid; gap: 20px; padding: 4px 16px 16px; }
+.ds-sd-body .ds-h4 { margin: 0 0 6px; }
+.ds-sd-names { display: grid; gap: 8px; }
+.ds-sd-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0; }
+.ds-sd-body .ds-sd-line .ds-h4 { margin: 0 4px 0 0; }
+.ds-code { position: relative; }
+.ds-code > pre {
+  margin: 0;
+  padding: 12px 84px 12px 14px;
+  overflow-x: auto;
+  border: 1px solid var(--dsg-line);
+  border-radius: 10px;
+  background: var(--dsg-sunken);
+  color: var(--dsg-ink);
+  font: 12px/18px var(--dsg-mono);
+}
+.ds-code > .ds-btn { position: absolute; top: 6px; right: 6px; }
+
+/* Do / Don't */
+.ds-dd { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+.ds-dd-panel {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  overflow: clip;
+  border: 1px solid var(--dsg-line);
+  border-radius: 16px;
+  background: var(--dsg-panel);
+}
+.ds-dd-rule { height: 2px; background: #15803d; }
+.ds-dd-panel--dont .ds-dd-rule { background: #d92d20; }
+.ds-dd-panel > .ds-canvas { flex: 1; }
+.ds-dd-cap { padding: 12px 16px; border-top: 1px solid var(--dsg-line); }
+.ds-dd-verdict { display: flex; align-items: center; gap: 6px; color: #15803d; font-size: 13px; line-height: 20px; font-weight: 600; }
+.ds-dd-panel--dont .ds-dd-verdict { color: #b42318; }
+.ds-dd-reason { margin: 2px 0 0; color: var(--dsg-body); font-size: 13px; line-height: 20px; }
+
+/* Replay sits at the canvas top-right */
+.ds-replay { position: absolute; top: 12px; right: 12px; z-index: 5; }
+:is(.ds-canvas--navy, .ds-canvas--terminal) .ds-btn { color: rgb(255 255 255 / 0.8); }
+:is(.ds-canvas--navy, .ds-canvas--terminal) .ds-btn:hover { background: rgb(255 255 255 / 0.12); color: #fff; }
+/* on the blue a kit button is the solid white pill, the one form whose 12px label passes there */
+.ds-canvas--on-blue .ds-btn { border-color: #fff; background: #fff; color: var(--dsg-navy); }
+.ds-canvas--on-blue .ds-btn:hover { border-color: var(--dsg-sunken); background: var(--dsg-sunken); color: var(--dsg-navy); }
+.ds-root :is(.ds-canvas--navy, .ds-canvas--terminal, .ds-canvas--on-blue) .ds-btn:focus-visible { outline-color: #fff; }
+/* a line button keeps its white pill on the dark grounds, so its label turns ink rather than white on white */
+:is(.ds-canvas--navy, .ds-canvas--terminal) .ds-btn--line,
+:is(.ds-canvas--navy, .ds-canvas--terminal) .ds-btn--line:hover { border-color: #fff; background: #fff; color: var(--dsg-navy); }
+/* the waiting card's note is a light island on any ground: its button is the page's own line button */
+:is(.ds-canvas--navy, .ds-canvas--terminal, .ds-canvas--on-blue) .ds-heavy-note .ds-btn {
+  border-color: var(--dsg-line-strong);
+  background: var(--dsg-panel);
+  color: var(--dsg-body);
+}
+:is(.ds-canvas--navy, .ds-canvas--terminal, .ds-canvas--on-blue) .ds-heavy-note .ds-btn:hover {
+  border-color: var(--dsg-line-hover);
+  color: var(--dsg-ink);
+}
+.ds-root :is(.ds-canvas--navy, .ds-canvas--terminal, .ds-canvas--on-blue) .ds-heavy-note .ds-btn:focus-visible { outline-color: var(--dsg-accent); }
+
+
+@media (max-width: 767px) {
+  .ds-canvas { padding: 24px; }
+  .ds-canvas.ds-canvas--bleed { padding: 0; }
+  .ds-dd { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 599px) {
+  .ds-keyrow { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  /* the values table stacks as the key rows do: the part as the row's label, then token, value and source,
+     each under its column name, so no mono source forces the drawer to scroll sideways */
+  .ds-table--stack, .ds-table--stack :is(tbody, tr, td) { display: block; }
+  .ds-table--stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .ds-table--stack tr { padding: 10px 0; border-bottom: 1px solid var(--dsg-line); }
+  .ds-table--stack td { padding: 0; border: 0; overflow-wrap: anywhere; }
+  .ds-table--stack td:first-child { color: var(--dsg-ink); font-weight: 500; }
+  .ds-table--stack td + td { margin-top: 2px; }
+  .ds-table--stack td:empty { display: none; }
+  .ds-table--stack .ds-table-label { display: inline; margin-right: 8px; color: var(--dsg-muted); font: 12px/20px var(--dsg-sans); }
+}

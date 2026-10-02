@@ -1,0 +1,65 @@
+/* The two phone frames' width chains, read from the layout and space tokens, so each part sits at the width
+   the page gives it. Nothing here styles a site part, only the boxes round it. */
+
+/* The player carousel: main's gutter plus the players section's inner (px-5, 64 from md), Players.tsx:104.
+   --ph is the portrait's height below lg, the clamp Players.tsx:100 writes (about 404px at 375 wide). */
+.ds-carousel {
+  --ph: clamp(240px, min(calc((100svh - 490px) / 0.6), calc((100vw - 72px) / 0.75)), 520px);
+  position: relative;
+  padding: 24px calc(var(--ds-gutter-page, 16px) + var(--ds-space-5, 20px)) 40px;
+}
+@media (min-width: 768px) {
+  .ds-carousel {
+    padding-inline: calc(var(--ds-gutter-page-md, 32px) + var(--ds-gutter-section-md, 64px));
+  }
+}
+/* the portrait box the arrows flank, as below lg in Players.tsx: the arrows sit on its edges, level with
+   its middle, round a still of the active player at --ph */
+.ds-carousel-portrait {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.ds-carousel-portrait > img {
+  width: auto;
+  max-width: none;
+  height: var(--ph);
+}
+/* the slim switch on the portrait's faded chest: the grid's 16px gap (gap-4 below lg), then up a fifth of
+   --ph (-mt-[calc(var(--ph)*0.2)], Players.tsx:190) */
+.ds-carousel-toggle {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: calc(16px - var(--ph) * 0.2);
+}
+/* the rail under the switch, mt-[calc(66px-var(--ph)*0.2)] (Players.tsx:274) */
+.ds-carousel-rail {
+  position: relative;
+  z-index: 10;
+  margin-top: calc(66px - var(--ph) * 0.2);
+}
+
+/* The job terminal outside its card: main's gutter plus the jobs section's inner (16, 64 from md), then the
+   job card's width below xl (min(100% - 20px, 560px), Jobs.tsx:162), its 1px border and its side padding (20,
+   24 from md). The border is kept transparent and the card's fill, radius and top padding are dropped, so the
+   width is the card's and nothing claims to be the card. */
+.ds-term {
+  padding: 24px calc(var(--ds-gutter-page, 16px) + var(--ds-space-4, 16px));
+}
+.ds-term-card {
+  width: min(calc(100% - 20px), 560px);
+  padding-inline: var(--ds-space-5, 20px);
+  border-inline: 1px solid transparent;
+}
+@media (min-width: 768px) {
+  .ds-term {
+    padding-inline: calc(var(--ds-gutter-page-md, 32px) + var(--ds-gutter-section-md, 64px));
+  }
+  .ds-term-card {
+    padding-inline: var(--ds-space-6, 24px);
+  }
+}

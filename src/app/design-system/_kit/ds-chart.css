@@ -1,0 +1,200 @@
+/* The measuring kit, part two: StateGrid, SizeLadder, TokenSwatch, ContrastBadge, EaseDemo and Timeline.
+   Guide chrome, every class ds- prefixed, plain fills and SVG strokes only. */
+
+/* StateGrid: states as columns, variants as rows */
+.ds-sg-wrap { max-width: 100%; overflow-x: auto; }
+.ds-sg { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.ds-sg th {
+  padding: 12px 12px 10px;
+  color: var(--dsg-muted);
+  font: 600 12px/16px var(--dsg-sans);
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.ds-sg thead th { border-bottom: 1px solid var(--dsg-line); }
+/* the corner and the row heads stay at the box's left edge while a phone scrolls the columns, painted with the
+   canvas's own ground (--ds-canvas-bg) so the cells slide under them */
+.ds-sg-corner,
+.ds-sg th.ds-sg-variant {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  width: 120px;
+  background: var(--ds-canvas-bg, var(--ds-color-page));
+}
+.ds-sg th.ds-sg-variant {
+  padding: 12px 16px;
+  font: 12px/16px var(--dsg-mono);
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: none;
+}
+/* cells centre their part as a flex box, never through text-align, so block text inside a part (a field label, a
+   helper line, a choice description) keeps the start alignment it has on a page */
+.ds-sg td { padding: 20px 12px; vertical-align: middle; }
+.ds-sg tbody tr + tr :is(td, th) { border-top: 1px solid var(--dsg-line); }
+.ds-sg :is(td, th) + :is(td, th) { border-left: 1px solid var(--dsg-line); }
+.ds-sg-cell { display: flex; align-items: center; justify-content: center; min-height: 40px; }
+.ds-sg-livehead { color: var(--dsg-ink); }
+/* a cell for a state the row does not take (Label.tsx None): the caption line, no top margin */
+.ds-sg-cell .ds-none { margin: 0; }
+.ds-sg-livecell .ds-label { margin-top: 10px; text-align: center; }
+/* on navy and the terminal a head is white 72%. On the blue no 12px text passes, so its text sits on the white
+   pill (ds-spec.css, .ds-sg-head) */
+:is(.ds-canvas--navy, .ds-canvas--terminal) .ds-sg th { color: rgb(255 255 255 / 0.72); }
+:is(.ds-canvas--navy, .ds-canvas--terminal, .ds-canvas--on-blue) .ds-sg :is(td, th) { border-color: rgb(255 255 255 / 0.16); }
+
+/* SizeLadder: specimens on one hairline, the measured line under each */
+.ds-ladder { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: center; row-gap: 24px; }
+.ds-ladder-rung { display: flex; flex-direction: column; align-items: center; }
+.ds-ladder-spec {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  align-self: stretch;
+  padding: 0 16px 12px;
+  border-bottom: 1px solid var(--dsg-line-strong);
+}
+.ds-ladder-rung .ds-label { padding: 0 16px; white-space: nowrap; }
+.ds-ladder-drift { color: #b42318; font-weight: 600; }
+:is(.ds-canvas--navy, .ds-canvas--terminal, .ds-canvas--on-blue) .ds-ladder-spec { border-color: rgb(255 255 255 / 0.3); }
+:is(.ds-canvas--navy, .ds-canvas--terminal, .ds-canvas--on-blue) .ds-ladder-drift { color: #fff; text-decoration: underline; }
+
+/* TokenSwatch: a 200px card */
+.ds-swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.ds-spec > .ds-swatch-grid { margin: 16px; }
+.ds-swatch {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  overflow: clip;
+  border: 1px solid var(--dsg-line);
+  border-radius: 12px;
+  background: var(--dsg-panel);
+}
+.ds-swatch-chip { display: block; height: 56px; border-bottom: 1px solid var(--dsg-line); }
+.ds-swatch-chip > span { display: block; height: 100%; }
+.ds-swatch-chip--alpha {
+  background-color: #fff;
+  background-image: conic-gradient(#e2e8f0 25%, #fff 0 50%, #e2e8f0 0 75%, #fff 0);
+  background-size: 12px 12px;
+}
+.ds-swatch-body { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 10px 12px 12px; }
+.ds-swatch-value { color: var(--dsg-ink); font: 12px/16px var(--dsg-mono); overflow-wrap: anywhere; }
+.ds-swatch-value .ds-src { line-height: 16px; }
+.ds-swatch-live { color: #b42318; font: 600 12px/16px var(--dsg-mono); }
+.ds-swatch-use { color: var(--dsg-body); font-size: 12px; line-height: 18px; }
+.ds-swatch-use b { color: var(--dsg-ink); font-weight: 600; }
+.ds-swatch-files { color: var(--dsg-muted); font: 12px/16px var(--dsg-mono); }
+
+/* ContrastBadge */
+.ds-cb-row { display: flex; flex-wrap: wrap; gap: 4px; }
+.ds-cb {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px 2px 2px;
+  border: 1px solid var(--dsg-line);
+  border-radius: 6px;
+  background: var(--dsg-panel);
+  color: var(--dsg-body);
+  font: 12px/16px var(--dsg-mono);
+  white-space: nowrap;
+}
+.ds-cb-sample {
+  display: inline-grid;
+  width: 22px;
+  height: 16px;
+  place-items: center;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px rgb(10 27 51 / 0.08);
+  font: 600 12px/1 var(--dsg-sans);
+}
+.ds-cb-grade { font-weight: 600; }
+.ds-cb[data-grade="AAA"] .ds-cb-grade,
+.ds-cb[data-grade="AA"] .ds-cb-grade,
+.ds-cb[data-grade="pass"] .ds-cb-grade { color: #15803d; }
+.ds-cb[data-grade="AA-large"] .ds-cb-grade { color: #b54708; }
+.ds-cb[data-grade="fail"] .ds-cb-grade,
+.ds-cb--fail { color: #b42318; }
+
+/* EaseDemo */
+.ds-ease {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--dsg-line);
+  border-radius: 12px;
+  background: var(--dsg-panel);
+}
+.ds-ease-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ds-ease-name { color: var(--dsg-ink); font: 500 14px/20px var(--dsg-display); }
+.ds-ease-body { display: flex; flex-direction: column; gap: 12px; }
+.ds-ease-plot { overflow: visible; }
+.ds-ease-guide { stroke: var(--dsg-line); stroke-width: 1; stroke-dasharray: 2 3; }
+.ds-ease-curve { fill: none; stroke: #0a152d; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.ds-ease-track {
+  position: relative;
+  display: block;
+  width: 252px;
+  max-width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--dsg-sunken);
+  box-shadow: inset 0 0 0 1px var(--dsg-line);
+}
+.ds-ease-dot { position: absolute; top: 0; left: 0; width: 12px; height: 12px; border-radius: 999px; background: #0a152d; }
+.ds-ease .ds-label { margin: 0; }
+
+/* Timeline */
+.ds-tl { margin: 0; }
+.ds-spec > .ds-tl { margin: 16px; }
+.ds-tl-scroll { max-width: 100%; overflow-x: auto; }
+.ds-tl-grid { min-width: var(--ds-tl-min, 560px); }
+.ds-tl-row { display: grid; grid-template-columns: 140px minmax(0, 1fr); align-items: end; min-height: 32px; }
+.ds-tl-first { border-top: 1px solid var(--dsg-line); }
+.ds-tl-lane { padding: 0 12px 6px 0; color: var(--dsg-muted); font-size: 12px; line-height: 16px; }
+.ds-tl-track { position: relative; height: 32px; margin-right: 24px; }
+.ds-tl-axis .ds-tl-track { height: 24px; border-bottom: 1px solid var(--dsg-line-strong); }
+.ds-tl-axis--second .ds-tl-track { border-top: 1px solid var(--dsg-line-strong); border-bottom: 0; }
+.ds-tl-axis .ds-tl-lane { align-self: center; padding-bottom: 0; }
+.ds-tl-tick {
+  position: absolute;
+  bottom: 4px;
+  color: var(--dsg-muted);
+  font: 12px/16px var(--dsg-mono);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.ds-tl-axis--second .ds-tl-tick { top: 4px; bottom: auto; }
+.ds-tl-rule { position: absolute; top: 0; bottom: 0; width: 1px; background: rgb(226 232 240 / 0.7); }
+.ds-tl-text {
+  position: absolute;
+  top: 2px;
+  color: var(--dsg-ink);
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+.ds-tl-mark {
+  position: absolute;
+  bottom: 4px;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  border-radius: 999px;
+  background: #0a152d;
+}
+.ds-tl-span {
+  position: absolute;
+  bottom: 6px;
+  height: 6px;
+  min-width: 2px;
+  border-radius: 0 3px 3px 0;
+  background: rgb(10 27 51 / 0.15);
+  box-shadow: inset 2px 0 0 #0a152d;
+}

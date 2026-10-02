@@ -1,0 +1,33 @@
+/* The radius section's chrome: ladder boxes and the nested pair. ds- prefixed, guide only. */
+
+.ds-box {
+  width: 128px;
+  height: 96px;
+  border: 1px solid var(--ds-color-line);
+  background: var(--ds-color-surface);
+}
+.ds-box--pill { height: 40px; }
+.ds-box-use { max-width: 180px; margin: 4px 0 0; color: var(--ds-color-text-muted); font-size: 13px; line-height: 18px; text-align: center; }
+
+/* the nested pair, from the tokens: a 16 panel, 6 padding, 12 rows */
+.ds-panel {
+  width: 192px;
+  padding: var(--ds-space-1-5);
+  border: 1px solid var(--ds-color-line-soft);
+  border-radius: var(--ds-radius-sm);
+  background: var(--ds-color-surface);
+  box-shadow: var(--ds-shadow-pop);
+}
+.ds-panel--same .ds-row { border-radius: var(--ds-radius-sm); }
+.ds-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-2-5) var(--ds-space-3);
+  border-radius: var(--ds-radius-xs);
+  color: var(--ds-color-text-body);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.ds-row--on { background: var(--ds-color-fill-highlight); color: var(--ds-color-ink); font-weight: 500; }
+.ds-row-code { width: 24px; color: var(--ds-color-text-quiet); }

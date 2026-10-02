@@ -1,0 +1,58 @@
+/* Guide chrome shared by the pattern sections: the bill of materials, the rule list and the example quote.
+   Kit colours only, nothing here styles a site part. */
+.ds-bom {
+  display: grid;
+  gap: 0;
+  margin: 16px;
+  padding: 0;
+  list-style: none;
+}
+.ds-bom-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 220px) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 10px 0;
+  border-top: 1px solid var(--dsg-line);
+}
+.ds-bom-row:first-child {
+  border-top: 0;
+}
+.ds-bom-part {
+  justify-self: start;
+}
+.ds-bom-job {
+  color: var(--dsg-body);
+  font-size: 13px;
+  line-height: 20px;
+}
+.ds-bom-note {
+  display: block;
+  margin-top: 2px;
+  color: var(--dsg-muted);
+  font-size: 12px;
+  line-height: 18px;
+}
+.ds-bom-link {
+  justify-self: end;
+  text-decoration: none;
+}
+@media (max-width: 640px) {
+  .ds-bom-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .ds-bom-job {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+/* a quoted example inside a table cell or a rule row */
+.ds-quote {
+  color: var(--dsg-ink);
+  font-size: 13px;
+  line-height: 20px;
+}
+.ds-quote-accent {
+  color: var(--dsg-accent);
+}

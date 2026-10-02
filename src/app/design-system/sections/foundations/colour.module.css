@@ -1,0 +1,156 @@
+/* The colour sections' own specimens: strips of samples, the ground nest, the text stack, the navy pair, the
+   field pair, the terminal lines and the floor ramps. Every class starts with ds-col-, values come from the
+   --ds-* tokens, and the sample colour arrives as --ds-col-c on the element. No filter, blend, mask or blur. */
+
+/* A strip of samples, one per colour, drawn the way the colour is seen. */
+.ds-col-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px 12px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ds-col-item { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 104px; text-align: center; }
+.ds-col-name { color: inherit; font: 12px/16px var(--dsg-mono); overflow-wrap: anywhere; }
+.ds-col-cap { color: var(--dsg-muted); font-size: 12px; line-height: 16px; }
+/* the muted caption falls under 4.5:1 on the container grey and the footer ground, so it takes the body ink */
+:global(.ds-canvas--container) .ds-col-cap,
+:global(.ds-canvas--footer) .ds-col-cap { color: var(--dsg-body); }
+:global(.ds-canvas--navy) .ds-col-cap,
+:global(.ds-canvas--terminal) .ds-col-cap { color: rgb(255 255 255 / 0.72); }
+/* no 12px text passes on the blue, not even white (4.49:1), so the name and caption sit on the kit's white pill */
+:global(.ds-canvas--on-blue) :is(.ds-col-name, .ds-col-cap) {
+  width: fit-content;
+  max-width: 100%;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--dsg-body);
+}
+
+.ds-col-sample { display: block; width: 72px; height: 48px; flex: none; border-radius: 12px; }
+.ds-col-sample--fill { background: var(--ds-col-c); box-shadow: inset 0 0 0 1px rgb(10 27 51 / 0.1); }
+:global(.ds-canvas--navy) .ds-col-sample--fill,
+:global(.ds-canvas--terminal) .ds-col-sample--fill,
+:global(.ds-canvas--on-blue) .ds-col-sample--fill {
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14);
+}
+.ds-col-sample--line { border: 1px solid var(--ds-col-c); }
+.ds-col-sample--text {
+  display: grid;
+  place-items: center;
+  color: var(--ds-col-c);
+  font: 500 26px/1 var(--ds-font-display);
+  letter-spacing: -0.025em;
+}
+.ds-col-sample--halo { margin: 3px; background: var(--ds-color-surface); box-shadow: 0 0 0 1px var(--ds-color-line-field), 0 0 0 4px var(--ds-col-c); }
+.ds-col-sample--glow { background: radial-gradient(closest-side, var(--ds-col-c), transparent); }
+.ds-col-sample--dot { display: grid; place-items: center; }
+.ds-col-sample--dot::before { width: 12px; height: 12px; border-radius: 999px; background: var(--ds-col-c); content: ""; }
+
+/* The grounds as they nest on the site: page, then the container, then a white surface, then a sunken panel. */
+.ds-col-nest { display: grid; gap: 12px; width: 100%; max-width: 560px; }
+.ds-col-tag { color: var(--dsg-body); font: 12px/16px var(--dsg-mono); }
+.ds-col-nest-container {
+  display: grid;
+  gap: 12px;
+  padding: 16px 20px 24px;
+  border: 1px solid var(--ds-color-line-faint);
+  border-radius: var(--ds-radius-container-sm);
+  background: var(--ds-color-container);
+}
+.ds-col-nest-surface {
+  display: grid;
+  gap: 12px;
+  padding: 14px 16px 16px;
+  border: 1px solid var(--ds-color-line);
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-color-surface);
+}
+.ds-col-nest-sunken { padding: 12px 14px; border-radius: var(--ds-radius-xs); background: var(--ds-color-surface-sunken); }
+.ds-col-nest-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 14px 16px;
+  border-radius: var(--ds-radius-sm);
+  background: linear-gradient(var(--ds-color-footer), var(--ds-color-footer)), var(--ds-color-page);
+}
+.ds-col-nest-tail {
+  padding: 6px 10px;
+  border-top: 1px solid var(--ds-color-ink-08);
+  border-radius: 8px;
+  background: var(--ds-color-footer-tail);
+}
+
+/* The text roles on one ground, each line with its token name. */
+.ds-col-text { display: grid; gap: 12px; width: 100%; max-width: 520px; }
+.ds-col-text-row { display: grid; gap: 2px; margin: 0; }
+.ds-col-text-tok { color: var(--dsg-body); font: 12px/16px var(--dsg-mono); }
+
+/* Two squares side by side, for the navies and the brand pairs. */
+.ds-col-pair { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; }
+.ds-col-duo { display: flex; gap: 8px; }
+.ds-col-square { width: 120px; height: 120px; border-radius: var(--ds-radius-sm); background: var(--ds-col-c); }
+
+/* The field pair: one border colour each, the rest of the field the same. */
+.ds-col-field {
+  width: 220px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--ds-col-c);
+  border-radius: var(--ds-radius-xs);
+  background: var(--ds-color-surface);
+  color: var(--ds-color-ink);
+  font: 400 14px/1 var(--ds-font-sans);
+}
+.ds-col-field::placeholder { color: var(--ds-color-text-muted); }
+.ds-col-field:focus-visible { outline: 2px solid var(--ds-focus-color); outline-offset: 2px; }
+
+/* A row of chips, and a selected fill painted in the accent for the Don't panel only. */
+.ds-col-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.ds-col-accent-fill { display: contents; --ds-color-primary: var(--ds-color-accent); }
+
+/* A few lines of a run, quoted from jobs-data.ts, in the terminal's palette. */
+.ds-col-term {
+  width: 100%;
+  max-width: 440px;
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: var(--ds-radius-sm);
+  background: var(--ds-color-terminal-bg);
+  box-shadow: inset 0 0 0 1px var(--ds-color-terminal-rule);
+  font: 400 12.5px/22px var(--ds-font-mono);
+}
+.ds-col-term > span { display: block; }
+
+/* The floor ramps: one column per parameter, default over shine, so a key reads down. */
+.ds-col-ramps { display: grid; gap: 4px; width: 100%; overflow-x: auto; }
+.ds-col-ramp { display: grid; grid-template-columns: 64px repeat(var(--ds-col-n), minmax(20px, 1fr)); align-items: center; gap: 2px; min-width: 560px; }
+.ds-col-ramp > span:first-child { color: var(--dsg-muted); font: 12px/16px var(--dsg-mono); }
+.ds-col-ramp-chip { height: 32px; border-radius: 4px; background: var(--ds-col-c); box-shadow: inset 0 0 0 1px rgb(10 27 51 / 0.08); }
+.ds-col-ramp-chip--empty { background: transparent; box-shadow: inset 0 0 0 1px var(--dsg-line-strong); }
+.ds-col-status { color: var(--dsg-muted); font: 12px/16px var(--dsg-mono); }
+
+/* One drift value: a small chip of the colour, then how it is written. */
+.ds-col-drift { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.ds-col-drift::before {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  border-radius: 3px;
+  background: var(--ds-col-c);
+  box-shadow: inset 0 0 0 1px rgb(10 27 51 / 0.12);
+  content: "";
+}
+
+/* The real switch and trait bars, at the width the players section gives them. */
+.ds-col-onblue { display: grid; justify-items: start; gap: 28px; width: 100%; max-width: 440px; }
+
+/* The wordmark beside the mark. */
+.ds-col-mark { display: flex; align-items: center; gap: 16px; color: var(--ds-color-ink); }
+.ds-col-mark svg { flex: none; }
+.ds-col-mark-icon { display: inline-flex; }

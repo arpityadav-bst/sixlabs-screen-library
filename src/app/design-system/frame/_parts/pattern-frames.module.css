@@ -1,0 +1,18 @@
+/* The page box the pattern frames share: the site's main column (its relative box, its horizontal clip and
+   the page gutter, 16 then 32 from 768), read from the gutter tokens. The hero frames keep main's 96px top
+   padding, the room the fixed header needs, which the full hero takes back with its own -mt-24. Nothing
+   here styles a site part. */
+.ds-pf-page {
+  position: relative;
+  min-height: 100vh;
+  overflow-x: clip;
+  padding-inline: var(--ds-gutter-page, 16px);
+}
+.ds-pf-page--hero {
+  padding-top: var(--ds-space-24, 96px);
+}
+@media (min-width: 768px) {
+  .ds-pf-page {
+    padding-inline: var(--ds-gutter-page-md, 32px);
+  }
+}

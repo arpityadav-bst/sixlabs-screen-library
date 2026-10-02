@@ -1,0 +1,169 @@
+/* The motion sections' own chrome: sample cards, the duration ladder, the scroll track, the glide plot and
+   the reduced-motion readout. Guide chrome only, every class ds- prefixed, plain fills, transforms and
+   opacity. Nothing here reaches the site. */
+
+/* A sample card for entrance specimens: a white 160 by 96 card with two filler lines. */
+.ds-mo-row { position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; width: 100%; }
+.ds-mo-sample {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 160px;
+  height: 96px;
+  padding: 16px;
+  border: 1px solid var(--dsg-line);
+  border-radius: 16px;
+  background: var(--dsg-panel);
+}
+.ds-mo-sample > span { display: block; height: 8px; border-radius: 4px; background: rgb(10 27 51 / 0.12); }
+.ds-mo-sample > span + span { width: 60%; background: rgb(10 27 51 / 0.07); }
+/* Understands' third beat: the vs disc over the cards' gutter at their middle, ringed in the page colour so
+   it reads as cut into both, a small copy of the site's 80px disc (ink at 30%, Outfit, lifted 0.07em). */
+.ds-mo-vs {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  padding-bottom: 0.14em;
+  border: 4px solid var(--dsg-page);
+  border-radius: 50%;
+  background: var(--dsg-panel);
+  color: rgb(10 27 51 / 0.3);
+  font: 400 18px/1 var(--dsg-display);
+  letter-spacing: -0.02em;
+}
+
+/* The duration ladder: one row per duration, every dot leaving at once. */
+.ds-mo-ladder { display: grid; grid-template-columns: 168px 1fr; align-items: center; gap: 10px 16px; width: 100%; }
+.ds-mo-ladder dt { color: var(--dsg-ink); font: 12px/16px var(--dsg-mono); white-space: nowrap; }
+.ds-mo-ladder dt b { display: inline-block; min-width: 4ch; font-weight: 600; text-align: right; }
+.ds-mo-ladder dd { margin: 0; }
+.ds-mo-track { position: relative; height: 12px; }
+.ds-mo-track::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--dsg-line-strong);
+}
+.ds-mo-mover { position: absolute; inset: 0 12px 0 0; }
+.ds-mo-dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--dsg-navy);
+}
+@media (max-width: 560px) {
+  .ds-mo-ladder { grid-template-columns: 1fr; gap: 4px; }
+  .ds-mo-ladder dd { margin-bottom: 8px; }
+}
+
+/* A slot that keeps room under the language trigger for its panel. */
+.ds-mo-menuslot { display: flex; align-items: flex-start; justify-content: center; min-width: 220px; height: 260px; }
+
+/* The full view's loader needs a positioned box: it fills it. */
+.ds-mo-loaderbox { position: relative; width: 320px; max-width: 100%; height: 240px; }
+
+/* A slot that gives the scroll cue's frame its true 320 width, since an Item sizes to its content. */
+.ds-mo-cueslot { width: 320px; max-width: 100%; }
+
+/* The tile window: one tile wide with room for its tilt, bob and 31px of cursor drift, clipping the stage
+   behind it. The stage's top left sits at the window's middle, then moves back by the first tile's own spot
+   (a share of the stage, so translate's own-box percentages land it exactly), at the site's breakpoints:
+   x and y from 1600, mx and ty below it, mx and my on phones. */
+.ds-mo-tilewin { position: relative; width: 340px; max-width: 100%; height: 340px; overflow: hidden; }
+.ds-mo-tilestage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(calc(-1 * var(--ds-mo-x)), calc(-1 * var(--ds-mo-y)));
+}
+@media (width < 1600px) {
+  .ds-mo-tilestage { transform: translate(calc(-1 * var(--ds-mo-mx)), calc(-1 * var(--ds-mo-ty))); }
+}
+@media (width < 768px) {
+  .ds-mo-tilestage { transform: translate(calc(-1 * var(--ds-mo-mx)), calc(-1 * var(--ds-mo-my))); }
+}
+
+/* Travel: each distance drawn true size, a solid block at rest over the dashed outline it travels from. */
+.ds-mo-travel { position: relative; width: 72px; height: calc(40px + var(--ds-mo-px)); }
+.ds-mo-travel-from,
+.ds-mo-travel-at { position: absolute; left: 0; box-sizing: border-box; width: 56px; height: 40px; border-radius: 10px; }
+.ds-mo-travel-from { top: var(--ds-mo-px); border: 1px dashed var(--dsg-line-strong); }
+.ds-mo-travel-at { top: 0; background: var(--dsg-navy); }
+.ds-mo-travel-gap { position: absolute; top: 0; left: 62px; box-sizing: border-box; width: 6px; height: var(--ds-mo-px); border: 1px solid var(--dsg-muted); border-left: 0; }
+
+/* Don't: a loop that travels 16px every 0.6s. */
+@keyframes ds-mo-fastbob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(16px); }
+}
+.ds-mo-fastbob { animation: ds-mo-fastbob 0.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .ds-mo-fastbob { animation: none; }
+}
+
+/* Don't: a spinner with its turn stopped. */
+.ds-mo-frozen, .ds-mo-frozen * { animation: none !important; }
+
+/* The scroll track: the line's 3.9 screens and what follows, laid end to end. */
+.ds-mo-strack { width: 100%; min-width: 560px; }
+.ds-mo-strack-wrap { width: 100%; overflow-x: auto; }
+.ds-mo-strack-wrap:focus-visible { outline: 2px solid var(--dsg-accent); outline-offset: 2px; }
+.ds-mo-strack-bar { display: flex; height: 28px; overflow: clip; border: 1px solid var(--dsg-line-strong); border-radius: 8px; }
+.ds-mo-seg { position: relative; display: flex; align-items: center; min-width: 0; padding: 0 8px; color: var(--dsg-ink); font: 12px/16px var(--dsg-mono); white-space: nowrap; }
+.ds-mo-seg + .ds-mo-seg { border-left: 1px solid var(--dsg-line-strong); }
+.ds-mo-seg[data-tone="players"] { color: #fff; }
+:is(.ds-mo-seg, .ds-mo-key)[data-tone="fill"] { background: rgb(10 27 51 / 0.12); }
+:is(.ds-mo-seg, .ds-mo-key)[data-tone="hold"] { background: var(--dsg-panel); }
+:is(.ds-mo-seg, .ds-mo-key)[data-tone="water"] { background: rgb(10 27 51 / 0.24); }
+:is(.ds-mo-seg, .ds-mo-key)[data-tone="players"] { background: var(--dsg-navy); }
+:is(.ds-mo-seg, .ds-mo-key)[data-tone="drain"] { background: rgb(10 27 51 / 0.06); }
+.ds-mo-strack-axis { position: relative; height: 52px; margin-top: 6px; }
+.ds-mo-strack-mark { position: absolute; top: 0; display: flex; flex-direction: column; align-items: center; transform: translateX(-50%); color: var(--dsg-muted); font: 12px/16px var(--dsg-mono); white-space: nowrap; }
+.ds-mo-strack-mark::before { content: ""; width: 1px; height: 8px; margin-bottom: 4px; background: var(--dsg-line-strong); }
+.ds-mo-strack-mark[data-edge="start"] { align-items: flex-start; transform: none; }
+.ds-mo-strack-mark[data-row="2"] { top: 20px; }
+.ds-mo-strack-mark[data-row="2"]::before { height: 28px; margin-top: -20px; }
+.ds-mo-legend { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 12px 0 0; padding: 0; list-style: none; color: var(--dsg-body); font-size: 13px; line-height: 20px; }
+.ds-mo-legend li { display: flex; align-items: center; gap: 8px; }
+.ds-mo-key { display: inline-block; flex-shrink: 0; width: 12px; height: 12px; border: 1px solid var(--dsg-line-strong); border-radius: 3px; }
+
+/* The glide's duration over distance. */
+.ds-mo-plot { display: block; width: 100%; max-width: 560px; height: auto; overflow: visible; }
+.ds-mo-plot-axis { stroke: var(--dsg-line-strong); stroke-width: 1; }
+.ds-mo-plot-grid { stroke: var(--dsg-line); stroke-width: 1; stroke-dasharray: 3 3; }
+.ds-mo-plot-line { fill: none; stroke: var(--dsg-navy); stroke-width: 1.5; }
+.ds-mo-plot-dot { fill: var(--dsg-navy); }
+.ds-mo-plot text { fill: var(--dsg-muted); font: 12px var(--dsg-mono); }
+
+/* The reduced-motion readout. */
+.ds-mo-readout { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; width: 100%; max-width: 560px; }
+.ds-mo-query { color: var(--dsg-body); font: 12px/16px var(--dsg-mono); overflow-wrap: anywhere; }
+.ds-mo-answer { display: flex; align-items: center; gap: 10px; color: var(--dsg-ink); font: 500 20px/28px var(--dsg-display); }
+.ds-mo-answer i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--dsg-navy);
+  border-radius: 50%;
+}
+.ds-mo-answer[data-on="true"] i { background: var(--dsg-navy); }
+.ds-mo-says { margin: 0; color: var(--dsg-body); font-size: 13px; line-height: 20px; }
+
+/* A kit button used as a switch: navy when on, like every selected fill. */
+.ds-mo-toggle[aria-pressed="true"],
+.ds-mo-toggle[aria-pressed="true"]:hover { border-color: var(--dsg-navy); background: var(--dsg-navy); color: #fff; }
+.ds-mo-stack { display: flex; flex-direction: column; align-items: center; gap: 24px; }

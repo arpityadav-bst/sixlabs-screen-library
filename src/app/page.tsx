@@ -1,6 +1,9 @@
 // SixLabs Screen Library: the handoff index, like BlueAI's. One row per page of the website, in its two
-// hero layouts. Links are full-page <a> so each route loads fresh.
+// hero layouts, then the design system's card. Links are full-page <a> so each route loads fresh. The card's
+// figures are counted here, from the guide's catalog, and handed to it, so the card holds no catalog lookup.
 import type { Metadata } from "next";
+import { catalogCounts, statesOf } from "@/app/design-system/_data/catalog";
+import { IndexCard } from "@/components/design-system/IndexCard";
 
 export const metadata: Metadata = {
   title: "6labs Screen Library",
@@ -23,13 +26,14 @@ const ROWS: Row[] = [
 ];
 
 export default function Index() {
+  const counts = catalogCounts();
   return (
     <main className="min-h-screen px-6 md:px-12 py-14 md:py-20">
       <div className="max-w-[880px] mx-auto">
         <p className="text-[12px] font-semibold tracking-[0.14em] uppercase text-slate-400">6labs</p>
         <h1 className="font-display text-[40px] font-medium tracking-tight text-[#0a1b33] mt-2">Screen Library</h1>
         <p className="text-[15px] text-slate-500 mt-3 max-w-[560px] leading-relaxed">
-          Design-only handoff. The 6labs website, in its two hero layouts.
+          Design-only handoff. The 6labs website, in its two hero layouts, and its design system.
         </p>
 
         <section className="mt-12">
@@ -47,6 +51,16 @@ export default function Index() {
               </li>
             ))}
           </ul>
+        </section>
+
+        <section className="mt-12">
+          <h2 className="text-[12px] font-semibold tracking-[0.14em] uppercase text-slate-400">System</h2>
+          <div className="mt-4">
+            <IndexCard
+              counts={{ components: counts.components, states: counts.states, groups: counts.groups }}
+              tileStates={statesOf("tile-states", "TileFloor").length}
+            />
+          </div>
         </section>
       </div>
     </main>

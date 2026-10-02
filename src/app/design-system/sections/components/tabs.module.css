@@ -1,0 +1,51 @@
+/* Guide chrome for the Tabs, Segmented and Chip sections. ds- prefixed, and it reaches only specimens
+   inside these sections. */
+
+/* A phone-wide box with a visible edge, so a list that scrolls is seen running out of room. */
+.ds-phone-box {
+  width: 375px;
+  max-width: 100%;
+  padding: 16px;
+  border: 1px solid var(--dsg-line-strong);
+  border-radius: 16px;
+  background: var(--ds-color-surface);
+}
+
+/* A wide box for the live set and the chip rows. */
+.ds-wide-box {
+  width: 100%;
+  max-width: 560px;
+}
+
+/* The Don't panel's accent indicator, drawn on purpose. Unlayered, so it wins over the part's utilities. */
+.ds-dont-accent-line [aria-selected="true"] > span:last-child {
+  background-color: var(--ds-color-accent);
+}
+
+/* The Don't panel's accent chip: a fill and no check, colour carrying the state alone. */
+.ds-dont-accent-chip button {
+  border-color: var(--ds-color-accent);
+  background-color: var(--ds-color-accent);
+  color: #fff;
+}
+
+/* A one-line chip row that scrolls sideways in its own box. The 4px pad keeps the focus ring inside it. */
+.ds-chip-scroll {
+  display: flex;
+  gap: 8px;
+  margin: -4px;
+  padding: 4px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.ds-chip-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* A wrapped chip row at the 8px gap. */
+.ds-chip-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
