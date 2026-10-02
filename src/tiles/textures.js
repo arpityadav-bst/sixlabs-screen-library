@@ -162,7 +162,9 @@ const frostSpec = (leftBand) => (P) => {
     const top = Math.exp(-(dTop * dTop) / w2) * along(xs);
     const left = leftBand ? Math.exp(-(dLeft * dLeft) / w2) * along(zs) : 0;
     const ghost = Math.max(top, left) * P.ghostDark;
-    const v = Math.round(255 * Math.min(1, Math.max(0, 1 + mottle - ghost)));
+    // the rear corner (-x, -z, the top on screen, where a raised tile's glint sits) a touch darker
+    const cr = P.frostCornerR ?? 0.3, cd = (x + 0.5) ** 2 + (z + 0.5) ** 2, corner = (P.frostCorner ?? 0) * Math.exp(-cd / (2 * cr * cr));
+    const v = Math.round(255 * Math.min(1, Math.max(0, 1 + mottle - ghost - corner)));
     return [v, v, v, 255];
   });
 };

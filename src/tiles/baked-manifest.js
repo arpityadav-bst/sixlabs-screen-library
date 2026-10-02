@@ -138,7 +138,7 @@ const BAKED = {
   ],
   "frost-true": [
     {
-      "file": "frost-true-5b6ef5e41f.png",
+      "file": "frost-true-a191e694bb.png",
       "srgb": true,
       "params": {
         "azim": 48,
@@ -149,13 +149,15 @@ const BAKED = {
         "ghostInset": 0.03,
         "ghostFadeStart": 0.12,
         "ghostFadeEnd": 0.42,
-        "ghostDark": 0.04
+        "ghostDark": 0.04,
+        "frostCornerR": 0.3,
+        "frostCorner": 0.08
       }
     }
   ],
   "frost-false": [
     {
-      "file": "frost-false-5b6ef5e41f.png",
+      "file": "frost-false-a191e694bb.png",
       "srgb": true,
       "params": {
         "azim": 48,
@@ -166,7 +168,9 @@ const BAKED = {
         "ghostInset": 0.03,
         "ghostFadeStart": 0.12,
         "ghostFadeEnd": 0.42,
-        "ghostDark": 0.04
+        "ghostDark": 0.04,
+        "frostCornerR": 0.3,
+        "frostCorner": 0.08
       }
     }
   ]

@@ -151,6 +151,8 @@
  "sideRough": 0.03,
  "sideShadow": 0.18,
  "sideShadowBand": 0.03,
+ "frostCorner": 0.08,
+ "frostCornerR": 0.3,
  "footShade": 0.12,
  "footBand": 0.07,
  "actFootHold": 0.3,
