@@ -24,12 +24,12 @@ const theirs = card + " border-slate-200/50 bg-[#e3e5e8] text-[#0a1b33]";
 // the left padding a step wider than the card's own (64px from md), for room from the "vs" over the gutter
 const ours = card + " border-transparent bg-[#0a152d] text-white md:pl-16";
 // the maker's mark and name, side by side, at the top of each card
-const lockup = "flex items-center gap-2.5";
-// the names at one visible weight: white on the navy reads heavier than navy on the grey, so 6labs sits a
-// step lighter than ChatGPT for the two to look the same
-const name = "font-display text-[22px] tracking-tight";
-const line =
-  "font-display text-[20px] md:text-[26px] font-normal leading-[1.3] tracking-tight";
+const lockup = "flex items-center gap-3";
+// the names are each card's heading, the two lines its body: the names large in Outfit, the lines in the
+// site's body type (Inter). The names at one visible weight: white on the navy reads heavier than navy on
+// the grey, so 6labs sits a step lighter than ChatGPT for the two to look the same
+const name = "font-display text-[26px] md:text-[34px] leading-[1.1] tracking-tight";
+const line = "font-sans text-[16px] md:text-[18px] font-normal leading-[1.5]";
 // each line: its verb, then what it is about; the verbs are the same kind on both sides, the rest differs
 const LINES = [
   {
@@ -66,14 +66,14 @@ export function Understands() {
       <div className="relative grid w-full grid-cols-1 gap-6 md:grid-cols-2 md:grid-rows-[auto_auto_auto] md:gap-x-6 md:gap-y-0">
         <motion.div {...rise(0)} className={theirs}>
           <span className={lockup}>
-            <ChatGptMark className="h-8 w-8" />
+            <ChatGptMark className="h-9 w-9 md:h-11 md:w-11" />
             <span className={name + " font-medium"}>ChatGPT</span>
           </span>
           <Lines side="theirs" />
         </motion.div>
         <motion.div {...rise(0.15)} className={ours}>
           <span className={lockup}>
-            <SixLabsMark className="h-8 w-8" />
+            <SixLabsMark className="h-9 w-9 md:h-11 md:w-11" />
             <span className={name + " font-normal"}>6labs</span>
           </span>
           <Lines side="ours" />
