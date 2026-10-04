@@ -18,6 +18,7 @@ import { PlayerTraits } from "./PlayerTraits";
 import { PlayerArrows, PlayerCarousel } from "./PlayerCarousel";
 import { useClipFormat } from "./useClipFormat";
 import { usePrefetchClips } from "./usePrefetchClips";
+import { usePlayersScale } from "./usePlayersScale";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 // On the accent blue (AccentWave.tsx): white cards.
@@ -43,6 +44,8 @@ export function Players() {
   // actually in view, one part at a time: the four cards, then the character, then the detail card. It
   // leaves as the water drains.
   const section = useRef<HTMLElement>(null);
+  const content = useRef<HTMLDivElement>(null);
+  usePlayersScale(content); // wider than 1920px: the content scaled up to the screen (usePlayersScale.ts)
   const [filled, setFilled] = useState(false);
   const [inView, setInView] = useState(false);
   // the clips download only once the visitor is within two screens of the section (and then stay)
@@ -101,7 +104,7 @@ export function Players() {
         (shown ? "" : "pointer-events-none") // hidden, it must not block the floating tiles under it
       }
     >
-      <div className="relative px-5 md:px-16">
+      <div ref={content} className="relative px-5 md:px-16">
         {/* soft glow behind the character */}
         <div
           aria-hidden
