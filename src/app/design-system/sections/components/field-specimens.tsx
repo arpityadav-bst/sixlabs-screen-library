@@ -8,6 +8,7 @@ import { Anatomy } from "@/app/design-system/_kit/Anatomy";
 import { Canvas } from "@/app/design-system/_kit/Canvas";
 import { ContrastBadge } from "@/app/design-system/_kit/ContrastBadge";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
+import { Forced } from "@/app/design-system/_kit/Forced";
 import { SizeLadder } from "@/app/design-system/_kit/SizeLadder";
 import { StateGrid } from "@/app/design-system/_kit/StateGrid";
 import { IconButton } from "@/components/design-system/IconButton";
@@ -100,7 +101,9 @@ export function FieldsOnCard() {
     <Canvas ground="page" isolateKeys label="Fields on a white card">
       <div className={styles["ds-in-card"]}>
         <TextInput label={COPY.studio} leadingIcon={Building2} defaultValue={COPY.studioValue} helper={COPY.studioHelper} />
-        <TextInput label={COPY.email} type="email" leadingIcon={Mail} placeholder={COPY.emailHint} forceState="focus" />
+        <Forced state="focus" label="email field">
+          <TextInput label={COPY.email} type="email" leadingIcon={Mail} placeholder={COPY.emailHint} forceState="focus" />
+        </Forced>
         <TextInput label="Team size" optional placeholder="12" inputMode="numeric" trailing={<span className={styles["ds-in-unit"]}>people</span>} />
       </div>
     </Canvas>

@@ -35,7 +35,7 @@ export const CONTEXTS: readonly (readonly string[])[] = [
   ["Tile floor", "1", "the hero, from first paint", "no recovery from a lost context", "tiles/floor.js:38"],
   ["Liquid", "1", "desktops only, WebGL2", "destroy() does not force the loss", "liquid/liquid-sim.ts:16-20"],
   ["Accent water", "1", "always, full viewport", "rebuilt when restored", "accent-wave-gl.ts:51-60"],
-  ["Portrait", "1, 2 during a player change", "the stacked format", "rebuilt when restored, no dispose", "swap-gl.ts:76, Players.tsx:142"],
+  ["Portrait", "1, 2 during a player change", "the stacked format", "rebuilt when restored, no dispose", "swap-gl.ts:76, Players.tsx:145"],
   ["Format probe", "1 to 2", "the first clip format check", "never released", "useClipFormat.ts:47,55"],
   ["GPU name", "1", "?perf only, when the floor's own is not up", "never released", "perf.ts:36-46"],
 ];

@@ -9,7 +9,7 @@ import { StateGrid } from "@/app/design-system/_kit/StateGrid";
 import { ViewportPreview } from "@/app/design-system/_kit/ViewportPreview";
 import { Avatar } from "@/components/design-system/Avatar";
 import { AvatarGroup } from "@/components/design-system/AvatarGroup";
-import { AVATAR_CODE, AVATAR_PINS, AVATAR_PROPS, AVATAR_SIZE_ROWS, AVATAR_VALUES, GROUP_PINS, MISSING, MODELS, PEOPLE } from "./avatar-data";
+import { AVATAR_CODE, AVATAR_PINS, AVATAR_PROPS, AVATAR_SIZE_ROWS, AVATAR_VALUES, GROUP_PINS, LOADING, MISSING, MODELS, PEOPLE } from "./avatar-data";
 import { ClickableAvatar } from "./avatar-live";
 
 const SRC = { from: "@/components/design-system/Avatar", name: "Avatar" };
@@ -59,6 +59,9 @@ function Faces() {
         <Canvas ground="page" layout="flow" label="Fallbacks">
           <Item label="picture">
             <Avatar name={MODELS[1].name} src={MODELS[1].human} size={48} />
+          </Item>
+          <Item label="picture loading · the bare ground">
+            <Avatar name={PEOPLE[1].name} src={LOADING} size={48} />
           </Item>
           <Item label="initials · picture missing">
             <Avatar name={PEOPLE[1].name} src={MISSING} size={48} />

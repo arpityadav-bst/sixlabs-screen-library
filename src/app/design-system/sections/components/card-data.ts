@@ -13,11 +13,11 @@ export const JOB_PINS: readonly Pin[] = [
 
 const PICKED = '.grid-cols-4 > button[aria-pressed="true"]';
 export const SELECTOR_PINS: readonly Pin[] = [
-  { selector: PICKED, name: "Selected card", token: "--ds-radius-lg", value: "radius 28, p 24, min-h 176, shadow 0 28 56 -26", source: "Players.tsx:217,219", expect: ["min-h-[176px]", "rounded-[28px] border p-6", "shadow-[0_28px_56px_-26px_rgba(10,27,51,0.45)]"], padding: true },
-  { selector: '.grid-cols-4 > button[aria-pressed="false"]', name: "Unselected card", value: "opacity 0.6, shadow 0 24 48 -28", source: "Players.tsx:25,27", expect: ["shadow-[0_24px_48px_-28px_rgba(10,27,51,0.35)]", "const UNSELECTED = 0.6;"] },
-  { selector: `${PICKED} > span > span`, name: "Title", value: "Outfit 22 / 500", source: "Players.tsx:227", expect: "text-[22px] max-lg:text-[18px] font-medium" },
-  { selector: `${PICKED} > span:last-child`, name: "Footer", value: "mono 11 caps, 0.14em, pt 16 over a hairline", source: "Players.tsx:244", expect: "border-t pt-4 font-mono text-[11px] uppercase tracking-[0.14em]" },
-  { selector: `${PICKED} > span:last-child > span:last-child > span`, name: "Running dot", value: "6px accent, pulse", source: "Players.tsx:260,261", expect: ["h-1.5 w-1.5 rounded-full", "bg-accent animate-pulse"] },
+  { selector: PICKED, name: "Selected card", token: "--ds-radius-lg", value: "radius 28, p 24, min-h 176, shadow 0 28 56 -26", source: "Players.tsx:220,222", expect: ["min-h-[176px]", "rounded-[28px] border p-6", "shadow-[0_28px_56px_-26px_rgba(10,27,51,0.45)]"], padding: true },
+  { selector: '.grid-cols-4 > button[aria-pressed="false"]', name: "Unselected card", value: "opacity 0.6, shadow 0 24 48 -28", source: "Players.tsx:26,28", expect: ["shadow-[0_24px_48px_-28px_rgba(10,27,51,0.35)]", "const UNSELECTED = 0.6;"] },
+  { selector: `${PICKED} > span > span`, name: "Title", value: "Outfit 22 / 500", source: "Players.tsx:230", expect: "text-[22px] max-lg:text-[18px] font-medium" },
+  { selector: `${PICKED} > span:last-child`, name: "Footer", value: "mono 11 caps, 0.14em, pt 16 over a hairline", source: "Players.tsx:247", expect: "border-t pt-4 font-mono text-[11px] uppercase tracking-[0.14em]" },
+  { selector: `${PICKED} > span:last-child > span:last-child > span`, name: "Running dot", value: "6px accent, pulse", source: "Players.tsx:263,264", expect: ["h-1.5 w-1.5 rounded-full", "bg-accent animate-pulse"] },
 ];
 
 export const CARD_PINS: readonly Pin[] = [
@@ -44,13 +44,13 @@ export const JOB_VALUES = [
 ] as const;
 
 export const SELECTOR_VALUES = [
-  sv("Radius", "28 from lg, 22 below", `${PL}:217`, undefined, "rounded-[28px]", "max-lg:rounded-[22px]"),
-  sv("Padding", "24 from lg, 16 below", `${PL}:217`, undefined, "border p-6", "max-lg:p-4"),
-  sv("Rest shadow", "0 24px 48px -28px ink 35%", `${PL}:25`, "--ds-shadow-player", "shadow-[0_24px_48px_-28px_rgba(10,27,51,0.35)]"),
-  sv("Selected shadow", "0 28px 56px -26px ink 45%", `${PL}:219`, "--ds-shadow-player-selected", "shadow-[0_28px_56px_-26px_rgba(10,27,51,0.45)]"),
-  sv("Hover shadow", "lift, -2px", `${PL}:221`, "--ds-shadow-lift", "hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(10,27,51,0.05),0_24px_48px_-24px_rgba(10,27,51,0.22)]"),
-  sv("Unselected opacity", "0.6, 0.85 on hover", `${PL}:27`, undefined, "const UNSELECTED = 0.6;", "whileHover={{ opacity: on ? 1 : 0.85 }}"),
-  sv("Footer", "mono 11 caps 0.14em, slate-400", `${PL}:244`, undefined, "font-mono text-[11px] uppercase tracking-[0.14em]", "border-slate-200/70 text-slate-400"),
+  sv("Radius", "28 from lg, 22 below", `${PL}:220`, undefined, "rounded-[28px]", "max-lg:rounded-[22px]"),
+  sv("Padding", "24 from lg, 16 below", `${PL}:220`, undefined, "border p-6", "max-lg:p-4"),
+  sv("Rest shadow", "0 24px 48px -28px ink 35%", `${PL}:26`, "--ds-shadow-player", "shadow-[0_24px_48px_-28px_rgba(10,27,51,0.35)]"),
+  sv("Selected shadow", "0 28px 56px -26px ink 45%", `${PL}:222`, "--ds-shadow-player-selected", "shadow-[0_28px_56px_-26px_rgba(10,27,51,0.45)]"),
+  sv("Hover shadow", "lift, -2px", `${PL}:224`, "--ds-shadow-lift", "hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(10,27,51,0.05),0_24px_48px_-24px_rgba(10,27,51,0.22)]"),
+  sv("Unselected opacity", "0.6, 0.85 on hover", `${PL}:28, 215`, undefined, "const UNSELECTED = 0.6;", "whileHover={{ opacity: on ? 1 : 0.85 }}"),
+  sv("Footer", "mono 11 caps 0.14em, slate-400", `${PL}:247-248`, undefined, "font-mono text-[11px] uppercase tracking-[0.14em]", "border-slate-200/70 text-slate-400"),
 ] as const;
 
 export const CARD_VALUES = [

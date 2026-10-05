@@ -81,17 +81,18 @@ export const PLAYERS_LANES: readonly TimelineLane[] = [
 ];
 
 export const PLAYERS_ROWS: readonly KeyRow[] = [
-  { key: "trigger", value: "the accentwave event says filled, and 20% of the section is in view", source: `${W}Players.tsx:53` },
-  { key: "travel", value: "24px up over 0.5s on the ease", source: `${W}Players.tsx:83` },
-  { key: "settle", value: "unselected cards stop at opacity 0.6, 0.85 on hover", source: `${W}Players.tsx:27` },
-  { key: "leave", value: "the same parts go back out as the water drains, so it is not once", source: `${W}Players.tsx:84` },
+  { key: "trigger", value: "the accentwave event says filled, and 20% of the section is in view", source: `${W}Players.tsx:56` },
+  { key: "travel", value: "24px up over 0.5s on the ease", source: `${W}Players.tsx:86` },
+  { key: "settle", value: "unselected cards stop at opacity 0.6, 0.85 on hover", source: `${W}Players.tsx:28` },
+  { key: "doodles", value: "the hand starts drawing 1s after the section comes in", source: `${W}PlayerDoodles.tsx:19` },
+  { key: "once", value: "once in, it stays: leaving or the water draining does not send it back out", source: `${W}Players.tsx:83` },
 ];
 
 export const PLAYERS_VALUES: readonly ValueRow[] = [
-  { part: "Travel", token: "--ds-reveal-y", value: "24px", source: `${W}Players.tsx:83` },
-  { part: "Length", token: "--ds-dur-reveal", value: "0.5s", source: `${W}Players.tsx:85` },
-  { part: "Cards", value: "k x 0.05s", source: `${W}Players.tsx:210` },
-  { part: "Portrait", value: "0.1s", source: `${W}Players.tsx:139` },
-  { part: "Switch (under lg)", value: "0.15s", source: `${W}Players.tsx:189` },
-  { part: "Detail and carousel", value: "0.2s", source: `${W}Players.tsx:112` },
+  { part: "Travel", token: "--ds-reveal-y", value: "24px", source: `${W}Players.tsx:86` },
+  { part: "Length", token: "--ds-dur-reveal", value: "0.5s", source: `${W}Players.tsx:88` },
+  { part: "Cards", value: "k x 0.05s", source: `${W}Players.tsx:213` },
+  { part: "Portrait", value: "0.1s", source: `${W}Players.tsx:142` },
+  { part: "Switch (under lg)", value: "0.15s", source: `${W}Players.tsx:192` },
+  { part: "Detail and carousel", value: "0.2s", source: `${W}Players.tsx:115` },
 ];

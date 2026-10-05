@@ -15,7 +15,7 @@ import { FOCUS, FOCUS_INVERSE } from "./focus";
 import { forceAttr, forces, type ForceState } from "./force";
 import { SPRING } from "./motion";
 import { Spinner } from "./Spinner";
-
+import { ICON_STROKE } from "./token-shape";
 /** Track 28x16 / 36x20 / 44x24, thumb 12 / 16 / 20, inset 2. */
 const SIZE: Record<ChoiceSize, { track: string; thumb: number; travel: number; spin: 8 | 12 }> = {
   sm: { track: "h-4 w-7", thumb: 12, travel: 12, spin: 8 },
@@ -174,11 +174,11 @@ export function Switch({
       >
         {loading ? (
           <Spinner size={s.spin} delay={0} decorative className={blue && on ? "" : "text-(--ds-color-text-muted)"} />
-        ) : icons ? (
+        ) : icons && size !== "sm" ? (
           on ? (
-            <Check size={10} strokeWidth={3} data-slot="glyph" />
+            <Check size={12} strokeWidth={ICON_STROKE[12]} data-slot="glyph" />
           ) : (
-            <X size={10} strokeWidth={3} data-slot="glyph" className="text-(--ds-color-text-muted) forced-colors:text-[color:Canvas]" />
+            <X size={12} strokeWidth={ICON_STROKE[12]} data-slot="glyph" className="text-(--ds-color-text-muted) forced-colors:text-[color:Canvas]" />
           )
         ) : null}
       </motion.span>

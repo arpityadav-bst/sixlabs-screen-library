@@ -4,7 +4,7 @@ import { Canvas } from "@/app/design-system/_kit/Canvas";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
 import { KeyRows } from "@/app/design-system/_kit/KeyRows";
 import { Replay } from "@/app/design-system/_kit/Replay";
-import { Section, Sub } from "@/app/design-system/_kit/Section";
+import { Section, SectionLink, Sub } from "@/app/design-system/_kit/Section";
 import { Spec } from "@/app/design-system/_kit/Spec";
 import { Timeline } from "@/app/design-system/_kit/Timeline";
 import { AssertChip } from "@/app/design-system/sections/foundations/foundation-parts";
@@ -87,7 +87,7 @@ export function MotionEntranceSection() {
           drawer={{ values: PLAYERS_VALUES }}
           note={
             <>
-              The live reveal plays in the players frame under <a href="#scroll-players">Scroll line to players</a>.
+              The live reveal plays in the players frame under <SectionLink id="scroll-players" />.
             </>
           }
         >

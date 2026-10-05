@@ -18,7 +18,6 @@ import { SEARCH_KBD, SEARCH_SIZE, type SearchSize } from "./search-styles";
 import { SelectPanel, type SelectOption } from "./select-panel";
 import { Spinner } from "./Spinner";
 import { ICON_STROKE } from "./token-shape";
-
 export type { SearchSize } from "./search-styles";
 
 export type SearchFieldProps = {
@@ -38,6 +37,8 @@ export type SearchFieldProps = {
   shortcut?: string;
   /** listen for the shortcut on the window (on by default). Off where another control owns the key. */
   bindShortcut?: boolean;
+  /** off drops the search landmark, for a picture among many (the guide's static specimens). On by default */
+  landmark?: boolean;
   disabled?: boolean;
   /** the guide's form: the results in the flow under the field, shown while it holds text */
   inline?: boolean;
@@ -60,6 +61,7 @@ export function SearchField({
   loading: loadingProp,
   shortcut,
   bindShortcut = true,
+  landmark = true,
   disabled: disabledProp,
   inline,
   active: activeProp,
@@ -83,7 +85,6 @@ export function SearchField({
   const listId = `s${uid}-list`;
   const listed = open && suggestions.length > 0;
   const count = suggestions.length;
-
   // the answer, written once typing settles, so a screen reader hears it once and not on every key
   useEffect(() => {
     const q = query.trim();
@@ -91,7 +92,6 @@ export function SearchField({
     const t = window.setTimeout(() => setSaid(text), 500);
     return () => window.clearTimeout(t);
   }, [query, count, loading, disabled]);
-
   useEffect(() => {
     if (!shortcut || !bindShortcut || disabled) return;
     const onKey = (e: globalThis.KeyboardEvent) => {
@@ -143,7 +143,7 @@ export function SearchField({
   const tone = fieldTone({ disabled });
   const filled = query !== "";
   return (
-    <div role="search" aria-label={label} className={`relative min-w-0 ${className}`} data-slot="search">
+    <div role={landmark ? "search" : undefined} aria-label={landmark ? label : undefined} className={`relative min-w-0 ${className}`} data-slot="search">
       <label id={`s${uid}-label`} htmlFor={`s${uid}`} className="sr-only">
         {label}
       </label>
@@ -192,7 +192,7 @@ export function SearchField({
         <span data-slot="trailing" className={`flex shrink-0 items-center ${s.end}`}>
           {loading ? (
             <span className="grid h-7 w-7 place-items-center text-(--ds-color-text-muted)">
-              <Spinner size={size === "lg" ? 16 : 12} delay={0} decorative />
+              <Spinner size={s.icon === 14 ? 12 : 16} delay={0} decorative />
             </span>
           ) : filled ? (
             <IconButton

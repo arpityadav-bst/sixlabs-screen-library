@@ -2,6 +2,16 @@
 
 Dated entries, newest first. An entry says what changed and, when it is not plain, why. A decision from Decisions pending (10.3) lands here on the day it ships. This partial is the one source of the changelog: the guide's Changelog section reads its entries from here as the page builds, so the guide and this document cannot tell the same day two ways. Write a `#### YYYY-MM-DD` heading and one bullet per change, then rebuild DESIGN.md.
 
+#### 2026-10-05
+
+- The comparison's names become each card's heading in Outfit 34 (26 on a phone) beside 44px marks (36 on a phone), and its lines become body text in Inter 18 at 1.5 (16 on a phone). Comparison cards (7.12) and Type (2.4) follow, and Known gaps (10.2) records that the names are spans, not headings.
+- The players' doodles start 1s after the section is in view, and the portrait switches between Human and AI every 5s, so the hand now ends just after the first switch. Doodles (5.11), Human / AI swap (5.10), Scroll line to players (9.3) and Choreography (4.5) follow, the last with a players clock.
+- On a dense screen (devicePixelRatio 1.5 and up) wider than 1920 the players' content scales up to 1.35. Scroll line to players (9.3), Responsive ladder (9.6) and Layout and breakpoints (2.6) follow, with density as a fourth axis.
+- The players' magnet gains a catch in script in every browser: a scroll that rests within 0.6 of a screen glides in over 0.6s, where the CSS snap alone caught only a scroll ending very near. Shell behaviours (6.7), Accent water (5.9), Page composition (9.5) and Reduced motion (4.6) follow.
+- The resting tiles' walls darken toward the foot and their tops' rear corner 8%, baked into the frost, and both raised slabs hold their dark foot over the lower 30% with a foot shade in each state. Tile states (5.3), The glass tile floor (5.2) and Activation sweep (5.4) follow.
+- The full view's "Loading" label turns slate-500, about 3.8:1 on the hero grey, still under the 4.5:1 bar. Known gaps (10.2), Load-in, autoplay and loaders (5.6) and Contrast (2.3) follow.
+- DESIGN.md's build checks the site values its partials quote against their source files (`tools/design-md/facts.mjs`), so a value that drifts from the site fails it.
+
 #### 2026-10-02
 
 - The comparison cards set each line whole in its card's one ink, navy on the grey and white on the navy, where the verb used to sit in a softer ink (site commit 1184ee4). The vs word grows to Outfit 34 (27 on a phone) at ink 30%, lifted 0.07em into the disc's optical middle (2e092b0). Comparison cards (7.12) and the ink ladder of Colour roles (2.1) follow: the 45 step is the touch-target key, the 40 step dashed guide outlines, and the 30 step the leader line and the vs word.

@@ -30,22 +30,31 @@ export function SelectAnatomy() {
   );
 }
 
+/** The interaction a cell forces, read off its name, so read-only-focus and open-invalid force as their twins. */
+function forced(state: SelectState): "hover" | "focus" | "open" | undefined {
+  if (state === "hover") return "hover";
+  if (state.endsWith("focus")) return "focus";
+  if (state.startsWith("open")) return "open";
+  return undefined;
+}
+
 function trigger(state: SelectState | "live") {
-  const chosen = state === "filled" || state === "disabled" || state === "read-only" || state === "invalid" || state === "live";
+  const chosen = state === "filled" || state === "disabled" || state.startsWith("read-only") || state.includes("invalid");
+  const open = state.startsWith("open");
   const select = (
     <Select
       label="Player type"
       options={PLAYER_OPTIONS}
-      defaultValue={chosen && state !== "live" ? PLAYER_OPTIONS[1].value : null}
-      forceState={state === "hover" ? "hover" : state === "focus" ? "focus" : state === "open" ? "open" : undefined}
+      defaultValue={chosen ? PLAYER_OPTIONS[1].value : null}
+      forceState={state === "live" ? undefined : forced(state)}
       disabled={state === "disabled"}
-      readOnly={state === "read-only"}
-      error={state === "invalid" ? "Pick the player type to model." : undefined}
+      readOnly={state.startsWith("read-only")}
+      error={state.includes("invalid") ? "Pick the player type to model." : undefined}
       native="never"
     />
   );
-  // the open cell holds the room its panel drops into, so the list is seen whole inside the grid
-  return state === "open" ? <div className={styles["ds-in-open"]}>{select}</div> : select;
+  // the open cells hold the room their panel drops into, so the list is seen whole inside the grid
+  return open ? <div className={styles["ds-in-open"]}>{select}</div> : select;
 }
 
 export function SelectStates() {

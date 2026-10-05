@@ -19,6 +19,8 @@ These have no reduced answer yet. Known gaps (10.2) tracks them.
 
 - The tile floor (intro rise, autoplay, waves and sweeps) runs as usual.
 - The in-page glide runs as usual. Under reduced motion it should jump.
+- The players' auto switch keeps cutting every 5s. Under reduced motion it should hold the copy on screen and leave the switch to the visitor.
+- The players' magnet glides 0.6s and holds the input. Under reduced motion it should settle at once, or leave the scroll to the CSS snap.
 - Tailwind's `animate-ping` and `animate-pulse` on the hero dot, the player card dot and the terminal cursor keep running.
 - motion/react entrances and menus travel as usual, because the site wraps no `MotionConfig` round them.
 

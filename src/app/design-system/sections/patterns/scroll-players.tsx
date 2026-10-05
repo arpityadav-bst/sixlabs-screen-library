@@ -5,12 +5,12 @@ import { Anatomy } from "@/app/design-system/_kit/Anatomy";
 import { ContrastBadge } from "@/app/design-system/_kit/ContrastBadge";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
 import { KeyRows } from "@/app/design-system/_kit/KeyRows";
-import { Section } from "@/app/design-system/_kit/Section";
+import { Section, SectionLink } from "@/app/design-system/_kit/Section";
 import { Spec } from "@/app/design-system/_kit/Spec";
 import { ViewportPreview } from "@/app/design-system/_kit/ViewportPreview";
 import { tokenByName, typeStyle } from "@/components/design-system/tokens";
 import { PLAYERS } from "@/components/website/players-data";
-import { Bom, SecLink } from "./pattern-parts";
+import { Bom } from "./pattern-parts";
 import { PLAYERS_BOM, PLAYERS_CODE, PLAYERS_FLOW, PLAYERS_PINS, PLAYERS_VALUES, PLAYERS_WIDTHS } from "./scroll-players-data";
 import s from "./scroll-players.module.css";
 
@@ -47,8 +47,9 @@ export function ScrollPlayersSection() {
         drawer={{ values: PLAYERS_VALUES, code: PLAYERS_CODE }}
         note={
           <>
-            The live run from the line to the water plays under <SecLink id="scroll-line" /> and{" "}
-            <SecLink id="accent-water" />.
+            The live run from the line to the water plays under <SectionLink id="scroll-line" /> and{" "}
+            <SectionLink id="accent-water" />. Past 1920 on dense screens the content also scales up (wide, under How it
+            comes in), which the frames cannot show, because the scale reads the viewer&apos;s device pixel ratio.
           </>
         }
       >

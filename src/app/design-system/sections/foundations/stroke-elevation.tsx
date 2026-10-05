@@ -6,7 +6,7 @@ import { contrastRatio, formatRatio } from "@/app/design-system/_kit/contrast";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
 import { Item } from "@/app/design-system/_kit/Label";
 import { Replay } from "@/app/design-system/_kit/Replay";
-import { Section } from "@/app/design-system/_kit/Section";
+import { Section, SectionLink } from "@/app/design-system/_kit/Section";
 import { Spec } from "@/app/design-system/_kit/Spec";
 import { ICON_STROKE, cssVar, type Token } from "@/components/design-system/tokens";
 import { TypedWord } from "@/components/website/TypedWord";
@@ -86,7 +86,7 @@ export function ElevationSection() {
         caption={
           <>
             stroke-ring-vs drawn alone, the page-colour ring with its centre open · the live vs disc it rings is in{" "}
-            <a href="#comparison">Comparison</a>
+            <SectionLink id="comparison" />
           </>
         }
         drawer={{ values: STROKE_VALUES, children: <UseTable tokens={STROKES} /> }}
@@ -116,7 +116,7 @@ export function ElevationSection() {
               so a clickable card rises as the player cards do on the water.
             </p>
             <p>
-              Which surface sits above which is the z-scale&apos;s job, set out in <a href="#layer-stack">Layer stack</a>.
+              Which surface sits above which is the z-scale&apos;s job, set out in <SectionLink id="layer-stack" />.
             </p>
           </>
         }

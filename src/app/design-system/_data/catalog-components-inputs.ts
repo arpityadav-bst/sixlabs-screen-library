@@ -31,7 +31,7 @@ export const INPUTS = defineSections([
     file: f("components/select-search"),
     designMd: "7.8",
     covers: [
-      sys("Select", { states: "rest hover focus open filled disabled read-only invalid", na: "pressed" }),
+      sys("Select", { states: "rest hover focus open filled disabled read-only read-only-focus invalid invalid-focus open-invalid", na: "pressed" }),
       sys("SearchField", { states: "empty hover focus filled results searching no-results disabled", na: "pressed" }),
     ],
   },
@@ -44,7 +44,7 @@ export const INPUTS = defineSections([
     covers: [
       sys("Checkbox", {
         states:
-          "unchecked hover checked checked-hover indeterminate focus-visible pressed disabled disabled-checked invalid read-only read-only-checked",
+          "unchecked hover checked checked-hover indeterminate focus-visible pressed disabled disabled-checked invalid invalid-checked read-only read-only-checked",
       }),
       sys("Radio", {
         states:

@@ -3,7 +3,7 @@
 import { Canvas } from "@/app/design-system/_kit/Canvas";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
 import { Item } from "@/app/design-system/_kit/Label";
-import { Section } from "@/app/design-system/_kit/Section";
+import { Section, SectionLink } from "@/app/design-system/_kit/Section";
 import { Spec } from "@/app/design-system/_kit/Spec";
 import { SpecTable } from "@/app/design-system/_kit/SpecTable";
 import { Spinner } from "@/components/design-system/Spinner";
@@ -34,7 +34,7 @@ export function MotionReducedSection() {
         role="Every moving part names its reduced answer and the line that gives it, so a missing answer shows up as a no."
         note={
           <>
-            These parts have no answer yet: the tile floor, the glide, ping and pulse, and the motion/react entrances. <a href="#gaps">Known gaps</a> tracks them.
+            These parts have no answer yet: the tile floor, the glide and the players magnet, the Human / AI auto flip, ping and pulse, and the motion/react entrances. <SectionLink id="gaps" /> tracks them.
           </>
         }
       >

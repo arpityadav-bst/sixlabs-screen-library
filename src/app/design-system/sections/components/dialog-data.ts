@@ -80,6 +80,7 @@ export const DIALOG_VALUES: readonly ValueRow[] = [
 export const DIALOG_PROPS: readonly PropRow[] = [
   { name: "open", type: "boolean", default: "false" },
   { name: "onOpenChange", type: "(open: boolean) => void", note: "Escape, the veil and the close call it with false" },
+  { name: "onClosed", type: "() => void", note: "once the exit is done and focus is back on the trigger: report an outcome (a toast) here" },
   { name: "title", type: "string" },
   { name: "description", type: "ReactNode" },
   { name: "size", type: "\"sm\" | \"md\" | \"lg\"", default: "\"md\"" },

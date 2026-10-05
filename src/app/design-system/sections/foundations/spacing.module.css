@@ -35,3 +35,6 @@
 .ds-head-h { color: var(--ds-color-ink); }
 .ds-head-sub { color: var(--ds-color-text-muted); }
 .ds-pair { display: flex; flex-wrap: wrap; }
+
+/* a field in the control ladders, wide enough to read as a field */
+.ds-ctl-field { width: 200px; }

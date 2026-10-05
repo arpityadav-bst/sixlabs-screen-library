@@ -6,7 +6,7 @@ import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
 import { KeyRows } from "@/app/design-system/_kit/KeyRows";
 import { Note } from "@/app/design-system/_kit/Note";
 import { Replay } from "@/app/design-system/_kit/Replay";
-import { Section } from "@/app/design-system/_kit/Section";
+import { Section, SectionLink } from "@/app/design-system/_kit/Section";
 import { Spec } from "@/app/design-system/_kit/Spec";
 import { HERO_LEDE } from "@/app/design-system/_data/specimens";
 import { Button } from "@/components/design-system/Button";
@@ -17,7 +17,7 @@ import { TypedWord } from "@/components/website/TypedWord";
 import { ClickHold } from "./click-hold";
 import { HEADLINE, HERO_BOM, HERO_CODE, HERO_LINK, HERO_PROPS, HERO_STATES, HERO_VALUES } from "./hero-data";
 import { HeroPreview } from "./hero-live";
-import { Bom, SecLink } from "./pattern-parts";
+import { Bom } from "./pattern-parts";
 import s from "./hero.module.css";
 
 const SRC = { from: "@/components/website/Hero", name: "Hero" };
@@ -84,8 +84,8 @@ export function HeroSection() {
         role="The copy arrives before the floor, so a slow device still reads the claim at once."
         note={
           <>
-            The intro is drawn to scale under <SecLink id="motion-choreography" />, and the missing WebGL state
-            is designed under <SecLink id="system-states" />.
+            The intro is drawn to scale under <SectionLink id="motion-choreography" />, and the missing WebGL state
+            is designed under <SectionLink id="system-states" />.
           </>
         }
       >

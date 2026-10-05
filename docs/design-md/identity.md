@@ -10,7 +10,7 @@
 
 **Variants.** Ink (the logo file and the accent 6, on the page, surface and container) and onBlue (the outline mark and the plain word, both white, on the accent water only).
 
-**Sizes.** sm, md and lg: mark 24 / 32 / 44, wordmark 18 / 24 / 32 at 500, gap 8 / 10 / 12. md is the header's lockup, and the other two keep its ratio so they read as the same lockup scaled rather than a second design. The smallest mark is 20, where the three blades still read as three. The outline mark has no optical sizes: its line is in viewBox units, so it thins at 16 and thickens at 64. Use it from 24 up.
+**Sizes.** sm, md and lg: mark 24 / 32 / 44, wordmark 18 / 24 / 32 at 500, gap 8 / 10 / 12. md is the header's lockup, and the other two keep its ratio so they read as the same lockup scaled rather than a second design. The smallest mark is 20, where the three blades still read as three. On the comparison cards the outline mark is 44 (36 on a phone), beside a name of its own size rather than a lockup step. The outline mark has no optical sizes: its line is in viewBox units, so it thins at 16 and thickens at 64. Use it from 24 up.
 
 **Clear space.** The core circle's diameter (0.292 of the mark) on every side: 7 at sm, 9 at md, 13 at lg. It is measured from the mark because the mark is the part that defines the lockup's height. Nothing else (a tab, a pill, the bar's edge) comes inside it.
 

@@ -1,15 +1,14 @@
 "use client";
 
-// Blocking tasks and confirms. A native dialog opened with showModal, so the page behind is inert, Escape is
-// a close request and focus stays inside with no hand-written trap. The veil is ink at 40% and never blurred.
-// Focus lands on the first field, or on the least destructive action of an alertdialog (the first footer
-// button, since the primary goes last), or on the primary, and goes back to the trigger on close. The page
-// holds still while it is open, as MobileMenu holds it. Under md (or with presentation sheet) the panel is a
-// bottom sheet that drags down to close. inline renders the panel alone in the flow, with no dialog, veil,
-// trap or scroll hold, as a picture for the guide. busy holds the close, Escape, the veil and the drag, and
-// reaches the footer through DialogAction (the primary spins, the rest hold). A close the browser makes on
-// its own (a second Escape, which is not cancelable) is undone: the dialog opens again with focus where it
-// was, and then closes through onOpenChange and its exit, or stays while busy.
+// Blocking tasks and confirms. A native dialog opened with showModal, so the page behind is inert, Escape is a close
+// request and focus stays inside with no hand-written trap. The veil is ink at 40% and never blurred. Focus lands on
+// the first field, or on the least destructive action of an alertdialog (the first footer button, since the primary
+// goes last), or on the primary, and goes back to the trigger on close, after which onClosed fires (toast there). The
+// page holds still while open, as MobileMenu holds it. Under md (or with presentation sheet) the panel is a bottom
+// sheet that drags down to close. inline renders the panel alone in the flow, with no dialog, veil, trap or scroll
+// hold, as a picture for the guide. busy holds the close, Escape, the veil and the drag, and reaches the footer
+// through DialogAction (the primary spins, the rest hold). A close the browser makes on its own (a second Escape, not
+// cancelable) is undone: it opens again with focus where it was, then closes its own way, or stays while busy.
 import { AnimatePresence, motion, useDragControls, useReducedMotion } from "motion/react";
 import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { DialogPanel, type DialogPanelProps } from "./DialogPanel";
@@ -27,6 +26,8 @@ export type DialogState = "closed" | "opening" | "open" | "busy" | "closing" | "
 export type DialogProps = {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** once it has really closed: the exit done, the top layer left and focus back on the trigger. A toast goes here */
+  onClosed?: () => void;
   title: string;
   description?: ReactNode;
   size?: DialogSize;
@@ -40,9 +41,8 @@ export type DialogProps = {
   busy?: boolean;
   /** the element to focus on open, in place of the rule above */
   initialFocus?: RefObject<HTMLElement | null>;
-  /** docs: the panel alone in the flow */
+  /** docs: inline is the panel alone in the flow, and forceState one frame of a state in it */
   inline?: boolean;
-  /** docs, inline: one frame of a state */
   forceState?: DialogState;
   className?: string;
   children?: ReactNode;
@@ -135,6 +135,7 @@ function InlineDialog({ title, description, size = "md", presentation = "dialog"
 function ModalDialog({
   open = false,
   onOpenChange,
+  onClosed,
   title,
   description,
   size = "md",
@@ -160,7 +161,6 @@ function ModalDialog({
   const close = () => {
     if (!busy) onOpenChange?.(false);
   };
-
   useLayoutEffect(() => {
     const d = ref.current;
     if (!d || !open || d.open) return;
@@ -169,7 +169,6 @@ function ModalDialog({
     hold(true);
     focusFirst(d, role, initialFocus?.current);
   }, [open, role, initialFocus]);
-
   useEffect(() => {
     const d = ref.current;
     return () => {
@@ -190,6 +189,7 @@ function ModalDialog({
     hold(false);
     back.current?.focus();
     back.current = null;
+    onClosed?.();
   };
 
   const dragProps: Partial<DialogPanelProps> = sheet

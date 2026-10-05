@@ -2,17 +2,15 @@
 // snippets. Values come from tokens.ts through tv wherever a token holds them.
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
-import { BUTTON_VARIANT, SELECTABLE, type ButtonSize, type ButtonVariant } from "@/components/design-system/button-styles";
+import { BUTTON_SIZE, BUTTON_VARIANT, SELECTABLE, type ButtonSize, type ButtonVariant } from "@/components/design-system/button-styles";
 import { FORCE_PROP } from "./act-sel-rows";
-import { sv, tv, type Pin } from "./display-values";
+import { heightOf, sizeNames, sv, tv, type Pin } from "./display-values";
 
-export const BUTTON_SIZES: readonly { name: ButtonSize; height: number }[] = [
-  { name: "xs", height: 28 },
-  { name: "sm", height: 32 },
-  { name: "md", height: 40 },
-  { name: "lg", height: 48 },
-  { name: "xl", height: 52 },
-];
+/** The rungs, read from BUTTON_SIZE's own box classes, so the ladder cannot drift from the part. */
+export const BUTTON_SIZES: readonly { name: ButtonSize; height: number }[] = sizeNames(BUTTON_SIZE).map((name) => ({
+  name,
+  height: heightOf(BUTTON_SIZE[name].box),
+}));
 
 /** The light-ground variants in the order a view reaches for them. */
 export const LIGHT_VARIANTS: readonly ButtonVariant[] = [
@@ -144,7 +142,7 @@ export const BUTTON_VALUES: readonly ValueRow[] = [
   tv("Grow and press", "spring-press"),
   tv("Ring on light", "focus-color"),
   tv("Ring on blue", "focus-color-inverse"),
-  sv("Heights", "28 / 32 / 40 / 48 / 52", `${BS}:31-37`),
+  sv("Heights", BUTTON_SIZES.map((s) => s.height).join(" / "), `${BS}:31-37`),
   sv("Side padding", "12 / 14 / 20 / 28 / 40", `${BS}:31-37`),
   sv("Label", "12 / 13 / 14 / 15 / 15 at 500, -0.01em", `${BS}:24-25, 31-37`, "--ds-type-button-label"),
   sv("Grow", "1.04 at lg and xl, 1.02 below, solid fills only", "Button.tsx:87"),

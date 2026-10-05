@@ -1,8 +1,9 @@
 "use client";
 
 // The live dialogs: a trigger that runs the real modal (a native dialog with showModal). Confirming turns the
-// dialog busy for 1.2s, which holds every way out (the footer follows through DialogAction), then closes and toasts the outcome once the dialog is
-// gone, since a toast cannot show above the modal's top layer.
+// dialog busy for 1.2s, which holds every way out (the footer follows through DialogAction), then closes.
+// The outcome is held until onClosed, once the exit is done and the modal has left the top layer, since
+// the rest of the page (the Toaster's live regions with it) stays inert while the dialog is modal.
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/design-system/Button";
 import { Dialog } from "@/components/design-system/Dialog";
@@ -19,6 +20,8 @@ export function DialogDemo({ kind, label }: { kind: DialogDemoKind; label?: stri
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const timer = useRef(0);
+  // the outcome to toast once the dialog is gone, empty after a cancel
+  const outcome = useRef("");
   useEffect(() => {
     const t = timer;
     return () => window.clearTimeout(t.current);
@@ -30,9 +33,13 @@ export function DialogDemo({ kind, label }: { kind: DialogDemoKind; label?: stri
     setBusy(true);
     timer.current = window.setTimeout(() => {
       setBusy(false);
+      outcome.current = alert ? "Player removed" : "Request sent";
       setOpen(false);
-      toast({ tone: "success", title: alert ? "Player removed" : "Request sent" });
     }, WORK_MS);
+  };
+  const closed = () => {
+    if (outcome.current) toast({ tone: "success", title: outcome.current });
+    outcome.current = "";
   };
 
   return (
@@ -43,6 +50,7 @@ export function DialogDemo({ kind, label }: { kind: DialogDemoKind; label?: stri
       <Dialog
         open={open}
         onOpenChange={setOpen}
+        onClosed={closed}
         title={copy.title}
         description={copy.description}
         size={alert ? "sm" : "md"}

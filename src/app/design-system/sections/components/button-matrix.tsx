@@ -135,7 +135,7 @@ export function ButtonSizes() {
       title="Sizes"
       source={SOURCE}
       props="size"
-      role="Five heights on one ladder, so a button always matches the field or row beside it."
+      role="Five heights, each shared with one neighbour of another kind."
     >
       <SizeLadder
         label="Button sizes"

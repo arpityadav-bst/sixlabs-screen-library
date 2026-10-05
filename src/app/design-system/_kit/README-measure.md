@@ -6,6 +6,7 @@ The half of the guide kit that measures and previews. Every number it prints is 
 | --- | --- | --- |
 | `Anatomy` | `Anatomy.tsx`, `anatomy-measure.ts` | yes (pins are data) |
 | `StateGrid` | `StateGrid.tsx` | yes, it has no state of its own, so `render` may be a function from a server file |
+| `Forced` | `Forced.tsx` | yes, it has no state of its own |
 | `SizeLadder` | `SizeLadder.tsx` | yes (rungs are data plus elements) |
 | `TokenSwatch`, `SwatchGrid` | `TokenSwatch.tsx` | yes |
 | `ContrastBadge`, `ContrastRow`, contrast maths | `ContrastBadge.tsx`, `contrast.ts` | yes |
@@ -78,7 +79,24 @@ Legend rows: number, part, token, value, source. A pin's status shows under its 
 1. the prop: `forceState?: "hover" | "pressed" | ...`, which the component turns into `data-force="hover"` on its own root, styled together with the real pseudo-class (`.x:hover, .x[data-force="hover"]`). This is the plan's way and the one to use.
 2. the attribute: CSS keyed on the ancestor, `[data-ds-state="hover"] .x`, for a part whose props you cannot change.
 
-Forced cells are `inert`, so they are out of the tab order and the pointer, and they never fight the real state. Each forced cell carries a screen-reader line outside the inert box ("primary, hover"), so a reader walking the table hears what the picture shows. Cells centre their part as a flex box, never through `text-align`, so block text inside a part keeps the start alignment it has on a page. The live cell is the only interactive one. A shipped part that cannot be forced (Tailwind `hover:`, motion values) gets a grid with `states={[]}` and the live column only, and its per-state values go in a KeyRows under it.
+Forced cells are `inert` (the cell is a `Forced` box, below), so they are out of the tab order and the pointer, and they never fight the real state. Each forced cell carries a screen-reader line outside the inert box ("primary, hover"), so a reader walking the table hears what the picture shows. Cells centre their part as a flex box, never through `text-align`, so block text inside a part keeps the start alignment it has on a page. The live cell is the only interactive one. A shipped part that cannot be forced (Tailwind `hover:`, motion values) gets a grid with `states={[]}` and the live column only, and its per-state values go in a KeyRows under it.
+
+## Forced
+
+```tsx
+<Forced state="focus" label="Email field">
+  <TextInput label="Work email" forceState="focus" />
+</Forced>
+```
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `state` | `string` | | the state the picture shows, set as `data-ds-state` and read to a screen reader, required |
+| `label` | `string` | | what the part is, read before the state ("Email field, focus") |
+| `as` | `"div" \| "span"` | `"div"` | `span` inside phrasing content, such as an Anatomy pin |
+| `className` | `string` | `"ds-forced"` | `ds-forced` is `display: contents`, so the wrapper never moves the specimen |
+
+A forced specimen outside a StateGrid (a focus ring in Foundations, a field shown focused on a card, a tooltip held open in an Anatomy, a slider shown mid-drag) goes in `Forced`, the same inert box and screen-reader line a forced grid cell uses (StateGrid renders its forced cells through it). The part still takes its `forceState` prop. Without the wrapper the specimen is a live, tabbable control with its state already drawn, which a keyboard reader lands in and a pointer can fight. Canvas and Anatomy set no inert of their own. A specimen meant to be used stays outside it.
 
 ## SizeLadder
 

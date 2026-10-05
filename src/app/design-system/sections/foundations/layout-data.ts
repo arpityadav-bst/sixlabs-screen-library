@@ -78,6 +78,8 @@ export const MEDIA_GATES: readonly Gate[] = [
     assert: site("JobTerminal.tsx", "[@media(hover:hover)_and_(pointer:fine)]:flex") },
   { key: "Liquid desktop", value: "min-width 1024 with hover, a fine pointer and motion allowed runs the liquid line",
     assert: site("LiquidLine.tsx", '"(min-width: 1024px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)"') },
+  { key: "Dense screen", value: "devicePixelRatio 1.5 and up, read in script, lets the players' content scale up to 1.35 past 1920",
+    assert: site("usePlayersScale.ts", "const BASE = 1920;", "const MAX = 1.35;", "const DENSE = 1.5;") },
 ];
 
 export const HEADER_OFFSETS: readonly Gate[] = [

@@ -4,6 +4,7 @@
 // icon is a component and cannot cross from a server file. Open bubbles are the docs form (open set), the
 // live ones are the real hover and focus path.
 import { ArrowUp, ChevronLeft, ChevronRight, Copy, RotateCw, type LucideIcon } from "lucide-react";
+import { Forced } from "@/app/design-system/_kit/Forced";
 import { Button } from "@/components/design-system/Button";
 import { IconButton } from "@/components/design-system/IconButton";
 import { Tooltip, type TooltipSide } from "@/components/design-system/Tooltip";
@@ -23,9 +24,11 @@ const SIDES: readonly Trigger[] = [
 export function TipAnatomy() {
   return (
     <span data-pin="tt" className={styles["ds-room-top"]}>
-      <Tooltip open arrow shortcut="Home" content="Back to top">
-        <IconButton icon={ArrowUp} label="Back to top" variant="elevated" size="lg" forceState="hover" />
-      </Tooltip>
+      <Forced as="span" state="hover" label="Back to top">
+        <Tooltip open arrow shortcut="Home" content="Back to top">
+          <IconButton icon={ArrowUp} label="Back to top" variant="elevated" size="lg" forceState="hover" />
+        </Tooltip>
+      </Forced>
     </span>
   );
 }

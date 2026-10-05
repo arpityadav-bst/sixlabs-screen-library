@@ -2,18 +2,17 @@
 // tokens.ts wherever a token holds them. The two spinners the site hand-rolls are cited where they live.
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
 import type { SpinnerSize } from "@/components/design-system/Spinner";
+import { SPINNER_BORDER } from "@/components/design-system/token-shape";
 import { sv, tokenSource, tv, type Pin } from "./display-values";
 
 const SP = "Spinner.tsx";
 const SK = "Skeleton.tsx";
 
-export const SPINNER_SIZES: readonly { size: SpinnerSize; border: string }[] = [
-  { size: 8, border: "1" },
-  { size: 12, border: "1.5" },
-  { size: 16, border: "1.75" },
-  { size: 20, border: "2" },
-  { size: 24, border: "2" },
-];
+/** The sizes and their borders, read from SPINNER_BORDER (the map Spinner draws with), so a label never
+ *  prints a border the ring does not have. */
+export const SPINNER_SIZES: readonly { size: SpinnerSize; border: string }[] = (
+  Object.keys(SPINNER_BORDER).map(Number) as SpinnerSize[]
+).map((size) => ({ size, border: String(SPINNER_BORDER[size]) }));
 
 export const SPINNER_PINS: readonly Pin[] = [
   { selector: "[data-pin=alone] .animate-spin", name: "Ring", token: "--ds-stroke-spinner", value: "16 · border 1.75 · top clear", source: `${SP}:49,51`, expect: ["SPINNER_BORDER[size]", "animate-spin rounded-full border-current border-t-transparent"] },
@@ -25,7 +24,7 @@ export const SPINNER_PINS: readonly Pin[] = [
 export const SPINNER_VALUES: readonly ValueRow[] = [
   sv("Ring", "currentColor border, border-top transparent", `${SP}:51`),
   tv("Border at 16", "stroke-spinner"),
-  sv("Borders by size", "8: 1 · 12: 1.5 · 16: 1.75 · 20: 2 · 24: 2", "token-shape.ts:111"),
+  sv("Borders by size", SPINNER_SIZES.map((s) => `${s.size}: ${s.border}`).join(" · "), "token-shape.ts:111"),
   sv("Turn", "animate-spin, 1s linear", `${SP}:51`),
   sv("Turn, reduced motion", "1.5s linear, still turning", `${SP}:52`),
   sv("Delay", "300ms at opacity 0, then shown", `${SP}:57-58`),

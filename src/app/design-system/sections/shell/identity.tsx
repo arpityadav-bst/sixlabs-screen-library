@@ -18,7 +18,7 @@ const W = "@/components/website/";
 const LOCKUP_SRC = { from: "@/components/design-system/Lockup", name: "Lockup" };
 const LINK_STATES = ["rest", "hover", "focus-visible"] as const;
 // literal classes per size, so the scanner sees each one
-const MARK_CLASS: Record<(typeof D.MARKS_LADDER)[number], string> = { 16: "h-4 w-4", 32: "h-8 w-8", 64: "h-16 w-16" };
+const MARK_CLASS: Record<(typeof D.MARKS_LADDER)[number]["px"], string> = { 16: "h-4 w-4", 36: "h-9 w-9", 44: "h-11 w-11", 64: "h-16 w-16" };
 // hover is rest by design (Lockup's forceState), so its column says none, as the Button and Chip grids do
 const NONE = <span className="ds-label">none</span>;
 const clear = (px: number) => ({ "--ds-clear": `${px}px` }) as CSSProperties;
@@ -166,9 +166,9 @@ export function IdentitySection() {
         drawer={{ values: D.MARKS_VALUES, code: D.MARKS_CODE }}
       >
         <SizeLadder
-          label="Line marks at 16, 32 and 64"
-          sizes={D.MARKS_LADDER.map((px) => ({
-            name: String(px),
+          label="Line marks at 16, 36, 44 and 64"
+          sizes={D.MARKS_LADDER.map(({ px, name }) => ({
+            name,
             spec: px,
             select: "svg",
             node: (

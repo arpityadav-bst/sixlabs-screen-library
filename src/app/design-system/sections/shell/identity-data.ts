@@ -1,22 +1,22 @@
 // Values for the identity section: pins, sizes and drawer rows, each with the file:line it is read from.
-import type { AnatomyPin } from "@/app/design-system/_kit/Anatomy";
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { Pin } from "@/app/design-system/sections/components/display-values";
 import { LOCKUP_SIZES, type LockupSize } from "@/components/design-system/Lockup";
 
 /** The header's own lockup, measured inside the header-rest frame. */
-export const SHIPPED_LOCKUP_PINS: readonly AnatomyPin[] = [
-  { selector: "#site-head > div > a", name: "Lockup link", value: "gap 10 · no hover", source: "Header.tsx:64", side: "left" },
-  { selector: "#site-head > div > a > img", name: "Mark", value: "32 × 32 · the logo file", source: "Header.tsx:66", side: "left" },
-  { selector: "#site-head > div > a > span", name: "Wordmark", token: "--ds-color-ink", value: "Outfit 24/32 · 500 · tracking -0.025em", source: "Header.tsx:73", side: "right" },
-  { selector: "#site-head > div > a > span > span", name: "Accent 6", token: "--ds-color-accent", value: "#1a6dff", source: "Header.tsx:74", side: "right" },
+export const SHIPPED_LOCKUP_PINS: readonly Pin[] = [
+  { selector: "#site-head > div > a", name: "Lockup link", value: "gap 10 · no hover", source: "Header.tsx:64", expect: "gap-2.5", side: "left" },
+  { selector: "#site-head > div > a > img", name: "Mark", value: "32 × 32 · the logo file", source: "Header.tsx:67,71", expect: ["/brand/sixlabs-mark.svg", "w-8 h-8"], side: "left" },
+  { selector: "#site-head > div > a > span", name: "Wordmark", token: "--ds-color-ink", value: "Outfit 24/32 · 500 · tracking -0.025em", source: "Header.tsx:73", expect: "font-display text-2xl font-medium tracking-tight text-[#0a1b33]", side: "right" },
+  { selector: "#site-head > div > a > span > span", name: "Accent 6", token: "--ds-color-accent", value: "#1a6dff", source: "Header.tsx:74", expect: "text-accent", side: "right" },
 ];
 
 /** The system Lockup at lg, measured in place. Each pin's expect is held to its cited line at build. */
-export const LOCKUP_PINS: readonly (AnatomyPin & { expect?: string })[] = [
+export const LOCKUP_PINS: readonly Pin[] = [
   { selector: "[data-lockup]", name: "Lockup", value: "gap 12 at lg · 8 sm · 10 md", source: "Lockup.tsx:18-20,26", expect: "gap-3", side: "left" },
   { selector: "[data-lockup-mark]", name: "Mark", value: "44 at lg", source: "Lockup.tsx:20,26", expect: "h-11 w-11", side: "left" },
   { selector: "[data-lockup-word]", name: "Wordmark", token: "--ds-font-display", value: "Outfit 32/44 · 500", source: "Lockup.tsx:26,59", expect: "text-[32px] leading-[44px]", side: "right" },
-  { selector: "[data-lockup-word] > span", name: "Accent 6", token: "--ds-color-accent", value: "the real Word", source: "CopyLine.tsx:52", side: "right" },
+  { selector: "[data-lockup-word] > span", name: "Accent 6", token: "--ds-color-accent", value: "the real Word", source: "CopyLine.tsx:52", expect: "text-accent", side: "right" },
 ];
 
 export const LOCKUP_LADDER: readonly { name: LockupSize; spec: number }[] = (["sm", "md", "lg"] as const).map((name) => ({
@@ -78,11 +78,19 @@ export const MARKS_VALUES: readonly ValueRow[] = [
   { part: "Line", value: "5.5 viewBox units, so 0.8px at 16 and 3.1px at 64", source: "brand-marks.tsx:27" },
   { part: "Ring", value: "r 14.75, the core grown by half a line", source: "brand-marks.tsx:51" },
   { part: "ChatGptMark", value: "viewBox 0 0 24 24 · filled in currentColor · Simple Icons", source: "brand-marks.tsx:8" },
+  { part: "On the cards", value: "36 on phones and 44 from md, beside the comparison cards' names, the only place they ship", source: "Understands.tsx:69,76" },
 ];
 
-export const MARKS_LADDER = [16, 32, 64] as const;
+/** The ladder's rungs: the two shipped sizes (the comparison cards) between a small and a large one. */
+export const MARKS_LADDER = [
+  { px: 16, name: "16" },
+  { px: 36, name: "comparison card, phone" },
+  { px: 44, name: "comparison card, from md" },
+  { px: 64, name: "64" },
+] as const;
 
 export const MARKS_CODE = `import { ChatGptMark, SixLabsMark } from "@/components/website/brand-marks";
 
-<SixLabsMark className="h-8 w-8" />
-<ChatGptMark className="h-8 w-8" />`;
+// the comparison cards' size: 36 on phones, 44 from md
+<SixLabsMark className="h-9 w-9 md:h-11 md:w-11" />
+<ChatGptMark className="h-9 w-9 md:h-11 md:w-11" />`;

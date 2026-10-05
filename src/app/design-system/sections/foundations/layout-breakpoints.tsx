@@ -5,7 +5,7 @@ import { Anatomy } from "@/app/design-system/_kit/Anatomy";
 import { Canvas } from "@/app/design-system/_kit/Canvas";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
 import { KeyRows } from "@/app/design-system/_kit/KeyRows";
-import { Section } from "@/app/design-system/_kit/Section";
+import { Section, SectionLink } from "@/app/design-system/_kit/Section";
 import { Spec } from "@/app/design-system/_kit/Spec";
 import { SpecTable } from "@/app/design-system/_kit/SpecTable";
 import { ViewportPreview } from "@/app/design-system/_kit/ViewportPreview";
@@ -112,7 +112,7 @@ export function LayoutSection() {
         note={
           <>
             The hand-written offsets disagree: 73 and 70 for the same phone bar, and 89 from md over a bar near 80. New
-            work offsets with --ds-header-h. <a href="#gaps">Known gaps</a> tracks the offsets.
+            work offsets with --ds-header-h. <SectionLink id="gaps" /> tracks the offsets.
           </>
         }
       >

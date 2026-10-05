@@ -6,8 +6,10 @@ import { ArrowUp, Bell, ChevronRight, Menu, Waves, X } from "lucide-react";
 import { useState } from "react";
 import { Canvas } from "@/app/design-system/_kit/Canvas";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
+import { Forced } from "@/app/design-system/_kit/Forced";
 import { Item } from "@/app/design-system/_kit/Label";
 import { Note } from "@/app/design-system/_kit/Note";
+import { SectionLink } from "@/app/design-system/_kit/Section";
 import { Spec } from "@/app/design-system/_kit/Spec";
 import { Badge } from "@/components/design-system/Badge";
 import { IconButton } from "@/components/design-system/IconButton";
@@ -81,7 +83,9 @@ export function IconButtonDecisions() {
       </DoDont>
       <DoDont>
         <Do reason="An icon the visitor may not know widens its name on hover and focus, as the wave button does, so the action names itself.">
-          <IconButton icon={Waves} label="Next wave" variant="outline" showLabelOnHover forceState="hover" />
+          <Forced state="hover" label="Next wave">
+            <IconButton icon={Waves} label="Next wave" variant="outline" showLabelOnHover forceState="hover" />
+          </Forced>
         </Do>
         <Dont reason="The same icon with no word leaves its action to a guess, and only a screen reader hears its name.">
           <IconButton icon={Waves} label="Next wave" variant="outline" />
@@ -89,7 +93,7 @@ export function IconButtonDecisions() {
       </DoDont>
       <Note>
         Glass off the accent water is shown once, with the white ladder it belongs to, in{" "}
-        <a href="#colour-special">Special palettes</a>.
+        <SectionLink id="colour-special" />.
       </Note>
     </>
   );

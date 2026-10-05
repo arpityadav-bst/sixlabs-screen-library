@@ -1,18 +1,47 @@
 // The scroll set-piece's values, written once: the frame's pins, the liquid's and the tiles' settings, and
 // the six tiles read from the real BADGES. The word fill's numbers come from ScrubLine's own exports, a
 // client module, so they live in scrub-exports.ts and print from a client leaf.
-import type { AnatomyPin } from "@/app/design-system/_kit/Anatomy";
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
 import { BADGES } from "@/components/website/floating-badges-data";
+import type { HeldPin } from "./held-pin";
 
 export const TILE = BADGES[0];
 export const TILE_NAME = TILE.cast[0];
 
-export const SETPIECE_PINS: readonly AnatomyPin[] = [
-  { selector: "#model-line > div", name: "Stage", value: "sticky for one screen, carries --line-h", source: "ScrubLine.tsx:111-113", side: "left" },
-  { selector: "#model-line p", name: "Line", token: "--ds-type-scroll-line", value: "Outfit 500, 26 then 44 from md, 1.3, max 980", source: "ScrubLine.tsx:116-122", side: "right" },
-  { selector: ".floating-badges img", name: "Floating tile", value: "one of six, at its own depth and tilt", source: "FloatingBadges.tsx:166-170", side: "left" },
-  { selector: "#model-line p > canvas", name: "Liquid canvas", value: "56px past the line, desktop only", source: "LiquidLine.tsx:138-150", side: "right" },
+export const SETPIECE_PINS: readonly HeldPin[] = [
+  {
+    selector: "#model-line > div",
+    name: "Stage",
+    value: "sticky for one screen, carries --line-h",
+    source: "ScrubLine.tsx:111-113",
+    expect: "sticky top-0 flex h-screen",
+    side: "left",
+  },
+  {
+    selector: "#model-line p",
+    name: "Line",
+    token: "--ds-type-scroll-line",
+    value: "Outfit 500, 26 then 44 from md, 1.3, max 980",
+    source: "ScrubLine.tsx:120",
+    expect: "max-w-[980px] text-center font-display text-[26px] md:text-[44px] font-medium leading-[1.3]",
+    side: "right",
+  },
+  {
+    selector: ".floating-badges img",
+    name: "Floating tile",
+    value: "one of six, at its own depth and tilt",
+    source: "FloatingBadges.tsx:166,173",
+    expect: ['className="badge-bob"', "rotate: b.tilt,"],
+    side: "left",
+  },
+  {
+    selector: "#model-line p > canvas",
+    name: "Liquid canvas",
+    value: "56px past the line, desktop only",
+    source: "LiquidLine.tsx:141,143",
+    expect: ["absolute max-lg:hidden", "left: -M,"],
+    side: "right",
+  },
 ];
 
 export const SETPIECE_VALUES: readonly ValueRow[] = [
@@ -41,11 +70,39 @@ export const TILES_STAGE = 640;
 
 /** Pins on the real FloatingBadges' first tile. The spot is still, moving only with the cursor. The bob, the
  *  tile and the picture ride the endless bob, so each is measured at one moment of it. */
-export const TILE_PINS: readonly AnatomyPin[] = [
-  { selector: ".floating-badges > div", name: "Spot", value: `left ${TILE.x}, top ${TILE.y} from 1600, other spots below it · drifts 22px × ${TILE.depth} with the cursor`, source: "FloatingBadges.tsx:152-165", side: "left" },
-  { selector: ".floating-badges .badge-bob", name: "Bob", value: "5.5s ease-in-out, 0 to -7px · measured at one moment of the loop", source: "app/globals.css:77-83", side: "right" },
-  { selector: ".floating-badges .badge-bob > div > div", name: "Tile", value: `${TILE.size}px from 1600 at ${TILE.tilt} degrees, flips on a 900px perspective · rides the bob`, source: "FloatingBadges.tsx:167-177", side: "right" },
-  { selector: ".floating-badges img", name: "Picture", value: "pre-rendered glass tile, srcset 384w 512w 768w · rides the bob", source: "floating-badges-data.ts:128-133", side: "left" },
+export const TILE_PINS: readonly HeldPin[] = [
+  {
+    selector: ".floating-badges > div",
+    name: "Spot",
+    value: `left ${TILE.x}, top ${TILE.y} from 1600, other spots below it · drifts 22px × ${TILE.depth} with the cursor`,
+    source: "FloatingBadges.tsx:153,156-157",
+    expect: ["left-(--x) top-(--y)", '"--x": b.x,', '"--y": b.y,'],
+    side: "left",
+  },
+  {
+    selector: ".floating-badges .badge-bob",
+    name: "Bob",
+    value: "5.5s ease-in-out, 0 to -7px · measured at one moment of the loop",
+    source: "app/globals.css:79,82",
+    expect: ["translateY(-7px)", "badge-bob 5.5s ease-in-out infinite"],
+    side: "right",
+  },
+  {
+    selector: ".floating-badges .badge-bob > div > div",
+    name: "Tile",
+    value: `${TILE.size}px from 1600 at ${TILE.tilt} degrees, flips on a 900px perspective · rides the bob`,
+    source: "FloatingBadges.tsx:167,169",
+    expect: ["perspective: 900", "w-(--s) max-md:w-[calc(var(--s)*0.5)]"],
+    side: "right",
+  },
+  {
+    selector: ".floating-badges img",
+    name: "Picture",
+    value: "pre-rendered glass tile, srcset 384w 512w 768w · rides the bob",
+    source: "floating-badges-data.ts:129,131",
+    expect: ["/tiles/float/", "[384, 512, 768]"],
+    side: "left",
+  },
 ];
 
 export const TILE_VALUES: readonly ValueRow[] = [

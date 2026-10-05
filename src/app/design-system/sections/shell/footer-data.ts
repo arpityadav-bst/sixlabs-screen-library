@@ -1,25 +1,25 @@
 // Values for the footer section: pins measured inside the footer frame, the compositions by width, the
 // link states and the drawer rows, each with the file:line it is read from.
-import type { AnatomyPin } from "@/app/design-system/_kit/Anatomy";
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
 import type { ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { Pin } from "@/app/design-system/sections/components/display-values";
 
 const BAND = "footer > div:nth-of-type(2)";
 const LABEL = `${BAND} > div:nth-of-type(2) > div > div`;
 const TAIL = "footer > div:last-child > div";
 
-export const FOOTER_PINS: readonly AnatomyPin[] = [
-  { selector: "footer > div:first-child", name: "Top grid", value: "1.7fr / 1fr / auto · gap 40 · pt 60 · px 64", source: "Footer.tsx:30", padding: true, side: "left" },
-  { selector: "footer > div:first-child > div", name: "Brand block", value: "lockup · tagline 14/1.65 at mt 22", source: "Footer.tsx:33", side: "left" },
-  { selector: "footer nav", name: "Explore", value: "gap 13 · h3 13.5/600 · links 13", source: "Footer.tsx:55", side: "right" },
-  { selector: "footer > div:first-child > button", name: "Back to top", value: "13.5 · ArrowUp 14/2 · gap 7", source: "Footer.tsx:75", side: "right" },
-  { selector: `${BAND} > div:first-child`, name: "Colour split", token: "--ds-color-fringe-red", value: "pale red copy 3px left · pale cyan 3px right · each fading by 16%", source: "CopyLine.tsx:72", side: "right" },
-  { selector: `${BAND} > span`, name: "Crest", value: "SixLabsLogo fade · 0.95em", source: "CopyLine.tsx:122", side: "left" },
-  { selector: `${BAND} > div:nth-of-type(3)`, name: "Word", token: "--ds-type-footer-word-size", value: "clamp(84px, 19vw, 300px) · 600 · -0.055em", source: "CopyLine.tsx:128", side: "left" },
-  { selector: LABEL, index: 0, name: "Spec label", token: "--ds-color-surface-85", value: "pill 12 · 28px leader · end dot 7", source: "CopyLine.tsx:105", side: "left" },
-  { selector: LABEL, index: 1, name: "Spec label, strong", token: "--ds-color-primary", value: "navy pill · white text", source: "CopyLine.tsx:104", side: "right" },
-  { selector: TAIL, name: "Tail", token: "--ds-color-footer-tail", value: "py 22 · ink hairline at 8% · 4% darker again", source: "Footer.tsx:86", padding: true, side: "left" },
-  { selector: `${TAIL} > span:last-child`, name: "Legal", value: "gap 18 · underlined, offset 3", source: "Footer.tsx:93", side: "right" },
+export const FOOTER_PINS: readonly Pin[] = [
+  { selector: "footer > div:first-child", name: "Top grid", value: "1.7fr / 1fr / auto · gap 40 · pt 60 · px 64", source: "Footer.tsx:21,30", expect: ["md:px-16", "gap-10 pt-[60px]", "md:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)_auto]"], padding: true, side: "left" },
+  { selector: "footer > div:first-child > div", name: "Brand block", value: "lockup · tagline 14/1.65 at mt 22", source: "Footer.tsx:33,48", expect: ["max-md:col-span-2", "mt-[22px] text-[14px] leading-[1.65]"], side: "left" },
+  { selector: "footer nav", name: "Explore", value: "gap 13 · h3 13.5/600 · links 13", source: "Footer.tsx:55,57", expect: ["gap-[13px]", "text-[13.5px] font-semibold"], side: "right" },
+  { selector: "footer > div:first-child > button", name: "Back to top", value: "13.5 · ArrowUp 14/2 · gap 7", source: "Footer.tsx:75,77", expect: ["gap-[7px]", "text-[13.5px]", "<ArrowUp size={14} strokeWidth={2}"], side: "right" },
+  { selector: `${BAND} > div:first-child`, name: "Colour split", token: "--ds-color-fringe-red", value: "pale red copy 3px left · pale cyan 3px right · each fading by 16%", source: "CopyLine.tsx:72, globals.css:207-208,211-212", expect: ["absolute inset-x-0 top-0", "translateX(-3px)", "#e89fa4 0%", "translateX(3px)", "#9ed5dd 0%"], side: "right" },
+  { selector: `${BAND} > span`, name: "Crest", value: "SixLabsLogo fade · 0.95em", source: "CopyLine.tsx:121-122", expect: ["h-[0.95em] w-[0.95em]", "fade />"], side: "left" },
+  { selector: `${BAND} > div:nth-of-type(3)`, name: "Word", token: "--ds-type-footer-word-size", value: "clamp(84px, 19vw, 300px) · 600 · -0.055em", source: "CopyLine.tsx:67,128", expect: ["text-[clamp(84px,19vw,300px)]", "font-semibold tracking-[-0.055em]"], side: "left" },
+  { selector: LABEL, index: 0, name: "Spec label", token: "--ds-color-surface-85", value: "pill 12 · 28px leader · end dot 7", source: "CopyLine.tsx:102,105,111-112", expect: ["rounded-full border px-3 py-1 text-[12px]", "bg-white/85", "h-7 w-px", "h-[7px] w-[7px]"], side: "left" },
+  { selector: LABEL, index: 1, name: "Spec label, strong", token: "--ds-color-primary", value: "navy pill · white text", source: "CopyLine.tsx:104", expect: "bg-[#0a152d] text-white", side: "right" },
+  { selector: TAIL, name: "Tail", token: "--ds-color-footer-tail", value: "py 22 · ink hairline at 8% · 4% darker again", source: "Footer.tsx:85,89", expect: ["border-[#0a1b33]/[0.08] bg-black/[0.04]", "py-[22px]"], padding: true, side: "left" },
+  { selector: `${TAIL} > span:last-child`, name: "Legal", value: "gap 18 · underlined, offset 3", source: "Footer.tsx:23,93", expect: ["underline-offset-[3px]", "gap-[18px]"], side: "right" },
 ];
 
 export const FOOTER_WIDTHS = [375, 768, 1440] as const;

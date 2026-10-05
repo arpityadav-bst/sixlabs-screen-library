@@ -8,7 +8,7 @@ import { ArrowRight, ArrowUpRight } from "lucide-react";
 import type { MouseEvent, ReactNode } from "react";
 import { FOCUS } from "./focus";
 import { forceAttr, type ForceState } from "./force";
-
+import { ICON_STROKE } from "./token-shape";
 export type TextLinkTone = "inherit" | "ink" | "muted";
 
 const TONE: Record<TextLinkTone, string> = {
@@ -63,7 +63,7 @@ export function TextLink({
         <ArrowRight
           aria-hidden
           size={14}
-          strokeWidth={2}
+          strokeWidth={ICON_STROKE[14]}
           className={
             `${GLYPH} transition-transform duration-(--ds-dur-line) ease-(--ds-ease-out) ` +
             "group-hover:translate-x-0.5 group-data-[force=hover]:translate-x-0.5"
@@ -72,7 +72,7 @@ export function TextLink({
       )}
       {external && (
         <>
-          <ArrowUpRight aria-hidden size={14} strokeWidth={2} className={GLYPH} />
+          <ArrowUpRight aria-hidden size={14} strokeWidth={ICON_STROKE[14]} className={GLYPH} />
           <span className="sr-only"> (opens in a new tab)</span>
         </>
       )}

@@ -1,19 +1,19 @@
 // Values for the header section: pins measured inside the frames, the state strip, the triggers and the
 // drawer rows, each with the file:line it is read from.
-import type { AnatomyPin } from "@/app/design-system/_kit/Anatomy";
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
 import type { PartId } from "@/app/design-system/frame/_parts";
+import type { Pin } from "@/app/design-system/sections/components/display-values";
 
-export const HEADER_PINS: readonly AnatomyPin[] = [
-  { selector: "#site-head", name: "Bar", token: "--ds-color-page-92", value: "px 24 py 20 · 16 all round on phones", source: "Header.tsx:53", padding: true, side: "left" },
-  { selector: "#site-head > div", name: "Inner row", token: "--ds-container", value: "max 1400, centred", source: "Header.tsx:63", side: "left" },
-  { selector: "#site-head > div > a", name: "Lockup", value: "mark 32 · gap 10 · Outfit 24/500", source: "Header.tsx:64", side: "left" },
-  { selector: "#site-head > div > div:nth-of-type(1)", name: "Tabs", token: "--ds-type-nav-size", value: "gap 32 · 15/400 · from md", source: "Header.tsx:78" },
-  { selector: '#site-head button[aria-haspopup="listbox"]', name: "Language trigger", value: "Globe 18 · code 12/500 · from md", source: "Header.tsx:96", side: "right" },
-  { selector: "#site-head button[data-cta]", name: "Sign in", token: "--ds-color-line-strong", value: "px 20 py 8 · 14px · about 39 tall", source: "Header.tsx:102", padding: true, side: "right" },
-  { selector: '#site-head button[aria-label="Open menu"]', name: "Menu button", value: "40 · Menu 22/1.75 · phones only", source: "MobileMenu.tsx:53", side: "right" },
-  { selector: "#site-head > div > div:nth-of-type(2)", name: "Right cluster", value: "gap 16 · 6 on phones", source: "Header.tsx:93", side: "right" },
+export const HEADER_PINS: readonly Pin[] = [
+  { selector: "#site-head", name: "Bar", token: "--ds-color-page-92", value: "px 24 py 20 · 16 all round on phones", source: "Header.tsx:53", expect: "px-6 py-5 max-md:px-4 max-md:py-4", padding: true, side: "left" },
+  { selector: "#site-head > div", name: "Inner row", token: "--ds-container", value: "max 1400, centred", source: "Header.tsx:63", expect: "max-w-[1400px] mx-auto", side: "left" },
+  { selector: "#site-head > div > a", name: "Lockup", value: "mark 32 · gap 10 · Outfit 24/500", source: "Header.tsx:64,71,73", expect: ["gap-2.5", "w-8 h-8", "font-display text-2xl font-medium"], side: "left" },
+  { selector: "#site-head > div > div:nth-of-type(1)", name: "Tabs", token: "--ds-type-nav-size", value: "gap 32 · 15/400 · from md", source: "Header.tsx:78,86", expect: ["md:flex items-center gap-8", "text-[15px] font-normal"] },
+  { selector: '#site-head button[aria-haspopup="listbox"]', name: "Language trigger", value: "Globe 18 · code 12/500 · from md", source: "Header.tsx:95-96, LanguageMenu.tsx:63,65", expect: ["max-md:hidden", "<LanguageMenu />", "w-[18px] h-[18px]", "text-[12px] font-medium"], side: "right" },
+  { selector: "#site-head button[data-cta]", name: "Sign in", token: "--ds-color-line-strong", value: "px 20 py 8 · 14px · about 39 tall", source: "Header.tsx:102", expect: "text-[14px] px-5 py-2", padding: true, side: "right" },
+  { selector: '#site-head button[aria-label="Open menu"]', name: "Menu button", value: "40 · Menu 22/1.75 · phones only", source: "MobileMenu.tsx:53,58", expect: ["h-10 w-10", "md:hidden", "<Menu size={22} strokeWidth={1.75} />"], side: "right" },
+  { selector: "#site-head > div > div:nth-of-type(2)", name: "Right cluster", value: "gap 16 · 6 on phones", source: "Header.tsx:93", expect: "gap-4 max-md:gap-1.5", side: "right" },
 ];
 
 /** The bar's grounds, each a frame at 1280 reached the way the live page reaches it. */

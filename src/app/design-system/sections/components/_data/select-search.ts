@@ -27,7 +27,21 @@ export function matchQuestions(query: string): readonly SelectOption[] {
   return q ? QUESTION_OPTIONS.filter((o) => o.label.toLowerCase().includes(q)).slice(0, 6) : [];
 }
 
-export const SELECT_STATES = ["rest", "hover", "focus", "open", "filled", "disabled", "read-only", "invalid"] as const;
+/** The trigger's looks, with the two focus lays over read-only and invalid (FIELD_TONE) and the panel open
+ *  over an invalid trigger, as the text input's grid shows them (fields.ts). */
+export const SELECT_STATES = [
+  "rest",
+  "hover",
+  "focus",
+  "open",
+  "filled",
+  "disabled",
+  "read-only",
+  "read-only-focus",
+  "invalid",
+  "invalid-focus",
+  "open-invalid",
+] as const;
 export type SelectState = (typeof SELECT_STATES)[number];
 export const SEARCH_STATES = ["empty", "hover", "focus", "filled", "results", "searching", "no-results", "disabled"] as const;
 export type SearchState = (typeof SEARCH_STATES)[number];

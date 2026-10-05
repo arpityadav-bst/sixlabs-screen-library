@@ -3,8 +3,10 @@
 // The live floor, as the hero mounts it: the real TileFloor filling a box of the hero's kind, and the real
 // WaveButton over its bottom-right corner calling the handle's reset(). The floor mounts only inside the
 // kit's HeavySlot (one floor and one WebGL unit), which releases it when it scrolls far away. The box's
-// shape can change, so the camera's reframe for a wide or a tall box is seen live. Keys stop at the
-// canvas, so typing in the guide never reaches the floor's window R listener.
+// shape can change, so the camera's reframe for a wide or a tall box is seen live. The floor resets on R
+// from a window listener (interact.js), so while this specimen is mounted R stops at the document on its
+// way up, after the guide's own handlers have had it, and typing in the guide never resets the floor.
+// The size caption is read out once after a shape is picked, never on every resize.
 //
 // One floor builds at a time. A build cut short (Replay intro, or the slot released while it loads) runs
 // on to its end and only then disposes itself (TileFloor.tsx), and that dispose puts three's own tone
@@ -84,23 +86,45 @@ function Mount({ onHandle }: { onHandle: (h: FloorHandle | null) => void }) {
   );
 }
 
+const sizeText = (s: { w: number; h: number }) => `${s.w} × ${s.h} · aspect ${(s.w / s.h).toFixed(2)}`;
+
 export function FloorLive() {
   const box = useRef<HTMLDivElement>(null);
   const [shape, setShape] = useState<Shape>("hero");
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
   const [handle, setHandle] = useState<FloorHandle | null>(null);
   const [busy, setBusy] = useState(false);
+  const [said, setSaid] = useState(""); // the live region: the size, once, after a shape is picked
+  const asked = useRef(false);
 
   useEffect(() => {
     const el = box.current;
     if (!el) return;
     const ro = new ResizeObserver(([e]) => {
       const r = e.contentRect;
-      setSize({ w: Math.round(r.width), h: Math.round(r.height) });
+      const next = { w: Math.round(r.width), h: Math.round(r.height) };
+      setSize(next);
+      if (asked.current) {
+        asked.current = false;
+        setSaid(sizeText(next));
+      }
     });
     ro.observe(el);
-    return () => ro.disconnect();
+    // the floor's window keydown resets it on R: stopped one step short of the window
+    const stopR = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === "r") e.stopPropagation();
+    };
+    document.addEventListener("keydown", stopR);
+    return () => {
+      ro.disconnect();
+      document.removeEventListener("keydown", stopR);
+    };
   }, []);
+
+  const pick = (v: Shape) => {
+    asked.current = v !== shape;
+    setShape(v);
+  };
 
   // the hero's sendWave: busy from the press until the wave's flip begins (it may wait for the next cast)
   const sendWave = () => {
@@ -109,14 +133,15 @@ export function FloorLive() {
     Promise.resolve(handle.reset()).finally(() => setBusy(false));
   };
 
-  const caption = size ? `${size.w} × ${size.h} · aspect ${(size.w / size.h).toFixed(2)}` : "measuring";
+  const caption = size ? sizeText(size) : "measuring";
 
   return (
     <Anatomy ground="container" layout="stack" pins={FLOOR_PINS} view="specimen" label="Live tile floor" isolateKeys>
       <div className={s["ds-fl-bar"]}>
-        <KitSeg options={SHAPES} value={shape} onChange={setShape} label="Box shape" />
-        <p className="ds-label" aria-live="polite">
-          {caption}
+        <KitSeg options={SHAPES} value={shape} onChange={pick} label="Box shape" />
+        <p className="ds-label">{caption}</p>
+        <p className="ds-sr" aria-live="polite">
+          {said}
         </p>
       </div>
       <div ref={box} className={s["ds-fl-box"]} data-shape={shape} data-floor-box="">

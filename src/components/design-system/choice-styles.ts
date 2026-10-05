@@ -35,9 +35,9 @@ export const MARK_BASE =
   "relative grid place-items-center border-[1.5px] transition-[background-color,border-color,color,scale] " +
   "duration-(--ds-dur-ui) ease-(--ds-ease-out)";
 
-/** Press settles the mark to scale-press-mark (SCALE.pressMark, 0.92). Only live controls carry it. */
+/** Press settles the mark to scale-press-mark (SCALE.pressMark, 0.92), at once under reduced motion. Live controls only. */
 export const MARK_PRESS =
-  "group-active/choice:scale-(--ds-scale-press-mark) group-data-[force=pressed]/choice:scale-(--ds-scale-press-mark)";
+  "group-active/choice:scale-(--ds-scale-press-mark) group-data-[force=pressed]/choice:scale-(--ds-scale-press-mark) motion-reduce:transition-none";
 
 export type MarkTone = "off" | "on" | "invalid" | "readOnlyOff" | "readOnlyOn";
 

@@ -167,7 +167,7 @@ export function Select({
       transition={still ? { duration: 0 } : SPRING.pop}
       className={`pointer-events-none flex shrink-0 ${disabled ? "" : readOnly ? "text-(--ds-color-text-quiet)" : "text-(--ds-color-text-muted)"}`}
     >
-      <ChevronDown size={16} strokeWidth={ICON_STROKE[16]} />
+      <ChevronDown size={s.icon} strokeWidth={ICON_STROKE[s.icon]} />
     </motion.span>
   );
 

@@ -12,8 +12,8 @@ export const CHIP_BASE =
   "text-[13px] font-medium transition-[color,background-color,border-color,scale] duration-(--ds-dur-ui) " +
   "ease-(--ds-ease-out) disabled:cursor-not-allowed disabled:opacity-40 data-[disabled]:opacity-40";
 
-/** The press settles to scale-press-pill (SCALE.pressPill, 0.97), on a live chip only. */
-export const CHIP_PRESS = "active:scale-(--ds-scale-press-pill) data-[force=pressed]:scale-(--ds-scale-press-pill)";
+/** The press settles to scale-press-pill (SCALE.pressPill, 0.97), on a live chip only, at once under reduced motion. */
+export const CHIP_PRESS = "active:scale-(--ds-scale-press-pill) data-[force=pressed]:scale-(--ds-scale-press-pill) motion-reduce:transition-none";
 
 export const CHIP_GROUND: Record<ChipGround, { rest: string; hover: string; remove: string }> = {
   light: {

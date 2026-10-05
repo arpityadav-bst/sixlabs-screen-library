@@ -2,10 +2,11 @@
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
 import type { SegmentedOption } from "@/components/design-system/Segmented";
-import { SEG_GROUND, type SegmentedGround, type SegmentedSize } from "@/components/design-system/segmented-styles";
+import { SEG_GROUND, SEG_SIZE, type SegmentedGround, type SegmentedSize } from "@/components/design-system/segmented-styles";
+import { SPACING } from "@/components/design-system/tokens";
 import { FORCE_PROP } from "./act-sel-rows";
 import { restToken } from "./contrast-pairs";
-import { sv, tv, type Pin } from "./display-values";
+import { heightOf, sizeNames, sv, tv, type Pin } from "./display-values";
 
 /** ModeToggle's two options and the Jobs switch's three titles, as the site writes them. */
 export const TWO: readonly SegmentedOption<string>[] = [
@@ -19,11 +20,17 @@ export const THREE: readonly SegmentedOption<string>[] = [
 ];
 export const TWO_OFF: readonly SegmentedOption<string>[] = [TWO[0], { ...TWO[1], disabled: true }];
 
-export const SEG_SIZES: readonly { name: SegmentedSize; px: number }[] = [
-  { name: "sm", px: 32 },
-  { name: "md", px: 36 },
-  { name: "lg", px: 40 },
-];
+/** The track's inset on each side (space-1), the 8 the control stands taller than its segment. */
+const INSET = parseFloat(SPACING.find((t) => t.name === "space-1")?.value ?? "NaN");
+
+/** Each size's segment (px) and the track it stands in (track), read from SEG_SIZE, so the two cannot
+ *  drift. The track is the height the control lines up by (control-heights.ts). */
+if (Number.isNaN(INSET)) throw new Error("Segmented: no space-1 token for the track's inset");
+export const SEG_SIZES: readonly { name: SegmentedSize; px: number; track: number }[] = sizeNames(SEG_SIZE).map((name) => {
+  const px = heightOf(SEG_SIZE[name]);
+  return { name, px, track: px + 2 * INSET };
+});
+const ladder = (k: "px" | "track") => SEG_SIZES.map((s) => `${s.name} ${s[k]}`).join(" · ");
 
 export const SEG_GROUNDS: readonly { ground: SegmentedGround; canvas: "page" | "container" | "on-blue" }[] = [
   { ground: "light", canvas: "page" },
@@ -74,7 +81,7 @@ export const JOBS_ROWS: readonly KeyRow[] = [
 
 export const MODE_ROWS: readonly KeyRow[] = [
   { key: "hover", value: "The resting label goes from white 80% to white over 200ms.", source: "ModeToggle.tsx:43" },
-  { key: "auto-flip", value: "In the players section it flips every 10s until the visitor picks, then the choice sticks per player.", source: "usePlayerMode.ts:11" },
+  { key: "auto-flip", value: "In the players section it flips every 5s until the visitor picks, then the choice sticks per player.", source: "usePlayerMode.ts:11" },
   { key: "keyboard", value: "Both radios are tab stops and the arrows do nothing, which the system control fixes.", source: "ModeToggle.tsx:34" },
   { key: "focus", value: "The browser outline only.", source: "ModeToggle.tsx:40" },
 ];
@@ -121,7 +128,8 @@ export const SEG_VALUES: readonly ValueRow[] = [
   tv("Hover label", "color-ink"),
   tv("Thumb slide", "spring-thumb"),
   tv("Label colour", "dur-ui"),
-  sv("Segments", "sm 32 · md 36 · lg 40, the track 8 taller", `${SS}:11-15`),
+  sv("Segments", `${ladder("px")}, the track 8 taller`, `${SS}:11-15`),
+  sv("Lines up by", `the track, ${ladder("track")}`, "control-heights.ts:35"),
   sv("Track", "a 1px line and 3px inside it, the 4px inset the segments sit in", `${SS}:19`),
   sv("Labels", "13 / 14 / 15 at 500, 14px each side", `${SS}:11-15, 55`),
   tv("Press", "scale-press-pill", `${SS}:56`),

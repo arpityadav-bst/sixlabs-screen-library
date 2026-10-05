@@ -37,9 +37,14 @@ export const TILE_STATES: readonly TileState[] = [
       { name: "floor", color: FP.floorColor },
       { name: "fog", color: FP.fogColor },
     ],
-    look: [`ghost bands ${FP.ghostDark} dark, ${FP.ghostWidth} wide`, `white rims ${FP.rimLine}, a trace ${FP.rimTopBottom} top and bottom`],
+    look: [
+      `ghost bands ${FP.ghostDark} dark, ${FP.ghostWidth} wide`,
+      `white rims ${FP.rimLine}, a trace ${FP.rimTopBottom} top and bottom`,
+      `walls ${FP.footShade} darker over the lowest ${FP.footBand} of their height`,
+      `rear corner ${FP.frostCorner} darker (radius ${FP.frostCornerR}), baked into the frost`,
+    ],
     timing: `rises on hover, tau ${FP.riseTau} (${secs(FP.riseTau)})`,
-    source: `${T}textures.js:153-170 · ${T}materials.js:72-87`,
+    source: `${T}textures.js:153-170 · ${T}materials.js:72-89`,
   },
   {
     id: "focused",
@@ -55,9 +60,13 @@ export const TILE_STATES: readonly TileState[] = [
       { name: "walls", color: F.actSide },
       { name: "foot line", color: F.actLowRimCol },
     ],
-    look: [`lifts ${FP.lift}, the slab fading in over the glass`, `metal walls ${F.actSideMetal} mirror the floor, contact shadow ${F.nearShadow}`],
+    look: [
+      `lifts ${FP.lift}, the slab fading in over the glass`,
+      `metal walls ${F.actSideMetal} mirror the floor, contact shadow ${F.nearShadow}`,
+      `foot dark held over the lower ${FP.actFootHold}, wall shade ${F.actWallShade}`,
+    ],
     timing: "sinks back the moment the pointer leaves",
-    source: `${T}focus-rig.js:60-77 · ${PARAMS} states.default`,
+    source: `${T}focus-rig.js:60-77 · ${T}materials.js:113-137 · ${PARAMS} states.default`,
   },
   {
     id: "activated",
@@ -73,9 +82,13 @@ export const TILE_STATES: readonly TileState[] = [
       { name: "halo", color: A.haloCol },
       { name: "spill", color: A.nearSpillCol },
     ],
-    look: [`emissive ${A.actEmis}, walls glow ${A.actSideGlowI}, no mirror`, `floor pool ${A.glowS}, halo ${A.haloAmt}, spill ${A.nearSpill}`],
+    look: [
+      `emissive ${A.actEmis}, walls glow ${A.actSideGlowI}, no mirror`,
+      `floor pool ${A.glowS}, halo ${A.haloAmt}, spill ${A.nearSpill}`,
+      `foot dark held over the lower ${FP.actFootHold}, wall shade ${A.actWallShade}`,
+    ],
     timing: `locked for ACT 0.9 (${secs(0.9)}), the bust turns hologram`,
-    source: `${T}sweep.js:10 · ${PARAMS} states.shine`,
+    source: `${T}sweep.js:10 · ${T}materials.js:113-137 · ${PARAMS} states.shine`,
   },
   {
     id: "spent",

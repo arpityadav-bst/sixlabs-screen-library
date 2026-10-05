@@ -1,17 +1,39 @@
 // The Human / AI sweep's values, written once. The frame size and the band and dome depths are read from
 // swap-gl's own exports (SIZE, SWEEP), so the guide prints what the shader runs on.
-import type { AnatomyPin } from "@/app/design-system/_kit/Anatomy";
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
 import type { TimelineLane } from "@/app/design-system/_kit/Timeline";
 import { SIZE, SWEEP } from "@/components/website/swap-gl";
+import { AUTO_S } from "./doodles-data";
+import type { HeldPin } from "./held-pin";
 
 export const SWEEP_S = 1.5;
 
-export const SWEEP_PINS: readonly AnatomyPin[] = [
-  { selector: '[data-ds="sweep-portrait"]', name: "Portrait", value: `${SIZE.w} x ${SIZE.h} frame, height set by its parent`, source: "PortraitSwap.tsx:213", side: "left" },
-  { selector: '[data-ds="sweep-portrait"] canvas', name: "Band canvas", value: `band ${SWEEP.band}, dome ${SWEEP.rise}, pitch 7, chroma 10 (frame px)`, source: "PortraitSwap.tsx:20-24", side: "right" },
-  { selector: '[data-ds="sweep-stage"] [role="radiogroup"]', name: "Human / AI switch", value: "white 15% track, white thumb on spring 500/40", source: "ModeToggle.tsx:26-51", side: "right" },
+export const SWEEP_PINS: readonly HeldPin[] = [
+  {
+    selector: '[data-ds="sweep-portrait"]',
+    name: "Portrait",
+    value: `${SIZE.w} x ${SIZE.h} frame, height set by its parent`,
+    source: "PortraitSwap.tsx:217-219",
+    expect: ["width={810}", 'className={"block " + (className ?? "")}'],
+    side: "left",
+  },
+  {
+    selector: '[data-ds="sweep-portrait"] canvas',
+    name: "Band canvas",
+    value: `band ${SWEEP.band}, dome ${SWEEP.rise}, pitch 7, chroma 10 (frame px)`,
+    source: "PortraitSwap.tsx:20-24",
+    expect: ["const BAND = 0.6;", "const CHROMA = 10;"],
+    side: "right",
+  },
+  {
+    selector: '[data-ds="sweep-stage"] [role="radiogroup"]',
+    name: "Human / AI switch",
+    value: "white 15% track, white thumb on spring 500/40",
+    source: "ModeToggle.tsx:29,49-50",
+    expect: ["bg-white/15 p-1", "rounded-full bg-white shadow", "stiffness: 500, damping: 40"],
+    side: "right",
+  },
 ];
 
 export const SWEEP_VALUES: readonly ValueRow[] = [
@@ -53,8 +75,8 @@ export const FORMAT_ROWS: readonly KeyRow[] = [
   { key: "still", value: "the same 2D path over the two stills, no video", source: "PortraitSwap.tsx:213-258" },
   { key: "?clips", value: "webm, stacked or still forces one format for a visit", source: "useClipFormat.ts:42" },
   { key: "at once", value: "the first showing, an unchanged mode, reduced motion or a copy with no frame yet swap with no band", source: "PortraitSwap.tsx:84" },
-  { key: "auto", value: "flips every 10s while in view, until the visitor uses the switch", source: "usePlayerMode.ts:11" },
-  { key: "cost", value: "stacked holds one context and two hidden videos, two during a player change (popLayout)", source: "Players.tsx:142" },
+  { key: "auto", value: `flips every ${AUTO_S}s while in view, until the visitor uses the switch`, source: "usePlayerMode.ts:11" },
+  { key: "cost", value: "stacked holds one context and two hidden videos, two during a player change (popLayout)", source: "Players.tsx:145" },
   { key: "teardown", value: "swapGL has no dispose, so the guide loses its context when the panel scrolls away", source: "swap-gl.ts:76" },
 ];
 

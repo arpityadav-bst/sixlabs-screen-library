@@ -11,7 +11,9 @@ const CS = "choice-styles.ts";
 
 export const SIZES = ["sm", "md", "lg"] as const;
 
-/** Each control's states, with the checked or on twin of every state the value changes the look of. */
+/** Each control's states, with the checked or on twin of every state the value changes the look of, and
+ *  invalid-checked, which keeps the checked navy (markTone, choice-styles.ts:86-88): a ticked box is never
+ *  the wrong one, so only the group's message carries the error. */
 export const CHECK_STATES = [
   "unchecked",
   "hover",
@@ -23,6 +25,7 @@ export const CHECK_STATES = [
   "disabled",
   "disabled-checked",
   "invalid",
+  "invalid-checked",
   "read-only",
   "read-only-checked",
 ] as const;

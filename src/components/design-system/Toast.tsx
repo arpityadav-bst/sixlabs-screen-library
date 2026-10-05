@@ -28,7 +28,7 @@ const SURFACE =
 const ACTION =
   "-my-0.5 shrink-0 rounded-(--ds-radius-mark-sm) px-0.5 text-[13px] font-medium leading-5 text-(--ds-color-accent-on-dark) " +
   "transition-[color,scale] duration-(--ds-dur-ui) ease-(--ds-ease-out) hover:text-white data-[force=hover]:text-white " +
-  "data-[force=pressed]:text-white active:scale-(--ds-scale-press-pill) data-[force=pressed]:scale-(--ds-scale-press-pill) " +
+  "data-[force=pressed]:text-white active:scale-(--ds-scale-press-pill) data-[force=pressed]:scale-(--ds-scale-press-pill) motion-reduce:transition-none " +
   FOCUS_DARK;
 
 const CLOSE =
@@ -36,7 +36,7 @@ const CLOSE =
   "transition-[color,background-color,scale] duration-(--ds-dur-ui) ease-(--ds-ease-out) " +
   "hover:bg-(--ds-color-on-blue-15) hover:text-white data-[force=hover]:bg-(--ds-color-on-blue-15) " +
   "data-[force=hover]:text-white data-[force=pressed]:bg-(--ds-color-on-blue-15) data-[force=pressed]:text-white " +
-  "active:scale-(--ds-scale-press-round) data-[force=pressed]:scale-(--ds-scale-press-round) " +
+  "active:scale-(--ds-scale-press-round) data-[force=pressed]:scale-(--ds-scale-press-round) motion-reduce:transition-none " +
   FOCUS_DARK;
 
 export type ToastProps = {

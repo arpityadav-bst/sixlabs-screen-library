@@ -2,7 +2,7 @@
 
 // The players the sweep and the doodles specimens can show (the ones with a human and an AI clip), and the
 // portrait as the homepage plays it in this browser: PortraitSwap on the format useClipFormat picks
-// (Players.tsx:154-163), the see-through WebM in Chrome, the stacked MP4s on the GPU in Safari or where the
+// (Players.tsx:157-165), the see-through WebM in Chrome, the stacked MP4s on the GPU in Safari or where the
 // browser decodes them itself, the stills where WebGL is missing. It mounts inside a HeavySlot, which claims a
 // WebGL unit only for the stacked format and is keyed on the format, so a late answer from the check claims
 // again.

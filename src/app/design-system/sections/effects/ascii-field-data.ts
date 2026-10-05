@@ -1,8 +1,8 @@
 // The glyph field's values, written once: the specs each specimen mounts, the drawer rows and the rules
 // that cannot be shown. Sources are file:line under src/components/website unless named otherwise.
-import type { AnatomyPin } from "@/app/design-system/_kit/Anatomy";
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { HeldPin } from "./held-pin";
 
 export type FieldMode = "page" | "terminal" | "resting" | "pool" | "page-on-terminal";
 
@@ -20,9 +20,25 @@ export const FIELD_SPECS: Record<FieldMode, FieldSpec> = {
 /** the terminal's own tints, set on its host as JobTerminal sets them */
 export const TERMINAL_TINT = { "--ascii-a": "148, 163, 184", "--ascii-b": "110, 168, 255", "--ascii": "0.5" };
 
-export const FIELD_PINS: readonly AnatomyPin[] = [
-  { selector: ".ascii-host", name: "Host", token: "--ascii-a, --ascii-b", value: "tints read off the host", source: "globals.css:63-66", side: "left" },
-  { selector: ".ascii-bg", name: "Glyph canvas", token: "--ascii", value: "opacity 0.4, pixel ratio up to 2", source: "globals.css:67-74", side: "right" },
+export const FIELD_PINS: readonly HeldPin[] = [
+  {
+    selector: ".ascii-host",
+    name: "Host",
+    token: "--ascii-a, --ascii-b",
+    value: "tints read off the host",
+    source: "app/globals.css:63-65",
+    expect: [".ascii-host {", "--ascii-b: 26, 109, 255;"],
+    side: "left",
+  },
+  {
+    selector: ".ascii-bg",
+    name: "Glyph canvas",
+    token: "--ascii",
+    value: "opacity 0.4, pixel ratio up to 2",
+    source: "app/globals.css:67,73",
+    expect: [".ascii-bg {", "opacity: var(--ascii, 0.4);"],
+    side: "right",
+  },
 ];
 
 export const PAGE_VALUES: readonly ValueRow[] = [

@@ -14,10 +14,10 @@ import { SketchPair, type SketchTone } from "./comparison-sketch";
 const SRC = { from: "@/components/website/Understands", name: "Understands" };
 const SKETCH = "sketch at the shipped proportions";
 
-function Sketch({ tones, subgrid }: { tones: readonly [SketchTone, SketchTone]; subgrid?: boolean }) {
+function Sketch({ tones, subgrid, flat }: { tones: readonly [SketchTone, SketchTone]; subgrid?: boolean; flat?: boolean }) {
   return (
     <Item label={SKETCH} align="start">
-      <SketchPair tones={tones} subgrid={subgrid} />
+      <SketchPair tones={tones} subgrid={subgrid} flat={flat} />
     </Item>
   );
 }
@@ -55,6 +55,14 @@ export function ComparisonSection() {
           <ViewportPreview part="section-understands" title="Comparison section" height={640} widths={[375, 768, 1280, 1440]} width={1280} fitHeight />
         </Canvas>
       </Spec>
+      <DoDont>
+        <Do layout="stack" reason="Make each name its card's heading and the two lines its body, so the eye takes the rival first, then the claim.">
+          <Sketch tones={["container", "navy"]} />
+        </Do>
+        <Dont layout="stack" reason="Lines set at the names' size compete with them, so nothing leads and every line reads as a heading.">
+          <Sketch tones={["container", "navy"]} flat />
+        </Dont>
+      </DoDont>
       <DoDont>
         <Do layout="stack" reason="Set the two sides on two grounds, the container grey and the navy, so the eye takes a side at once.">
           <Sketch tones={["container", "navy"]} />

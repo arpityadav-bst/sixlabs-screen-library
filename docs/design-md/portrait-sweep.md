@@ -8,7 +8,7 @@
 
 **Timing and easing.** 1.5s on an in-out cubic (4k^3 under half, then its mirror), the dome's top travelling from the whole band below the portrait to the whole band above it. Both copies follow the cursor while the band runs, and only the copy on screen does once it settles, so only its frames are decoded. The doodles' AI copy begins 0.6s after the switch, inside the sweep, so the drawing and the body change together.
 
-**When it does not sweep.** The first showing, an unchanged mode, reduced motion and a copy with no frame yet all swap at once. React's second effect run in development falls under the first rule. While in view and untouched the portrait flips by itself every 10s (`usePlayerMode`), until the visitor uses the switch.
+**When it does not sweep.** The first showing, an unchanged mode, reduced motion and a copy with no frame yet all swap at once. React's second effect run in development falls under the first rule. While in view and untouched the portrait flips by itself every 5s (`AUTO_S` in `usePlayerMode`), until the visitor uses the switch.
 
 **The switch.** ModeToggle is a radiogroup pill on the water: a white 15% track with a 25% inset ring, a white thumb with a soft ink shadow, the chosen label in ink and the other in white at 80%, white on hover. The thumb slides on a motion layoutId with spring 500 / 40. Each mounted switch needs its own `thumbId`, or the desktop and phone placements trade thumbs. It sets no focus style of its own and shows the browser's ring.
 

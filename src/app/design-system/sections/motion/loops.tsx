@@ -7,7 +7,7 @@ import { ArrowDown } from "lucide-react";
 import { Canvas } from "@/app/design-system/_kit/Canvas";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
 import { Item } from "@/app/design-system/_kit/Label";
-import { Section } from "@/app/design-system/_kit/Section";
+import { Section, SectionLink } from "@/app/design-system/_kit/Section";
 import { Spec } from "@/app/design-system/_kit/Spec";
 import { SpecTable } from "@/app/design-system/_kit/SpecTable";
 import { ViewportPreview } from "@/app/design-system/_kit/ViewportPreview";
@@ -90,7 +90,7 @@ export function MotionLoopsSection() {
         role="Each loop states its period, travel and reduced-motion answer, so a new loop is checked against the limits before it ships."
         note={
           <>
-            On the site animate-ping and animate-pulse keep running under reduced motion, which <a href="#gaps">Known gaps</a> tracks.
+            On the site animate-ping and animate-pulse keep running under reduced motion, which <SectionLink id="gaps" /> tracks.
             Ping&apos;s 1s period also sits under the 1.5s floor. StatusDot stops both under reduced motion.
           </>
         }

@@ -1,16 +1,16 @@
 // Values for the back to top section: pins measured inside the frames, the state cells, the visibility
 // rules and the drawer rows, each with the file:line it is read from.
-import type { AnatomyPin } from "@/app/design-system/_kit/Anatomy";
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
 import type { ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { Pin } from "@/app/design-system/sections/components/display-values";
 import type { Crop } from "@/app/design-system/_kit/ViewportPreview";
 import type { PartId } from "@/app/design-system/frame/_parts";
 
 const BTN = 'button[aria-label="Back to top"]';
 
-export const BACK_PINS: readonly AnatomyPin[] = [
-  { selector: BTN, name: "Button", token: "--ds-shadow-float", value: "44 round · white · slate-200 hairline · 24 from the corner (40 and 16 on phones)", source: "BackToTop.tsx:62", side: "left" },
-  { selector: `${BTN} svg`, name: "Arrow", token: "--ds-color-ink", value: "ArrowUp 18 · 1.75", source: "BackToTop.tsx:66", side: "left" },
+export const BACK_PINS: readonly Pin[] = [
+  { selector: BTN, name: "Button", token: "--ds-shadow-float", value: "44 round · white · slate-200 hairline · 24 from the corner (40 and 16 on phones)", source: "BackToTop.tsx:62", expect: ["bottom-6 right-6", "h-11 w-11", "border-slate-200/80 bg-white", "max-md:bottom-4 max-md:right-4 max-md:h-10 max-md:w-10"], side: "left" },
+  { selector: `${BTN} svg`, name: "Arrow", token: "--ds-color-ink", value: "ArrowUp 18 · 1.75", source: "BackToTop.tsx:66", expect: ["h-[18px] w-[18px]", "strokeWidth={1.75}"], side: "left" },
 ];
 
 /** the bottom-right corner of each frame, where the button lives */
@@ -59,9 +59,9 @@ export const BACK_CODE = `import { BackToTop } from "@/components/website/BackTo
 // once per page, after the footer. It needs #model-line and a <footer> on the page
 <BackToTop />`;
 
-export const CUE_PINS: readonly AnatomyPin[] = [
-  { selector: 'div[aria-hidden="true"] > span', name: "Label", token: "--ds-color-text-quiet", value: "11 · 500 · caps · 0.18em", source: "ScrollCue.tsx:25", side: "left" },
-  { selector: 'div[aria-hidden="true"] > svg', name: "Arrow", value: "ArrowDown 16 · 1.75 · bobs 4px over 1.8s", source: "ScrollCue.tsx:26", side: "right" },
+export const CUE_PINS: readonly Pin[] = [
+  { selector: 'div[aria-hidden="true"] > span', name: "Label", token: "--ds-color-text-quiet", value: "11 · 500 · caps · 0.18em", source: "ScrollCue.tsx:25", expect: "text-[11px] font-medium uppercase tracking-[0.18em]", side: "left" },
+  { selector: 'div[aria-hidden="true"] > svg', name: "Arrow", value: "ArrowDown 16 · 1.75 · bobs 4px over 1.8s", source: "ScrollCue.tsx:26", expect: ["scroll-bob h-4 w-4", "strokeWidth={1.75}"], side: "right" },
 ];
 
 export const CUE_VALUES: readonly ValueRow[] = [

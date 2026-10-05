@@ -1,29 +1,49 @@
 // The doodles' values, written once. Stroke timings come from the real drawings (DOODLES), so the
-// timeline is the explorer's own. The four pacing constants are not exported by PlayerDoodles, so they are
-// written here with their lines.
-import type { AnatomyPin } from "@/app/design-system/_kit/Anatomy";
+// timeline is the explorer's own. The four pacing constants are not exported by PlayerDoodles, nor is the
+// auto switch's AUTO_S by usePlayerMode, so they are written here with their lines, and PACING holds each
+// copy to its file, so the day the site changes one Coverage turns red.
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
 import type { TimelineLane } from "@/app/design-system/_kit/Timeline";
+import { site, type Assertion } from "@/app/design-system/sections/foundations/foundation-assert";
 import { DOT_GAP, SIZE } from "@/components/website/doodle-geometry";
 import { DOODLES } from "@/components/website/player-doodles";
+import type { HeldPin } from "./held-pin";
 
-export const DELAY_S = 5; // PlayerDoodles.tsx:19
+export const DELAY_S = 1; // PlayerDoodles.tsx:19
 const AI_LEAD_S = 0.6; // PlayerDoodles.tsx:20
 const AI_PACE = 0.5; // PlayerDoodles.tsx:21
 const HAND_PACE = 0.6; // PlayerDoodles.tsx:24
+/** the auto Human / AI switch, every AUTO_S seconds while the section is in view (usePlayerMode.ts:11) */
+export const AUTO_S = 5;
+
+export const PACING: readonly Assertion[] = [
+  site(
+    "PlayerDoodles.tsx",
+    `const DELAY_S = ${DELAY_S};`,
+    `const AI_LEAD_S = ${AI_LEAD_S};`,
+    `const AI_PACE = ${AI_PACE};`,
+    `const HAND_PACE = ${HAND_PACE};`,
+  ),
+  site("usePlayerMode.ts", `const AUTO_S = ${AUTO_S};`),
+];
 const round = (n: number) => Math.round(n * 100) / 100;
 
 const strokes = DOODLES.explorer ?? [];
 const end = strokes.reduce((m, s) => Math.max(m, s.at + s.dur), 0);
 const first = strokes[0];
+const handEnd = round(DELAY_S + end * HAND_PACE);
+/** when the explorer's hand ends, and when its AI copy ends after a switch, for Choreography's players clock */
+export const HAND_END = handEnd;
+export const COPY_END = round(AI_LEAD_S + end * AI_PACE);
 
 export const DOODLE_LANES: readonly TimelineLane[] = [
   {
     label: "Hand, from start",
     items: [
       { label: "wait (DELAY_S)", at: 0, to: DELAY_S },
-      { label: `${strokes.length} strokes at 0.6x`, at: DELAY_S, to: round(DELAY_S + end * HAND_PACE) },
+      { label: `${strokes.length} strokes at 0.6x`, at: DELAY_S, to: handEnd },
+      { label: "first auto flip (AUTO_S)", at: AUTO_S },
     ],
   },
   {
@@ -44,11 +64,11 @@ export const DOODLE_LANES: readonly TimelineLane[] = [
   { label: "Wipe, start false", items: [{ label: "all to 0", at: 0, to: 0.2 }] },
 ];
 
-// The order decision, on the explorer: a visitor who switches to AI 2s after the drawing starts, before
-// the hand has drawn a line. Each stroke's copy begins at its own place in the copy's pace, or when the
-// hand finishes that stroke, whichever is later (PlayerDoodles.tsx:94-97).
-const SWITCH_S = 2;
-const handEnd = round(DELAY_S + end * HAND_PACE);
+// The order decision, on the explorer: a visitor who switches to AI half way through DELAY_S, before the
+// hand has drawn a line, so the copy's own clock runs ahead of every stroke. Each stroke's copy begins at
+// its own place in the copy's pace, or when the hand finishes that stroke, whichever is later
+// (PlayerDoodles.tsx:94-97).
+const SWITCH_S = DELAY_S / 2;
 const begins = strokes.map((s) => Math.max(SWITCH_S + AI_LEAD_S + s.at * AI_PACE, DELAY_S + (s.at + s.dur) * HAND_PACE));
 const copyEnd = strokes.reduce((m, s, i) => Math.max(m, begins[i] + s.dur * AI_PACE), 0);
 const HAND_LANE: TimelineLane = {
@@ -82,11 +102,42 @@ export const ORDER_DONT: readonly TimelineLane[] = [
   },
 ];
 
-export const DOODLE_PINS: readonly AnatomyPin[] = [
-  { selector: "svg.player-doodles", name: "Drawing layer", token: "--ds-z-backdrop", value: "viewBox 810 × 1080, -z-10 inside an isolated box, overflow visible", source: "PlayerDoodles.tsx:136-144", side: "left" },
-  { selector: "svg.player-doodles > g:first-of-type", name: "Hand lines", token: "--ds-color-doodle", value: "3.5px at 0.85, wavered 6px", source: "DoodleStroke.tsx:99", side: "right" },
-  { selector: "svg.player-doodles > g:last-of-type", name: "AI copy", token: "--ds-color-holo-glow", value: "3.5px clean line over five glow lines", source: "DoodleStroke.tsx:17-25", side: "right" },
-  { selector: '[data-ds="doodle-portrait"]', name: "Portrait", value: "the still or the clip the drawings sit round", source: "Players.tsx:154", side: "left" },
+export const DOODLE_PINS: readonly HeldPin[] = [
+  {
+    selector: "svg.player-doodles",
+    name: "Drawing layer",
+    token: "--ds-z-backdrop",
+    value: "viewBox 810 × 1080, -z-10 inside an isolated box, overflow visible",
+    source: "PlayerDoodles.tsx:138-139",
+    expect: ['viewBox="0 0 810 1080"', "absolute inset-0 -z-10 h-full w-full overflow-visible"],
+    side: "left",
+  },
+  {
+    selector: "svg.player-doodles > g:first-of-type",
+    name: "Hand lines",
+    token: "--ds-color-doodle",
+    value: "3.5px at 0.85, wavered 6px",
+    source: "DoodleStroke.tsx:99",
+    expect: "strokeWidth={3.5} strokeOpacity={0.85}",
+    side: "right",
+  },
+  {
+    selector: "svg.player-doodles > g:last-of-type",
+    name: "AI copy",
+    token: "--ds-color-holo-glow",
+    value: "3.5px clean line over five glow lines",
+    source: "DoodleStroke.tsx:18-24",
+    expect: ['const AI_GLOW = "#7fb2ff";', "[5, 0.1],"],
+    side: "right",
+  },
+  {
+    selector: '[data-ds="doodle-portrait"]',
+    name: "Portrait",
+    value: "the still or the clip the drawings sit round",
+    source: "Players.tsx:157,164",
+    expect: ["<PortraitSwap", 'className="h-[var(--ph)] w-auto max-w-none select-none"'],
+    side: "left",
+  },
 ];
 
 export const DOODLE_VALUES: readonly ValueRow[] = [
@@ -118,7 +169,12 @@ export const DOODLE_RULES: readonly KeyRow[] = [
   { key: "no filters", value: "the waver is in the points and the glow is stacked strokes, after an SVG filter held Safari at 3 to 7 fps", source: "DoodleStroke.tsx:7-10" },
   { key: "reduced motion", value: "every stroke drawn at once", source: "PlayerDoodles.tsx:78-83" },
   { key: "?off=doodles", value: "the layer is display none", source: "app/globals.css:270" },
-  { key: "start", value: "Players passes revealed, which stays true once the section has shown", source: "Players.tsx:79-80,151" },
+  { key: "start", value: "Players passes revealed, which stays true once the section has shown", source: "Players.tsx:82-83,154" },
   { key: "stale comment", value: "the header says the doodles are wiped when the section leaves view, and nothing does that", source: "PlayerDoodles.tsx:11" },
+  {
+    key: "stale pace comment",
+    value: `it says the hand has finished before the portrait first turns AI, but the explorer ends at ${handEnd}s, after the ${AUTO_S}s flip`,
+    source: "PlayerDoodles.tsx:22-23",
+  },
   { key: "two SIZEs", value: "doodle-geometry's SIZE is a scale (0.7), swap-gl's is the frame ({ w: 810, h: 1080 })", source: "doodle-geometry.ts:10, swap-gl.ts:68" },
 ];

@@ -5,7 +5,7 @@
 import { Anatomy } from "@/app/design-system/_kit/Anatomy";
 import { Canvas } from "@/app/design-system/_kit/Canvas";
 import { KeyRows } from "@/app/design-system/_kit/KeyRows";
-import { Section, Sub } from "@/app/design-system/_kit/Section";
+import { Section, SectionLink, Sub } from "@/app/design-system/_kit/Section";
 import { Spec } from "@/app/design-system/_kit/Spec";
 import { Card } from "@/components/design-system/Card";
 import { CardBody, CardMeta, CardTitle } from "@/components/design-system/CardParts";
@@ -48,7 +48,7 @@ export function OverviewSection() {
       <header className={s["ds-ov-cover"]}>
         {updated && (
           <p className={s["ds-ov-eyebrow"]}>
-            <a href="#changelog">Updated {updated}</a>
+            <SectionLink id="changelog">Updated {updated}</SectionLink>
           </p>
         )}
         <h1 className={s["ds-ov-title"]}>

@@ -113,6 +113,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ds-card { transition-duration: 0ms; }
-  .ds-card[data-lift]:hover,
-  .ds-card[data-lift][data-force="hover"] { translate: none; }
+  .ds-card[data-lift]:not([data-disabled]):hover,
+  .ds-card[data-lift]:is([data-force="hover"], [data-force="pressed"]) { translate: none; }
 }

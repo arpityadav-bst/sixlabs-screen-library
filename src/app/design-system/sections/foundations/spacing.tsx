@@ -1,6 +1,7 @@
 // Spacing and rhythm: the 4px scale with the site's own use of each step counted from its source, the
-// arbitrary values that leave the grid, the measured rhythm of the container hero's copy, and the
-// padding each part takes, drawn on the Try now pill and a live FAQ row with every part in the drawer.
+// arbitrary values that leave the grid, the measured rhythm of the container hero's copy, the padding
+// each part takes, drawn on the Try now pill and a live FAQ row with every part in the drawer, and the
+// control heights, each with the real parts that reach it.
 import { Anatomy } from "@/app/design-system/_kit/Anatomy";
 import { Canvas } from "@/app/design-system/_kit/Canvas";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
@@ -16,9 +17,11 @@ import { SPACING } from "@/components/design-system/tokens";
 import { PrimaryCta } from "@/components/website/PrimaryCta";
 import { AssertChip, BarList } from "./foundation-parts";
 import { check, offGridSpacing, spacingCounts } from "./foundation-scan";
+import { ControlLadders } from "./control-ladders";
 import { RhythmRuler } from "./rhythm-ruler";
 import {
-  HERO_COPY, OTHER_GAPS, PADDINGS, PAD_CTA, PAD_FAQ, PROOF, RHYTHM_GAPS, SPACE_CODE, SPACE_VALUES, stepOf, type Gap,
+  HEIGHT_ROWS, HEIGHTS_CODE, HERO_COPY, OTHER_GAPS, PADDINGS, PAD_CTA, PAD_FAQ, PROOF, RHYTHM_GAPS, SPACE_CODE, SPACE_VALUES,
+  stepOf, type Gap,
 } from "./spacing-data";
 import s from "./spacing.module.css";
 import { UseTable } from "./token-use";
@@ -129,6 +132,17 @@ export function SpacingSection() {
         <Anatomy frame layout="stack" pins={[PAD_FAQ]} label="FAQ row padding, live in a frame">
           <ViewportPreview part="section-faq" title="FAQ row padding" height={240} widths={[375, 1280]} width={1280} scrollTo="#faq ul" />
         </Anatomy>
+      </Spec>
+
+      <Spec
+        title="Control heights"
+        source={{ from: "@/components/design-system/control-heights", name: "CONTROL_HEIGHTS", file: "control-heights.ts" }}
+        role="Controls in one row line up by height, never by size name, because each family names its own ladder: a md field stands 44 and a md button 40."
+        caption="read from each family's own size map, every part measured where it renders"
+        drawer={{ code: HEIGHTS_CODE }}
+      >
+        <KeyRows label="Heights and the parts that reach them" rows={HEIGHT_ROWS} />
+        <ControlLadders />
       </Spec>
 
       <DoDont>

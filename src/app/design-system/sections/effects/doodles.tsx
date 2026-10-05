@@ -39,7 +39,7 @@ export function DoodlesSection() {
           title="Timing"
           level={4}
           source={DOODLES}
-          role="The hand finishes before the portrait first turns AI, so the copy always has a whole drawing to follow."
+          role="The copy starts 0.6s into the sweep at half the written timing and never retraces a stroke the hand has not finished, even when the hand is still drawing at the first flip."
         >
           <Timeline label="Doodle timeline, the explorer" axisLabel="from each trigger" lanes={DOODLE_LANES} />
           <KeyRows label="Doodle rules" rows={DOODLE_RULES} />
@@ -48,7 +48,7 @@ export function DoodlesSection() {
 
       <Sub title="The order">
         <DoDont>
-          <Do reason="The hand draws first and the AI retraces only what it has finished, so a switch before the drawing waits for it.">
+          <Do reason="The hand draws first and the AI retraces only what it has finished, so a switch while the hand is still drawing waits for each stroke.">
             <Timeline label="An early switch, the copy waiting for the hand" axisLabel="from start" lanes={ORDER_DO} minWidth={360} />
           </Do>
           <Dont reason="A copy on its own clock would retrace lines the hand has not drawn, and the AI would seem to lead the person.">

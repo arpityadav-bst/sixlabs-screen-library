@@ -60,6 +60,19 @@ export function sv(part: string, value: string, source?: string, token?: string,
   return file ? { ...row, assert: { file, needles } } : row;
 }
 
+/** The height a class string sets, h-N on Tailwind's 4px scale or h-[Npx], so a size ladder reads its rungs
+ *  from the part's own size map instead of a copy. Throws on a string with neither. */
+export function heightOf(classes: string): number {
+  const step = /(?:^|\s)h-(\d+(?:\.\d+)?)(?=\s|$)/.exec(classes);
+  if (step) return Number(step[1]) * 4;
+  const px = /(?:^|\s)h-\[(\d+(?:\.\d+)?)px\](?=\s|$)/.exec(classes);
+  if (px) return Number(px[1]);
+  throw new Error(`Components: no height in "${classes}"`);
+}
+
+/** A part's size names in the order its size map writes them. */
+export const sizeNames = <K extends string>(map: Readonly<Record<K, unknown>>) => Object.keys(map) as K[];
+
 /** A props row. */
 export function pr(name: string, type: string, def?: string, note?: string): PropRow {
   return { name, type, ...(def ? { default: def } : {}), ...(note ? { note } : {}) };

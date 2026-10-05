@@ -2,7 +2,7 @@
 
 // The system button. Primary reads as the shipped Try now's family: a navy #0a152d pill with an Inter 500
 // label that grows a little on hover and settles on the press spring, and at xl the dot band sweeps it.
-// Under reduced motion the grow and the settle are dropped and the colour change stays.
+// Under reduced motion the grow is dropped, the press lands at once and the colour change stays.
 // Try now itself stays the hero's call to action. This one works as a real control: it takes onClick,
 // renders an anchor for href (a Next Link for internal paths) and carries every state as a prop, so the
 // StateGrid can force each one. Icon-only actions are IconButton.
@@ -107,7 +107,7 @@ export function Button({
     "aria-label": ariaLabel,
     animate: { scale },
     whileHover: live && !force && !still && grow !== 1 ? { scale: grow } : undefined,
-    whileTap: live && !force && !still && press !== 1 ? { scale: press } : undefined,
+    whileTap: live && !force && press !== 1 ? { scale: press } : undefined,
     transition: still ? { duration: 0 } : SPRING.press,
     onHoverStart: swept ? sweep.start : undefined,
     onHoverEnd: swept ? sweep.end : undefined,

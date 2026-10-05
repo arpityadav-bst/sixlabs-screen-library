@@ -16,13 +16,13 @@ export const LOOP_ROWS: readonly LoopRow[] = [
   { loop: "term-hint", where: "Jobs terminal cursor, mouse only", period: "2.4s", travel: "scale 0.95 to 1.05, ring 0.4 to 1.9", curve: "ease-in-out, ring ease-out", reduced: "stops, ring hidden", source: `${G}:169` },
   { loop: "tw-linger", where: "Typed word's last caret", period: "1s, once", travel: "none, it blinks", curve: "steps", reduced: "caret hidden", source: `${G}:115` },
   { loop: "animate-ping", where: "Hero live dot", period: "1s", travel: "scale to 2, fading", curve: "cubic-bezier(0, 0, 0.2, 1)", reduced: "keeps running", source: `${W}Hero.tsx:238` },
-  { loop: "animate-pulse", where: "Player card dot, terminal cursor", period: "2s", travel: "opacity 1 to 0.5", curve: "cubic-bezier(0.4, 0, 0.6, 1)", reduced: "keeps running", source: `${W}Players.tsx:261` },
+  { loop: "animate-pulse", where: "Player card dot, terminal cursor", period: "2s", travel: "opacity 1 to 0.5", curve: "cubic-bezier(0.4, 0, 0.6, 1)", reduced: "keeps running", source: `${W}Players.tsx:264` },
   { loop: "animate-spin", where: "Wave button busy, terminal steps", period: "1s a turn", travel: "turns in place", curve: "linear", reduced: "keeps running", source: `${W}HeroBits.tsx:114` },
   { loop: "ASCII shimmer", where: "Glyph field, brightest cells", period: "about 5.7s", travel: "brightness only", curve: "sine", reduced: "still", source: `${W}ascii-field.js:122` },
   { loop: "ASCII roll", where: "Glyph field", period: "about 8.3s", travel: "glyphs cycle in place", curve: "linear", reduced: "still", source: `${W}ascii-field.js:175` },
   { loop: "Badge flip", where: "Floating tiles", period: "every 3.5 to 6.5s, 0.8s a flip", travel: "a quarter turn out, a quarter turn back", curve: "ease in, then Tailwind ease-out", reduced: "no flips", source: `${W}FloatingBadges.tsx:32` },
   { loop: "Touch sway", where: "Player portrait on touch screens", period: "9s", travel: "0.85 of the turn each way", curve: "sine", reduced: "looks straight ahead", source: `${W}PlayerPortrait.tsx:37` },
-  { loop: "Human / AI flip", where: "Players, in view, until a choice", period: "every 10s", travel: "the 1.5s portrait sweep", curve: "in-out cubic", reduced: "flips without the sweep", source: `${W}usePlayerMode.ts:11` },
+  { loop: "Human / AI flip", where: "Players, in view, until a choice", period: "every 5s", travel: "the 1.5s portrait sweep, near a third of each period", curve: "in-out cubic", reduced: "flips without the sweep", source: `${W}usePlayerMode.ts:11` },
   { loop: "Tile autoplay", where: "Tile floor", period: "a tile every 380 + 220ms, then a wave", travel: "rise, sweep and flip", curve: "in-out cubic", reduced: "keeps running", source: "tiles/autoplay.js:11" },
 ];
 

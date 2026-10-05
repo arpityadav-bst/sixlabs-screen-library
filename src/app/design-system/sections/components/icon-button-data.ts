@@ -1,17 +1,20 @@
 // The Icon button section's data: sizes, state lists, anatomy pins, drawer rows and snippets.
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
-import type { IconButtonSize, IconButtonVariant } from "@/components/design-system/icon-button-styles";
+import { ICON_BUTTON_SIZE, type IconButtonSize, type IconButtonVariant } from "@/components/design-system/icon-button-styles";
 import { FORCE_PROP } from "./act-sel-rows";
-import { sv, tv, type Pin } from "./display-values";
+import { sizeNames, sv, tv, type Pin } from "./display-values";
 
-export const ICON_SIZES: readonly { name: IconButtonSize; px: number; icon: number }[] = [
-  { name: "xs", px: 28, icon: 14 },
-  { name: "sm", px: 32, icon: 16 },
-  { name: "md", px: 40, icon: 18 },
-  { name: "lg", px: 44, icon: 18 },
-  { name: "xl", px: 48, icon: 20 },
-];
+/** The rungs and their icons, read from ICON_BUTTON_SIZE, so the ladder and its captions cannot drift. */
+export const ICON_SIZES: readonly { name: IconButtonSize; px: number; icon: number }[] = sizeNames(ICON_BUTTON_SIZE).map((name) => ({
+  name,
+  px: ICON_BUTTON_SIZE[name].px,
+  icon: ICON_BUTTON_SIZE[name].icon,
+}));
+const boxes = ICON_SIZES.map((s) => s.px).join(" / ");
+const icons = ICON_SIZES.map((s) => s.icon).join(" / ");
+/** "xs 28 · sm 32 ... · icons 14 / 16 ..." for the matrix caption. */
+export const ICON_SIZE_LINE = `${ICON_SIZES.map((s) => `${s.name} ${s.px}`).join(" · ")} · icons ${icons}`;
 
 export const LIGHT_ICON_VARIANTS: readonly IconButtonVariant[] = ["elevated", "outline", "ghost", "solid"];
 
@@ -76,7 +79,7 @@ export const ICON_VALUES: readonly ValueRow[] = [
   tv("Colour change", "dur-ui"),
   tv("Lift", "dur-line"),
   tv("Press", "spring-press"),
-  sv("Sizes", "28 / 32 / 40 / 44 / 48, icons 14 / 16 / 18 / 18 / 20", "icon-button-styles.ts:23-27"),
+  sv("Sizes", `${boxes}, icons ${icons}`, "icon-button-styles.ts:23-27"),
   sv("Pressed", "scale 0.94 (SCALE.pressRound)", "IconButton.tsx:100-101"),
   sv("Toggled", "ghost, outline and elevated fill navy, glass turns white", "icon-button-styles.ts:36-37, 49"),
   tv("Toggled hover", "color-primary-hover", "button-styles.ts:59-64"),

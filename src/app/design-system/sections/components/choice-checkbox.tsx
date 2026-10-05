@@ -24,7 +24,7 @@ export function CheckboxAnatomy() {
 }
 
 function cell(state: CheckState | "live", size: (typeof SIZES)[number]) {
-  const on = state === "checked" || state === "checked-hover" || state === "disabled-checked" || state === "read-only-checked";
+  const on = state === "checked" || state === "checked-hover" || state.endsWith("-checked");
   return (
     <Checkbox
       label="Testing"
@@ -33,7 +33,7 @@ function cell(state: CheckState | "live", size: (typeof SIZES)[number]) {
       indeterminate={state === "indeterminate"}
       forceState={state === "live" ? undefined : forcedBy(state)}
       disabled={state.startsWith("disabled")}
-      invalid={state === "invalid"}
+      invalid={state.startsWith("invalid")}
       readOnly={state.startsWith("read-only")}
     />
   );

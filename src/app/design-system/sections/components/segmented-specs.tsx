@@ -87,7 +87,7 @@ export function SegmentedGrounds() {
       source={SOURCE}
       props="ground size equal"
       role={GROUNDS_ROLE}
-      caption="sm 32 · md 36 · lg 40 per segment · two and three options · equal on the three · each ground grades its rest label"
+      caption={`${SEG_SIZES.map((s) => `${s.name} ${s.px}`).join(" · ")} per segment · two and three options · equal on the three · each ground grades its rest label`}
       drawer={{ values: SEG_VALUES, props: SEG_PROPS, code: SEG_CODE }}
       note={
         MISSES.length
@@ -181,14 +181,15 @@ export function SegmentedSizes() {
       title="Sizes"
       source={SOURCE}
       props="size"
-      role="The size names the segment, so sm lines up with a 32 button and the track adds its 8 around it."
+      role="The size names the segment, and the control lines up by its track: sm 40 with a md Button, md 44 with a md field, lg 48 with a lg Button."
+      caption="each rung measures the track, the segment 8 shorter inside it"
     >
       <SizeLadder
         label="Segmented sizes"
         sizes={SEG_SIZES.map((s) => ({
           name: s.name,
-          spec: s.px,
-          select: "[role=radio]",
+          spec: s.track,
+          select: "[role=radiogroup]",
           node: <LiveSeg label={`Sizes, ${s.name}`} options={TWO} size={s.name} />,
         }))}
       />

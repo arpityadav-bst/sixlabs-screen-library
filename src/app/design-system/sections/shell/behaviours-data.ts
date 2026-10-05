@@ -2,6 +2,7 @@
 // a glide runs, and the window contracts the shell's parts talk through, each with its file:line.
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
 import type { ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import { site, type Assertion } from "../foundations/foundation-assert";
 
 export const LOCK_COLUMNS = ["Control", "Where", "Matches", "On click"] as const;
 
@@ -64,15 +65,17 @@ export const WINDOW_CONTRACTS: readonly KeyRow[] = [
   { key: "scrollY > 40", value: "the scroll cue fades away", source: "ScrollCue.tsx:11" },
   { key: "#model-line", value: "the scroll line's track. BackToTop, the spots, the water and the ASCII field all read it", source: "ScrubLine.tsx:107" },
   { key: "#site-head", value: "the header, whose height a spot subtracts", source: "jump.ts:28" },
-  { key: "#players", value: "the magnet's snap point, on scroll snap or on Lenis in Safari", source: "Players.tsx:97" },
+  { key: "#players", value: "the magnet's point: CSS scroll snap plus the JS catch (nativeMagnet, or Lenis in desktop Safari, where the snap is off)", source: "Players.tsx:100" },
   { key: "[data-covers-view]", value: "the full view's hero fills the screen, so the ASCII field pauses under it", source: "Hero.tsx:120" },
   { key: "onblue:theme", value: "the ASCII field reads its tint again", source: "ascii-field.js:107" },
 ];
 
-export const SAFARI_ROWS: readonly KeyRow[] = [
-  { key: "when", value: "desktop Safari with a fine pointer. Touch and every other browser scroll natively", source: "SafariScroll.tsx:21" },
+/** Each row with the text it was read off where the value is a number, so Coverage holds it to SafariScroll. */
+export const SAFARI_ROWS: readonly (KeyRow & { readonly a?: Assertion })[] = [
+  { key: "when", value: "desktop Safari with a fine pointer scrolls on Lenis. Every other browser and every touch screen keep native scrolling, with the same magnet (elsewhere, below)", source: "SafariScroll.tsx:21-22", a: site("SafariScroll.tsx", "return nativeMagnet();") },
   { key: "why", value: "Safari moves the page ahead of its drawing, so the water's edge trailed a quick scroll" },
-  { key: "lerp", value: "0.15 of the way to the wheel's target each frame", source: "SafariScroll.tsx:24" },
-  { key: "magnet", value: "a scroll that rests 120ms within 0.3 of a screen of #players glides the last stretch in 0.6s", source: "SafariScroll.tsx:36" },
+  { key: "lerp", value: "0.15 of the way to the wheel's target each frame", source: "SafariScroll.tsx:24", a: site("SafariScroll.tsx", "lerp: 0.15,") },
+  { key: "magnet", value: "a scroll that rests 120ms within 0.6 of a screen of #players glides the last stretch in 0.6s, on Lenis", source: "SafariScroll.tsx:15-17,36", a: site("SafariScroll.tsx", "const MAGNET = 0.6;", "const MAGNET_S = 0.6;", "const REST_MS = 120;") },
+  { key: "elsewhere", value: "every other browser and every touch screen: CSS snap plus nativeMagnet, the same 0.6-screen catch through glideTo, input held and snap off for its 0.6s", source: "SafariScroll.tsx:53-63", a: site("SafariScroll.tsx", "glideTo(window.scrollY + d, MAGNET_S, easeOut)") },
   { key: "glides", value: "the in-page links' glide runs on Lenis while it is on", source: "SafariScroll.tsx:28" },
 ];

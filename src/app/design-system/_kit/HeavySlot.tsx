@@ -34,7 +34,7 @@ export type HeavySlotProps = {
 type Status = "idle" | "waiting" | "live";
 
 const FOCUSABLE =
-  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"])';
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe:not([tabindex="-1"]), [tabindex]:not([tabindex="-1"])';
 type Left = { gl: WebGLRenderingContext[]; frames: HTMLIFrameElement[] };
 
 const EMPTY_LEFT: Left = { gl: [], frames: [] };
@@ -125,7 +125,7 @@ export function HeavySlot({ cost, label, poster, height, minHeight, fill, classN
     const el = root.current;
     if (status !== "live" || !focusIn.current || !el) return;
     focusIn.current = false;
-    // a forced state grid cell is inert, so its parts never take focus
+    // a forced picture (a StateGrid cell or Forced) is inert, so its parts never take focus
     const first = [...el.querySelectorAll<HTMLElement>(FOCUSABLE)].find((f) => !f.closest("[inert]"));
     first?.focus({ preventScroll: true });
     if (first && document.activeElement === first) return;

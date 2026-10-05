@@ -282,7 +282,7 @@ The signal helpers live in `frame/_parts/shell-signals.tsx`: `ScrollTo`, `Signal
 
 ## The measuring kit
 
-Anatomy, StateGrid, SizeLadder, TokenSwatch and ContrastBadge, ViewportPreview, HeavySlot and the GL budget, EaseDemo, Timeline, useMetrics and Metrics are documented in `README-measure.md` beside this file. Their styles are `ds-measure.css` and `ds-chart.css`, imported in `(guide)/layout.tsx` after `ds-spec.css`. A new kit stylesheet is imported there after `ds-chart.css`.
+Anatomy, StateGrid and Forced, SizeLadder, TokenSwatch and ContrastBadge, ViewportPreview, HeavySlot and the GL budget, EaseDemo, Timeline, useMetrics and Metrics are documented in `README-measure.md` beside this file. Their styles are `ds-measure.css` and `ds-chart.css`, imported in `(guide)/layout.tsx` after `ds-spec.css`. A new kit stylesheet is imported there after `ds-chart.css`.
 
 ## Build-time source reads
 

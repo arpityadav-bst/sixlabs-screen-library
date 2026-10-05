@@ -1,14 +1,11 @@
 // The Tabs section's data: filler tab sets, state list, pins, drawer rows and the snippet.
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
-import type { TabsSize } from "@/components/design-system/tabs-styles";
+import { TAB_SIZE, type TabsSize } from "@/components/design-system/tabs-styles";
 import { FORCE_PROP } from "./act-sel-rows";
-import { sv, tv, type Pin } from "./display-values";
+import { heightOf, sizeNames, sv, tv, type Pin } from "./display-values";
 
-export const TAB_SIZES: readonly { name: TabsSize; px: number }[] = [
-  { name: "sm", px: 36 },
-  { name: "md", px: 44 },
-  { name: "lg", px: 52 },
-];
+/** The rungs, read from TAB_SIZE, so the ladder cannot drift from the part. */
+export const TAB_SIZES: readonly { name: TabsSize; px: number }[] = sizeNames(TAB_SIZE).map((name) => ({ name, px: heightOf(TAB_SIZE[name].tab) }));
 
 export const TAB_STATES = ["rest", "hover", "selected", "focus-visible", "pressed", "disabled"] as const;
 
@@ -59,7 +56,7 @@ export const TAB_VALUES: readonly ValueRow[] = [
   tv("Label colour", "dur-ui"),
   tv("Panel exit", "dur-exit"),
   tv("Ring", "focus-color"),
-  sv("Heights", "sm 36 · md 44 · lg 52", `${TS}:11-13`),
+  sv("Heights", TAB_SIZES.map((s) => `${s.name} ${s.px}`).join(" · "), `${TS}:11-13`),
   sv("Labels", "13 Inter · 15 Inter · 18 Outfit at -0.01em, 500 when selected", `${TS}:11-13`),
   sv("Label to label", "20 · 28 · 32", `${TS}:8-13`),
   sv("Indicator", "2px, inset 4 to the label's width", `${TS}:35-36`),

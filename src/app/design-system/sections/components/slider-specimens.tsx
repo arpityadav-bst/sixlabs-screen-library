@@ -7,6 +7,7 @@ import { Anatomy } from "@/app/design-system/_kit/Anatomy";
 import { Canvas } from "@/app/design-system/_kit/Canvas";
 import { ContrastBadge } from "@/app/design-system/_kit/ContrastBadge";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
+import { Forced } from "@/app/design-system/_kit/Forced";
 import { Item } from "@/app/design-system/_kit/Label";
 import { SizeLadder } from "@/app/design-system/_kit/SizeLadder";
 import { StateGrid } from "@/app/design-system/_kit/StateGrid";
@@ -26,7 +27,9 @@ export function SliderAnatomy() {
   return (
     <Anatomy pins={SLIDER_PINS} ground="page" gutter={48} minHeight={200} label="Slider anatomy">
       <div className={styles["ds-in-w360"]}>
-        <Slider label={FIRST.label} defaultValue={Math.round(FIRST.value * 100)} formatValue={pct} ticks forceState="dragging" />
+        <Forced state="dragging" label={`${FIRST.label} slider`}>
+          <Slider label={FIRST.label} defaultValue={Math.round(FIRST.value * 100)} formatValue={pct} ticks forceState="dragging" />
+        </Forced>
       </div>
     </Anatomy>
   );

@@ -37,6 +37,8 @@
 .ds-sg tbody tr + tr :is(td, th) { border-top: 1px solid var(--dsg-line); }
 .ds-sg :is(td, th) + :is(td, th) { border-left: 1px solid var(--dsg-line); }
 .ds-sg-cell { display: flex; align-items: center; justify-content: center; min-height: 40px; }
+/* a forced specimen outside a grid (Forced.tsx): the inert box adds no layout of its own */
+.ds-forced { display: contents; }
 .ds-sg-livehead { color: var(--dsg-ink); }
 /* a cell for a state the row does not take (Label.tsx None): the caption line, no top margin */
 .ds-sg-cell .ds-none { margin: 0; }

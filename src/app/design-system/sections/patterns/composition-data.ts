@@ -47,9 +47,9 @@ export const STRETCHES: readonly Stretch[] = [
     height: "a screen at least, pulled up over the line's last",
     header: "solid white",
     ascii: "paused",
-    snap: "#players, proximity",
+    snap: "#players, proximity plus a 0.6-screen catch",
     back: "shown (phones: scrolling up)",
-    source: "Players.tsx:100",
+    source: "Players.tsx:103",
   },
   {
     name: "Grain block",
@@ -100,7 +100,7 @@ export const PAGE_RULES: readonly KeyRow[] = [
   { key: "one primary", value: "one solid call per view: Try now in the hero and the closing, Sign in outlined in the header", source: "Header.tsx:98" },
   { key: "grain", value: "from the fourth section to the foot, one block that covers the glyph field", source: "app/website/page.tsx:37" },
   { key: "accent fill", value: "only the water behind the players, painted by AccentWave", source: "AccentWave.tsx:36" },
-  { key: "one magnet", value: "#players is the only snap point, so a scroll rests on its own everywhere else", source: "globals.css:31" },
+  { key: "one magnet", value: "#players is the only snap point and the only JS catch, so a scroll rests on its own everywhere else", source: "globals.css:31, SafariScroll.tsx:15" },
   { key: "one container", value: "every section, the header inner and the footer sit in the same 1400 box", source: "Jobs.tsx:103" },
   { key: "ids once", value: "model-line, players, jobs and faq each mark one section, the in-page links' targets", source: "jump.ts:11" },
 ];

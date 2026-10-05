@@ -104,7 +104,7 @@ export const LOADER_VALUES: readonly ValueRow[] = [
   { part: "Hop", value: "1.5s ease-in-out loop, out and back in its first third", source: "app/globals.css:153-155" },
   { part: "Order", value: "arcs 1, 2, 0 (clockwise from the top right), delays i × 0.5 - 1.5s, under way at the first frame", source: `${W}HeroLoader.tsx:17 · ${W}HeroLoader.tsx:40` },
   { part: "Travel", value: "arc 0 (-1.6, -2.5), arc 1 (3, 0), arc 2 (-1.7, 2.5) px", source: "app/globals.css:156-158" },
-  { part: "Label", value: "slate-400, role status carries the word to a screen reader", source: `${W}HeroLoader.tsx:30 · ${W}HeroLoader.tsx:48` },
+  { part: "Label", value: "slate-500, about 3.8:1 on the hero grey, role status carries the word to a screen reader", source: `${W}HeroLoader.tsx:30 · ${W}HeroLoader.tsx:48` },
   { part: "Exit", value: "opacity 0 over 0.45s, ease (0.22, 1, 0.36, 1)", source: `${W}HeroLoader.tsx:28` },
   { part: "First paint", value: "in the server HTML, no fade in", source: `${W}HeroLoader.tsx:27` },
   { part: "Reduced motion", value: "the arcs hold still", source: "app/globals.css:163" },

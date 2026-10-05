@@ -14,7 +14,7 @@ import { CARD_BASE, CARD_SIZE, CARD_TONE, cardRing, type CardSize, type CardTone
 import { forceAttr, forces, type ForceState } from "./force";
 import { SPRING } from "./motion";
 import { Skeleton } from "./Skeleton";
-
+import { ICON_STROKE } from "./token-shape";
 export type { CardSize, CardTone, CardVariant } from "./card-styles";
 export type CardElement = "article" | "button" | "a";
 
@@ -82,7 +82,7 @@ function Tick({ tone, size }: { tone: CardTone; size: CardSize }) {
       transition={SPRING.thumb}
       className={`absolute ${place} grid h-5 w-5 place-items-center rounded-full ${colour}`}
     >
-      <Check size={12} strokeWidth={2.5} />
+      <Check size={12} strokeWidth={ICON_STROKE[12]} />
     </motion.span>
   );
 }

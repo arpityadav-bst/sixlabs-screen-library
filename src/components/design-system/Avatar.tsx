@@ -139,7 +139,7 @@ export function Avatar({
           `relative inline-block shrink-0 cursor-pointer transition-[scale,box-shadow] duration-(--ds-dur-ui) ` +
           `ease-(--ds-ease-out) hover:shadow-[0_0_0_2px_var(--ds-color-line-strong)] ` +
           `data-[force=hover]:shadow-[0_0_0_2px_var(--ds-color-line-strong)] data-[force=pressed]:shadow-[0_0_0_2px_var(--ds-color-line-strong)] ` +
-          `active:scale-(--ds-scale-press-round) data-[force=pressed]:scale-(--ds-scale-press-round) ` +
+          `active:scale-(--ds-scale-press-round) data-[force=pressed]:scale-(--ds-scale-press-round) motion-reduce:transition-none ` +
           `disabled:cursor-not-allowed disabled:opacity-40 ` +
           `disabled:hover:shadow-none ${FOCUS} ${className}`
         }

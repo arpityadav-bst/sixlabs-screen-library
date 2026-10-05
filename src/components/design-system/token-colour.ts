@@ -17,9 +17,9 @@ export const ACCENT: readonly Token[] = [
   tk("color-accent-glow-30", "rgb(26 109 255 / 0.3)", "Sheen falloff", "The sheen's radial stop at 34%",
     "Text, lines or fills", `${G}:254`),
   tk("color-accent-glow-28", "rgb(26 109 255 / 0.28)", "Players glow core", "The radial glow behind the players",
-    "Any light ground", `${W}Players.tsx:108`),
+    "Any light ground", `${W}Players.tsx:111`),
   tk("color-accent-glow-08", "rgb(26 109 255 / 0.08)", "Players glow edge", "The players glow at 55%",
-    "Any light ground", `${W}Players.tsx:108`),
+    "Any light ground", `${W}Players.tsx:111`),
   tk("color-accent-ping", "rgb(26 109 255 / 0.4)", "Live dot halo", "The ping ring round a live dot",
     "Fills larger than a dot", `${W}Hero.tsx:238`, { utility: "bg-accent/40" }),
 ];

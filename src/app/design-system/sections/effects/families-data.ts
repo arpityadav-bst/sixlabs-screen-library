@@ -1,7 +1,7 @@
 // The three effect families and each instance's values, written once. `at` is the guide section that
 // shows the instance live, so the family tables link out rather than repeat it.
-import type { AnatomyPin } from "@/app/design-system/_kit/Anatomy";
 import type { SectionId } from "@/app/design-system/_data/catalog";
+import type { HeldPin } from "./held-pin";
 
 type Instance = { name: string; cells: readonly string[]; source: string; at?: SectionId };
 
@@ -9,13 +9,14 @@ type Instance = { name: string; cells: readonly string[]; source: string; at?: S
 export const CTA_SIZE = { w: 220, h: 50.5 };
 export const CTA_BAND = 34;
 
-export const CTA_PINS: readonly AnatomyPin[] = [
+export const CTA_PINS: readonly HeldPin[] = [
   {
     selector: '[data-ds="cta-stage"]',
     name: "Stand-in pill",
     token: "--ds-color-primary",
     value: "#0a152d as PrimaryCta.tsx:98 · 220 × 50.5, the shipped pill's min-w 220 px 40 py 14 (PrimaryCta.tsx:100) · no label, no shifted fill",
-    source: "app/design-system/sections/effects/fx-live.module.css:105-110",
+    source: "app/design-system/sections/effects/fx-live.module.css:105-109",
+    expect: [".ds-cta-stage {", "background: var(--ds-color-primary, #0a152d);"],
     side: "left",
   },
   {
@@ -23,6 +24,7 @@ export const CTA_PINS: readonly AnatomyPin[] = [
     name: "Dot canvas",
     value: "covers the pill, the band crosses it 34 wide · 3.5px grid, r 0.95, #9cc0ff",
     source: "CtaDots.tsx:14-17,98",
+    expect: ["const PITCH = 3.5,", 'COLOUR = "#9cc0ff",', "absolute inset-0 h-full w-full"],
     side: "right",
   },
 ];

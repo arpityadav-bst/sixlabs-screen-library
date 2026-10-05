@@ -1,7 +1,9 @@
 "use client";
 
 // The switch's specimens: its anatomy, the state grids on light and on the accent water, the track
-// ladder, a live setting that saves, and the switch-or-checkbox decision. The setting is the Testing job,
+// ladders (height and width, plain and with icons), a live setting that saves, and the switch-or-checkbox
+// decision. Every grid and ladder runs a plain row and an icons row, so the off cross, the sm thumb's
+// glyph and the glyph under disabled, read-only and loading are shown. The setting is the Testing job,
 // its words quoted from jobs-data.ts.
 import { useEffect, useRef, useState } from "react";
 import { Anatomy } from "@/app/design-system/_kit/Anatomy";
@@ -38,7 +40,13 @@ export function SwitchAnatomy() {
   );
 }
 
-function cell(state: SwitchState | "live", size: (typeof SIZES)[number], ground: "light" | "onBlue" = "light") {
+type Size = (typeof SIZES)[number];
+/** A grid row: a size, plain or with its icons. */
+type Row = Size | `${Size} icons`;
+const ROWS: readonly Row[] = [...SIZES, ...SIZES.map((s): Row => `${s} icons`)];
+const sizeOf = (r: Row) => r.split(" ")[0] as Size;
+
+function cell(state: SwitchState | "live", size: Size, ground: "light" | "onBlue" = "light", icons = false) {
   const on = state === "on" || state.startsWith("on-") || state.endsWith("-on") || state === "loading";
   return (
     <Switch
@@ -50,6 +58,7 @@ function cell(state: SwitchState | "live", size: (typeof SIZES)[number], ground:
       disabled={state.startsWith("disabled")}
       loading={state.startsWith("loading")}
       readOnly={state.startsWith("read-only")}
+      icons={icons}
     />
   );
 }
@@ -57,11 +66,11 @@ function cell(state: SwitchState | "live", size: (typeof SIZES)[number], ground:
 export function SwitchStates() {
   return (
     <StateGrid
-      label="Switch states by size"
+      label="Switch states by size, plain and with icons"
       states={SWITCH_STATES}
-      variants={SIZES}
+      variants={ROWS}
       minCell={104}
-      render={({ state, variant }) => cell(state, variant)}
+      render={({ state, variant }) => cell(state, sizeOf(variant), "light", variant.endsWith("icons"))}
     />
   );
 }
@@ -88,19 +97,24 @@ export function SwitchBlueStates() {
   );
 }
 
-const SPEC = { sm: 16, md: 20, lg: 24 } as const;
+/** The track's height and width per size (Switch.tsx:19-23), each measured on the rendered track. */
+const SPEC = { sm: { height: 16, width: 28 }, md: { height: 20, width: 36 }, lg: { height: 24, width: 44 } } as const;
+
+function rungs(axis: "height" | "width") {
+  return ROWS.map((r) => ({
+    name: r,
+    spec: SPEC[sizeOf(r)][axis],
+    select: "[data-slot=track]",
+    node: <Switch aria-label={`Size ${r}, ${axis}`} size={sizeOf(r)} defaultChecked icons={r.endsWith("icons")} />,
+  }));
+}
 
 export function SwitchLadder() {
   return (
-    <SizeLadder
-      label="Switch track sizes"
-      sizes={SIZES.map((s) => ({
-        name: s,
-        spec: SPEC[s],
-        select: "[data-slot=track]",
-        node: <Switch aria-label={`Size ${s}`} size={s} defaultChecked />,
-      }))}
-    />
+    <>
+      <SizeLadder label="Switch track heights" sizes={rungs("height")} />
+      <SizeLadder label="Switch track widths" axis="width" sizes={rungs("width")} />
+    </>
   );
 }
 

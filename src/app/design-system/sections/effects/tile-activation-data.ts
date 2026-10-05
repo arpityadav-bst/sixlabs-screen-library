@@ -1,6 +1,8 @@
 // The activation, frame by frame: the sweep timeline in sweep time S (sweep.js sweepValues), the rim's
-// parts, and the glint, every colour read from floor-params.json.
+// parts, and the glint, every colour read from floor-params.json. The rim rows find their lines in
+// materials.js by the text each one writes (read at build, so this module stays server only).
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
+import { locate } from "@/app/design-system/_kit/source";
 import type { ValueRow } from "@/app/design-system/_kit/SpecDrawer";
 import type { TimelineLane } from "@/app/design-system/_kit/Timeline";
 import type { Assertion } from "@/app/design-system/sections/foundations/foundation-assert";
@@ -50,12 +52,28 @@ export const SWEEP_VALUES: readonly ValueRow[] = [
   { part: "Timings", value: "ACT 0.9, DEACT 1.05, COMMIT 0.25, all in S", source: `${T}sweep.js:10-13` },
 ];
 
+/** The rim shader's lines, each by the text it writes: the beam head, the front hot spot, the right flare. */
+const RIM = {
+  beam: "float lit = smoothstep(uBeam - 0.1, uBeam + 0.02, u)",
+  front: "uHotF * rimZone * exp(-dot(dF, dF) / 0.012)",
+  flare: "uHotR * max(rimZone",
+} as const;
+
+/** Holds the rim's text to materials.js, so Coverage turns red the day a line is rewritten. */
+export const RIM_CHECK: Assertion = { file: "tiles/materials.js", needles: Object.values(RIM) };
+
+/** "tiles/materials.js:143-145", the lines the needles are on now, or "moved" once one is gone. */
+function rimAt(...keys: (keyof typeof RIM)[]): string {
+  const lines = keys.map((k) => locate("src/tiles/materials.js", RIM[k]));
+  return lines.every((l) => l !== null) ? `${T}materials.js:${lines.join("-")}` : `${T}materials.js, moved`;
+}
+
 /** The rim, numbered as the diagram numbers it. u = (x + z) / tile. */
 export const RIM_ROWS: readonly KeyRow[] = [
-  { key: "1 Front corner", value: `u +0.92, toward the camera: the beam starts here with a white-hot spot ${A.actHotCol} × ${A.actHotF}`, source: `${T}materials.js:141` },
-  { key: "2 Front edges", value: `lit where u is ahead of the head, ${A.actShineCol} × ${A.actShine}`, source: `${T}materials.js:139-141` },
-  { key: "3 Side corners", value: `u 0, reached at S 0.3, the right one flares ${A.actHotCol} × ${A.actHotR}`, source: `${T}materials.js:142` },
-  { key: "4 Back edges", value: `the beam runs on at ${A.actBackRim} strength`, source: `${T}materials.js:139` },
+  { key: "1 Front corner", value: `u +0.92, toward the camera: the beam starts here with a white-hot spot ${A.actHotCol} × ${A.actHotF}`, source: rimAt("front") },
+  { key: "2 Front edges", value: `lit where u is ahead of the head, ${A.actShineCol} × ${A.actShine}`, source: rimAt("beam", "front") },
+  { key: "3 Side corners", value: `u 0, reached at S 0.3, the right one flares ${A.actHotCol} × ${A.actHotR}`, source: rimAt("flare") },
+  { key: "4 Back edges", value: `the beam runs on at ${A.actBackRim} strength`, source: rimAt("beam") },
   { key: "5 Glint", value: "near the rear corner, u -0.92, turned 45°", source: `${T}focus-rig.js:64` },
 ];
 

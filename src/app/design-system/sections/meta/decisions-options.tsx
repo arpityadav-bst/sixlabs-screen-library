@@ -2,7 +2,8 @@
 // system atoms otherwise, and a remapped token where an option only changes a value. Forced focus samples
 // sit in an inert box, so they stay out of the tab order. Copy is quoted from the site's source through the
 // data that holds it to its line (LINES and SIDES in comparison-data). The comparison's keep option is the
-// shipped section itself, in its frame, and the container option redraws both of its cards with the same lines.
+// shipped section itself, in its frame, and the container option redraws both of its cards with the same names
+// and lines, so the two differ only in the ground and the accent words.
 import type { CSSProperties, ReactNode } from "react";
 import { ContrastBadge } from "@/app/design-system/_kit/ContrastBadge";
 import type { Ground } from "@/app/design-system/_kit/Canvas";
@@ -125,14 +126,16 @@ function Dots({ navy }: { navy?: boolean }) {
   );
 }
 
-/** Both comparison cards on the container grey, the same lines as the frame, the 6labs rests in the accent. */
+/** Both comparison cards on the container grey, the same names and lines as the frame, the 6labs rests in the accent. */
 function ContainerPair() {
   return (
     <span className={s["ds-dc-col"]}>
       <span className={s["ds-dc-pair"]}>
-        {SIDES.map(({ side, name }) => (
+        {SIDES.map(({ side, name, weight }) => (
           <Card key={side} tone="container" size="compact">
-            <CardTitle as="span">{name}</CardTitle>
+            <span className="block text-(--ds-color-ink)" style={{ ...typeStyle("comparison-name"), fontWeight: weight }}>
+              {name}
+            </span>
             {LINES[side].map(([verb, rest]) => (
               <span key={verb + rest} className="mt-2 block text-(--ds-color-ink)" style={typeStyle("comparison")}>
                 {verb} {side === "ours" ? <span className="text-(--ds-color-accent)">{rest}</span> : rest}

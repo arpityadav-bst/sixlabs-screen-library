@@ -22,6 +22,8 @@ export const REDUCED_ROWS: readonly ReducedRow[] = [
   { part: "ASCII field", reduced: "still glyphs, a swap in place of the scan", handled: true, source: `${W}ascii-field.js:249` },
   { part: "Tile floor (intro, autoplay, waves, sweeps)", reduced: "runs as usual", handled: false, source: "tiles/autoplay.js:11" },
   { part: "In-page glide", reduced: "runs as usual", handled: false, source: `${W}glide.ts:38` },
+  { part: "Players magnet", reduced: "still glides in over 0.6s, holding the input outside desktop Safari", handled: false, source: `${W}SafariScroll.tsx:61` },
+  { part: "Human / AI auto flip", reduced: "still swaps every 5s, without the sweep", handled: false, source: `${W}usePlayerMode.ts:19` },
   { part: "animate-ping and animate-pulse", reduced: "keep running", handled: false, source: `${W}Hero.tsx:238` },
   { part: "motion/react entrances and menus", reduced: "travel as usual, no MotionConfig", handled: false, source: `${W}Understands.tsx:44` },
 ];

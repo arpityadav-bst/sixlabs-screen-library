@@ -5,7 +5,8 @@
 // Run from anywhere: node tools/design-md/build.mjs, which writes the file, or with --check, which writes
 // nothing and fails when DESIGN.md is not what the partials build. Either way it exits 1 on an error: a
 // missing or orphan partial, a catalog number out of order, a reference to nothing or one whose lead-in
-// is not its target's title, a numbered heading whose anchor repeats, an em dash or a semicolon in prose.
+// is not its target's title, a numbered heading whose anchor repeats, an em dash or a semicolon in prose,
+// or a site value a partial quotes that is no longer in its source (facts.mjs).
 // Warnings (a title that differs from the catalog, a part missing one of its ten labels or holding them
 // out of order, an unknown --ds-* name) are printed and pass.
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
@@ -16,6 +17,7 @@ import { headingAnchors, makeLinker, slug } from "./links.mjs";
 import { numberedAnchor } from "./slug.mjs";
 import { tokenSections } from "./tokens-md.mjs";
 import { nestedParts, partWarnings, printedNames, unknownNames } from "./checks.mjs";
+import { factErrors } from "./facts.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const PARTS = join(ROOT, "docs/design-md");
@@ -127,6 +129,9 @@ for (const [file, md] of partials) {
 for (const f of readdirSync(PARTS)) {
   if (f.endsWith(".md") && !used.has(f.slice(0, -3))) errors.push(`${f} is not in the catalog, so it is not in DESIGN.md`);
 }
+
+// Site values the partials quote, still in their source files (facts.mjs).
+errors.push(...factErrors((f) => readFileSync(join(ROOT, f), "utf8"), partials));
 
 // Anchors and titles for every chapter and section number.
 const refs = new Map();

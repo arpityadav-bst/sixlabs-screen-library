@@ -32,8 +32,8 @@ export const SCENE_ROWS: readonly KeyRow[] = [
   },
   {
     key: "Glass top",
-    value: `${FP.topColor} · roughness ${FP.topRough} · transmission ${FP.topTrans} in stills, opaque and colour-matched live`,
-    source: `${T}opaque-glass.js:18-31`,
+    value: `${FP.topColor} · roughness ${FP.topRough} · transmission ${FP.topTrans} in stills, opaque and colour-matched live · rear corner ${FP.frostCorner} darker (radius ${FP.frostCornerR}), baked into the frost`,
+    source: `${T}opaque-glass.js:18-31 · ${T}textures.js:165-166`,
   },
   {
     key: "Ground and fog",

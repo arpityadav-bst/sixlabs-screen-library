@@ -50,7 +50,7 @@ export function BehavioursSection() {
       <Spec
         title="Safari scroll"
         source={{ from: `${W}SafariScroll`, name: "SafariScroll", line: 19 }}
-        role="Desktop Safari scrolls on Lenis, in step with the page's drawing, and keeps the players' magnet as its own."
+        role="Desktop Safari scrolls on Lenis, in step with the page's drawing, and keeps the players' magnet as its own. Every other browser and every touch screen scroll natively, CSS snap plus the same catch through glideTo."
       >
         <KeyRows label="Safari scroll" rows={D.SAFARI_ROWS} />
       </Spec>

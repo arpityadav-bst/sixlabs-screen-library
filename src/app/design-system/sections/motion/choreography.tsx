@@ -1,11 +1,11 @@
 // Choreography: the long, staged sequences drawn on their clocks. The two hero intros run from the
-// moment the floor is ready, the scroll line is laid out in screens, the glide is plotted and run, and the
-// terminal's lanes are built from a real job's run.
+// moment the floor is ready, the scroll line is laid out in screens, the glide is plotted and run, the
+// players run from their reveal, and the terminal's lanes are built from a real job's run.
 import { Canvas } from "@/app/design-system/_kit/Canvas";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
 import { EaseDemo } from "@/app/design-system/_kit/EaseDemo";
 import { KeyRows } from "@/app/design-system/_kit/KeyRows";
-import { Section, Sub } from "@/app/design-system/_kit/Section";
+import { Section, SectionLink, Sub } from "@/app/design-system/_kit/Section";
 import { Spec } from "@/app/design-system/_kit/Spec";
 import { Timeline } from "@/app/design-system/_kit/Timeline";
 import { GlidePlot } from "./glide-plot";
@@ -18,6 +18,8 @@ import {
   CONTAINER_VALUES,
   FULL_VALUES,
   GLIDE_VALUES,
+  PLAYERS_CLOCK,
+  PLAYERS_CLOCK_ROWS,
   TERMINAL_JOB,
   TERMINAL_VALUES,
   TRACK_VALUES,
@@ -31,7 +33,7 @@ export function MotionChoreographySection() {
   return (
     <Section
       id="motion-choreography"
-      lead="The four staged sequences, each on its own clock: the two hero intros, the scroll line's track and the terminal run, with the shell's glide drawn beside them."
+      lead="The staged sequences, each on its own clock: the two hero intros, the scroll line's track, the players and the terminal run, with the shell's glide drawn beside them."
     >
       <Sub title="Hero intros">
         <Spec
@@ -84,6 +86,24 @@ export function MotionChoreographySection() {
         </Spec>
       </Sub>
 
+      <Sub title="Players">
+        <Spec
+          level={4}
+          title="Players clock"
+          source={{ from: "@/components/website/usePlayerMode", name: "usePlayerMode", file: "usePlayerMode.ts", at: "const AUTO_S = " }}
+          chips={["accentwave"]}
+          role="The hand, the flip and the copy share one clock, so the AI only ever copies a stroke the hand has finished."
+          note={
+            <>
+              The drawing itself plays under <SectionLink id="doodles" />.
+            </>
+          }
+        >
+          <Timeline label="Players, seconds after the reveal" axisLabel="after reveal" lanes={PLAYERS_CLOCK} />
+          <KeyRows label="Players clock" rows={PLAYERS_CLOCK_ROWS} />
+        </Spec>
+      </Sub>
+
       <Sub title="Terminal run">
         <Spec
           level={4}
@@ -94,7 +114,7 @@ export function MotionChoreographySection() {
           drawer={{ values: TERMINAL_VALUES }}
           note={
             <>
-              The lanes are built from the intelligence job&apos;s run in jobs-data.ts. The live terminal plays under <a href="#terminal">Terminal</a>.
+              The lanes are built from the intelligence job&apos;s run in jobs-data.ts. The live terminal plays under <SectionLink id="terminal" />.
             </>
           }
         >

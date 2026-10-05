@@ -5,7 +5,7 @@ import { Anatomy } from "@/app/design-system/_kit/Anatomy";
 import { Canvas } from "@/app/design-system/_kit/Canvas";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
 import { KeyRows } from "@/app/design-system/_kit/KeyRows";
-import { Section, Sub } from "@/app/design-system/_kit/Section";
+import { Section, SectionLink, Sub } from "@/app/design-system/_kit/Section";
 import { SizeLadder } from "@/app/design-system/_kit/SizeLadder";
 import { Spec } from "@/app/design-system/_kit/Spec";
 import { SpecTable } from "@/app/design-system/_kit/SpecTable";
@@ -50,7 +50,7 @@ export function TypeSection() {
             <p>Loaded and never set: {unused.join(" and ")}. Each costs a font file and draws no glyph.</p>
             <p>
               font-mono on the player cards ({meta}) is Tailwind&apos;s system mono, not JetBrains Mono. Machine text takes
-              --ds-font-mono. <a href="#gaps">Known gaps</a> tracks the fallback.
+              --ds-font-mono. <SectionLink id="gaps" /> tracks the fallback.
             </p>
           </>
         }

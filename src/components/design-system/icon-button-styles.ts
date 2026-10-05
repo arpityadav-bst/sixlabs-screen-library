@@ -55,8 +55,8 @@ export const ICON_BUTTON_VARIANT: Record<IconButtonVariant, string> = {
  *  step of them on hover: the navy ones the shared SELECTED_HOVER, glass a 90% white. */
 export const ICON_BUTTON_HOVER: Record<IconButtonVariant, string> = {
   elevated:
-    "hover:-translate-y-0.5 hover:bg-(--ds-color-fill-hover) data-[force=hover]:-translate-y-0.5 " +
-    "data-[force=hover]:bg-(--ds-color-fill-hover) data-[force=pressed]:-translate-y-0.5 " +
+    "motion-safe:hover:-translate-y-0.5 hover:bg-(--ds-color-fill-hover) motion-safe:data-[force=hover]:-translate-y-0.5 " +
+    "data-[force=hover]:bg-(--ds-color-fill-hover) motion-safe:data-[force=pressed]:-translate-y-0.5 " +
     `data-[force=pressed]:bg-(--ds-color-fill-hover) ${SELECTED_HOVER}`,
   outline:
     "hover:text-(--ds-color-accent) data-[force=hover]:text-(--ds-color-accent) " +

@@ -24,7 +24,7 @@ const CARD =
   `${SCOPE} group/ix relative flex overflow-hidden rounded-(--ds-radius-xl) border border-(--ds-color-line-faint) ` +
   "bg-(--ds-color-container) shadow-(--ds-shadow-container) transition-[translate,box-shadow,scale] duration-(--ds-dur-line) " +
   "ease-(--ds-ease-out) motion-safe:hover:-translate-y-0.5 hover:shadow-(--ds-shadow-lift) " +
-  "motion-safe:active:scale-(--ds-scale-press-card) md:h-[400px] " +
+  "active:scale-(--ds-scale-press-card) motion-reduce:transition-none md:h-[400px] " +
   "max-md:flex-col max-md:rounded-(--ds-radius-lg) " +
   FOCUS_CARD;
 

@@ -1,8 +1,10 @@
 // Small specimens for the focus section. RingProbe adds the two invisible boxes the Anatomy pins (the
 // offset gap and the ring's outer edge). RingPill carries one ring tone on a plain pill, for the dark
 // tone no system part uses yet and for the Don't panels. The card and scroll-row samples are the real
-// Card, forced to focus, the card in the first job's own copy.
+// Card, forced to focus, the card in the first job's own copy, each in the kit's Forced box (inert, with
+// a reader line), so the clickable cards stay out of the Tab order.
 import type { ReactNode } from "react";
+import { Forced } from "@/app/design-system/_kit/Forced";
 import { Card } from "@/components/design-system/Card";
 import { CardBody, CardTitle } from "@/components/design-system/CardParts";
 import { focusRing, type FocusTone } from "@/components/design-system/focus";
@@ -49,10 +51,12 @@ export function RingPill({
 export function FocusedCard() {
   return (
     <div className={styles["ds-card-box"]}>
-      <Card variant="clickable" size="compact" forceState="focus" aria-label={JOB.title}>
-        <CardTitle>{JOB.title}</CardTitle>
-        <CardBody>{JOB.body}</CardBody>
-      </Card>
+      <Forced state="focus" label={`${JOB.title} card`}>
+        <Card variant="clickable" size="compact" forceState="focus" aria-label={JOB.title}>
+          <CardTitle>{JOB.title}</CardTitle>
+          <CardBody>{JOB.body}</CardBody>
+        </Card>
+      </Forced>
     </div>
   );
 }
@@ -61,12 +65,14 @@ export function FocusedCard() {
 export function ScrollRow({ inset }: { inset: boolean }) {
   const titles = ["Functional", "Behavioral", "Large scale"];
   return (
-    <div className={styles["ds-scroll-row"]}>
-      {titles.map((t, k) => (
-        <Card key={t} variant="clickable" size="compact" inset={inset} forceState={k === 0 ? "focus" : undefined}>
-          <CardTitle>{t}</CardTitle>
-        </Card>
-      ))}
-    </div>
+    <Forced state="focus" label={`${titles[0]} card in a scroll row, the ring ${inset ? "inside" : "outside"} the box`}>
+      <div className={styles["ds-scroll-row"]}>
+        {titles.map((t, k) => (
+          <Card key={t} variant="clickable" size="compact" inset={inset} forceState={k === 0 ? "focus" : undefined}>
+            <CardTitle>{t}</CardTitle>
+          </Card>
+        ))}
+      </div>
+    </Forced>
   );
 }

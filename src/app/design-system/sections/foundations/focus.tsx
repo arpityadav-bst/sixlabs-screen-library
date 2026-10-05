@@ -1,10 +1,12 @@
 // Focus: the site's own controls live first (they set no focus style), then the ring drawn out, its tones
-// by ground, its card, scroll-row and field forms, the SkipLink, and two decisions. Values live in
-// focus-data.ts.
+// by ground, its card, scroll-row and field forms, the SkipLink, and two decisions. Every forced ring
+// outside the StateGrid sits in the kit's Forced box (inert, with a reader line), so Tab only ever lands
+// on a live part. Values live in focus-data.ts.
 import { Anatomy } from "@/app/design-system/_kit/Anatomy";
 import { Canvas } from "@/app/design-system/_kit/Canvas";
 import { ContrastBadge } from "@/app/design-system/_kit/ContrastBadge";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
+import { Forced } from "@/app/design-system/_kit/Forced";
 import { Item } from "@/app/design-system/_kit/Label";
 import { Section, Sub } from "@/app/design-system/_kit/Section";
 import { Spec } from "@/app/design-system/_kit/Spec";
@@ -88,11 +90,13 @@ export function FocusSection() {
           drawer={{ values: RING_VALUES, props: RING_PROPS, code: RING_CODE, children: <RingContrast /> }}
         >
           <Anatomy pins={RING_PINS} label="The focus ring">
-            <RingProbe>
-              <Button variant="primary" forceState="focus">
-                Request access
-              </Button>
-            </RingProbe>
+            <Forced state="focus" label="Request access">
+              <RingProbe>
+                <Button variant="primary" forceState="focus">
+                  Request access
+                </Button>
+              </RingProbe>
+            </Forced>
           </Anatomy>
         </Spec>
       </Sub>
@@ -125,7 +129,9 @@ export function FocusSection() {
               </Item>
               <Item label="field · 3px halo, no outline">
                 <div className={styles["ds-field-box"]}>
-                  <TextInput label="Work email" placeholder="you@studio.com" forceState="focus" />
+                  <Forced state="focus" label="Work email field">
+                    <TextInput label="Work email" placeholder="you@studio.com" forceState="focus" />
+                  </Forced>
                 </div>
               </Item>
             </div>
@@ -143,14 +149,16 @@ export function FocusSection() {
           drawer={{ values: SKIP_VALUES, props: SKIP_PROPS, code: SKIP_CODE }}
         >
           <Anatomy pins={SKIP_PINS} layout="stack" label="Skip link pinned to the window's corner">
-            <div className={styles["ds-pin-stage"]}>
-              <SkipLink forceState="focus" />
-            </div>
+            <Forced state="focus" label="Skip to content">
+              <div className={styles["ds-pin-stage"]}>
+                <SkipLink href="#ds-content" forceState="focus" />
+              </div>
+            </Forced>
           </Anatomy>
           <StateGrid
             label="Skip link states"
             states={SKIP_STATES}
-            render={({ force }) => <SkipLink inline forceState={force} />}
+            render={({ force }) => <SkipLink href="#ds-content" inline forceState={force} />}
             liveCaption="Tab here, then hover or press it"
           />
         </Spec>
@@ -158,9 +166,11 @@ export function FocusSection() {
 
       <DoDont>
         <Do ground="on-blue" reason={`White on the accent measures ${ratio(RING.inverse, ACCENT)}:1, so focus stands clear of the water.`}>
-          <Button variant="inverse" forceState="focus">
-            Request access
-          </Button>
+          <Forced state="focus" label="Request access">
+            <Button variant="inverse" forceState="focus">
+              Request access
+            </Button>
+          </Forced>
         </Do>
         <Dont ground="on-blue" reason="The accent ring on the water measures 1:1 and disappears.">
           <RingPill on="dark">Request access</RingPill>

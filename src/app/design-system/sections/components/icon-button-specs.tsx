@@ -5,6 +5,7 @@
 import { ArrowUp, Bell, ChevronRight, Plus, Waves, X, type LucideIcon } from "lucide-react";
 import { Anatomy } from "@/app/design-system/_kit/Anatomy";
 import { Canvas } from "@/app/design-system/_kit/Canvas";
+import { Forced } from "@/app/design-system/_kit/Forced";
 import { None } from "@/app/design-system/_kit/Label";
 import { SizeLadder } from "@/app/design-system/_kit/SizeLadder";
 import { Spec } from "@/app/design-system/_kit/Spec";
@@ -20,6 +21,7 @@ import {
   ICON_PINS,
   ICON_PROPS,
   ICON_SIZES,
+  ICON_SIZE_LINE,
   ICON_STATES,
   ICON_VALUES,
   LIGHT_ICON_VARIANTS,
@@ -53,7 +55,9 @@ export function IconButtonAnatomy() {
           <IconButton icon={Bell} label="Alerts" badge={<Badge count={3} pinned label="3 new" />} />
         </span>
         <span data-pin="label">
-          <IconButton icon={Waves} label="Next wave" variant="outline" showLabelOnHover forceState="hover" />
+          <Forced as="span" state="hover" label="Next wave">
+            <IconButton icon={Waves} label="Next wave" variant="outline" showLabelOnHover forceState="hover" />
+          </Forced>
         </span>
       </Anatomy>
     </Spec>
@@ -79,7 +83,7 @@ export function IconButtonMatrix() {
       source={SOURCE}
       props="variant size"
       role="Each variant answers the ground under it: elevated floats over content, outline sits on the grey, ghost stays quiet inside a row."
-      caption="xs 28 · sm 32 · md 40 · lg 44 · xl 48 · icons 14 / 16 / 18 / 18 / 20 · glass on blue"
+      caption={`${ICON_SIZE_LINE} · glass on blue`}
     >
       <Canvas ground="page" layout="stack" label="Icon button variants on the page">
         <div className={styles["ds-bm-scroll"]}>
@@ -155,7 +159,7 @@ export function IconButtonSizes() {
       title="Sizes"
       source={SOURCE}
       props="size"
-      role="The ladder matches the Button's rows, and md is the least a touch target takes."
+      role="Matches the Button up to md, then steps by 4, and lg (44) is the touch floor."
     >
       <SizeLadder
         label="Icon button sizes"

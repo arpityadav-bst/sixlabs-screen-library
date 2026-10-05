@@ -33,7 +33,12 @@ export const LADDER: readonly Step[] = [
   },
   { width: "1280", at: "xl", changes: `jobs three across and the switch hides · ${TYPE_STEP}`, a: site("Jobs.tsx", "xl:grid-cols-3") },
   { width: "1600", at: "min-[1600px]", changes: `the floating tiles take their wide places · ${TYPE_STEP}`, a: site("Hero.tsx", "min-[1600px]:text-[64px]") },
-  { width: "1920", at: "min-[1920px]", changes: TYPE_STEP, a: site("Hero.tsx", "min-[1920px]:text-[76px]") },
+  {
+    width: "1920",
+    at: "min-[1920px]",
+    changes: `${TYPE_STEP} · past it, on dense screens only (dpr 1.5 and up), the players content scales up to 1.35x, see Scroll line to players`,
+    a: site("Hero.tsx", "min-[1920px]:text-[76px]"),
+  },
   { width: "2560", at: "min-[2560px]", changes: TYPE_STEP, a: site("Hero.tsx", "min-[2560px]:text-[88px]") },
 ];
 

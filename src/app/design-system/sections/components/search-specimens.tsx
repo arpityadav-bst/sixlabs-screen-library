@@ -19,8 +19,8 @@ export function SearchAnatomy() {
   return (
     <Anatomy pins={SEARCH_PINS} ground="page" gutter={48} isolateKeys label="Search field anatomy">
       <div className={styles["ds-in-stack"]}>
-        <SearchField label={LABEL} placeholder={LABEL} shortcut="/" bindShortcut={false} />
-        <SearchField label={LABEL} placeholder={LABEL} defaultValue="play" suggestions={matchQuestions("play")} inline />
+        <SearchField label={LABEL} placeholder={LABEL} shortcut="/" bindShortcut={false} landmark={false} />
+        <SearchField label={LABEL} placeholder={LABEL} defaultValue="play" suggestions={matchQuestions("play")} inline landmark={false} />
       </div>
     </Anatomy>
   );
@@ -41,6 +41,7 @@ function cell(state: SearchState) {
       forceState={state === "hover" ? "hover" : state === "focus" ? "focus" : undefined}
       inline={state === "no-results" || state === "results"}
       active={state === "results" ? 0 : undefined}
+      landmark={false}
     />
   );
 }
@@ -70,7 +71,7 @@ export function SearchLadder() {
         select: "[data-slot=box]",
         node: (
           <div className={styles["ds-in-w240"]}>
-            <SearchField label={`Size ${s}`} size={s} placeholder="Search" shortcut="/" bindShortcut={false} />
+            <SearchField label={`Size ${s}`} size={s} placeholder="Search" shortcut="/" bindShortcut={false} landmark={false} />
           </div>
         ),
       }))}
@@ -128,12 +129,12 @@ export function SearchDoDont() {
     <DoDont>
       <Do reason="A status row says the search ran and found nothing, and names the query it ran." isolateKeys tall>
         <div className={styles["ds-in-w320"]}>
-          <SearchField label={LABEL} placeholder="Search" defaultValue="pricing" inline bindShortcut={false} />
+          <SearchField label={LABEL} placeholder="Search" defaultValue="pricing" inline bindShortcut={false} landmark={false} />
         </div>
       </Do>
       <Dont reason="Closing the list without a word reads as a search that never ran." isolateKeys tall>
         <div className={styles["ds-in-w320"]}>
-          <SearchField label={LABEL} placeholder="Search" defaultValue="pricing" bindShortcut={false} />
+          <SearchField label={LABEL} placeholder="Search" defaultValue="pricing" bindShortcut={false} landmark={false} />
         </div>
       </Dont>
     </DoDont>

@@ -25,7 +25,7 @@ import {
 import { FOCUS, FOCUS_INVERSE } from "./focus";
 import { forceAttr, forces, type ForceState } from "./force";
 import { DUR } from "./motion";
-
+import { ICON_STROKE } from "./token-shape";
 export type { ChipGround, ChipKind, ChipSize } from "./chip-styles";
 
 export type ChipProps = {
@@ -115,11 +115,11 @@ export function Chip({
             (selected ? "mr-1.5 w-3.5 opacity-100" : "w-0 opacity-0")
           }
         >
-          <Check size={14} strokeWidth={2} />
+          <Check size={14} strokeWidth={ICON_STROKE[14]} />
         </span>
       )}
       {avatar && <span className="mr-1.5 inline-flex shrink-0">{avatar}</span>}
-      {Icon && <Icon aria-hidden size={14} strokeWidth={2} className="mr-1.5 shrink-0" />}
+      {Icon && <Icon aria-hidden size={14} strokeWidth={ICON_STROKE[14]} className="mr-1.5 shrink-0" />}
       <span>{children}</span>
     </>
   );
@@ -143,7 +143,7 @@ export function Chip({
           onKeyDown={onKey}
           className={`${CHIP_REMOVE} ${g.remove} ${styles["ds-hit"]} ${ring}`}
         >
-          <X aria-hidden size={14} strokeWidth={2} />
+          <X aria-hidden size={14} strokeWidth={ICON_STROKE[14]} />
         </button>
       </span>
     );

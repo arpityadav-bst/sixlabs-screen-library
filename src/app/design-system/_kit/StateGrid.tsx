@@ -3,11 +3,13 @@
 // state from its forceState prop or from that attribute in its CSS. Forced cells are inert: they are
 // pictures of a state, out of the tab order and deaf to the pointer, so they never fight the real one.
 // Each carries a screen-reader line outside the inert box ("primary, hover"), so a reader walking the
-// table hears what the picture shows. The live column renders the part free, to hover, press or Tab into.
+// table hears what the picture shows. That box is Forced (Forced.tsx), which a forced specimen outside a
+// grid wears too. The live column renders the part free, to hover, press or Tab into.
 // Its box scrolls sideways on a phone with the row heads held at the left, and takes a tab stop while it
 // scrolls (ScrollBox). Works in server and client sections alike, because it holds no state of its own.
 import type { ReactNode } from "react";
 import { Canvas, type Ground } from "./Canvas";
+import { Forced } from "./Forced";
 import { ScrollBox } from "./ScrollBox";
 
 export type StateGridCell<S extends string, V extends string> = {
@@ -88,10 +90,9 @@ export function StateGrid<S extends string, V extends string = string>({
                 )}
                 {states.map((s) => (
                   <td key={s}>
-                    <span className="ds-sr">{row.variant ? `${row.variant}, ${s}` : s}</span>
-                    <div className="ds-sg-cell" data-ds-state={s} inert>
+                    <Forced state={s} label={row.variant} className="ds-sg-cell">
                       {cell(s, row, s)}
-                    </div>
+                    </Forced>
                   </td>
                 ))}
                 {live && (

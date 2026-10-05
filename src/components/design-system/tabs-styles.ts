@@ -26,10 +26,10 @@ export const TAB =
   "data-[force=pressed]:text-(--ds-color-ink) aria-selected:text-(--ds-color-ink) " +
   "disabled:cursor-not-allowed disabled:text-(--ds-color-text-quiet)";
 
-/** The label settles to scale-press-pill (SCALE.pressPill, 0.97) under a press, the indicator does not. */
+/** The label settles to scale-press-pill (SCALE.pressPill, 0.97) under a press (at once when reduced), the indicator does not. */
 export const TAB_LABEL =
   "inline-flex items-center gap-1.5 transition-[scale] duration-(--ds-dur-ui) ease-(--ds-ease-out) " +
-  "group-enabled:group-active:scale-(--ds-scale-press-pill) group-data-[force=pressed]:scale-(--ds-scale-press-pill)";
+  "group-enabled:group-active:scale-(--ds-scale-press-pill) group-data-[force=pressed]:scale-(--ds-scale-press-pill) motion-reduce:transition-none";
 
 /** The 2px navy indicator, as wide as the label, over the list's hairline. */
 export const TAB_INDICATOR =

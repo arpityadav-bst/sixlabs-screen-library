@@ -231,7 +231,7 @@ export function Tooltip({
           className={`pointer-events-none absolute z-(--ds-z-tooltip) ${IN_PLACE[side]}`}
         />
       )}
-      {!docs && !shown && (
+      {!docs && (
         <span id={id} hidden>
           {shortcut ? `${content} ${shortcut}` : content}
         </span>
@@ -244,7 +244,7 @@ export function Tooltip({
               <TooltipBubble
                 key="bubble"
                 ref={bubble}
-                id={id}
+                id={`${id}-bubble`}
                 content={content}
                 side={side}
                 tone={tone}

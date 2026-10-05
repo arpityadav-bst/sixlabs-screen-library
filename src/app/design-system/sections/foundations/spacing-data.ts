@@ -1,6 +1,8 @@
 // The spacing section's data: the rhythm gaps and component paddings, each transcribed from the site
-// and asserted against the exact class text it came from. The scale itself is SPACING in tokens.
+// and asserted against the exact class text it came from, and the control heights read from
+// CONTROL_HEIGHTS. The scale itself is SPACING in tokens.
 import type { AnatomyPin } from "@/app/design-system/_kit/anatomy-measure";
+import { CONTROL_HEIGHTS } from "@/components/design-system/control-heights";
 import { SPACING } from "@/components/design-system/tokens";
 import { site, type Assertion } from "./foundation-assert";
 import { check } from "./foundation-scan";
@@ -13,6 +15,17 @@ export const SPACE_VALUES = SPACING.map((t) => ({ part: t.useFor, token: `--ds-$
 export const SPACE_CODE = `import { cssVar } from "@/components/design-system/tokens";
 
 <div style={{ display: "grid", gap: cssVar("space-4"), padding: cssVar("space-6") }}>...</div>`;
+
+/** Every control height and the family sizes that reach it, smallest first. */
+export const HEIGHT_ROWS = CONTROL_HEIGHTS.map((h) => ({ key: `${h.px}px`, value: h.parts.join(", ") }));
+
+export const HEIGHTS_CODE = `import { ArrowRight } from "lucide-react";
+import { TextInput } from "@/components/design-system/TextInput";
+import { IconButton } from "@/components/design-system/IconButton";
+
+// one row, one height: a md TextInput (44) beside a lg IconButton (44)
+<TextInput label="Work email" size="md" />
+<IconButton icon={ArrowRight} label="Send" size="lg" />`;
 
 export type Gap = { key: string; cls: string; value: string; assert: Assertion };
 

@@ -13,11 +13,11 @@
 
 **The portrait height.** `--ph = min(720px, (100svh - 344px) / 0.756)`. 344 is the room the header clearance and the cards need. 0.756 is the share of the portrait that adds to the section, since the cards cover its bottom 24.4%. Below lg the formula changes to fit the portrait, switch and carousel in one screen, capped at 520 and at the content width. The section always fits one view, so picking a player and seeing them never needs a scroll.
 
-**Auto mode.** While the section is shown, the portrait swaps between the human and the AI copy every 10s, so a visitor who never touches the switch still sees both. The first pick stops it for that player.
+**Auto mode.** While the section is shown, the portrait swaps between the human and the AI copy every 5s (`AUTO_S`), so a visitor who never touches the switch still sees both. The first pick stops it for that player.
 
-**Accessibility.** The cards are toggle buttons with `aria-pressed`. The switch is a radiogroup. Only type in white (or on a white card) sits on the water, because white is the most contrast the blue allows (4.49:1) and navy reaches only about 3.8:1. The section is the page's one scroll-snap magnet, set to proximity, so it catches a scroll that ends near it and leaves every other scroll alone.
+**Accessibility.** The cards are toggle buttons with `aria-pressed`. The switch is a radiogroup. Only type in white (or on a white card) sits on the water, because white is the most contrast the blue allows (4.49:1) and navy reaches only about 3.8:1. The section is the page's one magnet, CSS scroll snap plus a JS catch within 0.6 of a screen, so it catches a scroll that comes to rest near it and leaves every other scroll alone. The auto switch starts by itself and keeps going, and using a player's switch stops it for that player only, so another pick starts it again. WCAG 2.2.2 (Pause, Stop, Hide) asks for one way to stop it, such as holding every player once the visitor uses any switch.
 
-**Responsive.** One switch at lg. Below lg the side column and the cards give way to the carousel and the arrows.
+**Responsive.** One switch at lg. Below lg the side column and the cards give way to the carousel and the arrows. Past 1920 on a dense screen (devicePixelRatio 1.5 and up) the content scales up evenly, by the window's width over 1920, to at most 1.35, and never past what fits between the header clearance and the foot (usePlayersScale.ts). It is a transform, so the layout, the pull up and the full height are untouched. A wide CSS width at that density is a big physical screen seen up close, and a 1440p monitor at density 1 keeps the layout.
 
 #### Gaps
 

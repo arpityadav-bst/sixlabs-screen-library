@@ -1,6 +1,6 @@
 // The card's class maps, kept beside Card.tsx so the scanner reads every class. Sizes set the radius and
 // padding (the shipped feature card is the job card, Jobs.tsx:162, the compact one the selector card under
-// lg, Players.tsx:215, whose 22 radius new work snaps to radius-md 24). Tones set the type colour the parts inherit. The fill, line and states live in
+// lg, Players.tsx:220, whose 22 radius new work snaps to radius-md 24). Tones set the type colour the parts inherit. The fill, line and states live in
 // card.module.css, because they need registered properties.
 import { FOCUS_CARD, FOCUS_INSET } from "./focus";
 

@@ -12,7 +12,7 @@ The size follows the icon's role and the box it sits in, never the size of the t
 
 #### Never for
 
-Sizes between the steps (the site's 17 and 22 move to 16 and 20). A stroke picked by eye or left at lucide's default of 2 above 14. A rotating icon as a loader, which is the Spinner's job. The brand marks, which are their own artwork at 32 and 44 and live in Logo and identity (6.1).
+Sizes between the steps (the site's 17 and 22 move to 16 and 20). A stroke picked by eye or left at lucide's default of 2 above 14. A rotating icon as a loader, which is the Spinner's job. The brand marks, which are their own artwork at 32, 36 and 44 and live in Logo and identity (6.1).
 
 #### Reasons
 

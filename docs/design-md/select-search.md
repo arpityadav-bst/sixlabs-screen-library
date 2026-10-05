@@ -15,7 +15,7 @@
 **Sizes.** The Select trigger takes the field heights, 36, 44 and 52, so it lines up with the inputs in a form. SearchField runs 32, 40 and 48 with text at 13, 14 and 15, a step shorter, because it lives in toolbars and section heads beside sm and md buttons rather than in forms.
 
 **States.**
-- *Select trigger:* rest, hover (the darker line), focus (accent line and halo), open (focus plus the turned chevron), filled, disabled, read-only (inset grey, focusable, the list does not open) and invalid (danger line and message), all from the field box.
+- *Select trigger:* rest, hover (the darker line), focus (accent line and halo), open (focus plus the turned chevron), filled, disabled, read-only (inset grey, focusable, the list does not open), read-only focus (the inset grey under the focus line and halo), invalid (danger line and message), invalid focus (the danger line's halo with the accent outline) and open over an invalid trigger, all from the field box.
 - *Select row:* rest, active (the highlight), selected (500 ink and the check) and disabled (40%).
 - *SearchField:* empty (the chip), hover, focus (the chip hides), filled (the clear button), searching (the spinner and `aria-busy`), no results (a status row) and disabled.
 

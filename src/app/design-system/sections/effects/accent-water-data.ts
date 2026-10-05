@@ -1,9 +1,9 @@
 // The accent water's values, written once: the constants the specimen passes to accentWaveGL, the level
 // formula AccentWave runs on the scroll, the pins, the drawer rows and the event contract. The rise's
 // length comes from ScrubLine's own WAVE_VH, a client export, so that row lives in scrub-exports.ts.
-import type { AnatomyPin } from "@/app/design-system/_kit/Anatomy";
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { HeldPin } from "./held-pin";
 
 /** AccentWave.tsx:20-26, passed to accentWaveGL as the site passes them */
 export const WATER = { accent: [26, 109, 255], arc: 90, band: 480, pitch: 6, grain: 0.07 };
@@ -48,11 +48,41 @@ export function waterMarks(level: number, dir: Dir, h: number) {
     : { band: span(level, level + band), edge: span(level - arc, level), solid: span(0, level - pitch * 2) };
 }
 
-export const WATER_PINS: readonly AnatomyPin[] = [
-  { selector: '[data-ds="water-stage"]', name: "Water canvas", token: "--ds-z-copy", value: "fixed inset-0 at z 20 on the site, viewport x DPR up to 2", source: "AccentWave.tsx:193", side: "left" },
-  { selector: '[data-ds="water-band"]', name: "Halftone band", value: "6px grid over 480px, dots 0.35 to 4.32px by s^1.4", source: "accent-wave-gl.ts:28-41", side: "right" },
-  { selector: '[data-ds="water-edge"]', name: "Edge arc", value: "90px deep, level + dir x 90 x (2x / w - 1)^2", source: "accent-wave-gl.ts:19", side: "right" },
-  { selector: '[data-ds="water-solid"]', name: "Solid", token: "--ds-color-accent", value: "#1a6dff mixed 7% toward grey grain, 12px short of the edge", source: "accent-wave-gl.ts:24,48", side: "left" },
+export const WATER_PINS: readonly HeldPin[] = [
+  {
+    selector: '[data-ds="water-stage"]',
+    name: "Water canvas",
+    token: "--ds-z-copy",
+    value: "fixed inset-0 at z 20 on the site, viewport x DPR up to 2",
+    source: "AccentWave.tsx:193",
+    expect: "fixed inset-0 z-20",
+    side: "left",
+  },
+  {
+    selector: '[data-ds="water-band"]',
+    name: "Halftone band",
+    value: "6px grid over 480px, dots 0.35 to 4.32px by s^1.4",
+    source: "accent-wave-gl.ts:28,39-41",
+    expect: ["into < uBand + uPitch * 2.0", "pow(s, 1.4)", "0.15 + s * 0.95"],
+    side: "right",
+  },
+  {
+    selector: '[data-ds="water-edge"]',
+    name: "Edge arc",
+    value: "90px deep, level + dir x 90 x (2x / w - 1)^2",
+    source: "accent-wave-gl.ts:19",
+    expect: "uLevel + uDir * uArc * u * u",
+    side: "right",
+  },
+  {
+    selector: '[data-ds="water-solid"]',
+    name: "Solid",
+    token: "--ds-color-accent",
+    value: "#1a6dff mixed 7% toward grey grain, 12px short of the edge",
+    source: "accent-wave-gl.ts:24,48",
+    expect: ["e + uDir * uPitch * 2.0", "mix(uAccent, vec3(grain), uGrain)"],
+    side: "left",
+  },
 ];
 
 export const WATER_VALUES: readonly ValueRow[] = [
@@ -90,7 +120,7 @@ export const WATER_EVENTS: readonly KeyRow[] = [
   { key: "accentwave", value: `window CustomEvent, detail { filled: true } once the view is ${FULL_AT * 100}% full`, source: "AccentWave.tsx:64-70,95" },
   { key: "drained", value: `detail { filled: false } below ${DRAINED_BELOW * 100}%, so a step back does not undo the players`, source: "AccentWave.tsx:81" },
   { key: "Header", value: "turns solid white while filled", source: "Header.tsx:40,56" },
-  { key: "Players", value: "come in once filled", source: "Players.tsx:50-53" },
+  { key: "Players", value: "come in once filled", source: "Players.tsx:53-56" },
   { key: "redraw", value: "an unchanged frame is not drawn again", source: "accent-wave-gl.ts:113-115" },
   { key: "context lost", value: "rebuilt and drawn again when it is restored", source: "accent-wave-gl.ts:52-56,104-108" },
   { key: "no WebGL", value: "a 2D canvas draws the same geometry", source: "AccentWave.tsx:98-150" },

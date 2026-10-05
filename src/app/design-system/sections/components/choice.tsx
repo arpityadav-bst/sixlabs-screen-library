@@ -45,7 +45,7 @@ export function ChoiceSection() {
           title="States"
           source={CHECK}
           props="checked indeterminate forceState disabled invalid readOnly"
-          role="Checked and indeterminate differ by glyph as well as fill, so the state survives forced colours and colour blindness."
+          role="Checked and indeterminate differ by glyph as well as fill, so the state survives forced colours and colour blindness. A ticked box in an invalid group stays navy, and only the group's message carries the error."
         >
           <CheckboxStates />
         </Spec>
@@ -121,7 +121,7 @@ export function ChoiceSection() {
           level={4}
           title="States"
           source={SWITCH}
-          props="checked forceState disabled loading readOnly"
+          props="checked forceState disabled loading readOnly icons"
           role="Loading keeps the old position with a spinner in the thumb, so the switch never shows a state it has not saved."
         >
           <SwitchStates />
@@ -136,7 +136,7 @@ export function ChoiceSection() {
         >
           <SwitchBlueStates />
         </Spec>
-        <Spec level={4} title="Sizes" source={SWITCH} props="size" role="Track heights follow the box sizes, so a switch sits on the same line as a checkbox.">
+        <Spec level={4} title="Sizes" source={SWITCH} props="size icons" role="Track heights follow the box sizes, so a switch sits on the same line as a checkbox.">
           <SwitchLadder />
         </Spec>
         <Spec level={4} title="Live" source={SWITCH} props="loading onChange" role="The setting saves on the flip, and the thumb lands only once the save has.">

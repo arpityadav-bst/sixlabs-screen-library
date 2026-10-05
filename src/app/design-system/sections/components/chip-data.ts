@@ -2,8 +2,9 @@
 // anatomy pins, drawer rows and the snippet.
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
 import type { ChipKind, ChipSize } from "@/components/design-system/Chip";
+import { CHIP_SIZE } from "@/components/design-system/chip-styles";
 import { FORCE_PROP } from "./act-sel-rows";
-import { sv, tv, type Pin } from "./display-values";
+import { heightOf, sizeNames, sv, tv, type Pin } from "./display-values";
 
 /** The trait labels (players-data.ts:31) filter, the player types (players-data.ts:40) are one choice. */
 export const TRAITS = ["Curiosity", "Patience", "Price sensitivity", "Skill"] as const;
@@ -29,11 +30,8 @@ export function chipHas(kind: ChipKind, state: string): boolean {
   return true;
 }
 
-export const CHIP_SIZES: readonly { name: ChipSize; px: number }[] = [
-  { name: "sm", px: 28 },
-  { name: "md", px: 32 },
-  { name: "lg", px: 36 },
-];
+/** The rungs, read from CHIP_SIZE, so the ladder cannot drift from the part. */
+export const CHIP_SIZES: readonly { name: ChipSize; px: number }[] = sizeNames(CHIP_SIZE).map((name) => ({ name, px: heightOf(CHIP_SIZE[name]) }));
 
 /** The part and its class maps, cited by path: the guide's own kit has a Chip.tsx too. */
 const CH = "components/design-system/Chip.tsx";
@@ -56,13 +54,14 @@ export const CHIP_VALUES: readonly ValueRow[] = [
   tv("Selected fill", "color-primary"),
   tv("Selected hover fill", "color-primary-hover", `${CS}:29`),
   tv("Remove hover", "color-fill-open"),
-  tv("Ring on blue", "color-on-blue-40", `${CS}:36`),
+  tv("Line on blue", "color-on-blue-40", `${CS}:36`),
+  tv("Focus ring on blue", "focus-color-inverse", `${CH}:101`),
   sv("Label on blue", "white, on the blue itself with no fill under it", `${CS}:36`),
   tv("Hover fill on blue", "color-on-blue-15", `${CS}:39`),
   tv("Selected on blue", "color-surface", `${CS}:37`),
   tv("Remove hover on blue", "color-on-blue-25", `${CS}:42`),
   tv("Colour and check", "dur-ui"),
-  sv("Heights", "sm 28 · md 32 · lg 36", `${CS}:8`),
+  sv("Heights", CHIP_SIZES.map((s) => `${s.name} ${s.px}`).join(" · "), `${CS}:8`),
   sv("Label", "Inter 13 / 500, px 12, gap 6", `${CS}:12, ${CH}:102`),
   tv("Press", "scale-press-pill", `${CS}:16`),
   sv("Remove", "collapses over 160ms, at once under reduced motion", `${CH}:80, 99`),

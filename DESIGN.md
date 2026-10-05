@@ -323,7 +323,7 @@ The readings that set the rules, rounded down:
 
 **Non-text needs 3:1 too.** A field edge a visitor has to find is held to 3:1, which the hairline does not reach. That is why the field line exists. A hairline round a card needs no such bar, because the content inside it already marks the edge.
 
-**Shipped pairs under the line.** Besides the accent and player body cases, the player card's "Model 01" meta in quiet slate-400 is 2.63:1 on white, and the terminal's prompt and labels in Tailwind v4 slate-500 are 3.83:1 on its body at 12.5px. The comparison's vs is ink at 30% on its white disc, 1.93:1, and stays there because the word is incidental: the paired cards already say versus, so it falls under the decorative exemption of 1.4.3. The system parts made for the water set their labels in full white at 12 to 15px, 4.49:1, a hair under the bar: the glass Button, the on-blue Chip, Segmented's segments, the Switch's label and the label rows of Slider and Progress on blue. They are open, [decision 2](#2-white-labels-on-the-accent) in Decisions pending ([10.3](#103-decisions-pending)), and Known gaps ([10.2](#102-known-gaps)) lists them. The on-blue Badge, white on its 15% glass, is lower still, as Badge, status dot, tag ([7.14](#714-badge-status-dot-tag)) records.
+**Shipped pairs under the line.** Besides the accent and player body cases, the player card's "Model 01" meta in quiet slate-400 is 2.63:1 on white, and the terminal's prompt and labels in Tailwind v4 slate-500 are 3.83:1 on its body at 12.5px. The full view's "Loading" label is the same slate-500 at 11px on the hero grey, 3.77:1, the muted-on-container pair this chapter rules out. The comparison's vs is ink at 30% on its white disc, 1.93:1, and stays there because the word is incidental: the paired cards already say versus, so it falls under the decorative exemption of 1.4.3. The system parts made for the water set their labels in full white at 12 to 15px, 4.49:1, a hair under the bar: the glass Button, the on-blue Chip, Segmented's segments, the Switch's label and the label rows of Slider and Progress on blue. They are open, [decision 2](#2-white-labels-on-the-accent) in Decisions pending ([10.3](#103-decisions-pending)), and Known gaps ([10.2](#102-known-gaps)) lists them. The on-blue Badge, white on its 15% glass, is lower still, as Badge, status dot, tag ([7.14](#714-badge-status-dot-tag)) records.
 
 **Pending: an accent ink for small text.** A darker accent, `#1559d6`, reaches 5.85:1 on the page, 6.11 on white and 4.84 on the container, enough for small accent copy on every light ground. It is [decision 1](#1-accent-text-under-24px) in Decisions pending ([10.3](#103-decisions-pending)), and new work keeps small copy out of the accent meanwhile.
 
@@ -348,8 +348,8 @@ The scale for new work is Type scale ([3.16](#316-type-scale)), from 11 to 56, p
 Settings by kind:
 
 - *Tracking.* Display runs from -0.02em at 16 to -0.055em at the footer word, tighter as it grows. Text sits at 0 to -0.02em, the tightest being the footer's column heads (`footer-head`). Capitals at 11px open to 0.14em (mono) and 0.18em (sans).
-- *Leading.* One- and two-line display sits at 1.05 to 1.1. A display line that wraps as a statement (the scroll line, the comparison lines) opens to 1.3. Reading text runs 1.4 to 1.65, the most open being the footer's intro (`footer-intro`).
-- *Weights.* 500 for display and emphasis, and for badge labels in mono. 400 for reading, and for the comparison's lines and its vs, which are statements rather than headings. 600 only for the footer word, the footer's column heads (`footer-head`), the code tag and a badge's count.
+- *Leading.* One- and two-line display sits at 1.05 to 1.1. A display line that wraps as a statement (the scroll line) opens to 1.3. Reading text runs 1.4 to 1.65, the most open being the footer's intro (`footer-intro`).
+- *Weights.* 500 for display and emphasis, and for badge labels in mono. 400 for reading, and for the vs and the 6labs name on navy, which sits a step lighter so white on navy matches ChatGPT's 500 on grey. 600 only for the footer word, the footer's column heads (`footer-head`), the code tag and a badge's count.
 
 #### Use for
 
@@ -431,7 +431,7 @@ Every section on 6labs sits in the same box: a page gutter on `main`, a 1400px c
 
 The parts of the box are the container (written by hand as `max-w-[1400px]` in each section), the full view's wider copy grid, the page gutter on `main`, each section's inner gutter, the text measures and the header's height. Every value, with its token and source, is Layout ([3.18](#318-layout)), and the widths are Breakpoints ([3.19](#319-breakpoints)).
 
-Breakpoints for new work are Tailwind's: sm 640, md 768, lg 1024, xl 1280. Inside a part, three named component widths may also be used, 400, 480 and 560, where a row of actions, choices or a banner's copy stops fitting a phone (ButtonGroup and EmptyState's actions stack under 400, a horizontal radio row and a banner's actions wrap under 480, EmptyState's padding drops under 560). A part that answers its own box rather than the window, as EmptyState does, steps on a container query at those widths instead of a media query. The full-view hero's ladder is 561, 901, 1280, 1600, 1920 and 2560. Responsive ladder ([9.6](#96-responsive-ladder)) gives the reasons for both. One narrow edge at 380 tightens the jobs tabs. Two media gates sit beside the widths: a short screen (`min-width: 1280px` and `max-height: 720px`) caps the full headline, and a fine pointer (`hover: hover` and `pointer: fine`) is required before a part shows a hover-only hint.
+Breakpoints for new work are Tailwind's: sm 640, md 768, lg 1024, xl 1280. Inside a part, three named component widths may also be used, 400, 480 and 560, where a row of actions, choices or a banner's copy stops fitting a phone (ButtonGroup and EmptyState's actions stack under 400, a horizontal radio row and a banner's actions wrap under 480, EmptyState's padding drops under 560). A part that answers its own box rather than the window, as EmptyState does, steps on a container query at those widths instead of a media query. The full-view hero's ladder is 561, 901, 1280, 1600, 1920 and 2560. Responsive ladder ([9.6](#96-responsive-ladder)) gives the reasons for both. One narrow edge at 380 tightens the jobs tabs. Three gates sit beside the widths: a short screen (`min-width: 1280px` and `max-height: 720px`) caps the full headline, a fine pointer (`hover: hover` and `pointer: fine`) is required before a part shows a hover-only hint, and a dense screen (devicePixelRatio 1.5 and up, read in script) wider than 1920 lets the players scale up to 1.35.
 
 The z-scale lives in Layer stack ([5.1](#51-layer-stack)).
 
@@ -557,7 +557,7 @@ The size follows the icon's role and the box it sits in, never the size of the t
 
 #### Never for
 
-Sizes between the steps (the site's 17 and 22 move to 16 and 20). A stroke picked by eye or left at lucide's default of 2 above 14. A rotating icon as a loader, which is the Spinner's job. The brand marks, which are their own artwork at 32 and 44 and live in Logo and identity ([6.1](#61-logo-and-identity)).
+Sizes between the steps (the site's 17 and 22 move to 16 and 20). A stroke picked by eye or left at lucide's default of 2 above 14. A rotating icon as a loader, which is the Spinner's job. The brand marks, which are their own artwork at 32, 36 and 44 and live in Logo and identity ([6.1](#61-logo-and-identity)).
 
 #### Reasons
 
@@ -744,8 +744,8 @@ Each row gives the CSS name, the value, the role, what the token is for and neve
 | `--ds-color-accent-glow-55` | `rgb(26 109 255 / 0.55)` | Caret glow | The typed caret's 10px glow | Text, lines or fills | `app/globals.css:108` |
 | `--ds-color-accent-glow-50` | `rgb(26 109 255 / 0.5)` | Sheen bloom | The card sheen's 7px bloom | Text, lines or fills | `app/globals.css:253` |
 | `--ds-color-accent-glow-30` | `rgb(26 109 255 / 0.3)` | Sheen falloff | The sheen's radial stop at 34% | Text, lines or fills | `app/globals.css:254` |
-| `--ds-color-accent-glow-28` | `rgb(26 109 255 / 0.28)` | Players glow core | The radial glow behind the players | Any light ground | `components/website/Players.tsx:108` |
-| `--ds-color-accent-glow-08` | `rgb(26 109 255 / 0.08)` | Players glow edge | The players glow at 55% | Any light ground | `components/website/Players.tsx:108` |
+| `--ds-color-accent-glow-28` | `rgb(26 109 255 / 0.28)` | Players glow core | The radial glow behind the players | Any light ground | `components/website/Players.tsx:111` |
+| `--ds-color-accent-glow-08` | `rgb(26 109 255 / 0.08)` | Players glow edge | The players glow at 55% | Any light ground | `components/website/Players.tsx:111` |
 | `--ds-color-accent-ping` | `rgb(26 109 255 / 0.4)` | Live dot halo | The ping ring round a live dot | Fills larger than a dot | `components/website/Hero.tsx:238`, as `bg-accent/40` |
 
 Reasons: Colour roles ([2.1](#21-colour-roles)), The accent rule ([chapter 8](#8-the-accent-rule)).
@@ -861,7 +861,7 @@ Reasons: Colour roles ([2.1](#21-colour-roles)).
 
 | Token | Value | Role | Use for | Never for | Source |
 | --- | --- | --- | --- | --- | --- |
-| `--ds-color-on-blue-80` | `rgb(255 255 255 / 0.8)` | Body on blue | Player body, carousel body, ModeToggle rest text | Light grounds | `components/website/Players.tsx:124`, as `text-white/80` |
+| `--ds-color-on-blue-80` | `rgb(255 255 255 / 0.8)` | Body on blue | Player body, carousel body, ModeToggle rest text | Light grounds | `components/website/Players.tsx:127`, as `text-white/80` |
 | `--ds-color-on-blue-75` | `rgb(255 255 255 / 0.75)` | Trait label on blue | The trait bar labels | Light grounds | `components/website/PlayerTraits.tsx:37`, as `text-white/75` |
 | `--ds-color-on-blue-50` | `rgb(255 255 255 / 0.5)` | Quiet white on navy and blue | Toast close and tooltip shortcut at rest, inverse card meta, the read-only switch on blue, paused progress | Text a reader must read | system |
 | `--ds-color-on-blue-40` | `rgb(255 255 255 / 0.4)` | Rest dot and line on blue | Carousel dots at rest, terminal bar fills, the glass Button and on-blue Chip lines, the segmented blue track, Slider ticks and the Switch track's hover on blue | Text | `components/website/PlayerCarousel.tsx:109`, as `bg-white/40` |
@@ -919,8 +919,8 @@ Reasons: Special palettes ([2.2](#22-special-palettes)).
 
 | Token | Value | Role | Use for | Never for | Source |
 | --- | --- | --- | --- | --- | --- |
-| `--ds-color-logo-blue` | `#1770EF` | Logo blades | The SixLabs mark only | UI, which takes color-accent | `components/website/brand-marks.tsx:86` |
-| `--ds-color-logo-navy` | `#030D2D` | Logo core | The SixLabs mark only | UI, which takes color-ink | `components/website/brand-marks.tsx:85` |
+| `--ds-color-logo-blue` | `#1770EF` | Logo blades | The 6labs mark only | UI, which takes color-accent | `components/website/brand-marks.tsx:86` |
+| `--ds-color-logo-navy` | `#030D2D` | Logo core | The 6labs mark only | UI, which takes color-ink | `components/website/brand-marks.tsx:85` |
 
 Reasons: Special palettes ([2.2](#22-special-palettes)), Logo and identity ([6.1](#61-logo-and-identity)).
 
@@ -943,15 +943,15 @@ Reasons: Type ([2.4](#24-type)).
 | `--ds-text-13` | `13px` | Type step 13 | captions, tabs, chips, small controls | system |
 | `--ds-text-14` | `14px` | Type step 14 | body S, controls, the container lede | system |
 | `--ds-text-15` | `15px` | Type step 15 | body L, nav, the CTA label | system |
-| `--ds-text-16` | `16px` | Type step 16 | body L from md, FAQ question | system |
-| `--ds-text-18` | `18px` | Type step 18 | player body, FAQ question from md | system |
-| `--ds-text-20` | `20px` | Type step 20 | card titles, comparison lines, menu rows | system |
+| `--ds-text-16` | `16px` | Type step 16 | body L from md, FAQ question, comparison lines on phones | system |
+| `--ds-text-18` | `18px` | Type step 18 | player body, FAQ question from md, comparison lines from md | system |
+| `--ds-text-20` | `20px` | Type step 20 | card titles, menu rows | system |
 | `--ds-text-22` | `22px` | Type step 22 | card names | system |
 | `--ds-text-24` | `24px` | Type step 24 | the wordmark | system |
-| `--ds-text-26` | `26px` | Type step 26 | scroll line, comparison from md | system |
+| `--ds-text-26` | `26px` | Type step 26 | scroll line, comparison names on phones | system |
 | `--ds-text-28` | `28px` | Type step 28 | the carousel title | system |
 | `--ds-text-30` | `30px` | Type step 30 | section h2, stats | system |
-| `--ds-text-34` | `34px` | Type step 34 | hero headline, the vs word from md | system |
+| `--ds-text-34` | `34px` | Type step 34 | hero headline, the vs word and comparison names from md | system |
 | `--ds-text-36` | `36px` | Type step 36 | the carousel title from md | system |
 | `--ds-text-44` | `44px` | Type step 44 | section h2 and scroll line from md | system |
 | `--ds-text-56` | `56px` | Type step 56 | hero and player headline from md | system |
@@ -1000,7 +1000,7 @@ Reasons: Spacing and rhythm ([2.5](#25-spacing-and-rhythm)).
 | `--ds-measure-line` | `980px` | Scroll line measure | The scroll line statement | Body | `components/website/ScrubLine.tsx:120` |
 | `--ds-measure-answer` | `680px` | Answer measure | FAQ answers and the widest full lede | Headings | `components/website/Faq.tsx:68` |
 | `--ds-measure-subline` | `520px` | Subline measure | Section sublines, the closing line, carousel body | Long body | `components/website/Jobs.tsx:109` |
-| `--ds-measure-body` | `480px` | Player body measure | The player body and its column | Light sections | `components/website/Players.tsx:124` |
+| `--ds-measure-body` | `480px` | Player body measure | The player body and its column | Light sections | `components/website/Players.tsx:127` |
 | `--ds-measure-lede` | `440px` | Lede measure | The container lede and the traits | Sublines | `components/website/Hero.tsx:205` |
 | `--ds-rhythm-section` | `clamp(96px, 9vw, 144px)` | Section rhythm | The top padding of Jobs and the comparison's offset under the header | Spacing inside a section | `components/website/Jobs.tsx:103`, as `pt-[clamp(96px,9vw,144px)]` |
 | `--ds-rhythm-faq` | `clamp(72px, 7vw, 120px)` | FAQ rhythm | The top padding of the FAQ | Other sections, which take rhythm-section | `components/website/Faq.tsx:18`, as `pt-[clamp(72px,7vw,120px)]` |
@@ -1072,9 +1072,9 @@ Reasons: Stroke and elevation ([2.8](#28-stroke-and-elevation)).
 | `--ds-shadow-float` | `0 1px 2px rgba(10,27,51,0.06), 0 12px 28px -12px rgba(10,27,51,0.35)` | Float | BackToTop, elevated icon buttons, toasts | Cards in the flow | `components/website/BackToTop.tsx:62` |
 | `--ds-shadow-pop` | `0 18px 50px -12px rgba(10,27,51,0.18)` | Pop | Menus and select panels | Cards | `components/website/LanguageMenu.tsx:78` |
 | `--ds-shadow-thumb` | `0 6px 16px -8px rgba(10,27,51,0.45)` | Thumb | The toggle and segmented thumb | Cards | `components/website/ModeToggle.tsx:49` |
-| `--ds-shadow-lift` | `0 1px 2px rgba(10,27,51,0.05), 0 24px 48px -24px rgba(10,27,51,0.22)` | Lift | A clickable card on hover | Rest states | `components/website/Players.tsx:221` |
-| `--ds-shadow-player` | `0 24px 48px -28px rgba(10,27,51,0.35)` | Player card rest | Player cards on blue | Light grounds | `components/website/Players.tsx:25` |
-| `--ds-shadow-player-selected` | `0 28px 56px -26px rgba(10,27,51,0.45)` | Player card selected | The selected player card on blue | Light grounds | `components/website/Players.tsx:219` |
+| `--ds-shadow-lift` | `0 1px 2px rgba(10,27,51,0.05), 0 24px 48px -24px rgba(10,27,51,0.22)` | Lift | A clickable card on hover | Rest states | `components/website/Players.tsx:224` |
+| `--ds-shadow-player` | `0 24px 48px -28px rgba(10,27,51,0.35)` | Player card rest | Player cards on blue | Light grounds | `components/website/Players.tsx:26` |
+| `--ds-shadow-player-selected` | `0 28px 56px -26px rgba(10,27,51,0.45)` | Player card selected | The selected player card on blue | Light grounds | `components/website/Players.tsx:222` |
 | `--ds-shadow-tooltip` | `0 8px 24px -8px rgba(10,27,51,0.35)` | Bubble | Tooltip and slider value bubbles: float's ink with a shorter throw, since a bubble sits on its trigger | Panels | system |
 | `--ds-shadow-modal` | `0 40px 100px -20px rgba(10,27,51,0.28)` | Modal | Dialogs and sheets | Anything in the flow | system |
 | `--ds-glow-caret` | `0 0 10px rgba(26,109,255,0.55)` | Caret glow | The typed caret | Controls | `app/globals.css:108` |
@@ -1125,7 +1125,7 @@ Reasons: Icons ([2.9](#29-icons)).
 | `--ds-z-floor` | `0` | The tile floor | The hero's WebGL floor | Controls | `components/website/Hero.tsx:132`, as `z-0` |
 | `--ds-z-raised` | `10` | Raised in a section | Player cards, the vs disc, the carousel, the floor logo | Anything fixed | `components/website/Understands.tsx:87`, as `z-10` |
 | `--ds-z-copy` | `20` | Copy over the floor | Hero copy, the wave button, the scroll cue, the accent water | Overlays | `components/website/AccentWave.tsx:193`, as `z-20` |
-| `--ds-z-stage` | `30` | Loader and players | The hero loader and the players section | Overlays | `components/website/Players.tsx:100`, as `z-30` |
+| `--ds-z-stage` | `30` | Loader and players | The hero loader and the players section | Overlays | `components/website/Players.tsx:103`, as `z-30` |
 | `--ds-z-header` | `40` | Fixed chrome | The header and BackToTop | Popovers | `components/website/Header.tsx:53`, as `z-40` |
 | `--ds-z-popover` | `45` | Popovers | Menus and select panels above the header | Dialogs and sheets, which open with showModal in the top layer over every z value | system |
 | `--ds-z-toast` | `60` | Toasts | Over the header and popovers, under an open modal, so a dialog's outcome is toasted after it closes | Tooltips | system |
@@ -1137,7 +1137,7 @@ Reasons: Layer stack ([5.1](#51-layer-stack)).
 
 | Token | Value | Role | Use for | Never for | Source |
 | --- | --- | --- | --- | --- | --- |
-| `--ds-ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` | The ease | Every entrance, panel, bar and settle | Loops, which run linear or ease-in-out | `components/website/Players.tsx:22` |
+| `--ds-ease-out` | `cubic-bezier(0.22, 1, 0.36, 1)` | The ease | Every entrance, panel, bar and settle | Loops, which run linear or ease-in-out | `components/website/Players.tsx:23` |
 | `--ds-ease-out-tw` | `cubic-bezier(0, 0, 0.2, 1)` | Tailwind ease-out | The hero's opacity fades only | New work, which takes ease-out | `components/website/Hero.tsx:37`, as `ease-out` |
 | `--ds-ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` | In-out cubic | The Human / AI sweep and the tile flip | Entrances | `components/website/PortraitSwap.tsx:187` |
 | `--ds-ease-sweep` | `cubic-bezier(0.45, 0, 0.25, 1)` | CTA sweep | The primary button's dot band run | Anything else | `components/website/PrimaryCta.tsx:85` |
@@ -1160,7 +1160,7 @@ Reasons: Easing, duration, springs ([4.1](#41-easing-duration-springs)).
 | `--ds-dur-panel` | `350ms` | Panel | An accordion answer opening, a detail swap | Hover | `components/website/Faq.tsx:65` |
 | `--ds-dur-sheen` | `400ms` | Sheen | The card sheen fading in | Hover colour | `app/globals.css:260` |
 | `--ds-dur-exit-long` | `450ms` | Long exit | Loaders leaving, a live count settling | Controls | `components/website/HeroBits.tsx:65` |
-| `--ds-dur-reveal` | `500ms` | Reveal | The players reveal and portrait swap | Controls | `components/website/Players.tsx:85` |
+| `--ds-dur-reveal` | `500ms` | Reveal | The players reveal and portrait swap | Controls | `components/website/Players.tsx:88` |
 | `--ds-dur-numbers` | `600ms` | Numbers | The hero numbers rising | Controls | `components/website/HeroBits.tsx:35` |
 | `--ds-dur-rise` | `700ms` | Rise | Section entrances and trait bars | Controls | `components/website/Understands.tsx:48` |
 | `--ds-dur-tiles` | `900ms` | Tiles | The tile floor rising in | UI | `tiles/intro.js:12` |
@@ -1200,7 +1200,7 @@ Reasons: Easing, duration, springs ([4.1](#41-easing-duration-springs)), Micro-i
 | Token | Value | Role | Use for | Never for | Source |
 | --- | --- | --- | --- | --- | --- |
 | `--ds-rise-y` | `28px` | Entrance travel | Section entrances | Controls | `components/website/Understands.tsx:45` |
-| `--ds-reveal-y` | `24px` | Reveal travel | The players reveal | Controls | `components/website/Players.tsx:83` |
+| `--ds-reveal-y` | `24px` | Reveal travel | The players reveal | Controls | `components/website/Players.tsx:86` |
 | `--ds-numbers-y` | `6px` | Small rise | The hero numbers, small content swaps | Sections | `components/website/HeroBits.tsx:33` |
 | `--ds-lift-y` | `2px` | Hover lift | Cards and floating buttons on hover | Text | `components/website/BackToTop.tsx:62` |
 | `--ds-loop-max` | `8px` | Loop ceiling | The most an ambient loop may travel | Entrances | system |
@@ -1219,16 +1219,17 @@ Reasons: Easing, duration, springs ([4.1](#41-easing-duration-springs)).
 | `--ds-type-scroll-line-*` | Outfit 500 | `26px / 1.3 / -0.025em` | from 768: 44px | Scroll line statement | The centred statement that fills on scroll | Headings | `components/website/ScrubLine.tsx:120` |
 | `--ds-type-carousel-title-*` | Outfit 500 | `28px / 1.1 / -0.025em` | from 768: 36px | Carousel player title | The player name under lg | Light grounds | `components/website/PlayerCarousel.tsx:84` |
 | `--ds-type-stat-*` | Outfit 500, tabular | `30px / 1 / -0.025em` | none | Stat number | Hero numbers | Prose numbers | `components/website/HeroBits.tsx:55` |
-| `--ds-type-comparison-*` | Outfit 400 | `20px / 1.3 / -0.025em` | from 768: 26px | Comparison line | The lines inside the comparison cards | Headings | `components/website/Understands.tsx:32` |
+| `--ds-type-comparison-name-*` | Outfit 500 | `26px / 1.1 / -0.025em` | from 768: 34px | Comparison name | The maker's name heading each comparison card, 500 on the grey and 400 (6labs) on the navy | Section heads | `components/website/Understands.tsx:31` |
 | `--ds-type-vs-*` | Outfit 400 | `27px / 1 / -0.025em` | from 768: 34px | The vs word | The vs on the disc between the comparison cards, decorative and aria-hidden | Text a reader must read | `components/website/Understands.tsx:87` |
-| `--ds-type-card-name-*` | Outfit 500 | `22px / 1.25 / -0.025em` | none | Card name | Player cards. The comparison names (Understands.tsx:30) share its size and tracking, inherit leading 1.5 and set 500 on grey, 400 on navy | Section heads | `components/website/Players.tsx:227` |
+| `--ds-type-card-name-*` | Outfit 500 | `22px / 1.25 / -0.025em` | none | Card name | Player cards | Section heads | `components/website/Players.tsx:230` |
 | `--ds-type-wordmark-*` | Outfit 500 | `24px / 32px / -0.025em` | none | Logo wordmark | The 6labs lockup in the header and footer | Headings | `components/website/Header.tsx:73` |
 | `--ds-type-card-title-*` | Outfit 500 | `20px / 1.25 / -0.03em` | none | Card title | Job cards and new card titles | Body | `components/website/Jobs.tsx:164` |
 | `--ds-type-menu-row-*` | Outfit 400 | `20px / 1.5 / -0.025em` | none | Mobile menu row | Rows of the mobile menu | Desktop nav | `components/website/MobileMenu.tsx:91` |
 | `--ds-type-question-*` | Outfit 500 | `16px / 1.375 / -0.02em` | from 768: 18px | FAQ question | Accordion triggers | Body | `components/website/Faq.tsx:45` |
 | `--ds-type-lede-full-*` | Inter 400 | `16px / 1.55 / -0.015em` | from 561: 16.5px, from 901: 15px, from 1280: 16px, from 1600: 18px, from 1920: 20px, from 2560: 22px | Lede, full view | The full-view hero's lede | Body copy | `components/website/Hero.tsx:20` |
 | `--ds-type-lede-*` | Inter 400 | `14px / 1.625 / 0` | from 768: 15px | Lede, container hero | The line under the container h1 | Long body | `components/website/Hero.tsx:205` |
-| `--ds-type-player-body-*` | Inter 400 | `16px / 1.625 / 0` | from 768: 18px | Player body | The player description on blue | Light grounds | `components/website/Players.tsx:124` |
+| `--ds-type-player-body-*` | Inter 400 | `16px / 1.625 / 0` | from 768: 18px | Player body | The player description on blue | Light grounds | `components/website/Players.tsx:127` |
+| `--ds-type-comparison-*` | Inter 400 | `16px / 1.5 / 0` | from 768: 18px | Comparison line | The two lines inside each comparison card, in the card's one ink | Headings | `components/website/Understands.tsx:32` |
 | `--ds-type-body-l-*` | Inter 400 | `15px / 1.5 / 0` | from 768: 16px | Body L | The closing line | Labels | `components/website/Closing.tsx:27` |
 | `--ds-type-subline-*` | Inter 400 | `15px / 1.375 / 0` | from 768: 16px | Section subline | Section sublines, the carousel body on blue | Long reading | `components/website/Jobs.tsx:109` |
 | `--ds-type-answer-*` | Inter 400 | `14px / 1.6 / 0` | from 768: 15px | FAQ answer | Accordion answers | Labels | `components/website/Faq.tsx:68` |
@@ -1236,8 +1237,19 @@ Reasons: Easing, duration, springs ([4.1](#41-easing-duration-springs)).
 | `--ds-type-nav-*` | Inter 400 | `15px / 1.5 / -0.01em` | none | Nav link | Header links, menu rows | Body | `components/website/Header.tsx:86` |
 | `--ds-type-cta-*` | Inter 500 | `15px / 1.5 / 0` | none | Primary CTA label | Try now only. System buttons take button-label | Body | `components/website/PrimaryCta.tsx:100` |
 | `--ds-type-button-label-*` | Inter 500 | `14px / 1.5 / -0.01em` | none | Button label | System Button labels: 12 / 13 / 14 / 15 / 15 at xs to xl (14 is md), all at -0.01em | Try now, which keeps cta | `components/design-system/button-styles.ts:25` |
+| `--ds-type-dialog-title-*` | Outfit 500 | `24px / 30px / -0.03em` | none | Dialog title | The title of a Dialog or sheet | Section heads | `components/design-system/dialog-styles.ts:33` |
+| `--ds-type-dialog-description-*` | Inter 400 | `15px / 22px / 0` | none | Dialog description | The line under a dialog title | The body, which takes dialog-body | `components/design-system/dialog-styles.ts:35` |
+| `--ds-type-dialog-body-*` | Inter 400 | `15px / 1.6 / 0` | none | Dialog body | The scrolling body of a Dialog | Labels | `components/design-system/dialog-styles.ts:37` |
+| `--ds-type-field-label-*` | Inter 500 | `13px / 18px / -0.01em` | none | Field label | The label over a field, a Select, a SearchField and a Slider, and a choice group's legend | Body | `components/design-system/field-styles.ts:83` |
+| `--ds-type-helper-*` | Inter 400 | `13px / 18px / 0` | none | Helper line | Field helper and error lines, choice descriptions, the toast body, the Slider value | Labels | `components/design-system/Field.tsx:107` |
+| `--ds-type-counter-*` | Inter 400, tabular | `12px / 18px / 0` | none | Character count | The count under a field with a maxLength | Prose numbers | `components/design-system/Field.tsx:115` |
+| `--ds-type-choice-label-*` | Inter 400 | `14px / 20px / 0` | none | Choice label | Checkbox, Radio and Switch labels | Field labels, which take field-label | `components/design-system/choice-styles.ts:17` |
+| `--ds-type-list-row-*` | Inter 400 | `15px / 22px / 0` | none | List row | Select and SearchField option rows and their empty line | Body | `components/design-system/select-panel.tsx:134` |
+| `--ds-type-toast-title-*` | Inter 500 | `14px / 20px / 0` | none | Toast title | The first line of a toast | Body | `components/design-system/Toast.tsx:84` |
+| `--ds-type-tooltip-*` | Inter 500 | `12px / 16px / 0` | none | Tooltip words | The words in a tooltip bubble | Body | `components/design-system/TooltipBubble.tsx:28` |
+| `--ds-type-group-caps-*` | Inter 500, caps | `11px / 16px / 0.14em` | none | Group caps | The group names inside a Select or SearchField list | Sentences | `components/design-system/select-panel.tsx:187` |
 | `--ds-type-body-s-*` | Inter 400 | `14px / 1.4 / -0.01em` | none | Body S | Job body and card body | Long reading | `components/website/Jobs.tsx:167` |
-| `--ds-type-card-tagline-*` | Inter 400 | `14px / 1.375 / 0` | none | Card tagline | The tagline under a player card's name, hidden under lg | Body | `components/website/Players.tsx:235` |
+| `--ds-type-card-tagline-*` | Inter 400 | `14px / 1.375 / 0` | none | Card tagline | The tagline under a player card's name, hidden under lg | Body | `components/website/Players.tsx:238` |
 | `--ds-type-trait-label-*` | Inter 400 | `14px / 1.5 / 0` | none | Trait label | The trait bar labels on blue, 13px in the dense card | Light grounds | `components/website/PlayerTraits.tsx:37` |
 | `--ds-type-caption-l-*` | Inter 400 | `13.5px / 1.5 / -0.01em` | none | Caption 13.5 | The closing small line, footer links | New work, which takes 13 or 14 | `components/website/Closing.tsx:34` |
 | `--ds-type-caption-*` | Inter 400 | `13px / 1.625 / 0` | none | Caption 13 | The social proof line | Body | `components/website/Hero.tsx:236` |
@@ -1248,7 +1260,7 @@ Reasons: Easing, duration, springs ([4.1](#41-easing-duration-springs)).
 | `--ds-type-micro-*` | Inter 400 | `12px / 1.5 / -0.01em` | none | Micro 12 | The footer copy line's model pills | Body | `components/website/CopyLine.tsx:102` |
 | `--ds-type-eyebrow-*` | Inter 500, caps | `11px / 1.5 / 0.18em` | none | Eyebrow caps | The scroll cue and the loader label | Sentences | `components/website/ScrollCue.tsx:25` |
 | `--ds-type-code-tag-*` | Inter 600 | `11px / 1.5 / 0.025em` | none | Code tag | Language codes in the menu | Labels | `components/website/LanguageMenu.tsx:95` |
-| `--ds-type-card-meta-*` | JetBrains Mono 400, caps | `11px / 1.5 / 0.14em` | under 1024: 10px / 0.08em | Card meta | Model number and status on player cards | Sentences, badge labels | `components/website/Players.tsx:244` |
+| `--ds-type-card-meta-*` | JetBrains Mono 400, caps | `11px / 1.5 / 0.14em` | under 1024: 10px / 0.08em | Card meta | Model number and status on player cards | Sentences, badge labels | `components/website/Players.tsx:247` |
 | `--ds-type-badge-*` | JetBrains Mono 500, caps | `11px / 1 / 0.12em` | none | Badge label | Badge labels: 0.12em at md, 0.08em at sm | Sentences | `components/design-system/Badge.tsx:21` |
 | `--ds-type-terminal-*` | JetBrains Mono 400 | `12.5px / 22px / 0` | under 768: 11.5px / 20px | Terminal text | The jobs terminal | Light grounds | `components/website/JobTerminal.tsx:142` |
 
@@ -1397,6 +1409,7 @@ The staged sequences below each run on their own clock.
 - **Container hero** (from the floor's `onReady`): the floor logo leaves over 0.45s, the tiles hold 0.5s and rise over 0.9s, the numbers rise at 1.2s, the scroll cue and wave button fade in at 1.8s. The copy is not on this clock: it fades in CSS from first paint (`.hero-copy-in`, 0.6s).
 - **Full view** (from `onReady`, or after 12s if it never comes): the loader leaves and the `heroloaded` window event fires at 0, the copy fades in at 0.35s, the floor at 1.7s, the tiles start rising at 1.85s, the extras at 3.45s. All fades are 700ms.
 - **Scroll line track** (in screens of scroll, from the moment the 390vh track reaches the top of the view): the words fill over the first 1.31 screens (0.82 of their scroll), the line holds to 1.6, the accent water rises over the last 1.3 screens to 2.9, the players snap in place there, and the water drains over one screen past them.
+- **Players** (from the reveal: the water filled and 20% of the section in view): the cards rise 0.05s apart, then the portrait, the switch and the column. The hand draws from 1s, the portrait first turns AI at 5s and every 5s after, and the AI copy starts 0.6s after each switch. A scroll that rests within 0.6 of a screen of the players glides in over 0.6s, on no clock but the scroll's.
 - **Terminal run** (from `play`): each step dwells by its kind, from 34ms a typed character to 1300ms for a load, with every dwell listed in Terminal ([7.19](#719-terminal)).
 
 The in-page glide is a shell behaviour, specified in Shell behaviours ([6.7](#67-shell-behaviours)).
@@ -1418,11 +1431,11 @@ Each sequence is timers plus transform and opacity, except the floor's own intro
 
 #### How to change a sequence safely
 
-Change the constants where they are declared (`hero-intro.ts`, `ScrubLine.tsx`, `AccentWave.tsx`, `jump.ts`, `JobTerminal.tsx`) rather than adding delays elsewhere, because the parts read each other's numbers (the container's 1.8s extras assume the 0.5s hold and the 0.9s rise). Keep the hold and the give-up together. Re-check the timelines in the guide afterwards.
+Change the constants where they are declared (`hero-intro.ts`, `ScrubLine.tsx`, `AccentWave.tsx`, `jump.ts`, `JobTerminal.tsx`, `PlayerDoodles.tsx`, `usePlayerMode.ts`, `SafariScroll.tsx`) rather than adding delays elsewhere, because the parts read each other's numbers. The container's 1.8s extras assume the 0.5s hold and the 0.9s rise, and the doodles' delay and pace are set against the players' first switch: the delay and the switch moved to 1s and 5s with the pace left at 0.6, and the hand no longer finishes first. Keep the hold and the give-up together. Re-check the timelines in the guide afterwards.
 
 #### Reduced motion
 
-The terminal shows its finished run and the scroll line shows the filled line. The hero intros and the glide do not change yet, gaps tracked in Reduced motion ([4.6](#46-reduced-motion)). The water needs no change, since its level is the scroll.
+The terminal shows its finished run and the scroll line shows the filled line. The hero intros, the glide and the players' auto switch and magnet do not change yet, gaps tracked in Reduced motion ([4.6](#46-reduced-motion)). The water needs no change, since its level is the scroll.
 
 ### 4.6 Reduced motion
 
@@ -1445,6 +1458,8 @@ These have no reduced answer yet. Known gaps ([10.2](#102-known-gaps)) tracks th
 
 - The tile floor (intro rise, autoplay, waves and sweeps) runs as usual.
 - The in-page glide runs as usual. Under reduced motion it should jump.
+- The players' auto switch keeps cutting every 5s. Under reduced motion it should hold the copy on screen and leave the switch to the visitor.
+- The players' magnet glides 0.6s and holds the input. Under reduced motion it should settle at once, or leave the scroll to the CSS snap.
 - Tailwind's `animate-ping` and `animate-pulse` on the hero dot, the player card dot and the terminal cursor keep running.
 - motion/react entrances and menus travel as usual, because the site wraps no `MotionConfig` round them.
 
@@ -1488,7 +1503,7 @@ The set pieces that make the page 6labs: the tile floor and its states, the holo
 
 **Parameters.** Every look value lives in `public/tiles/floor-params.json`, which the engine fetches at load and the browser revalidates on every visit (`next.config.ts`), so a new value shows on the next load instead of waiting out a cache. The camera is a long lens (fov 14) at elevation 40 and azimuth 48, distance 13.3 times `distScale`. A narrow field of view keeps the tiles nearly one size from front to back, so the grid reads as a calm pattern rather than a road running away. The grid is one square grid of tile 1.0 and gap 0.018, built on the half-plane `i >= 0`, so the field has a single inner edge: one straight diagonal through the bottom of the screen with empty floor beyond it.
 
-**Material families.** Resting tiles are frosted white glass (`#f4f5f7`, roughness 0.3). Live, they are drawn opaque and colour-matched to the floor rather than with real transmission, because anything see-through makes three.js render the scene once more each frame, a full-resolution 4x multisampled image. Stills use real transmission with TAA, and the two were matched by eye (`opaque-glass.js`). The raised tile is a separate slab per state, as Tile states ([5.3](#53-tile-states)) describes. Light comes from a studio environment of soft panels, whose two low strips draw the crisp white rim lines, plus a hemisphere and one key light.
+**Material families.** Resting tiles are frosted white glass (`#f4f5f7`, roughness 0.3), each wall shaded up to 12% darker toward its foot (`footShade`) and each top's rear corner 8% darker (`frostCorner`), so a tile reads lit from above rather than flat. Live, they are drawn opaque and colour-matched to the floor rather than with real transmission, because anything see-through makes three.js render the scene once more each frame, a full-resolution 4x multisampled image. Stills use real transmission with TAA, and the two were matched by eye (`opaque-glass.js`). The raised tile is a separate slab per state, as Tile states ([5.3](#53-tile-states)) describes. Light comes from a studio environment of soft panels, whose two low strips draw the crisp white rim lines, plus a hemisphere and one key light.
 
 **Output.** An 8-bit sRGB target with 4x MSAA at full device pixel ratio, Neutral tone mapping written into every material, and one final pass that encodes, adds static film grain 0.025 and runs the intro crossfade.
 
@@ -1525,9 +1540,9 @@ The set pieces that make the page 6labs: the tile floor and its states, the holo
 **A naming trap.** In `floor-params.json` the focused look is `states.default` and the activated look is `states.shine`. "default" there is the default raised look, not the resting tile.
 
 **Each look in parameters.**
-- **Default.** The resting frosted tile: top `#f4f5f7`, opaque and colour-matched on the live floor. Two faint ghost bands (darkness 0.04, width 0.025) inside the upper edges stand for the far bottom edges seen through the glass. White rim lines at 0.55 on the sides and a trace of 0.15 top and bottom.
-- **Focused.** The glass tile and a cobalt slab rise together by 0.07 while the slab fades in over it, and the glass hides once covered. Slab top `#244a92` to `#2d5db4` over a `#050d22` body, a navy pool at the rear corner, a sheen, a reflection band and a soft head glow. Metallic walls (0.6) mirror the floor. A contact shadow (0.42) darkens the neighbours' tops. No floor glow.
-- **Activated.** A brighter slab, top `#2f78e0` to `#3f8eec` with a `#6fb4ff` rim. Deep navy walls `#0d2a66` that glow from `#4a92f0` at the foot to `#2f77e2` at the top, no mirror. A blue pool spreads on the floor (`#2a8ff2`), a halo `#3c82ff` and a pale spill `#7fb2f2` light the neighbours, and the contact shadow lifts to 0.1. The bust becomes its hologram.
+- **Default.** The resting frosted tile: top `#f4f5f7`, opaque and colour-matched on the live floor. Two faint ghost bands (darkness 0.04, width 0.025) inside the upper edges stand for the far bottom edges seen through the glass. White rim lines at 0.55 on the sides and a trace of 0.15 top and bottom. Each wall is up to 12% darker at its foot, fading to none 0.07 up, about 70% of the way up the wall (`footShade`, `footBand`), so it runs light at the top. The top's rear corner is 8% darker in a soft falloff about 0.3 of the tile wide (`frostCorner`, `frostCornerR`), baked into the frost.
+- **Focused.** The glass tile and a cobalt slab rise together by 0.07 while the slab fades in over it, and the glass hides once covered. Slab top `#244a92` to `#2d5db4` over a `#050d22` body, a navy pool at the rear corner, a sheen, a reflection band and a soft head glow. Metallic walls (0.6) mirror the floor. On both slabs the wall's dark foot holds over its lower 30% before it ramps to the light (`actFootHold`), and a foot shade darkens that stretch, fading out toward the top, at 0.25 here and 0.12 activated (`actWallShade`). A contact shadow (0.42) darkens the neighbours' tops. No floor glow.
+- **Activated.** A brighter slab, top `#2f78e0` to `#3f8eec` with a `#6fb4ff` rim. Deep navy walls `#0d2a66` that glow from `#4a92f0` at the foot to `#2f77e2` at the top, held at the foot's colour over the lower 30% and shaded 0.12 there, no mirror. A blue pool spreads on the floor (`#2a8ff2`), a halo `#3c82ff` and a pale spill `#7fb2f2` light the neighbours, and the contact shadow lifts to 0.1. The bust becomes its hologram.
 - **Spent.** The tile sinks back already carrying its tint, keeps its hologram and ignores the pointer. The walls' glow takes the tint in full and the rim line half of it.
 - **Resetting.** The wave flips the tile in place, about the axis through its centre parallel to its top-right edge, with no lift, so the lower half passes into the floor. Edge-on it swaps to the other cast's human and lands as a default tile.
 
@@ -1551,7 +1566,7 @@ The set pieces that make the page 6labs: the tile floor and its states, the holo
 - Don't let a spent tile answer hover.
 - Don't add a state that only the pointer can reach without a keyboard twin.
 
-**How to change it safely.** Edit `states.default` or `states.shine` in the params file, keeping the two blocks' keys the same. Run `tools/tiles/bake-textures.mjs`, then hover and click a tile on the live floor and watch a full turn of autoplay, the only places the states are drawn.
+**How to change it safely.** Edit `states.default` or `states.shine` in the params file, keeping the two blocks' keys the same. The shading keys sit outside both blocks, at the top level, so they apply to every look: `footShade` and `footBand` (the resting walls), `actFootHold` (both slabs' walls) and `frostCorner` and `frostCornerR` (the resting tops). `actWallShade` is per state. `frostCorner` and `frostCornerR` are baked into the frost, so a change to either needs the bake. Run `tools/tiles/bake-textures.mjs`, then hover and click a tile on the live floor and watch a full turn of autoplay, the only places the states are drawn.
 
 ### 5.4 Activation sweep
 
@@ -1579,7 +1594,7 @@ The beam colour is `#8cc8ff` at 2.4. The beam head follows `0.95 - (S / 0.3) * 0
 
 **Motion.** Starting the light at the camera corner puts the brightest moment nearest the eye, then carries it away into the floor. Deactivation is not a reverse sweep: everything fades together over `DEACT_SECONDS` 1.05, so the end of a turn is quieter than its start and never reads as a second activation. `COMMIT_SECONDS` 0.25 is the point where conversion has started, under the commit rule in Tile states ([5.3](#53-tile-states)).
 
-**Performance rules.** The frost, the raised slab's gradient and the glint are procedural textures, baked ahead of time into `public/tiles/baked/` by `tools/tiles/bake-textures.mjs`. Each baked picture records every setting it read, and is used only while they all still match. After any params edit that touches them, the page paints them again at load on its main thread, about 1.4s of the first load on a 2019 MacBook Pro, until the bake is run again. The animation itself (beam, sweep, glint move, spill) is drawn by the shaders over the baked pictures, so it costs no texture work per frame.
+**Performance rules.** The frost, the raised slab's gradient and the glint are procedural textures, baked ahead of time into `public/tiles/baked/` by `tools/tiles/bake-textures.mjs`. Each baked picture records every setting it read, and is used only while they all still match. The frost's settings include the rear corner's shade (`frostCorner`, `frostCornerR`), so a change to either is one the bake must follow. After any params edit that touches them, the page paints them again at load on its main thread, about 1.4s of the first load on a 2019 MacBook Pro, until the bake is run again. The animation itself (beam, sweep, glint move, spill) is drawn by the shaders over the baked pictures, so it costs no texture work per frame.
 
 **How to change it safely.** Change a time in `sweepValues` only against the reference recording, and change the tempo through `animSpeed`, never by scaling one lane. Keep the beam, the bright head and the spill on the same `u`, or the light separates from the slab it lights. Re-bake after any glint or gradient edit, then click a tile on the live floor at full speed.
 
@@ -1619,13 +1634,13 @@ The beam colour is `#8cc8ff` at 2.4. The beam head follows `0.95 - (S / 0.3) * 0
 
 **Reset wave.** When every tile on screen is spent, or `reset()` is called, a wave runs left to right. Once 70% of the tiles on screen have played, the other cast starts loading so it is in by the wave. Each tile flips in place over 0.75s on an in-out cubic, staggered over 1.3s by its position, and edge-on at 90 degrees it swaps to the other cast's human and lands as a default tile. Tiles are inert during the wave. `reset()` resolves as the flip begins, which may wait for the next cast to load, and the wave button shows busy for exactly that wait.
 
-**Full-view loader.** `HeroLoader` is in the server HTML from the first paint, with no fade in, so the full view is never an empty grey screen. It is the 6labs mark at 64 × 64, its core in the mark's own navy `#030D2D` and its three arcs in the mark's own blue `#1770EF` (the brand-mark tokens `--ds-color-logo-navy` and `--ds-color-logo-blue`, not the site's ink and accent). Each arc hops a few pixels out from the core and back in the first third of a 1.5s loop, in clockwise order with delays a third apart, so one is always moving and the first hop is already under way at the first frame. Each arc is its own transformed layer, so the compositor runs the loop smoothly while the main thread builds the floor. "Loading" sits under it in 11px caps at 0.18em. It fades out over 0.45s on the one ease. A floor that never comes (no WebGL) gives up after 12s, so the page is never held behind the loader.
+**Full-view loader.** `HeroLoader` is in the server HTML from the first paint, with no fade in, so the full view is never an empty grey screen. It is the 6labs mark at 64 × 64, its core in the mark's own navy `#030D2D` and its three arcs in the mark's own blue `#1770EF` (the brand-mark tokens `--ds-color-logo-navy` and `--ds-color-logo-blue`, not the site's ink and accent). Each arc hops a few pixels out from the core and back in the first third of a 1.5s loop, in clockwise order with delays a third apart, so one is always moving and the first hop is already under way at the first frame. Each arc is its own transformed layer, so the compositor runs the loop smoothly while the main thread builds the floor. "Loading" sits under it in 11px caps at 0.18em, in slate-500. It fades out over 0.45s on the one ease. A floor that never comes (no WebGL) gives up after 12s, so the page is never held behind the loader.
 
 **Container loader.** `FloorLogo` lays a pre-rendered still of the mark in the tiles' white glass on the floor, toward the bottom right where the tiles will rise, at 60% opacity. A CSS tilt (`perspective(2400px) rotateX(50deg)`) lays it back at the tiles' camera angle, and it turns about the floor's vertical axis once every 90s. It fades in over 0.4s and out with a slight shrink over 0.45s, just before the tiles rise. One still of 16 KB and a compositor spin cost almost nothing to load and run.
 
 **Performance rules.** Loaders animate transform and opacity only. The floor holds during the intro delay. The container loader's feathered edge is a CSS `mask-image`, one of the effects the compositor rule forbids, and it is on screen while the container hero loads. It is a known exception, listed in Known gaps ([10.2](#102-known-gaps)), and the fix is to bake the feather into the still's alpha.
 
-**Accessibility.** `HeroLoader` is `role="status"`, so its word reaches a screen reader. Its slate-400 label is about 2:1 on the hero grey, below the 4.5:1 text minimum, so it needs a darker tone such as slate-500. `FloorLogo` is decorative (`alt=""`). Under reduced motion both loaders hold still (the floor logo keeps its tilt), but the intro, autoplay and waves still run, because `src/tiles` has no reduced-motion mode.
+**Accessibility.** `HeroLoader` is `role="status"`, so its word reaches a screen reader. Its label is slate-500, about 3.8:1 on the hero grey, under the 4.5:1 a status word needs. The body slate `#475569`, at 6.0:1, is the fix. `FloorLogo` is decorative (`alt=""`). Under reduced motion both loaders hold still (the floor logo keeps its tilt), but the intro, autoplay and waves still run, because `src/tiles` has no reduced-motion mode.
 
 **Do / Don't.**
 - Do put a loader on the hero's grey, the ground the floor lands on.
@@ -1691,7 +1706,7 @@ Cell 15, glyphs 11px ui-monospace on the ramp `' .,:;i1tfLCG08@'`, ambient 0.075
 
 **Colour and grain.** The accent `#1a6dff` is mixed 7% toward a 160px tile of random greys, dots included, so the solid reads as a material and averages about `#216ef6`. Judge anything that sits on the players' ground against that, not against flat `#1a6dff`. The guide's on-blue ground draws the same kind of tile at the same strength for that reason.
 
-**Motion.** None of its own: its level is a function of the scroll, so it needs no reduced-motion branch. The rise runs over the scroll line's last `WAVE_VH` (1.3) screens and the drain over one screen past the players' foot (`DRAIN_VH`), both eased by smoothstep so the edge starts and settles gently. Near the players the document's scroll snap (proximity, `#players` as its start, Lenis's own magnet in desktop Safari) settles a scroll that comes to rest close to full.
+**Motion.** None of its own: its level is a function of the scroll, so it needs no reduced-motion branch. The rise runs over the scroll line's last `WAVE_VH` (1.3) screens and the drain over one screen past the players' foot (`DRAIN_VH`), both eased by smoothstep so the edge starts and settles gently. Near the players the magnet settles a scroll that comes to rest close to full: the document's scroll snap (proximity, `#players` as its start) plus a catch in script that glides in a scroll resting within 0.6 of a screen, the whole magnet in desktop Safari, as Shell behaviours ([6.7](#67-shell-behaviours)) sets out.
 
 **Event contract.** At 0.9 full it dispatches `accentwave` on window with `{ filled: true }`, and below 0.8 it dispatches `{ filled: false }`. The gap keeps one step back from undoing the players. The header turns solid white while filled, since its 92% page strip would read grey over the blue. The players start their entrance on filled. Anything new that must react to the takeover listens to the same event rather than measuring the scroll again.
 
@@ -1709,7 +1724,7 @@ Cell 15, glyphs 11px ui-monospace on the ramp `' .,:;i1tfLCG08@'`, ambient 0.075
 
 **Timing and easing.** 1.5s on an in-out cubic (4k^3 under half, then its mirror), the dome's top travelling from the whole band below the portrait to the whole band above it. Both copies follow the cursor while the band runs, and only the copy on screen does once it settles, so only its frames are decoded. The doodles' AI copy begins 0.6s after the switch, inside the sweep, so the drawing and the body change together.
 
-**When it does not sweep.** The first showing, an unchanged mode, reduced motion and a copy with no frame yet all swap at once. React's second effect run in development falls under the first rule. While in view and untouched the portrait flips by itself every 10s (`usePlayerMode`), until the visitor uses the switch.
+**When it does not sweep.** The first showing, an unchanged mode, reduced motion and a copy with no frame yet all swap at once. React's second effect run in development falls under the first rule. While in view and untouched the portrait flips by itself every 5s (`AUTO_S` in `usePlayerMode`), until the visitor uses the switch.
 
 **The switch.** ModeToggle is a radiogroup pill on the water: a white 15% track with a 25% inset ring, a white thumb with a soft ink shadow, the chosen label in ink and the other in white at 80%, white on hover. The thumb slides on a motion layoutId with spring 500 / 40. Each mounted switch needs its own `thumbId`, or the desktop and phone placements trade thumbs. It sets no focus style of its own and shows the browser's ring.
 
@@ -1725,11 +1740,11 @@ Cell 15, glyphs 11px ui-monospace on the ramp `' .,:;i1tfLCG08@'`, ambient 0.075
 
 **Glow without filters.** The AI's glow is five wider, fainter strokes under its line in `#7fb2ff` (widths 26, 20, 14, 9 and 5 at opacities 0.04, 0.05, 0.06, 0.08 and 0.10), the falloff of the 4px blur it replaced. The pen point is a white disc of r 5 with halos of r 9 at 0.2 and r 13 at 0.1. The waver used to be an SVG feTurbulence and feDisplacementMap over the whole drawing and the glow an SVG blur. Both were redrawn every frame a stroke drew in, on the processor in Safari, and held the players at 3 to 7 fps there. Points and stacked strokes cost nothing per frame beyond the strokes themselves.
 
-**Timing.** The hand starts 5s after `start` (`DELAY_S`) and plays each stroke at 0.6x its written timing on easeInOut, brisk enough to finish before the portrait first turns AI at 10s. The AI starts 0.6s after the switch, inside the 1.5s sweep, at 0.5x and linear, and never copies a stroke the hand has not finished. Each hand line fades [1, 0.3, 0] over its copy's length plus 0.3s. Back to Human the copy fades in 0.3s and the hand redraws from 0.6s. `start` false wipes everything to 0 over 0.2s.
+**Timing.** The hand starts 1s after `start` (`DELAY_S`) and plays each stroke at 0.6x its written timing (`HAND_PACE`) on easeInOut, so the longest drawing, the explorer's, ends about 5.5s in, just after the first switch at 5s. The copy never overtakes it: each stroke's copy starts at the switch plus 0.6s (`AI_LEAD_S`, inside the 1.5s sweep) plus half its written start, runs at 0.5x and linear, and never starts before the hand has finished that stroke. Each hand line fades [1, 0.3, 0] over its copy's length plus 0.3s. Back to Human the copy fades in 0.3s and the hand redraws from 0.6s. `start` false wipes everything to 0 over 0.2s.
 
 **Reduced motion and switches.** Under reduced motion every stroke is drawn at once. `?off=doodles` hides the layer.
 
-**How to change it safely.** Write strokes in frame px with `at` and `dur` in seconds of the written timing, and give each drawing its centre `o` and its place `to`. Keep the doodles on the water: they are white for it. A drawing is fixed for an instance's life (its motion values are made once), so a new player needs a remount. `DELAY_S` is hard-coded, which is why a specimen waits 5s for the hand. The header comment says the doodles are wiped when the section leaves view, but Players passes `revealed`, which stays true once the section has shown, so nothing wipes them. Any new effect on the strokes is made from points or more strokes, never an SVG filter or mask.
+**How to change it safely.** Write strokes in frame px with `at` and `dur` in seconds of the written timing, and give each drawing its centre `o` and its place `to`. Keep the doodles on the water: they are white for it. A drawing is fixed for an instance's life (its motion values are made once), so a new player needs a remount. `DELAY_S` is hard-coded, which is why a specimen waits 1s for the hand. `HAND_PACE`'s comment still says the hand finishes before the portrait first turns AI. That held with the old 5s start and 10s switch, and no longer does: three of the four drawings end after the first switch at 5s, so the copy waits on the hand there. The delay, the pace and the switch (`AUTO_S` in usePlayerMode.ts) are one clock, as Choreography ([4.5](#45-choreography)) sets out, and change together. The header comment says the doodles are wiped when the section leaves view, but Players passes `revealed`, which stays true once the section has shown, so nothing wipes them. Any new effect on the strokes is made from points or more strokes, never an SVG filter or mask.
 
 ### 5.12 Halftone, chromatic split, grain
 
@@ -1780,7 +1795,7 @@ The parts every page wears: the identity, the header and its phone menu, the lan
 
 **Variants.** Ink (the logo file and the accent 6, on the page, surface and container) and onBlue (the outline mark and the plain word, both white, on the accent water only).
 
-**Sizes.** sm, md and lg: mark 24 / 32 / 44, wordmark 18 / 24 / 32 at 500, gap 8 / 10 / 12. md is the header's lockup, and the other two keep its ratio so they read as the same lockup scaled rather than a second design. The smallest mark is 20, where the three blades still read as three. The outline mark has no optical sizes: its line is in viewBox units, so it thins at 16 and thickens at 64. Use it from 24 up.
+**Sizes.** sm, md and lg: mark 24 / 32 / 44, wordmark 18 / 24 / 32 at 500, gap 8 / 10 / 12. md is the header's lockup, and the other two keep its ratio so they read as the same lockup scaled rather than a second design. The smallest mark is 20, where the three blades still read as three. On the comparison cards the outline mark is 44 (36 on a phone), beside a name of its own size rather than a lockup step. The outline mark has no optical sizes: its line is in viewBox units, so it thins at 16 and thickens at 64. Use it from 24 up.
 
 **Clear space.** The core circle's diameter (0.292 of the mark) on every side: 7 at sm, 9 at md, 13 at lg. It is measured from the mark because the mark is the part that defines the lockup's height. Nothing else (a tab, a pill, the bar's edge) comes inside it.
 
@@ -1983,7 +1998,7 @@ The parts every page wears: the identity, the header and its phone menu, the lan
 - On desktop Safari the glide runs on Lenis with its lock in place of the frame loop.
 - Without scripts each link keeps its `#hash`, so it still jumps.
 
-**Safari scroll.** Desktop Safari moves the page on a thread of its own, ahead of the page's drawing, so the accent water's edge trailed a quick scroll. There the page scrolls on Lenis (lerp 0.15), in step with the drawing. Lenis cannot take CSS scroll snap, so the players' magnet is reimplemented: a scroll that rests 120ms within 0.3 of a screen of `#players` glides the last stretch in 0.6s. Touch screens and every other browser keep native scrolling.
+**Safari scroll and the magnet.** The players' magnet is CSS proximity snap on `#players` plus a catch in script, in every browser, because the browser's own proximity distance is small and catches only a scroll that ends very near the players. A scroll that rests 120ms within 0.6 of a screen of `#players` glides the rest of the way in 0.6s on the glide's ease (SafariScroll.tsx). Outside desktop Safari the catch runs through the glide (`glideTo`), which holds the wheel, touch and scroll keys and lifts the snap for its run. Desktop Safari moves the page on a thread of its own, ahead of the page's drawing, so the accent water's edge trailed a quick scroll. There the page scrolls on Lenis (lerp 0.15), in step with the drawing, and Lenis cannot take CSS scroll snap (globals.css turns it off under Lenis), so the catch is the whole magnet there, run as a Lenis `scrollTo` without the lock. Touch screens scroll natively everywhere (Lenis smooths only the wheel and trackpad), so they get the snap and the glide's catch. Neither catch starts while a link's glide is under way.
 
 **Window contracts.** The shell's parts never import each other's state. They meet on the window, which makes these names the shell's state API:
 - `heroloaded` (Event): the full view's loading has ended, or 12s have passed. The clear header waits for it.
@@ -1993,7 +2008,7 @@ The parts every page wears: the identity, the header and its phone menu, the lan
 
 **How to change it safely.** Add a new signal as a window event with a constant exported from the file that sends it (as `HERO_LOADED` is), and list it in the guide's contract table. Never rename an id without a search across `src/components/website`, because each is a string repeated in several files. Never render `#players`, `#model-line` or `#site-head` in a document that also runs the site's scroll code.
 
-**Gaps.** The glide ignores reduced motion (a 0.9 to 2.2s forced animation) and cannot be cancelled. It moves neither focus nor the URL hash, so Back does not return and a screen reader stays where it was. Sections have no `scroll-margin-top`, so the no-script hash lands under the bar. Understands and Closing have no spot, and Case Studies has no target. New work: under reduced motion jump at once, move focus to the target's heading, update the hash with `history.replaceState`, and give every section a `scroll-margin-top` of the bar's height.
+**Gaps.** The glide ignores reduced motion (a 0.9 to 2.2s forced animation) and cannot be cancelled. The magnet's catch ignores it too, a 0.6s glide that holds the input. It moves neither focus nor the URL hash, so Back does not return and a screen reader stays where it was. Sections have no `scroll-margin-top`, so the no-script hash lands under the bar. Understands and Closing have no spot, and Case Studies has no target. New work: under reduced motion jump at once, move focus to the target's heading, update the hash with `history.replaceState`, and give every section a `scroll-margin-top` of the bar's height.
 
 ## 7 Components
 
@@ -2255,7 +2270,7 @@ The parts a page is built from, each chapter in one order: Purpose, Anatomy, Var
 **Sizes.** The Select trigger takes the field heights, 36, 44 and 52, so it lines up with the inputs in a form. SearchField runs 32, 40 and 48 with text at 13, 14 and 15, a step shorter, because it lives in toolbars and section heads beside sm and md buttons rather than in forms.
 
 **States.**
-- *Select trigger:* rest, hover (the darker line), focus (accent line and halo), open (focus plus the turned chevron), filled, disabled, read-only (inset grey, focusable, the list does not open) and invalid (danger line and message), all from the field box.
+- *Select trigger:* rest, hover (the darker line), focus (accent line and halo), open (focus plus the turned chevron), filled, disabled, read-only (inset grey, focusable, the list does not open), read-only focus (the inset grey under the focus line and halo), invalid (danger line and message), invalid focus (the danger line's halo with the accent outline) and open over an invalid trigger, all from the field box.
 - *Select row:* rest, active (the highlight), selected (500 ink and the check) and disabled (40%).
 - *SearchField:* empty (the chip), hover, focus (the chip hides), filled (the clear button), searching (the spinner and `aria-busy`), no results (a status row) and disabled.
 
@@ -2300,7 +2315,7 @@ The parts a page is built from, each chapter in one order: Purpose, Anatomy, Var
 **Sizes.** Box and circle 16, 18 and 20 (radius 4, 4 and 6 on the box, `--ds-radius-mark-sm` and `--ds-radius-mark`), tick 12, 12 and 14, dot 6, 8 and 9. Switch tracks are 28 × 16, 36 × 20 and 44 × 24 with thumbs of 12, 16 and 20. md is the default, matching 14px labels and the 44 field. Every row is at least 24 tall, and 32 under a coarse pointer, so a finger can hit the label as well as the mark.
 
 **States.**
-- *Checkbox:* unchecked, hover (the line darkens to #64748b and the box takes slate 50), checked (navy fill, white tick), checked hover (#0c1e42), indeterminate (navy with a bar, `aria-checked="mixed"`), focus-visible (the accent ring 2px off the box), pressed (0.92), disabled (the row at 40%), invalid (the danger line), read-only (the sunken box with the field line, a checked fill of the muted #64748b at 4.75:1, still focusable).
+- *Checkbox:* unchecked, hover (the line darkens to #64748b and the box takes slate 50), checked (navy fill, white tick), checked hover (#0c1e42), indeterminate (navy with a bar, `aria-checked="mixed"`), focus-visible (the accent ring 2px off the box), pressed (0.92), disabled (the row at 40%), invalid (the danger line), invalid checked (the checked navy kept, since a ticked box is never the wrong one, so the group's message carries the error), read-only (the sunken box with the field line, a checked fill of the muted #64748b at 4.75:1, still focusable).
 - *Radio:* unchecked, hover, checked (navy line, white centre, navy dot), focus-visible, pressed, disabled, invalid, read-only (the sunken circle, and checked a #64748b line and dot). The white centre is deliberate: a filled circle would read as a checkbox at a glance.
 - *Switch:* off (the field line grey), on (navy), hover (#64748b off, #0c1e42 on), focus-visible, pressed, disabled, loading (a spinner in the thumb, `aria-busy`, the old position held), read-only (off, a sunken track drawn by a 1.5px field line #848fa1 at 3.26:1, on, a track filled the muted #64748b at 4.75:1, so the two differ by shape as well as fill, and over the water white at 15% off and 50% on), and on blue.
 
@@ -2401,7 +2416,7 @@ The parts a page is built from, each chapter in one order: Purpose, Anatomy, Var
 
 **Purpose.** The page's one direct argument with a rival: ChatGPT on the left, 6labs on the right, joined by a vs. It ships as one component, Understands, with its copy written in the file. It is a composition, not a reusable card, so the guide shows it once as it ships, and Card ([7.11](#711-card)) covers cards in general.
 
-**Anatomy.** Two cards on a two-column grid from md, 24px apart. Each card opens with its maker's lockup (a 32px mark and the name in Outfit 22 at a 10px gap), then two lines in Outfit 26 at 1.3 (20 on a phone) at 400. Each line is set whole in its card's one ink, navy on the grey and white on the navy: the verbs are the same kind on both sides and the rest differs, so the pair reads as one claim answered twice. The vs is an 80px white disc (64 on a phone) with the word in Outfit 34 (27 on a phone) at ink 30%, lifted 0.07em into the disc's optical middle because the lower-case word has no ascenders, set over the gutter at the cards' middle.
+**Anatomy.** Two cards on a two-column grid from md, 24px apart. Each card opens with its maker's lockup, the card's heading: a 44px mark (36 on a phone) and the name in Outfit 34 at 1.1 (26 on a phone), 12px apart. Then come two lines of body text in Inter 18 at 1.5 (16 on a phone) at 400, the first 24 under the lockup and the second 12 under the first. Each line is set whole in its card's one ink, navy on the grey and white on the navy: the verbs are the same kind on both sides and the rest differs, so the pair reads as one claim answered twice. The vs is an 80px white disc (64 on a phone) with the word in Outfit 34 (27 on a phone) at ink 30%, lifted 0.07em into the disc's optical middle because the lower-case word has no ascenders, set over the gutter at the cards' middle.
 
 **Variants.** None. It is one composition, shown once as it ships.
 
@@ -2419,9 +2434,9 @@ The parts a page is built from, each chapter in one order: Purpose, Anatomy, Var
 
 **Motion.** Each card rises 28px over 0.7s on the one ease when 40% of it is in view, once: the left card first, the right at 0.15s, the vs at 0.3s, so the argument is made in reading order.
 
-**Accessibility.** The vs may sit as light as ink at 30% on white (1.93:1) because the word is incidental: the two cards side by side, each under its maker's lockup, already say versus, so the word carries nothing a reader must read, which is the decorative exemption of WCAG 1.4.3. It is also aria-hidden, which only keeps a screen reader from saying it, and is not the reason it may be light. The cards are not interactive and carry no focus. Both lines are full ink: navy `#0a1b33` on the grey `#e3e5e8` at 13.66:1, and white on the navy `#0a152d` at 18.13:1.
+**Accessibility.** The vs may sit as light as ink at 30% on white (1.93:1) because the word is incidental: the two cards side by side, each under its maker's lockup, already say versus, so the word carries nothing a reader must read, which is the decorative exemption of WCAG 1.4.3. It is also aria-hidden, which only keeps a screen reader from saying it, and is not the reason it may be light. The cards are not interactive and carry no focus. The names look like each card's heading but are spans, and the section has no heading, so heading navigation passes over it. An h3 per name under a visually hidden h2 fixes it without changing the look. Both lines are full ink: navy `#0a1b33` on the grey `#e3e5e8` at 13.66:1, and white on the navy `#0a152d` at 18.13:1.
 
-**Responsive.** The stacked pair keeps the vs on its seam because that is still where the two sides meet. Radius and padding both drop from 36 to 28 there, so the cards keep the proportions of the phone's other cards, and the lines step from 26 to 20, the disc from 80 to 64 and its word from 34 to 27.
+**Responsive.** The stacked pair keeps the vs on its seam because that is still where the two sides meet. Radius and padding both drop from 36 to 28 there, so the cards keep the proportions of the phone's other cards, and the marks step from 44 to 36, the names from 34 to 26, the lines from 18 to 16, the disc from 80 to 64 and its word from 34 to 27.
 
 **Open decision.** The owner's rule gives sections other than the players the container look with the accent on a word or two. This section has no accent word, and its 6labs card is a full primary navy fill. Navy is not the accent, but whether a full navy surface fits the rule is [decision 5](#5-the-comparisons-navy-card) in Decisions pending ([10.3](#103-decisions-pending)).
 
@@ -2989,11 +3004,11 @@ How parts and surfaces combine into the page: the six surfaces, the hero, the pl
 
 **The portrait height.** `--ph = min(720px, (100svh - 344px) / 0.756)`. 344 is the room the header clearance and the cards need. 0.756 is the share of the portrait that adds to the section, since the cards cover its bottom 24.4%. Below lg the formula changes to fit the portrait, switch and carousel in one screen, capped at 520 and at the content width. The section always fits one view, so picking a player and seeing them never needs a scroll.
 
-**Auto mode.** While the section is shown, the portrait swaps between the human and the AI copy every 10s, so a visitor who never touches the switch still sees both. The first pick stops it for that player.
+**Auto mode.** While the section is shown, the portrait swaps between the human and the AI copy every 5s (`AUTO_S`), so a visitor who never touches the switch still sees both. The first pick stops it for that player.
 
-**Accessibility.** The cards are toggle buttons with `aria-pressed`. The switch is a radiogroup. Only type in white (or on a white card) sits on the water, because white is the most contrast the blue allows (4.49:1) and navy reaches only about 3.8:1. The section is the page's one scroll-snap magnet, set to proximity, so it catches a scroll that ends near it and leaves every other scroll alone.
+**Accessibility.** The cards are toggle buttons with `aria-pressed`. The switch is a radiogroup. Only type in white (or on a white card) sits on the water, because white is the most contrast the blue allows (4.49:1) and navy reaches only about 3.8:1. The section is the page's one magnet, CSS scroll snap plus a JS catch within 0.6 of a screen, so it catches a scroll that comes to rest near it and leaves every other scroll alone. The auto switch starts by itself and keeps going, and using a player's switch stops it for that player only, so another pick starts it again. WCAG 2.2.2 (Pause, Stop, Hide) asks for one way to stop it, such as holding every player once the visitor uses any switch.
 
-**Responsive.** One switch at lg. Below lg the side column and the cards give way to the carousel and the arrows.
+**Responsive.** One switch at lg. Below lg the side column and the cards give way to the carousel and the arrows. Past 1920 on a dense screen (devicePixelRatio 1.5 and up) the content scales up evenly, by the window's width over 1920, to at most 1.35, and never past what fits between the header clearance and the foot (usePlayersScale.ts). It is a transform, so the layout, the pull up and the full height are untouched. A wide CSS width at that density is a big physical screen seen up close, and a 1440p monitor at density 1 keeps the layout.
 
 #### Gaps
 
@@ -3016,7 +3031,7 @@ How parts and surfaces combine into the page: the six surfaces, the hero, the pl
 
 | Section | Opens with | Holds | Specced under |
 | --- | --- | --- | --- |
-| Understands | no head, the cards are the argument | the ChatGPT and 6labs pair joined by a vs | Comparison cards ([7.12](#712-comparison-cards)) |
+| Understands | no section head, each card headed by its maker's name | the ChatGPT and 6labs pair joined by a vs | Comparison cards ([7.12](#712-comparison-cards)) |
 | Jobs | a section head, "One model. Three jobs." with a subline (raw markup today, specced as Section head ([7.16](#716-section-head))) | the three-job switch below xl, three job cards with terminals and tags | Segmented control ([7.4](#74-segmented-control)), Card ([7.11](#711-card)), Terminal ([7.19](#719-terminal)), Badge, status dot, tag ([7.14](#714-badge-status-dot-tag)) |
 | FAQ | a section head, "Questions, answered.", in a 360 column from lg (raw markup today, specced as Section head ([7.16](#716-section-head))) | ten questions in rows | Accordion ([7.20](#720-accordion)) |
 | Closing | the mark | "1 million made / 2 billion to go", one line of why, Try now, a sign-in line | this section |
@@ -3067,7 +3082,7 @@ How parts and surfaces combine into the page: the six surfaces, the hero, the pl
 | --- | --- | --- | --- | --- |
 | Hero | at rest, its stroke after 4px of scroll | on | none | hidden |
 | Scroll line | scrolled, then solid white once the water is 90% up | on until the line's foot | none | hidden |
-| Water and players | solid white | paused | `#players`, proximity | shown, on phones only while scrolling up |
+| Water and players | solid white | paused | `#players`, proximity snap plus a catch within 0.6 of a screen | shown, on phones only while scrolling up |
 | Grain block | scrolled | covered | none | as above |
 | Footer | scrolled | covered | none | on phones hidden, the footer has its own |
 
@@ -3084,7 +3099,7 @@ How parts and surfaces combine into the page: the six surfaces, the hero, the pl
 #### Reasons
 
 - **The shell follows the ground so the content does not have to.** The header turns white on the water because a page-tinted bar would be a pale stripe on blue. The glyph field pauses under the water and the grain because nobody can see it there, and drawing it would cost frames for nothing. BackToTop appears only past the line because above it the top is a short scroll away.
-- **One magnet, because a magnet is a decision.** The players are the one place the page wants the visitor to stop. A second snap point would make scrolling feel sticky, and the visitor would stop trusting the wheel.
+- **One magnet, because a magnet is a decision.** The players are the one place the page wants the visitor to stop. A second snap point would make scrolling feel sticky, and the visitor would stop trusting the wheel. For the same reason the magnet's catch fires only once a scroll has rested 120ms, so it never tugs at a scroll still under way.
 - **The two pages share everything below the line** so the variant is a choice about the first impression only, never a second site to maintain.
 
 #### Do / Don't
@@ -3109,15 +3124,19 @@ How parts and surfaces combine into the page: the six surfaces, the hero, the pl
 | 1024 (lg) | the players' two columns and four cards, the full hero's scroll cue, the copy line's labels, the full floor pulled back (distScale 1.5) |
 | 1280 (xl) | the jobs three across, the full hero's type, the short-screen cap |
 | 1600, 1920, 2560 | the full hero's type and measure, the floating tiles' wide places at 1600 |
+| 1920, dense screens only | the players scale up to 1.35 |
 
-**The full-hero exception.** The full hero keeps the ladder it was tuned on, from the onBlue creators hero: the title 34 / 36 / 42 / 54 / 64 / 76 / 88 and the lede 16 / 16.5 / 15 / 16 / 18 / 20 / 22 at a measure of 470 / 440 / 540 / 620 / 680. At 901 the lede drops to 15 as its measure narrows to 440, as the onBlue scale has it: size and measure move as a pair, so the line length holds while the title grows. The ladder stays in the full hero. Nothing else may use 561, 901, 1600, 1920 or 2560.
+**The full-hero exception.** The full hero keeps the ladder it was tuned on, from the onBlue creators hero: the title 34 / 36 / 42 / 54 / 64 / 76 / 88 and the lede 16 / 16.5 / 15 / 16 / 18 / 20 / 22 at a measure of 470 / 440 / 540 / 620 / 680. At 901 the lede drops to 15 as its measure narrows to 440, as the onBlue scale has it: size and measure move as a pair, so the line length holds while the title grows. The ladder stays in the full hero. Nothing else may use 561, 901, 1600, 1920 or 2560, with the one exception below.
+
+**The players' scale, the second exception.** The players section is laid out for windows up to 1920. Past 1920, on a dense screen only, its content scales up evenly by the window's width over 1920, to at most 1.35, as Scroll line to players ([9.3](#93-scroll-line-to-players)) sets out. It is a transform rather than a breakpoint, so nothing reflows, and it reads the width and the density in script, not in a media query.
 
 **The rule for new work.** A page changes at Tailwind's breakpoints only: md (768) for the phone to tablet split of gutters, type and rhythm, lg (1024) for layouts that change shape, xl (1280) for wide grids. Write `xl`, never `min-[1280px]`. A part that steps its size steps down one rung under md. Inside a part, the named component widths 400, 480 and 560 may also be used, where a row of actions or choices stops fitting a phone, and a part that answers its own box (EmptyState) takes a container query rather than a media query, as Layout and breakpoints ([2.6](#26-layout-and-breakpoints)) lists.
 
-**Height and pointer.** Width is one axis of three.
+**Height, pointer and density.** Width is one axis of four.
 - **Short screens.** `(min-width: 1280px) and (max-height: 720px)` caps the full title at 48, so a laptop with a short window still shows the copy, the numbers and the cue in one screen.
 - **Small viewport units.** The full hero and the players' portrait use `svh`, the height with a phone's toolbar showing, so nothing is cropped when the toolbar comes back.
 - **Hover and fine pointers.** `(hover: hover)` gates anything that answers a cursor (the glyph field's pool, the floating tiles' drift), and `(hover: hover) and (pointer: fine)` gates the liquid over the line and desktop Safari's smooth scroll. Touch gets the still form, never a broken hover.
+- **Pixel density.** A devicePixelRatio of 1.5 and up, read in script, lets the players scale past 1920. A wide CSS width at that density is a big physical screen seen up close, while a 1440p monitor at density 1 is a desk screen at arm's length and keeps the layout.
 - **Safe areas.** The footer's legal row pads `env(safe-area-inset-bottom)`, so the home bar never covers the links.
 
 **The tight band.** From 768 to about 900 the header's row is at its narrowest, as Header ([6.2](#62-header)) describes. A fifth tab does not fit there, so it goes in the menu or waits for a wider step.
@@ -3133,7 +3152,7 @@ How parts and surfaces combine into the page: the six surfaces, the hero, the pl
 
 - Do change new work at md, lg and xl, and inside a part at 400, 480 or 560.
 - Do gate cursor effects on `(hover: hover)`.
-- Don't write any other custom width outside the full hero.
+- Don't write any other custom width outside the full hero and the players' scale.
 - Don't size a full-screen part with `vh` on a phone.
 
 ### 9.7 Forms
@@ -3316,11 +3335,12 @@ The guide records these and the owner decides. Nothing here was fixed while buil
 - **Device GPU limits.** A phone has its own WebGL context limit and slows as it heats. Only the device shows either.
 - **Copy drift.** Site copy outside an assertion can change without a trace here. A copy pass belongs on the site page.
 - **Unasserted drawers.** Coverage collects the assertions of the type, spacing, layout and radius data, the terminal's timings and every token that cites a `file:line`. The values that component, effect and pattern sections write in their drawers and value lists are not collected yet, so one of them can go stale without turning Coverage red. A change to a part those sections show needs a look at its drawer.
+- **Quoted site values.** DESIGN.md's build checks each site value listed in `tools/design-md/facts.mjs` against its source file, and fails when one is gone or when its partial stops saying it. Any other value a partial quotes carries no assertion, so a site change outside that list needs a look at the partial that describes the part, and a new quoted value earns a fact.
 - **Rendered drift.** A passing assertion proves the text is still in the source. A Tailwind upgrade or a new font file can still move pixels, so a visual pass after either is the cover.
 
 #### Site defects
 
-Severity: **high** breaks a rule the site states for itself (the compositor rule, keyboard access), **medium** degrades a real visit, **low** is drift or housekeeping. Line numbers are as of 2026-10-02. The guide reads them from each defect's evidence when it builds, so its table is the current one.
+Severity: **high** breaks a rule the site states for itself (the compositor rule, keyboard access), **medium** degrades a real visit, **low** is drift or housekeeping. Line numbers are as of 2026-10-05. The guide reads them from each defect's evidence when it builds, so its table is the current one.
 
 | Area | Severity | Part | Where | Fix direction |
 | --- | --- | --- | --- | --- |
@@ -3335,15 +3355,16 @@ Severity: **high** breaks a rule the site states for itself (the compositor rule
 | Accessibility | medium | JobTerminal | JobTerminal.tsx:134 | hide the decoration, keep the answer line readable |
 | Accessibility | medium | Small targets | PlayerCarousel.tsx:16, 104 | 44px arrows (the lg icon button) and taller dot hit areas |
 | Accessibility | low | BackToTop | BackToTop.tsx:60 | inert while hidden |
-| Accessibility | medium | Glide and floor | glide.ts, src/tiles | jump instead of glide, and hold the floor's intro, under reduced motion |
-| Accessibility | medium | Ping and pulse | Hero.tsx:238, Players.tsx:261 | the motion-safe variant on both loops |
+| Accessibility | medium | Glide and floor | glide.ts, SafariScroll.tsx, usePlayerMode.ts, src/tiles | under reduced motion: jump instead of glide, settle the players' magnet at once, hold the players' auto switch, and hold the floor's intro |
+| Accessibility | medium | Ping and pulse | Hero.tsx:238, Players.tsx:264 | the motion-safe variant on both loops |
 | Accessibility | medium | Accent text | Header.tsx:86, Hero.tsx:245 | the accent ink for text under 24px, [decision 1](#1-accent-text-under-24px) in Decisions pending ([10.3](#103-decisions-pending)) |
 | Accessibility | medium | Skip link | website/page.tsx:25 | a SkipLink first in the body, and an id on `main` for it to land on |
 | Accessibility | low | Footer stubs | Footer.tsx:18, 94-95 | an `href` on each link, or plain text until it has one |
 | Accessibility | medium | Glide focus and hash | jump.ts:38 | move focus to the target's heading and update the hash with `history.replaceState` |
 | Accessibility | medium | LanguageMenu highlight | LanguageMenu.tsx:72 | `aria-activedescendant` on the focused trigger, with `aria-controls` |
+| Accessibility | low | Comparison headings | Understands.tsx:70, 77 | an h3 per name under a visually hidden h2, so heading navigation finds the section, with no change to the look |
 | Accessibility | low | Language of parts | LanguageMenu.tsx:96 | a `lang` on each row's label (ko, ja, zh) |
-| Accessibility | low | HeroLoader label | HeroLoader.tsx:48 | slate-500 for the label, which slate-400 holds near 2:1 on the hero grey |
+| Accessibility | medium | HeroLoader label | HeroLoader.tsx:48 | the body slate `#475569` for the label (6.0:1), since its slate-500 holds near 3.8:1 on the hero grey |
 | Behaviour | medium | Mobile menu rows | ClickLock.tsx:11, MobileMenu.tsx:86 | close the sheet before ClickLock's capture, or let ClickLock spare the menu |
 | Behaviour | medium | Page hold | MobileMenu.tsx:17 | release the hold when the md query starts to match |
 | Behaviour | low | Language in the sheet | MobileMenu.tsx:108 | lift the chosen language above the sheet |
@@ -3354,12 +3375,13 @@ Severity: **high** breaks a rule the site states for itself (the compositor rule
 | Drift | medium | Ease | website | one ease token in the theme, [decision 7](#7-tokens-in-the-sites-theme) in Decisions pending ([10.3](#103-decisions-pending)) |
 | Drift | low | Radius | website | one spelling per step |
 | Drift | low | Header offsets | Understands.tsx:64, Hero.tsx:169 | one header height token |
-| Drift | low | Players gutter | Players.tsx:104 | 16 on phones, as every other section takes |
+| Drift | low | Players gutter | Players.tsx:107 | 16 on phones, as every other section takes |
 | Drift | low | Hero row gutter | Hero.tsx:101 | 16 on phones, as every other row takes |
-| Drift | medium | font-mono | Players.tsx:244, globals.css | map --font-mono, [decision 8](#8-the-mono-family) in Decisions pending ([10.3](#103-decisions-pending)) |
-| Dead code | low | Player card classes | Players.tsx:204, 217 | remove the classes a hidden grid never shows |
+| Drift | medium | font-mono | Players.tsx:247, globals.css | map --font-mono, [decision 8](#8-the-mono-family) in Decisions pending ([10.3](#103-decisions-pending)) |
+| Dead code | low | Player card classes | Players.tsx:207, 220 | remove the classes a hidden grid never shows |
 | Dead code | low | Prism sweep | PrimaryCta.tsx:25, 112 | remove the branch, which also breaks the compositor rule |
 | Stale comment | low | Charcoal copies | characters.js:5, interact.js:6 | say blue hologram |
+| Stale comment | low | Doodle pace | PlayerDoodles.tsx:22-23 | say the hand ends just after the first switch and the copy waits on it |
 | Stale comment | low | Hero waves | Hero.tsx:32 | describe the waves Hero asks for |
 | Stale comment | low | Floating tiles | FloatingBadges.tsx:11 | say what touch screens do |
 | Tooling | medium | render.cjs | render.cjs:13 | add the /tiles-holo/ route |
@@ -3458,6 +3480,16 @@ How the system and its guide are kept, so the next part goes in the way the last
 ### 10.5 Changelog
 
 Dated entries, newest first. An entry says what changed and, when it is not plain, why. A decision from Decisions pending ([10.3](#103-decisions-pending)) lands here on the day it ships. This partial is the one source of the changelog: the guide's Changelog section reads its entries from here as the page builds, so the guide and this document cannot tell the same day two ways. Write a `#### YYYY-MM-DD` heading and one bullet per change, then rebuild DESIGN.md.
+
+#### 2026-10-05
+
+- The comparison's names become each card's heading in Outfit 34 (26 on a phone) beside 44px marks (36 on a phone), and its lines become body text in Inter 18 at 1.5 (16 on a phone). Comparison cards ([7.12](#712-comparison-cards)) and Type ([2.4](#24-type)) follow, and Known gaps ([10.2](#102-known-gaps)) records that the names are spans, not headings.
+- The players' doodles start 1s after the section is in view, and the portrait switches between Human and AI every 5s, so the hand now ends just after the first switch. Doodles ([5.11](#511-doodles)), Human / AI swap ([5.10](#510-human--ai-swap)), Scroll line to players ([9.3](#93-scroll-line-to-players)) and Choreography ([4.5](#45-choreography)) follow, the last with a players clock.
+- On a dense screen (devicePixelRatio 1.5 and up) wider than 1920 the players' content scales up to 1.35. Scroll line to players ([9.3](#93-scroll-line-to-players)), Responsive ladder ([9.6](#96-responsive-ladder)) and Layout and breakpoints ([2.6](#26-layout-and-breakpoints)) follow, with density as a fourth axis.
+- The players' magnet gains a catch in script in every browser: a scroll that rests within 0.6 of a screen glides in over 0.6s, where the CSS snap alone caught only a scroll ending very near. Shell behaviours ([6.7](#67-shell-behaviours)), Accent water ([5.9](#59-accent-water)), Page composition ([9.5](#95-page-composition)) and Reduced motion ([4.6](#46-reduced-motion)) follow.
+- The resting tiles' walls darken toward the foot and their tops' rear corner 8%, baked into the frost, and both raised slabs hold their dark foot over the lower 30% with a foot shade in each state. Tile states ([5.3](#53-tile-states)), The glass tile floor ([5.2](#52-the-glass-tile-floor)) and Activation sweep ([5.4](#54-activation-sweep)) follow.
+- The full view's "Loading" label turns slate-500, about 3.8:1 on the hero grey, still under the 4.5:1 bar. Known gaps ([10.2](#102-known-gaps)), Load-in, autoplay and loaders ([5.6](#56-load-in-autoplay-and-loaders)) and Contrast ([2.3](#23-contrast)) follow.
+- DESIGN.md's build checks the site values its partials quote against their source files (`tools/design-md/facts.mjs`), so a value that drifts from the site fails it.
 
 #### 2026-10-02
 

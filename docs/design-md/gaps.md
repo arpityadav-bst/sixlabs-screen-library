@@ -10,11 +10,12 @@ The guide records these and the owner decides. Nothing here was fixed while buil
 - **Device GPU limits.** A phone has its own WebGL context limit and slows as it heats. Only the device shows either.
 - **Copy drift.** Site copy outside an assertion can change without a trace here. A copy pass belongs on the site page.
 - **Unasserted drawers.** Coverage collects the assertions of the type, spacing, layout and radius data, the terminal's timings and every token that cites a `file:line`. The values that component, effect and pattern sections write in their drawers and value lists are not collected yet, so one of them can go stale without turning Coverage red. A change to a part those sections show needs a look at its drawer.
+- **Quoted site values.** DESIGN.md's build checks each site value listed in `tools/design-md/facts.mjs` against its source file, and fails when one is gone or when its partial stops saying it. Any other value a partial quotes carries no assertion, so a site change outside that list needs a look at the partial that describes the part, and a new quoted value earns a fact.
 - **Rendered drift.** A passing assertion proves the text is still in the source. A Tailwind upgrade or a new font file can still move pixels, so a visual pass after either is the cover.
 
 #### Site defects
 
-Severity: **high** breaks a rule the site states for itself (the compositor rule, keyboard access), **medium** degrades a real visit, **low** is drift or housekeeping. Line numbers are as of 2026-10-02. The guide reads them from each defect's evidence when it builds, so its table is the current one.
+Severity: **high** breaks a rule the site states for itself (the compositor rule, keyboard access), **medium** degrades a real visit, **low** is drift or housekeeping. Line numbers are as of 2026-10-05. The guide reads them from each defect's evidence when it builds, so its table is the current one.
 
 | Area | Severity | Part | Where | Fix direction |
 | --- | --- | --- | --- | --- |
@@ -29,15 +30,16 @@ Severity: **high** breaks a rule the site states for itself (the compositor rule
 | Accessibility | medium | JobTerminal | JobTerminal.tsx:134 | hide the decoration, keep the answer line readable |
 | Accessibility | medium | Small targets | PlayerCarousel.tsx:16, 104 | 44px arrows (the lg icon button) and taller dot hit areas |
 | Accessibility | low | BackToTop | BackToTop.tsx:60 | inert while hidden |
-| Accessibility | medium | Glide and floor | glide.ts, src/tiles | jump instead of glide, and hold the floor's intro, under reduced motion |
-| Accessibility | medium | Ping and pulse | Hero.tsx:238, Players.tsx:261 | the motion-safe variant on both loops |
+| Accessibility | medium | Glide and floor | glide.ts, SafariScroll.tsx, usePlayerMode.ts, src/tiles | under reduced motion: jump instead of glide, settle the players' magnet at once, hold the players' auto switch, and hold the floor's intro |
+| Accessibility | medium | Ping and pulse | Hero.tsx:238, Players.tsx:264 | the motion-safe variant on both loops |
 | Accessibility | medium | Accent text | Header.tsx:86, Hero.tsx:245 | the accent ink for text under 24px, decision 1 in Decisions pending (10.3) |
 | Accessibility | medium | Skip link | website/page.tsx:25 | a SkipLink first in the body, and an id on `main` for it to land on |
 | Accessibility | low | Footer stubs | Footer.tsx:18, 94-95 | an `href` on each link, or plain text until it has one |
 | Accessibility | medium | Glide focus and hash | jump.ts:38 | move focus to the target's heading and update the hash with `history.replaceState` |
 | Accessibility | medium | LanguageMenu highlight | LanguageMenu.tsx:72 | `aria-activedescendant` on the focused trigger, with `aria-controls` |
+| Accessibility | low | Comparison headings | Understands.tsx:70, 77 | an h3 per name under a visually hidden h2, so heading navigation finds the section, with no change to the look |
 | Accessibility | low | Language of parts | LanguageMenu.tsx:96 | a `lang` on each row's label (ko, ja, zh) |
-| Accessibility | low | HeroLoader label | HeroLoader.tsx:48 | slate-500 for the label, which slate-400 holds near 2:1 on the hero grey |
+| Accessibility | medium | HeroLoader label | HeroLoader.tsx:48 | the body slate `#475569` for the label (6.0:1), since its slate-500 holds near 3.8:1 on the hero grey |
 | Behaviour | medium | Mobile menu rows | ClickLock.tsx:11, MobileMenu.tsx:86 | close the sheet before ClickLock's capture, or let ClickLock spare the menu |
 | Behaviour | medium | Page hold | MobileMenu.tsx:17 | release the hold when the md query starts to match |
 | Behaviour | low | Language in the sheet | MobileMenu.tsx:108 | lift the chosen language above the sheet |
@@ -48,12 +50,13 @@ Severity: **high** breaks a rule the site states for itself (the compositor rule
 | Drift | medium | Ease | website | one ease token in the theme, decision 7 in Decisions pending (10.3) |
 | Drift | low | Radius | website | one spelling per step |
 | Drift | low | Header offsets | Understands.tsx:64, Hero.tsx:169 | one header height token |
-| Drift | low | Players gutter | Players.tsx:104 | 16 on phones, as every other section takes |
+| Drift | low | Players gutter | Players.tsx:107 | 16 on phones, as every other section takes |
 | Drift | low | Hero row gutter | Hero.tsx:101 | 16 on phones, as every other row takes |
-| Drift | medium | font-mono | Players.tsx:244, globals.css | map --font-mono, decision 8 in Decisions pending (10.3) |
-| Dead code | low | Player card classes | Players.tsx:204, 217 | remove the classes a hidden grid never shows |
+| Drift | medium | font-mono | Players.tsx:247, globals.css | map --font-mono, decision 8 in Decisions pending (10.3) |
+| Dead code | low | Player card classes | Players.tsx:207, 220 | remove the classes a hidden grid never shows |
 | Dead code | low | Prism sweep | PrimaryCta.tsx:25, 112 | remove the branch, which also breaks the compositor rule |
 | Stale comment | low | Charcoal copies | characters.js:5, interact.js:6 | say blue hologram |
+| Stale comment | low | Doodle pace | PlayerDoodles.tsx:22-23 | say the hand ends just after the first switch and the copy waits on it |
 | Stale comment | low | Hero waves | Hero.tsx:32 | describe the waves Hero asks for |
 | Stale comment | low | Floating tiles | FloatingBadges.tsx:11 | say what touch screens do |
 | Tooling | medium | render.cjs | render.cjs:13 | add the /tiles-holo/ route |

@@ -4,7 +4,7 @@
 import { Anatomy } from "@/app/design-system/_kit/Anatomy";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
 import { Replay } from "@/app/design-system/_kit/Replay";
-import { Section } from "@/app/design-system/_kit/Section";
+import { Section, SectionLink } from "@/app/design-system/_kit/Section";
 import { Spec } from "@/app/design-system/_kit/Spec";
 import { ViewportPreview } from "@/app/design-system/_kit/ViewportPreview";
 import { SectionHead } from "@/components/design-system/SectionHead";
@@ -12,7 +12,7 @@ import { Closing } from "@/components/website/Closing";
 import { ClickHold } from "./click-hold";
 import { CLOSING_CODE, CLOSING_PINS, JOBS_PINS, JOBS_WIDTHS, LIGHT_BOM, LIGHT_HEADS, LIGHT_VALUES } from "./light-sections-data";
 import { RhythmMap } from "./light-sections-rhythm";
-import { Bom, SecLink } from "./pattern-parts";
+import { Bom } from "./pattern-parts";
 import s from "./light-sections.module.css";
 
 const JOBS = { from: "@/components/website/Jobs", name: "Jobs", at: "<section" };
@@ -42,7 +42,7 @@ export function LightSectionsSection() {
         caption="frame section-jobs on the grain · the switch hides from xl"
         note={
           <>
-            Understands is mounted under <SecLink id="comparison" /> and the FAQ under <SecLink id="accordion" />,
+            Understands is mounted under <SectionLink id="comparison" /> and the FAQ under <SectionLink id="accordion" />,
             each once on this page.
           </>
         }

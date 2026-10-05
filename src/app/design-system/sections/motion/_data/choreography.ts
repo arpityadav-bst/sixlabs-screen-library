@@ -6,6 +6,8 @@ import type { ValueRow } from "@/app/design-system/_kit/SpecDrawer";
 import type { TimelineItem, TimelineLane } from "@/app/design-system/_kit/Timeline";
 import { TIMING, runLanes, stepMs } from "@/app/design-system/sections/components/terminal-data";
 import { JOBS } from "@/components/website/jobs-data";
+import { AUTO_S, COPY_END, DELAY_S, HAND_END } from "@/app/design-system/sections/effects/doodles-data";
+import { PLAYERS_LANES } from "./entrance";
 
 const W = "components/website/";
 
@@ -70,7 +72,24 @@ export const TRACK_VALUES: readonly ValueRow[] = [
   { part: "Water edge", value: "smoothstep k x k x (3 - 2k)", source: `${W}AccentWave.tsx:88` },
   { part: "Full", value: "0.9 of the view, drained below 0.8", source: `${W}AccentWave.tsx:23` },
   { part: "Drain", value: "1 screen past the players", source: `${W}AccentWave.tsx:24` },
-  { part: "Magnet", value: "scroll-snap y proximity, #players at its start", source: "app/globals.css:26" },
+  { part: "Magnet", value: "scroll-snap y proximity plus a JS catch: a scroll resting 120ms within 0.6 of a screen glides in over 0.6s (nativeMagnet, Lenis in desktop Safari)", source: `${W}SafariScroll.tsx:53` },
+];
+
+/** The players, seconds after the reveal: the entrance, the explorer's hand, the first two flips and the
+ *  AI copy after the first. The magnet is on no clock but the scroll's, so it is under the track above. */
+const ENTRANCE_END = Math.max(...PLAYERS_LANES.flatMap((l) => l.items.map((i) => i.to ?? i.at)));
+export const PLAYERS_CLOCK: readonly TimelineLane[] = [
+  { label: "Entrance", items: [{ label: "cards, portrait, switch, column", at: 0, to: ENTRANCE_END }] },
+  { label: "Hand", items: [{ label: "wait", at: 0, to: DELAY_S }, { label: "draws, the explorer", at: DELAY_S, to: HAND_END }] },
+  { label: "Portrait", items: [{ label: "AI", at: AUTO_S }, { label: "Human", at: AUTO_S * 2 }] },
+  { label: "AI copy", items: [{ label: "retraces", at: +(AUTO_S + 0.6).toFixed(2), to: +(AUTO_S + COPY_END).toFixed(2) }] },
+];
+
+export const PLAYERS_CLOCK_ROWS: readonly KeyRow[] = [
+  { key: "reveal", value: "the accentwave event says filled, and 20% of the section is in view", source: `${W}Players.tsx:56` },
+  { key: "hand", value: `starts ${DELAY_S}s after the reveal, the explorer's drawing done at ${HAND_END}s`, source: `${W}PlayerDoodles.tsx:19` },
+  { key: "flips", value: `the portrait turns AI at ${AUTO_S}s and flips every ${AUTO_S}s after, until the visitor picks`, source: `${W}usePlayerMode.ts:11` },
+  { key: "copy", value: "the AI copy starts 0.6s after each switch, never before the hand has finished a stroke", source: `${W}PlayerDoodles.tsx:20` },
 ];
 
 /** The glide: min(2.2, 0.9 + distance / 4000) seconds. */
@@ -82,7 +101,7 @@ export const GLIDE_VALUES: readonly ValueRow[] = [
   { part: "Length", value: "min(2.2, 0.9 + distance / 4000) s", source: `${W}jump.ts:38` },
   { part: "Back to top", value: "the same, with the distance from the top", source: `${W}BackToTop.tsx:53` },
   { part: "While it runs", value: "wheel, touch and scroll keys held, scroll snap off", source: `${W}glide.ts:46` },
-  { part: "Desktop Safari", value: "runs on Lenis (lerp 0.15), magnet 0.3 screen over 0.6s", source: `${W}SafariScroll.tsx:15` },
+  { part: "Desktop Safari", value: "runs on Lenis (lerp 0.15), magnet 0.6 of a screen over 0.6s", source: `${W}SafariScroll.tsx:15` },
 ];
 
 /** One job's run as lanes in ms: the commands typed in, then every step landing in turn. A step keeps the

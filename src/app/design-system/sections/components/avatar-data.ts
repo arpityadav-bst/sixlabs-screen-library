@@ -11,6 +11,11 @@ export { MODELS, PEOPLE, type Model };
 /** A picture that is not there, so the specimen shows the initials it falls back to. */
 export const MISSING = "/tiles/chars/00-not-on-file.webp";
 
+/** A transparent 1px picture. It loads, so no initials are drawn, and shows nothing, so the disc reads as
+ *  it does while a real picture decodes (Avatar.tsx holds the img at opacity 0 until onLoad): the bare
+ *  ground with no initials, held still so it can be judged. */
+export const LOADING = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
 const AV = "Avatar.tsx";
 
 export const AVATAR_PINS: readonly Pin[] = [

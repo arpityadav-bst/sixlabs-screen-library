@@ -1,7 +1,9 @@
 // The card's state matrices: every forced state per variant on its own ground (the page, the container
 // grey, the page under the inverse navy, the accent water), with a live cell to hover, press or Tab into.
-// The clickable row carries the sheen, pinned at the centre in its forced hover. A state a variant does not
-// have prints "none" rather than a fake picture.
+// The clickable row carries the sheen, pinned at the centre in its forced hover. The selected-hover column
+// is a picked card under a forced hover: it holds the selected look on purpose (card.module.css pins it),
+// where other selected controls step to primary-hover. A state a variant does not have prints "none"
+// rather than a fake picture.
 import type { Ground } from "@/app/design-system/_kit/Canvas";
 import { None } from "@/app/design-system/_kit/Label";
 import { StateGrid } from "@/app/design-system/_kit/StateGrid";
@@ -12,17 +14,22 @@ import { JOBS } from "@/components/website/jobs-data";
 import { PLAYERS } from "@/components/website/players-data";
 import { LiveSelectable } from "./card-live";
 
-const STATES = ["rest", "hover", "pressed", "selected", "focus-visible", "disabled", "loading"] as const;
-const ON_BLUE = ["rest", "hover", "pressed", "selected", "focus-visible", "disabled", "loading"] as const;
+const STATES = ["rest", "hover", "pressed", "selected", "selected-hover", "focus-visible", "disabled", "loading"] as const;
+const ON_BLUE = ["rest", "hover", "pressed", "selected", "selected-hover", "focus-visible", "disabled", "loading"] as const;
 const ROWS = ["clickable", "selectable"] as const;
 
 /** A clickable card goes somewhere, so it is never picked. Every other state is drawn by Card. */
 const NOT: Record<(typeof ROWS)[number], readonly string[]> = {
-  clickable: ["selected"],
+  clickable: ["selected", "selected-hover"],
   selectable: [],
 };
 
-function Specimen({ variant, tone, force }: { variant: CardVariant; tone: CardTone; force?: ForceState }) {
+/** A cell's forced state: one Card forces, or selected-hover, a picked card under a forced hover. */
+type CellForce = ForceState | "selected-hover";
+
+function Specimen({ variant, tone, force: cellForce }: { variant: CardVariant; tone: CardTone; force?: CellForce }) {
+  const selected = cellForce === "selected-hover";
+  const force: ForceState | undefined = selected ? "hover" : cellForce;
   if (variant === "clickable") {
     const j = JOBS[0];
     return (
@@ -35,10 +42,10 @@ function Specimen({ variant, tone, force }: { variant: CardVariant; tone: CardTo
   const p = PLAYERS[0];
   const off = force === "disabled";
   return (
-    <Card variant="selectable" tone={tone} size="compact" forceState={force}>
+    <Card variant="selectable" tone={tone} size="compact" selected={selected} forceState={force}>
       <CardTitle>{p.title}</CardTitle>
       <CardBody>{p.tagline}</CardBody>
-      <CardMeta start="Model 01" end={off ? "Unavailable" : force === "selected" ? "Running" : "Ready"} />
+      <CardMeta start="Model 01" end={off ? "Unavailable" : selected || force === "selected" ? "Running" : "Ready"} />
     </Card>
   );
 }

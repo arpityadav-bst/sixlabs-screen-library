@@ -2,7 +2,7 @@
 
 // A round icon-only action on one size ladder. The label is required: it is the accessible name, and with
 // showLabelOnHover it also widens in beside the icon, as the hero's wave button does. Pressed settles to
-// 0.94 on the press spring, dropped under reduced motion. Toggled (selected) fills navy on light grounds and
+// 0.94 on the press spring, at once under reduced motion. Toggled (selected) fills navy on light grounds and
 // white on the blue, never the accent, and can cross-fade to a second icon with a quarter turn (Menu to X).
 // Solid is a pure action: it has no toggled state and ignores selected, with a warning in development.
 import Link from "next/link";
@@ -98,7 +98,7 @@ export function IconButton({
     "data-force": force,
     style: showLabelOnHover ? { paddingInline: revealPad(size) } : undefined,
     animate: { scale: force === "pressed" ? SCALE.pressRound : 1 },
-    whileTap: live && !force && !still ? { scale: SCALE.pressRound } : undefined,
+    whileTap: live && !force ? { scale: SCALE.pressRound } : undefined,
     transition: still ? { duration: 0 } : SPRING.press,
     onClick: (e: MouseEvent<HTMLElement>) => {
       if (!live) return e.preventDefault();

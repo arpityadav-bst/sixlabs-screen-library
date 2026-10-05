@@ -6,7 +6,7 @@
 
 | Section | Opens with | Holds | Specced under |
 | --- | --- | --- | --- |
-| Understands | no head, the cards are the argument | the ChatGPT and 6labs pair joined by a vs | Comparison cards (7.12) |
+| Understands | no section head, each card headed by its maker's name | the ChatGPT and 6labs pair joined by a vs | Comparison cards (7.12) |
 | Jobs | a section head, "One model. Three jobs." with a subline (raw markup today, specced as Section head (7.16)) | the three-job switch below xl, three job cards with terminals and tags | Segmented control (7.4), Card (7.11), Terminal (7.19), Badge, status dot, tag (7.14) |
 | FAQ | a section head, "Questions, answered.", in a 360 column from lg (raw markup today, specced as Section head (7.16)) | ten questions in rows | Accordion (7.20) |
 | Closing | the mark | "1 million made / 2 billion to go", one line of why, Try now, a sign-in line | this section |

@@ -11,7 +11,7 @@ export const EASE_SWEEP = [0.45, 0, 0.25, 1] as const;
 
 export const EASES: readonly Token[] = [
   tk("ease-out", "cubic-bezier(0.22, 1, 0.36, 1)", "The ease", "Every entrance, panel, bar and settle",
-    "Loops, which run linear or ease-in-out", `${W}Players.tsx:22`),
+    "Loops, which run linear or ease-in-out", `${W}Players.tsx:23`),
   tk("ease-out-tw", "cubic-bezier(0, 0, 0.2, 1)", "Tailwind ease-out", "The hero's opacity fades only",
     "New work, which takes ease-out", `${W}Hero.tsx:37`, { utility: "ease-out" }),
   tk("ease-in-out", "cubic-bezier(0.65, 0, 0.35, 1)", "In-out cubic", "The Human / AI sweep and the tile flip",
@@ -40,7 +40,7 @@ export const DURATIONS: readonly Token[] = [
   tk("dur-panel", "350ms", "Panel", "An accordion answer opening, a detail swap", "Hover", `${W}Faq.tsx:65`),
   tk("dur-sheen", "400ms", "Sheen", "The card sheen fading in", "Hover colour", "app/globals.css:260"),
   tk("dur-exit-long", "450ms", "Long exit", "Loaders leaving, a live count settling", "Controls", `${W}HeroBits.tsx:65`),
-  tk("dur-reveal", "500ms", "Reveal", "The players reveal and portrait swap", "Controls", `${W}Players.tsx:85`),
+  tk("dur-reveal", "500ms", "Reveal", "The players reveal and portrait swap", "Controls", `${W}Players.tsx:88`),
   tk("dur-numbers", "600ms", "Numbers", "The hero numbers rising", "Controls", `${W}HeroBits.tsx:35`),
   tk("dur-rise", "700ms", "Rise", "Section entrances and trait bars", "Controls", `${W}Understands.tsx:48`),
   tk("dur-tiles", "900ms", "Tiles", "The tile floor rising in", "UI", "tiles/intro.js:12"),
@@ -90,7 +90,7 @@ export const SCALES: readonly Token[] = [
 
 export const TRAVEL: readonly Token[] = [
   tk("rise-y", "28px", "Entrance travel", "Section entrances", "Controls", `${W}Understands.tsx:45`),
-  tk("reveal-y", "24px", "Reveal travel", "The players reveal", "Controls", `${W}Players.tsx:83`),
+  tk("reveal-y", "24px", "Reveal travel", "The players reveal", "Controls", `${W}Players.tsx:86`),
   tk("numbers-y", "6px", "Small rise", "The hero numbers, small content swaps", "Sections", `${W}HeroBits.tsx:33`),
   tk("lift-y", "2px", "Hover lift", "Cards and floating buttons on hover", "Text", `${W}BackToTop.tsx:62`),
   tk("loop-max", "8px", "Loop ceiling", "The most an ambient loop may travel", "Entrances", "system"),

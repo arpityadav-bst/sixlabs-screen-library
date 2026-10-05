@@ -49,8 +49,8 @@ export const SEG_GROUND: Record<SegmentedGround, { track: string; rest: string; 
   },
 };
 
-/** One segment. The press settles to scale-press-pill (SCALE.pressPill, 0.97), as Try now's does. */
+/** One segment. The press settles to scale-press-pill (SCALE.pressPill, 0.97), as Try now's does, at once when reduced. */
 export const SEG_OPTION =
   "relative inline-flex select-none items-center justify-center whitespace-nowrap rounded-full font-sans " +
   "font-medium transition-[color,background-color,scale] duration-(--ds-dur-ui) ease-(--ds-ease-out) " +
-  "enabled:active:scale-(--ds-scale-press-pill) data-[force=pressed]:scale-(--ds-scale-press-pill)";
+  "enabled:active:scale-(--ds-scale-press-pill) data-[force=pressed]:scale-(--ds-scale-press-pill) motion-reduce:transition-none";

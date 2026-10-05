@@ -165,7 +165,7 @@ function System() {
 function States() {
   return (
     <Sub title="States and sizes">
-      <Spec title="States" level={4} source={SYS} props="forceState" role="Every state forced on the page ground, with a live card to hover, press and Tab into.">
+      <Spec title="States" level={4} source={SYS} props="forceState selected" role="Every state forced on the page ground, with a live card to hover, press and Tab into. A picked card holds its look under hover on purpose, since the pick already answers the pointer.">
         <CardStateGrid />
       </Spec>
       <Spec

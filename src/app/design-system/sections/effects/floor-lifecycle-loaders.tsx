@@ -7,12 +7,16 @@ import { useState } from "react";
 import { FloorLogo } from "@/components/website/HeroBits";
 import { HeroLoader } from "@/components/website/HeroLoader";
 import { Button } from "@/components/design-system/Button";
+import { tokenByName } from "@/components/design-system/tokens";
 import { Anatomy } from "@/app/design-system/_kit/Anatomy";
 import { Canvas } from "@/app/design-system/_kit/Canvas";
 import { ContrastBadge } from "@/app/design-system/_kit/ContrastBadge";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
 import { LOADER_PINS, LOGO_PINS } from "./floor-lifecycle-pins";
 import s from "./floor.module.css";
+
+/** the label's slate-500, as the muted text token holds it */
+const LABEL_INK = tokenByName("color-text-muted")?.value ?? "";
 
 function Toggle({ show, onChange, on, off }: { show: boolean; onChange: (v: boolean) => void; on: string; off: string }) {
   return (
@@ -41,7 +45,7 @@ export function HeroLoaderSpecimens() {
         <div className={s["ds-fl-loader"]}>
           <HeroLoader show={show} />
         </div>
-        <ContrastBadge fg="#94a3b8" bg="container" bgName="the hero grey" />
+        <ContrastBadge fg={LABEL_INK} bg="container" bgName="the hero grey" />
       </Canvas>
     </>
   );

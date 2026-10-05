@@ -17,8 +17,8 @@ The scale for new work is Type scale (3.16), from 11 to 56, plus the two display
 Settings by kind:
 
 - *Tracking.* Display runs from -0.02em at 16 to -0.055em at the footer word, tighter as it grows. Text sits at 0 to -0.02em, the tightest being the footer's column heads (`footer-head`). Capitals at 11px open to 0.14em (mono) and 0.18em (sans).
-- *Leading.* One- and two-line display sits at 1.05 to 1.1. A display line that wraps as a statement (the scroll line, the comparison lines) opens to 1.3. Reading text runs 1.4 to 1.65, the most open being the footer's intro (`footer-intro`).
-- *Weights.* 500 for display and emphasis, and for badge labels in mono. 400 for reading, and for the comparison's lines and its vs, which are statements rather than headings. 600 only for the footer word, the footer's column heads (`footer-head`), the code tag and a badge's count.
+- *Leading.* One- and two-line display sits at 1.05 to 1.1. A display line that wraps as a statement (the scroll line) opens to 1.3. Reading text runs 1.4 to 1.65, the most open being the footer's intro (`footer-intro`).
+- *Weights.* 500 for display and emphasis, and for badge labels in mono. 400 for reading, and for the vs and the 6labs name on navy, which sits a step lighter so white on navy matches ChatGPT's 500 on grey. 600 only for the footer word, the footer's column heads (`footer-head`), the code tag and a badge's count.
 
 #### Use for
 

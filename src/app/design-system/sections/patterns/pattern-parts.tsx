@@ -47,9 +47,3 @@ export function Quote({ text, accent }: { text: string; accent?: string }) {
     </span>
   );
 }
-
-/** A link to another section of the guide, titled from the catalog so it always reads as the nav does.
- *  Swap for the kit's SectionLink when it lands. */
-export function SecLink({ id }: { id: SectionId }) {
-  return <a href={`#${id}`}>{sectionById(id).title}</a>;
-}

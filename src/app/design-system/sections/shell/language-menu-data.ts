@@ -1,16 +1,16 @@
 // Values for the language menu section: the open panel's pins (measured in the language frame), the
 // states the live menu cannot be forced into, and the drawer rows, each with its file:line.
-import type { AnatomyPin } from "@/app/design-system/_kit/Anatomy";
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
 import type { ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { Pin } from "@/app/design-system/sections/components/display-values";
 
-export const OPEN_PINS: readonly AnatomyPin[] = [
-  { selector: 'button[aria-haspopup="listbox"]', name: "Trigger, open", token: "--ds-color-fill-open", value: "px 10 py 6 · about 30 tall", source: "LanguageMenu.tsx:58", padding: true, side: "right" },
-  { selector: 'button[aria-haspopup="listbox"] svg', name: "Globe", value: "18 · turned 20° while open", source: "LanguageMenu.tsx:62", side: "left" },
-  { selector: 'ul[role="listbox"]', name: "Panel", token: "--ds-shadow-pop", value: "w 192 · p 6 · radius 16 · white at 95%", source: "LanguageMenu.tsx:78", padding: true, side: "left" },
-  { selector: 'li[role="option"]', name: "Row", token: "--ds-radius-xs", value: "px 12 py 10 · gap 12 · radius 12", source: "LanguageMenu.tsx:90", padding: true, side: "right" },
-  { selector: 'li[role="option"] > span.absolute', name: "Highlight", token: "--ds-color-fill-highlight", value: "slate-100 · one layoutId", source: "LanguageMenu.tsx:93", side: "left" },
-  { selector: 'li[aria-selected="true"] svg', name: "Check", token: "--ds-color-ink", value: "16 · selected row only", source: "LanguageMenu.tsx:99", side: "right" },
+export const OPEN_PINS: readonly Pin[] = [
+  { selector: 'button[aria-haspopup="listbox"]', name: "Trigger, open", token: "--ds-color-fill-open", value: "px 10 py 6 · about 30 tall", source: "LanguageMenu.tsx:58-59", expect: ["px-2.5 py-1.5", "bg-slate-200/60"], padding: true, side: "right" },
+  { selector: 'button[aria-haspopup="listbox"] svg', name: "Globe", value: "18 · turned 20° while open", source: "LanguageMenu.tsx:62-63", expect: ["rotate: open ? 20 : 0", "w-[18px] h-[18px]"], side: "left" },
+  { selector: 'ul[role="listbox"]', name: "Panel", token: "--ds-shadow-pop", value: "w 192 · p 6 · radius 16 · white at 95%", source: "LanguageMenu.tsx:78", expect: ["w-48 p-1.5 rounded-2xl bg-white/95", "shadow-[0_18px_50px_-12px_rgba(10,27,51,0.18)]"], padding: true, side: "left" },
+  { selector: 'li[role="option"]', name: "Row", token: "--ds-radius-xs", value: "px 12 py 10 · gap 12 · radius 12", source: "LanguageMenu.tsx:90", expect: "gap-3 px-3 py-2.5 rounded-xl", padding: true, side: "right" },
+  { selector: 'li[role="option"] > span.absolute', name: "Highlight", token: "--ds-color-fill-highlight", value: "slate-100 · one layoutId", source: "LanguageMenu.tsx:93", expect: ['layoutId="lang-highlight"', "bg-slate-100"], side: "left" },
+  { selector: 'li[aria-selected="true"] svg', name: "Check", token: "--ds-color-ink", value: "16 · selected row only", source: "LanguageMenu.tsx:99", expect: "w-4 h-4 text-[#0a1b33]", side: "right" },
 ];
 
 /** The live menu's states, which are internal (no props) and so cannot be forced. */

@@ -4,7 +4,7 @@ import { Anatomy } from "@/app/design-system/_kit/Anatomy";
 import { Canvas } from "@/app/design-system/_kit/Canvas";
 import { Do, DoDont, Dont } from "@/app/design-system/_kit/DoDont";
 import { KeyRows } from "@/app/design-system/_kit/KeyRows";
-import { Section } from "@/app/design-system/_kit/Section";
+import { Section, SectionLink } from "@/app/design-system/_kit/Section";
 import { Spec } from "@/app/design-system/_kit/Spec";
 import { RADIUS, cssVar } from "@/components/design-system/tokens";
 import { Computed } from "./computed-style";
@@ -83,7 +83,7 @@ export function RadiusSection() {
         caption={
           <>
             a diagram drawn from LanguageMenu&apos;s own numbers, not the part · the live panel opens in{" "}
-            <a href="#language-menu">Language menu</a>
+            <SectionLink id="language-menu" />
           </>
         }
       >
