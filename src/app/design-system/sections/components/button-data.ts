@@ -1,10 +1,11 @@
 // The Button section's data: anatomy pins, drawer rows, the shipped Try now's per-state values and the
 // snippets. Values come from tokens.ts through tv wherever a token holds them.
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
-import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { PropRow } from "@/app/design-system/_kit/SpecDrawer";
+import { system } from "@/app/design-system/sections/foundations/foundation-assert";
 import { BUTTON_SIZE, BUTTON_VARIANT, SELECTABLE, type ButtonSize, type ButtonVariant } from "@/components/design-system/button-styles";
 import { FORCE_PROP } from "./act-sel-rows";
-import { heightOf, sizeNames, sv, tv, type Pin } from "./display-values";
+import { heightOf, sizeNames, sv, tv, type CheckedRow, type Pin } from "./display-values";
 
 /** The rungs, read from BUTTON_SIZE's own box classes, so the ladder cannot drift from the part. */
 export const BUTTON_SIZES: readonly { name: ButtonSize; height: number }[] = sizeNames(BUTTON_SIZE).map((name) => ({
@@ -77,7 +78,7 @@ export const CTA_STATE_ROWS: readonly KeyRow[] = [
   { key: "reduced motion", value: "No band. The fill shifts at once and the grow stays.", source: "PrimaryCta.tsx:83" },
 ];
 
-export const CTA_VALUES: readonly ValueRow[] = [
+export const CTA_VALUES: readonly CheckedRow[] = [
   sv("Fill", "#0a152d (NAVY)", "PrimaryCta.tsx:20", undefined, 'const NAVY = "#0a152d";'),
   sv("Shift fill", "#0c1e42 (NAVY_SHIFT)", "PrimaryCta.tsx:21", undefined, 'const NAVY_SHIFT = "#0c1e42";'),
   sv("Sweep", "1s (SWEEP_S) on [0.45, 0, 0.25, 1]", "PrimaryCta.tsx:85", undefined, "const SWEEP_S = 1;", "ease: [0.45, 0, 0.25, 1]"),
@@ -92,11 +93,11 @@ export const CTA_CODE = `import { PrimaryCta } from "@/components/website/Primar
 
 export const SWEEP_FRAMES = [0.2, 0.5, 0.8] as const;
 
-export const SWEEP_VALUES: readonly ValueRow[] = [
+export const SWEEP_VALUES: readonly CheckedRow[] = [
   tv("Run", "dur-sweep"),
   tv("Ease", "ease-sweep"),
   tv("Dots", "color-holo-dot"),
-  sv("Band width", "34px, SWEEP_BAND in the system copy", "ButtonSweep.tsx:24"),
+  sv("Band width", "34px, SWEEP_BAND in the system copy", "ButtonSweep.tsx:24", undefined, "export const SWEEP_BAND = 34;"),
   sv("Band opacity", "0 at the start, 0.75 from 12% to 88%, 0 at the end", "PrimaryCta.tsx:69", undefined, "[-1, 0, 0.12, 0.88, 1]", "[0, 0, 0.75, 0.75, 0]"),
   sv("Grid", "3.5px pitch · r 0.95 · 5px soft sides", "CtaDots.tsx:14", undefined, "PITCH = 3.5", "R = 0.95", "BLUR = 5"),
 ];
@@ -123,31 +124,31 @@ export const SWEPT_PINS: readonly Pin[] = [
   { selector: "[data-pin=xl] button > span > span", name: "Label", token: "--ds-type-button-label", value: "Inter 15 / 500, white", source: "Button.tsx:129", expect: "<span>{children}</span>" },
 ];
 
-export const BUTTON_VALUES: readonly ValueRow[] = [
+export const BUTTON_VALUES: readonly CheckedRow[] = [
   tv("Primary fill", "color-primary"),
   tv("Primary hover", "color-primary-hover"),
   tv("Secondary border", "color-line-strong"),
   tv("Secondary hover border", "color-line-hover"),
   tv("Secondary hover fill", "color-surface-70"),
-  ...(GHOST_SELECTED ? [tv("Ghost selected fill", GHOST_SELECTED, `${BS}:76`)] : []),
-  tv("Selected hover", "color-primary-hover", `${BS}:59-64`),
+  ...(GHOST_SELECTED ? [tv("Ghost selected fill", GHOST_SELECTED, `${BS}:76`, `"aria-pressed:bg-(--ds-${GHOST_SELECTED}) aria-pressed:text-white`)] : []),
+  tv("Selected hover", "color-primary-hover", `${BS}:59-64`, "aria-pressed:hover:border-(--ds-color-primary-hover) aria-pressed:hover:bg-(--ds-color-primary-hover)"),
   tv("Destructive text", "color-danger-ink"),
   tv("Destructive border", "color-danger-line"),
   tv("Destructive hover", "color-danger-tint"),
   tv("Destructive primary fill", "color-danger"),
-  tv("Glass line on blue", "color-on-blue-40", `${BS}:86`),
-  tv("Glass hover fill", "color-on-blue-15", `${BS}:121`),
+  tv("Glass line on blue", "color-on-blue-40", `${BS}:86`, 'glass: "rounded-full border border-(--ds-color-on-blue-40)'),
+  tv("Glass hover fill", "color-on-blue-15", `${BS}:121`, "hover:bg-(--ds-color-on-blue-15) data-[force=hover]:bg-(--ds-color-on-blue-15)"),
   tv("Colour change", "dur-ui"),
   tv("Link colour change", "dur-line"),
   tv("Grow and press", "spring-press"),
   tv("Ring on light", "focus-color"),
   tv("Ring on blue", "focus-color-inverse"),
-  sv("Heights", BUTTON_SIZES.map((s) => s.height).join(" / "), `${BS}:31-37`),
-  sv("Side padding", "12 / 14 / 20 / 28 / 40", `${BS}:31-37`),
-  sv("Label", "12 / 13 / 14 / 15 / 15 at 500, -0.01em", `${BS}:24-25, 31-37`, "--ds-type-button-label"),
-  sv("Grow", "1.04 at lg and xl, 1.02 below, solid fills only", "Button.tsx:87"),
-  sv("Press", "0.97 at every size (SCALE.pressPill), none on the link", "Button.tsx:88"),
-  sv("Disabled", "opacity 0.4, not-allowed", `${BS}:26`),
+  sv("Heights", BUTTON_SIZES.map((s) => s.height).join(" / "), `${BS}:31-37`, undefined, ...BUTTON_SIZES.map((s) => `${s.name}: { box: "${BUTTON_SIZE[s.name].box}"`)),
+  sv("Side padding", "12 / 14 / 20 / 28 / 40", `${BS}:31-37`, undefined, 'xs: { box: "h-7 gap-1.5 px-3 ', 'sm: { box: "h-8 gap-2 px-3.5 ', 'md: { box: "h-10 gap-2 px-5 ', 'lg: { box: "h-12 gap-2 px-7 ', 'px-10 text-[15px]"'),
+  sv("Label", "12 / 13 / 14 / 15 / 15 at 500, -0.01em", `${BS}:24-25, 31-37`, "--ds-type-button-label", "font-sans font-medium", "tracking-[-0.01em]", 'text-[12px]", icon: 14', 'text-[13px]", icon: 16', 'text-[14px]", icon: 16', 'px-7 text-[15px]", icon: 18', 'px-10 text-[15px]", icon: 18'),
+  { part: "Grow", value: "1.04 at lg and xl, 1.02 below, primary and destructive primary only", source: `Button.tsx:86-87, ${BS}:134`, assert: [system("Button.tsx", 'const big = size === "lg" || size === "xl";', "const grow = GROWS.includes(variant) ? (big ? SCALE.growLarge : SCALE.grow) : 1;"), system(BS, 'export const GROWS: readonly ButtonVariant[] = ["primary", "destructivePrimary"];')] },
+  sv("Press", "0.97 at every size (SCALE.pressPill), none on the link", "Button.tsx:88", undefined, 'const press = variant === "link" ? 1 : SCALE.pressPill;'),
+  sv("Disabled", "opacity 0.4, not-allowed", `${BS}:26`, undefined, "disabled:cursor-not-allowed disabled:opacity-40"),
 ];
 
 export const BUTTON_PROPS: readonly PropRow[] = [
@@ -168,10 +169,10 @@ export const BUTTON_CODE = `import { Button } from "@/components/design-system/B
 
 <Button variant="primary" size="md" onClick={send}>Try now</Button>`;
 
-export const GROUP_VALUES: readonly ValueRow[] = [
+export const GROUP_VALUES: readonly CheckedRow[] = [
   tv("Gap", "space-3"),
-  sv("Order", "reading order, the primary last and on the right", "ButtonGroup.tsx:13"),
-  sv("Under 400px", "a full-width column, reversed so the primary is on top", "ButtonGroup.tsx:21-22"),
+  sv("Order", "reading order, the primary last and on the right", "ButtonGroup.tsx:8, 13", undefined, 'align = "end",', "buttons in reading order, the primary last"),
+  sv("Under 400px", "a full-width column, reversed so the primary is on top", "ButtonGroup.tsx:21-22", undefined, "max-[400px]:flex-col-reverse max-[400px]:items-stretch", "max-[400px]:*:w-full"),
 ];
 
 export const GROUP_PINS: readonly Pin[] = [

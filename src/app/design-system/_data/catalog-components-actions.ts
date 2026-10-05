@@ -78,6 +78,9 @@ export const ACTIONS_SELECTION = defineSections([
         variants: "filter choice input",
         states: "rest hover focus-visible pressed selected selected-hover disabled remove-hover",
       }),
+      // the group is made of choice Chips, so the states it owes are the ones the Chip grid shows on them
+      sys("ChipGroup", { states: "hover focus-visible pressed disabled" }),
+      sys("ChipInputGroup"),
     ],
   },
 ]);

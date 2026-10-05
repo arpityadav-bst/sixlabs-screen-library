@@ -115,7 +115,7 @@ export const SHELL = defineGroup({
         site("SixLabsMark", { file: "brand-marks" }),
         site("SixLabsLogo", { file: "brand-marks" }),
         site("ChatGptMark", { file: "brand-marks" }),
-        sys("Lockup", { na: "hover pressed disabled" }),
+        sys("Lockup", { states: "rest focus-visible", na: "hover pressed disabled" }),
       ],
     },
     {

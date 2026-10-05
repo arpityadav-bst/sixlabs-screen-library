@@ -1,10 +1,10 @@
 // The Text link section's data: the three shipped links and how they drift, anatomy pins, drawer rows. The
 // specimen lines are quoted from the site and held to it (LINE_CHECKS), so a reworded line turns Coverage red.
-import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { PropRow } from "@/app/design-system/_kit/SpecDrawer";
 import { site, type Assertion } from "@/app/design-system/sections/foundations/foundation-assert";
 import { HERO_LEDE, HERO_LEDE_SOURCE } from "@/app/design-system/_data/specimens";
 import { FORCE_PROP } from "./act-sel-rows";
-import { sv, tv, type Pin } from "./display-values";
+import { sv, tv, type CheckedRow, type Pin } from "./display-values";
 
 export const LINK_TONES = ["inherit", "ink", "muted"] as const;
 export const LINK_STATES = ["rest", "hover", "focus-visible", "pressed", "visited"] as const;
@@ -41,7 +41,7 @@ export const LINK_PINS: readonly Pin[] = [
   { selector: "[data-pin=external] a svg", name: "External mark", token: "--ds-icon-14", value: "plus a hidden new-tab note", source: "TextLink.tsx:75-76", expect: ["<ArrowUpRight aria-hidden size={14}", "(opens in a new tab)"], side: "right" },
 ];
 
-export const LINK_VALUES: readonly ValueRow[] = [
+export const LINK_VALUES: readonly CheckedRow[] = [
   tv("Underline", "color-line-strong"),
   tv("Hover text and underline", "color-accent"),
   tv("Hover duration", "dur-line"),
@@ -50,10 +50,10 @@ export const LINK_VALUES: readonly ValueRow[] = [
   tv("Muted tone", "color-text-muted"),
   tv("Focus ring", "focus-color"),
   tv("Ring offset", "focus-offset"),
-  sv("Offset", "clamp(3px, 1em - 11px, 4px): 3 under 15px, 4 from 15px", "TextLink.tsx:22"),
-  sv("Thickness", "1px, 2px while pressed", "TextLink.tsx:21, 25"),
-  tv("Ring radius", "radius-mark-xs", "TextLink.tsx:21"),
-  sv("Visited", "the same as rest", "TextLink.tsx:3"),
+  sv("Offset", "clamp(3px, 1em - 11px, 4px): 3 under 15px, 4 from 15px", "TextLink.tsx:22", undefined, "underline-offset-[clamp(3px,1em_-_11px,4px)]"),
+  sv("Thickness", "1px, 2px while pressed", "TextLink.tsx:21, 25", undefined, "underline decoration-1", "active:decoration-2"),
+  tv("Ring radius", "radius-mark-xs", "TextLink.tsx:21", "group rounded-(--ds-radius-mark-xs)"),
+  sv("Visited", "the same as rest", "TextLink.tsx:3", undefined, "Visited looks the"),
 ];
 
 export const LINK_PROPS: readonly PropRow[] = [

@@ -63,10 +63,10 @@ export const CARD_VALUES = [
   tv("Feature radius", "radius-lg"),
   tv("Phone radius", "radius-md"),
   tv("Row radius", "radius-row"),
-  tv("Compact radius", "radius-md", "card-styles.ts:13"),
+  tv("Compact radius", "radius-md", "card-styles.ts:13", 'compact: "flex-col rounded-(--ds-radius-md) p-4"'),
   tv("Lift shadow", "shadow-lift"),
   tv("Lift travel", "lift-y"),
-  tv("Pressed", "scale-press-card", "card.module.css:68-70"),
+  tv("Pressed", "scale-press-card", "card.module.css:68-70", '.ds-card[data-interactive][data-force="pressed"] { scale: var(--ds-scale-press-card); }'),
   tv("Selected line", "color-primary"),
   tv("Check spring", "spring-thumb"),
   tv("Sheen stroke", "stroke-sheen"),
@@ -74,7 +74,7 @@ export const CARD_VALUES = [
   tv("Focus offset", "focus-offset-card"),
   tv("On blue shadow", "shadow-player"),
   tv("On blue selected", "shadow-player-selected"),
-  sv("Disabled", "opacity 0.4, not-allowed", "card.module.css:96"),
+  sv("Disabled", "opacity 0.4, not-allowed", "card.module.css:96", undefined, ".ds-card[data-disabled] { opacity: 0.4; cursor: not-allowed; }"),
 ] as const;
 
 export const CARD_PROPS = [

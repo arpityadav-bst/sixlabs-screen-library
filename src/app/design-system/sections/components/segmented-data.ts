@@ -1,12 +1,12 @@
 // The Segmented section's data: option sets quoted from the site, state lists, pins, drawer rows.
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
-import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { PropRow } from "@/app/design-system/_kit/SpecDrawer";
 import type { SegmentedOption } from "@/components/design-system/Segmented";
 import { SEG_GROUND, SEG_SIZE, type SegmentedGround, type SegmentedSize } from "@/components/design-system/segmented-styles";
 import { SPACING } from "@/components/design-system/tokens";
 import { FORCE_PROP } from "./act-sel-rows";
 import { restToken } from "./contrast-pairs";
-import { heightOf, sizeNames, sv, tv, type Pin } from "./display-values";
+import { heightOf, sizeNames, sv, tv, type CheckedRow, type Pin } from "./display-values";
 
 /** ModeToggle's two options and the Jobs switch's three titles, as the site writes them. */
 export const TWO: readonly SegmentedOption<string>[] = [
@@ -94,46 +94,52 @@ const GROUND_LINE: Record<SegmentedGround, Record<"track" | "rest" | "on" | "thu
 };
 
 /** A ground's row read from its own classes in SEG_GROUND: the token it names, else the literal it sets
- *  (white or transparent), else none. The track's line is a border, read as a ring if it ever is one. */
-function groundRow(part: string, ground: SegmentedGround, slot: "track" | "rest" | "on" | "thumb", prop: "bg" | "text" | "line"): ValueRow {
+ *  (white or transparent), else none. The track's line is a border, read as a ring if it ever is one. The
+ *  needles are the text segmented-styles.ts writes for that slot. */
+type Slot = "track" | "rest" | "on" | "thumb";
+function groundRow(part: string, ground: SegmentedGround, slot: Slot, prop: "bg" | "text" | "line", ...needles: string[]): CheckedRow {
   const cls = SEG_GROUND[ground][slot];
   const props = prop === "line" ? (["border", "ring"] as const) : ([prop] as const);
   const source = `${SS}:${GROUND_LINE[ground][slot]}`;
   for (const p of props) {
     const name = restToken(cls, p);
-    if (name) return tv(part, name, source);
+    if (name) return tv(part, name, source, ...needles);
     const lit = new RegExp(`(?:^|\\s)${p}-(white|transparent)(?:\\s|$)`).exec(cls)?.[1];
-    if (lit) return sv(part, lit, source);
+    if (lit) return sv(part, lit, source, undefined, ...needles);
   }
-  return sv(part, "none", source);
+  return sv(part, "none", source, undefined, ...needles);
 }
 
-export const SEG_VALUES: readonly ValueRow[] = [
-  groundRow("Light track", "light", "track", "bg"),
-  groundRow("Light line", "light", "track", "line"),
-  groundRow("Light thumb", "light", "thumb", "bg"),
-  groundRow("Light selected label", "light", "on", "text"),
-  groundRow("Light rest label", "light", "rest", "text"),
-  groundRow("Container track", "container", "track", "bg"),
-  groundRow("Container line", "container", "track", "line"),
-  groundRow("Container thumb", "container", "thumb", "bg"),
-  groundRow("Container selected label", "container", "on", "text"),
-  groundRow("Container rest label", "container", "rest", "text"),
-  groundRow("Blue track", "blue", "track", "bg"),
-  groundRow("Blue line", "blue", "track", "line"),
-  groundRow("Blue thumb", "blue", "thumb", "bg"),
-  groundRow("Blue selected label", "blue", "on", "text"),
-  groundRow("Blue rest label", "blue", "rest", "text"),
+const NAVY = ['const THUMB_NAVY = "bg-(--ds-color-primary)', "thumb: `${THUMB_NAVY} ${FORCED_THUMB}`"];
+const WHITE_ON = "on: `text-white ${FORCED_ON}`";
+const TRACK = (g: SegmentedGround) => `track: "${SEG_GROUND[g].track}"`;
+
+export const SEG_VALUES: readonly CheckedRow[] = [
+  groundRow("Light track", "light", "track", "bg", TRACK("light")),
+  groundRow("Light line", "light", "track", "line", TRACK("light")),
+  groundRow("Light thumb", "light", "thumb", "bg", ...NAVY),
+  groundRow("Light selected label", "light", "on", "text", WHITE_ON),
+  groundRow("Light rest label", "light", "rest", "text", '"text-(--ds-color-text-muted) enabled:hover:text-(--ds-color-ink) "'),
+  groundRow("Container track", "container", "track", "bg", TRACK("container")),
+  groundRow("Container line", "container", "track", "line", TRACK("container")),
+  groundRow("Container thumb", "container", "thumb", "bg", ...NAVY),
+  groundRow("Container selected label", "container", "on", "text", WHITE_ON),
+  groundRow("Container rest label", "container", "rest", "text", '"text-(--ds-color-text-body) enabled:hover:text-(--ds-color-ink) "'),
+  groundRow("Blue track", "blue", "track", "bg", TRACK("blue")),
+  groundRow("Blue line", "blue", "track", "line", TRACK("blue")),
+  groundRow("Blue thumb", "blue", "thumb", "bg", "thumb: `bg-(--ds-color-surface) shadow-(--ds-shadow-thumb) ${FORCED_THUMB}`"),
+  groundRow("Blue selected label", "blue", "on", "text", "on: `text-(--ds-color-ink) ${FORCED_ON}`"),
+  groundRow("Blue rest label", "blue", "rest", "text", '"text-white enabled:hover:bg-(--ds-color-on-blue-15) "'),
   tv("Thumb shadow", "shadow-thumb"),
   tv("Hover label", "color-ink"),
   tv("Thumb slide", "spring-thumb"),
   tv("Label colour", "dur-ui"),
-  sv("Segments", `${ladder("px")}, the track 8 taller`, `${SS}:11-15`),
-  sv("Lines up by", `the track, ${ladder("track")}`, "control-heights.ts:35"),
-  sv("Track", "a 1px line and 3px inside it, the 4px inset the segments sit in", `${SS}:19`),
-  sv("Labels", "13 / 14 / 15 at 500, 14px each side", `${SS}:11-15, 55`),
-  tv("Press", "scale-press-pill", `${SS}:56`),
-  sv("Disabled", "opacity 0.4 on the segment or the whole track", "Segmented.tsx:101, 130"),
+  sv("Segments", `${ladder("px")}, the track 8 taller`, `${SS}:11-15`, undefined, ...SEG_SIZES.map((s) => `${s.name}: "${SEG_SIZE[s.name]}",`)),
+  sv("Lines up by", `the track, ${ladder("track")}`, "control-heights.ts:35", undefined, '{ family: "Segmented", sizes: map(SEG_SIZE, (s) => heightOf(s) + 2 * inset) },'),
+  sv("Track", "a 1px line and 3px inside it, the 4px inset the segments sit in", `${SS}:19`, undefined, '"rounded-full border p-[calc(var(--ds-space-1)_-_var(--ds-stroke-hairline))]"'),
+  sv("Labels", "13 / 14 / 15 at 500, 14px each side", `${SS}:11-15, 55`, undefined, "px-3.5 text-[13px]", "px-3.5 text-[14px]", "px-3.5 text-[15px]", '"font-medium transition-[color,background-color,scale]'),
+  tv("Press", "scale-press-pill", `${SS}:56`, "enabled:active:scale-(--ds-scale-press-pill) data-[force=pressed]:scale-(--ds-scale-press-pill)"),
+  sv("Disabled", "opacity 0.4 on the segment or the whole track", "Segmented.tsx:101, 130", undefined, 'disabled ? "cursor-not-allowed opacity-40" : "",', 'o.disabled && !disabled ? "cursor-not-allowed opacity-40" : "",'),
 ];
 
 export const SEG_PROPS: readonly PropRow[] = [

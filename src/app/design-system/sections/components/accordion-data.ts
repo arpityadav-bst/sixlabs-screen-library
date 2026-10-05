@@ -4,7 +4,8 @@ import { QUESTIONS } from "@/components/website/faq-data";
 import type { AccordionItem } from "@/components/design-system/Accordion";
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
-import type { Pin } from "./display-values";
+import { system } from "@/app/design-system/sections/foundations/foundation-assert";
+import type { CheckedRow, Pin } from "./display-values";
 
 const FQ = "Faq.tsx";
 const CSS = "Accordion.module.css";
@@ -77,21 +78,21 @@ export const FAQ_VALUES: readonly ValueRow[] = [
   { part: "Answer", token: "--ds-color-text-body", value: "Inter 15 / 1.6 (14 under md), max-w 680, px 24 pb 24 (20 under md)", source: `${FQ}:68` },
 ];
 
-export const ACC_VALUES: readonly ValueRow[] = [
-  { part: "Card item", token: "--ds-radius-row, --ds-color-line, --ds-color-surface", value: "white, radius 14, 1px hairline, gap 10 (8 under md)", source: `${CSS}:15-28` },
-  { part: "Flush item", token: "--ds-color-line-divider", value: "a rule between rows, no side padding", source: `${CSS}:30-35` },
-  { part: "Hover and open", token: "--ds-color-line-strong, --ds-dur-line", value: "the hairline firms over 300ms", source: `${CSS}:37-43` },
-  { part: "Pressed", token: "--ds-color-fill-hover", value: "the row tints while held", source: `${CSS}:44-47` },
-  { part: "Focus", token: "--ds-focus-width, --ds-focus-color, --ds-focus-offset", value: "2px ring 2px off the card row, round the trigger when flush", source: `${CSS}:78-91` },
-  { part: "Disabled", value: "opacity 0.4, not-allowed, no hover", source: `${CSS}:49-51` },
-  { part: "sm", value: "trigger 48: py 14 px 16 gap 16, title 15 / 20, icon 14, answer 14", source: `${CSS}:179-182` },
-  { part: "md", token: "--ds-type-question", value: "trigger 64.75: py 20 px 24 gap 24, title 18, icon 16, answer 15, the FAQ's step under md", source: `${CSS}:184-190` },
-  { part: "lg", value: "trigger 76: py 24 px 28 gap 24, title 20 / 28, icon 18, answer 16", source: `${CSS}:192-195` },
-  { part: "Answer", token: "--ds-color-text-body", value: "Inter, leading 1.6, max-w 680", source: `${CSS}:168-173` },
-  { part: "Open", token: "--ds-dur-panel, --ds-ease-out", value: "height 0 to auto and opacity, at once under reduced motion", source: "Accordion.tsx:154-157" },
-  { part: "Icon motion", token: "--ds-dur-line, --ds-ease-out", value: "the plus bar turns 90 to 0 and fades, the chevron turns 180", source: `${CSS}:116-148` },
-  { part: "Region", value: "role region labelled by its trigger while there are six items or fewer", source: "Accordion.tsx:71" },
-  { part: "Loading", token: "--ds-color-skeleton", value: "open, three Skeleton lines, aria-busy", source: "Accordion.tsx:162-163" },
+export const ACC_VALUES: readonly CheckedRow[] = [
+  { part: "Card item", token: "--ds-radius-row, --ds-color-line, --ds-color-surface", value: "white, radius 14, 1px hairline, gap 10 (8 under md)", source: `${CSS}:15-28, 199`, assert: system(CSS, "gap: var(--ds-space-2-5);", "border: 1px solid var(--ds-color-line);", "border-radius: var(--ds-radius-row);", "background: var(--ds-color-surface);", '.ds-acc[data-variant="card"] { gap: var(--ds-space-2); }') },
+  { part: "Flush item", token: "--ds-color-line-divider", value: "a rule between rows, no side padding", source: `${CSS}:30-35, 208`, assert: system(CSS, "border-bottom: 1px solid var(--ds-color-line-divider);", "border-bottom-width: 0;", '.ds-acc[data-variant="flush"] .ds-acc-trigger { padding-inline: 0; }') },
+  { part: "Hover and open", token: "--ds-color-line-strong, --ds-dur-line", value: "the hairline firms over 300ms", source: `${CSS}:22, 37-43`, assert: system(CSS, "border-color var(--ds-dur-line) var(--ds-ease-out),", ".ds-acc-item[data-open] {", "border-color: var(--ds-color-line-strong);") },
+  { part: "Pressed", token: "--ds-color-fill-hover", value: "the row tints while held", source: `${CSS}:44-47`, assert: system(CSS, ".ds-acc-item:not([data-disabled]):has(.ds-acc-trigger:active),", "background-color: var(--ds-color-fill-hover);") },
+  { part: "Focus", token: "--ds-focus-width, --ds-focus-color, --ds-focus-offset", value: "2px ring 2px off the card row, round the trigger when flush", source: `${CSS}:78-91`, assert: system(CSS, '.ds-acc[data-variant="card"] .ds-acc-item:has(.ds-acc-trigger:focus-visible),', '.ds-acc[data-variant="flush"] .ds-acc-trigger:focus-visible,', "outline: var(--ds-focus-width) solid var(--ds-focus-color);", "outline-offset: var(--ds-focus-offset);") },
+  { part: "Disabled", value: "opacity 0.4, not-allowed, no hover", source: `${CSS}:38, 49-51, 71-73`, assert: system(CSS, ".ds-acc-item:not([data-disabled]):hover,", "opacity: 0.4;", "cursor: not-allowed;") },
+  { part: "sm", value: "trigger 48: py 14 px 16 gap 16, title 15 / 20, icon 14, answer 14", source: `${CSS}:179-182`, assert: system(CSS, '.ds-acc[data-size="sm"] .ds-acc-trigger { gap: var(--ds-space-4); padding: var(--ds-space-3-5) var(--ds-space-4); }', '.ds-acc[data-size="sm"] .ds-acc-q { font-size: var(--ds-text-15); line-height: 20px; }', '.ds-acc[data-size="sm"] .ds-acc-plus { width: 14px; height: 14px; }', '.ds-acc[data-size="sm"] .ds-acc-a { padding: 0 var(--ds-space-4) var(--ds-space-4); font-size: var(--ds-text-14); }') },
+  { part: "md", token: "--ds-type-question", value: "trigger 64.75: py 20 px 24 gap 24, title 18, icon 16, answer 15, the FAQ's step under md", source: `${CSS}:184-190, 200-201`, assert: system(CSS, '.ds-acc[data-size="md"] .ds-acc-trigger { gap: var(--ds-space-6); padding: var(--ds-space-5) var(--ds-space-6); }', "font-size: var(--ds-type-question-size);", '.ds-acc[data-size="md"] .ds-acc-plus { width: 16px; height: 16px; }', '.ds-acc[data-size="md"] .ds-acc-a { padding: 0 var(--ds-space-6) var(--ds-space-6); font-size: var(--ds-text-15); }', '.ds-acc[data-size="md"] .ds-acc-trigger { gap: var(--ds-space-4); padding: var(--ds-space-4) var(--ds-space-5); }') },
+  { part: "lg", value: "trigger 76: py 24 px 28 gap 24, title 20 / 28, icon 18, answer 16", source: `${CSS}:192-195`, assert: system(CSS, '.ds-acc[data-size="lg"] .ds-acc-trigger { gap: var(--ds-space-6); padding: var(--ds-space-6) var(--ds-space-7); }', '.ds-acc[data-size="lg"] .ds-acc-q { font-size: var(--ds-text-20); line-height: 28px; }', '.ds-acc[data-size="lg"] .ds-acc-plus { width: 18px; height: 18px; }', '.ds-acc[data-size="lg"] .ds-acc-a { padding: 0 var(--ds-space-7) var(--ds-space-7); font-size: var(--ds-text-16); }') },
+  { part: "Answer", token: "--ds-color-text-body", value: "Inter, leading 1.6, max-w 680", source: `${CSS}:168-173`, assert: system(CSS, "max-width: 680px;", "color: var(--ds-color-text-body);", "font-family: var(--ds-font-sans);", "line-height: 1.6;") },
+  { part: "Open", token: "--ds-dur-panel, --ds-ease-out", value: "height 0 to auto and opacity, at once under reduced motion", source: "Accordion.tsx:154-157", assert: system("Accordion.tsx", "initial={{ height: 0, opacity: 0 }}", 'animate={{ height: "auto", opacity: 1 }}', "transition={{ duration: still ? 0 : DUR.panel, ease: EASE }}") },
+  { part: "Icon motion", token: "--ds-dur-line, --ds-ease-out", value: "the plus bar turns 90 to 0 and fades, the chevron turns 180", source: `${CSS}:116-148`, assert: system(CSS, "rotate: 90deg;", "rotate: 0deg;", "opacity: 0;", "rotate: 180deg;", "opacity var(--ds-dur-line) var(--ds-ease-out);", "transition: rotate var(--ds-dur-line) var(--ds-ease-out);") },
+  { part: "Region", value: "role region labelled by its trigger while there are six items or fewer", source: "Accordion.tsx:71, 151-152", assert: system("Accordion.tsx", "const regions = items.length <= 6;", 'role={regions ? "region" : undefined}', "aria-labelledby={regions ? tid : undefined}") },
+  { part: "Loading", token: "--ds-color-skeleton", value: "open, three Skeleton lines, aria-busy", source: "Accordion.tsx:103, 153, 162-163", assert: system("Accordion.tsx", 'const isOpen = open.includes(it.id) || f === "open" || loading;', "aria-busy={loading || undefined}", "<Skeleton lines={3} />") },
 ];
 
 export const ACC_PROPS: readonly PropRow[] = [

@@ -1,10 +1,11 @@
 // The Chip section's data: labels quoted from the site (the players' traits and types), state lists,
 // anatomy pins, drawer rows and the snippet.
-import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { PropRow } from "@/app/design-system/_kit/SpecDrawer";
+import { system } from "@/app/design-system/sections/foundations/foundation-assert";
 import type { ChipKind, ChipSize } from "@/components/design-system/Chip";
 import { CHIP_SIZE } from "@/components/design-system/chip-styles";
 import { FORCE_PROP } from "./act-sel-rows";
-import { heightOf, sizeNames, sv, tv, type Pin } from "./display-values";
+import { heightOf, sizeNames, sv, tv, type CheckedRow, type Pin } from "./display-values";
 
 /** The trait labels (players-data.ts:31) filter, the player types (players-data.ts:40) are one choice. */
 export const TRAITS = ["Curiosity", "Patience", "Price sensitivity", "Skill"] as const;
@@ -45,26 +46,29 @@ export const CHIP_PINS: readonly Pin[] = [
   { selector: "[data-pin=input] > span > button", name: "Remove", value: "X 14 in a 20 circle, 24 hit area", source: `${CS}:47, ${CH}:144,146`, expect: ["ml-1.5 grid h-5 w-5", 'styles["ds-hit"]', "<X aria-hidden size={14}"], side: "right" },
 ];
 
-export const CHIP_VALUES: readonly ValueRow[] = [
+export const CHIP_VALUES: readonly CheckedRow[] = [
   tv("Rest fill", "color-surface"),
   tv("Rest border", "color-line"),
   tv("Rest label", "color-text-body"),
   tv("Hover border", "color-line-strong"),
   tv("Hover label", "color-ink"),
   tv("Selected fill", "color-primary"),
-  tv("Selected hover fill", "color-primary-hover", `${CS}:29`),
+  tv("Selected hover fill", "color-primary-hover", `${CS}:29`, "data-selected:hover:bg-(--ds-color-primary-hover)"),
   tv("Remove hover", "color-fill-open"),
-  tv("Line on blue", "color-on-blue-40", `${CS}:36`),
-  tv("Focus ring on blue", "focus-color-inverse", `${CH}:101`),
-  sv("Label on blue", "white, on the blue itself with no fill under it", `${CS}:36`),
-  tv("Hover fill on blue", "color-on-blue-15", `${CS}:39`),
-  tv("Selected on blue", "color-surface", `${CS}:37`),
-  tv("Remove hover on blue", "color-on-blue-25", `${CS}:42`),
+  tv("Line on blue", "color-on-blue-40", `${CS}:36`, "border-(--ds-color-on-blue-40)"),
+  tv("Focus ring on blue", "focus-color-inverse", `${CH}:101`, 'const ring = ground === "onBlue" ? FOCUS_INVERSE : FOCUS;'),
+  sv("Label on blue", "white, on the blue itself with no fill under it", `${CS}:36`, undefined, "bg-transparent text-white"),
+  tv("Hover fill on blue", "color-on-blue-15", `${CS}:39`, "hover:bg-(--ds-color-on-blue-15)"),
+  tv("Selected on blue", "color-surface", `${CS}:37`, "data-selected:bg-(--ds-color-surface)"),
+  tv("Remove hover on blue", "color-on-blue-25", `${CS}:42`, "enabled:hover:bg-(--ds-color-on-blue-25)"),
   tv("Colour and check", "dur-ui"),
-  sv("Heights", CHIP_SIZES.map((s) => `${s.name} ${s.px}`).join(" · "), `${CS}:8`),
-  sv("Label", "Inter 13 / 500, px 12, gap 6", `${CS}:12, ${CH}:102`),
-  tv("Press", "scale-press-pill", `${CS}:16`),
-  sv("Remove", "collapses over 160ms, at once under reduced motion", `${CH}:80, 99`),
+  sv("Heights", CHIP_SIZES.map((s) => `${s.name} ${s.px}`).join(" · "), `${CS}:8`, undefined, ...CHIP_SIZES.map((s) => `${s.name}: "${CHIP_SIZE[s.name]}"`)),
+  {
+    ...sv("Label", "Inter 13 / 500, px 12, gap 6", `${CS}:11-12, ${CH}:102, 115`),
+    assert: [system("chip-styles.ts", "rounded-full border font-sans", "text-[13px] font-medium"), system("Chip.tsx", ': "px-3";', '"mr-1.5 w-3.5 opacity-100"')],
+  },
+  tv("Press", "scale-press-pill", `${CS}:16`, "active:scale-(--ds-scale-press-pill)"),
+  sv("Remove", "collapses over 160ms, at once under reduced motion", `${CH}:80, 99`, undefined, "if (still || !el) return onRemove();", "max-width var(--ds-dur-quick) var(--ds-ease-out)"),
   sv("Row gap", "8px, wrapping by default"),
 ];
 

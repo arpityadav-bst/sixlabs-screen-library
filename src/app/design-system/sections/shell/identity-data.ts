@@ -1,6 +1,7 @@
 // Values for the identity section: pins, sizes and drawer rows, each with the file:line it is read from.
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
-import type { Pin } from "@/app/design-system/sections/components/display-values";
+import type { CheckedRow, Pin } from "@/app/design-system/sections/components/display-values";
+import { system } from "@/app/design-system/sections/foundations/foundation-assert";
 import { LOCKUP_SIZES, type LockupSize } from "@/components/design-system/Lockup";
 
 /** The header's own lockup, measured inside the header-rest frame. */
@@ -24,18 +25,25 @@ export const LOCKUP_LADDER: readonly { name: LockupSize; spec: number }[] = (["s
   spec: LOCKUP_SIZES[name].mark,
 }));
 
-export const LOCKUP_VALUES: readonly ValueRow[] = [
-  { part: "Mark", value: "24 / 32 / 44 (sm / md / lg)", source: "Lockup.tsx:18-20" },
-  { part: "Wordmark", token: "--ds-font-display", value: "Outfit 500 · 18/24, 24/32, 32/44 · tracking -0.025em", source: "Lockup.tsx:24-26,59" },
-  { part: "Gap", value: "8 / 10 / 12", source: "Lockup.tsx:18-20,24-26" },
+export const LOCKUP_VALUES: readonly CheckedRow[] = [
+  { part: "Mark", value: "24 / 32 / 44 (sm / md / lg)", source: "Lockup.tsx:18-20",
+    assert: system("Lockup.tsx", "sm: { mark: 24,", "md: { mark: 32,", "lg: { mark: 44,") },
+  { part: "Wordmark", token: "--ds-font-display", value: "Outfit 500 · 18/24, 24/32, 32/44 · tracking -0.025em", source: "Lockup.tsx:24-26,59",
+    assert: system("Lockup.tsx", 'word: "text-[18px] leading-6"', 'word: "text-2xl"', 'word: "text-[32px] leading-[44px]"', "font-display font-medium tracking-tight") },
+  { part: "Gap", value: "8 / 10 / 12", source: "Lockup.tsx:18-20,24-26",
+    assert: system("Lockup.tsx", "gap: 8,", "gap: 10,", "gap: 12,", 'sm: { root: "gap-2",', 'md: { root: "gap-2.5",', 'lg: { root: "gap-3",') },
   { part: "Clear space", value: "the core circle's diameter, 0.292 of the mark: 7 / 9 / 13", source: "brand-marks.tsx:85" },
-  { part: "Minimum mark", value: "20", source: "Lockup.tsx:24" },
+  { part: "Minimum mark", value: "20 by the usage rule, the sm lockup draws 24", source: "Lockup.tsx:24, docs/design-md/identity.md:13",
+    assert: [system("Lockup.tsx", 'sm: { root: "gap-2", mark: "h-6 w-6"'), { file: "docs/design-md/identity.md", needles: ["The smallest mark is 20"] }] },
   { part: "Ink wordmark", token: "--ds-color-ink", value: "#0a1b33", source: "Header.tsx:73" },
   { part: "Accent 6", token: "--ds-color-accent", value: "#1a6dff", source: "CopyLine.tsx:52" },
   { part: "Logo blades", token: "--ds-color-logo-blue", value: "#1770EF", source: "brand-marks.tsx:86" },
   { part: "Logo core", token: "--ds-color-logo-navy", value: "#030D2D", source: "brand-marks.tsx:85" },
-  { part: "onBlue", value: "SixLabsMark outline and the plain Word, both white", source: "Lockup.tsx:60" },
-  { part: "Focus ring", token: "--ds-focus-color", value: "2px at 2px offset, white on blue", source: "focus.ts:8" },
+  { part: "onBlue", value: "SixLabsMark outline and the plain Word, both white", source: "Lockup.tsx:56,60",
+    assert: system("Lockup.tsx", '<SixLabsMark className="block h-full w-full text-white" />', "<Word plain />") },
+  { part: "Focus ring", token: "--ds-focus-color", value: "2px at 2px offset, white on blue", source: "focus.ts:10,16",
+    assert: system("focus.ts", "outline-offset-(--ds-focus-offset) focus-visible:outline-(length:--ds-focus-width)",
+      "focus-visible:outline-(--ds-focus-color-inverse)") },
 ];
 
 export const LOCKUP_PROPS: readonly PropRow[] = [

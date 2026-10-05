@@ -1,12 +1,13 @@
 // The Dialog section's data: the specimen copy (the request description is quoted from Closing.tsx, the rest
 // is house filler), anatomy pins, drawer rows, props, the motion curves and the snippet. Widths are the
 // part's own DIALOG_WIDTH_PX, never a second list.
-import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { PropRow } from "@/app/design-system/_kit/SpecDrawer";
+import { system } from "@/app/design-system/sections/foundations/foundation-assert";
 import type { DialogSize } from "@/components/design-system/Dialog";
 import { DIALOG_WIDTH_PX } from "@/components/design-system/dialog-styles";
 import { SHEET_SPRING } from "@/components/design-system/overlay-motion";
 import { SPRING_VALUES } from "@/components/design-system/token-motion";
-import { sv, tv, type Pin } from "./display-values";
+import { sv, tv, type CheckedRow, type Pin } from "./display-values";
 
 const D = "Dialog.tsx";
 const S = "dialog-styles.ts";
@@ -51,30 +52,33 @@ export const SHEET_PINS: readonly Pin[] = [
   { selector: "[data-part=footer]", name: "Stacked footer", value: "full width · primary on top", source: `${S}:41`, expect: "flex-col-reverse gap-3 *:w-full" },
 ];
 
-export const DIALOG_VALUES: readonly ValueRow[] = [
-  tv("Veil", "color-veil-modal", `${D}:247`),
-  tv("Veil fade", "dur-menu", "overlay-motion.ts:37"),
-  tv("Panel", "color-surface", `${S}:22`),
-  tv("Panel line", "color-line", `${S}:22`),
-  tv("Panel shadow", "shadow-modal", `${S}:23`),
-  tv("Radius from md", "radius-lg", `${S}:26`),
-  tv("Radius under md", "radius-md", `${S}:26`),
-  sv("Padding", "32 from md, 24 under", `${S}:26`),
-  sv("Widths", SIZES.map((s) => `${s.size} ${s.px}`).join(" · "), `${S}:8`),
-  sv("Height", "viewport less 96, the body scrolls", `${S}:26`),
-  sv("Title", "Outfit 24 / 30 / 500, -0.03em, ink", `${S}:33`),
-  tv("Description", "color-text-muted", `${S}:35`),
-  sv("Footer", "right-aligned, gap 12, primary last", `${S}:40`),
-  sv("In", "opacity, scale 0.96 (SCALE.panel) and y 8 on the pop spring", `${D}:86-87`),
-  sv("Out", "opacity and scale 0.96, 140ms ease in", `${D}:88`),
-  sv("Sheet", "bottom-attached, top corners 28, max 90svh, foot past the safe area", `${S}:29`),
-  tv("Handle", "color-line-strong", `${S}:48`),
-  sv("Sheet in", "y 100% to 0 on stiffness 400, damping 40", `overlay-motion.ts:43, ${D}:80-81`),
-  sv("Sheet close", "a drag past 96 or a flick at 600 px/s", `${D}:53-54, 205`),
-  tv("Reduced motion", "dur-exit", "overlay-motion.ts:39"),
-  sv("Layer", "the native top layer, above every z value", `${D}:168`),
-  sv("Focus", "first field, else the first footer action in an alertdialog, else the primary", `${D}:60-68`),
-  sv("Page", "held still with overflow clip while open, as MobileMenu holds it", `${D}:56-58`),
+export const DIALOG_VALUES: readonly CheckedRow[] = [
+  tv("Veil", "color-veil-modal", `${D}:247`, "bg-(--ds-color-veil-modal)"),
+  tv("Veil fade", "dur-menu", "overlay-motion.ts:37", 'veil: seconds("dur-menu")'),
+  tv("Panel", "color-surface", `${S}:22`, "bg-(--ds-color-surface)"),
+  tv("Panel line", "color-line", `${S}:22`, "border border-(--ds-color-line)"),
+  tv("Panel shadow", "shadow-modal", `${S}:23`, "shadow-(--ds-shadow-modal)"),
+  tv("Radius from md", "radius-lg", `${S}:26`, "md:rounded-(--ds-radius-lg)"),
+  tv("Radius under md", "radius-md", `${S}:26`, "max-h-[calc(100svh-96px)] rounded-(--ds-radius-md)"),
+  sv("Padding", "32 from md, 24 under", `${S}:26`, undefined, "rounded-(--ds-radius-md) p-6", "md:p-8"),
+  sv("Widths", SIZES.map((s) => `${s.size} ${s.px}`).join(" · "), `${S}:8`, undefined, ...SIZES.map((s) => `${s.size}: ${s.px}`)),
+  sv("Height", "viewport less 96, the body scrolls", `${S}:26, 37`, undefined, "max-h-[calc(100svh-96px)]", "min-h-0 flex-1 overflow-y-auto"),
+  sv("Title", "Outfit 24 / 30 / 500, -0.03em, ink", `${S}:33`, undefined, "font-display text-[24px] font-medium leading-[30px] tracking-[-0.03em] text-(--ds-color-ink)"),
+  tv("Description", "color-text-muted", `${S}:35`, 'DESCRIPTION = "mt-2 text-[15px] leading-[22px] text-(--ds-color-text-muted)"'),
+  sv("Footer", "right-aligned, gap 12, primary last", `${S}:40`, undefined, "items-center justify-end gap-3"),
+  sv("In", "opacity, scale 0.96 (SCALE.panel) and y 8 on the pop spring", `${D}:86-87`, undefined, "initial: { opacity: 0, scale: SCALE.panel, y: 8 }", "transition: SPRING.pop"),
+  sv("Out", "opacity and scale 0.96, 140ms ease in", `${D}:88`, undefined, "exit: { opacity: 0, scale: SCALE.panel, transition: { duration: OVERLAY.dialogOut, ease: EASE_IN } }"),
+  sv("Sheet", "bottom-attached, top corners 28, max 90svh, foot past the safe area", `${S}:29-30`, undefined, "max-h-[90svh]", "rounded-t-(--ds-radius-lg) rounded-b-none", "pb-[calc(24px+env(safe-area-inset-bottom,0px))]"),
+  tv("Handle", "color-line-strong", `${S}:48`, "h-1 w-9 rounded-full bg-(--ds-color-line-strong)"),
+  {
+    ...sv("Sheet in", "y 100% to 0 on stiffness 400, damping 40", `overlay-motion.ts:43, ${D}:80-81`),
+    assert: [system("overlay-motion.ts", 'SHEET_SPRING = { type: "spring", stiffness: 400, damping: 40 }'), system(D, 'initial: { y: "100%" }', "animate: { y: 0, transition: SHEET_SPRING }")],
+  },
+  sv("Sheet close", "a drag past 96 or a flick at 600 px/s", `${D}:53-54, 205`, undefined, "const DRAG_CLOSE = 96;", "const FLICK = 600;", "info.offset.y > DRAG_CLOSE || info.velocity.y > FLICK"),
+  tv("Reduced motion", "dur-exit", "overlay-motion.ts:39", 'reducedFade: seconds("dur-exit")'),
+  sv("Layer", "the native top layer, above every z value", `${D}:168`, undefined, "d.showModal();"),
+  sv("Focus", "initialFocus when given, else the first footer action in an alertdialog, else the first field, else the primary", `${D}:60-68`, undefined, "given ??", 'role === "alertdialog" ? actions[0] : (field ?? actions[actions.length - 1])', ":is(input, select, textarea):not([disabled])"),
+  sv("Page", "held still with overflow clip while open, as MobileMenu holds it", `${D}:56-58`, undefined, 'document.documentElement.style.overflow = on ? "clip" : "";'),
 ];
 
 export const DIALOG_PROPS: readonly PropRow[] = [

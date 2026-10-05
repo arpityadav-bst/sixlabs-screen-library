@@ -1,6 +1,7 @@
 // Assembles DESIGN.md at the project root from the chapter partials in docs/design-md, which are the
 // editable source. The guide's catalog gives the order, the numbers and the titles, tokens.ts gives the
-// tables of chapter 3, and every "Title (N.N)", "chapter N" or "decision N" reference becomes a link. The
+// tables of chapter 3, and every "Title (N.N)", "chapter N" or "decision N" reference becomes a link. A
+// one-page Start here (start-here.md) opens the file, unnumbered, ahead of the contents. The
 // changelog partial is also the guide's changelog (changelog-data.ts reads it), so its entries live there.
 // Run from anywhere: node tools/design-md/build.mjs, which writes the file, or with --check, which writes
 // nothing and fails when DESIGN.md is not what the partials build. Either way it exits 1 on an error: a
@@ -39,6 +40,8 @@ const PART_CHAPTERS = new Set([6, 7]);
 const NOT_A_PART = new Set(["behaviours"]);
 /** A grouped chapter's optional opening, before its first section. */
 const groupFile = (id) => `group-${id}`;
+/** The unnumbered page that opens the file, ahead of the contents, so it renumbers nothing. */
+const PREFACE = "start-here";
 
 const errors = [];
 const warnings = [];
@@ -125,6 +128,11 @@ for (const [file, md] of partials) {
   for (const part of nestedParts(md).parts) warnings.push(...partWarnings(part.body, `${file}.md, ${part.title}`));
 }
 
+// The opening page, ahead of the contents.
+const preface = readPartial(PREFACE);
+used.add(PREFACE);
+if (!preface) errors.push(`no partial for the opening page: write docs/design-md/${PREFACE}.md`);
+
 // Partials that nothing reaches.
 for (const f of readdirSync(PARTS)) {
   if (f.endsWith(".md") && !used.has(f.slice(0, -3))) errors.push(`${f} is not in the catalog, so it is not in DESIGN.md`);
@@ -179,6 +187,7 @@ const headings = headingAnchors(bodyLines);
 // Every link target must be the anchor its heading really gets, so no numbered heading or decision may
 // repeat an earlier heading's text and take GitHub's -1 suffix.
 const real = new Set(headings.map((h) => h.anchor));
+if (real.has(slug(preface?.heading ?? PREFACE))) errors.push(`a heading in the body repeats the opening page's title, ${preface?.heading}`);
 for (const [num, r] of refs) if (!real.has(r.anchor)) errors.push(`heading ${num} ${r.title} does not get the anchor #${r.anchor}`);
 for (const [n, a] of decisions) if (!real.has(a)) errors.push(`decision ${n} does not get the anchor #${a}`);
 const nested = new Map();
@@ -198,8 +207,10 @@ const out = [
   "",
   "_Assembled from `docs/design-md/` by `node tools/design-md/build.mjs`. Edit the partials, not this file._",
   "",
+  ...(preface ? [`## ${preface.heading}`, "", linker.linkify(preface.body, preface.heading), ""] : []),
   "## Contents",
   "",
+  ...(preface ? [`- [${preface.heading}](#${slug(preface.heading)})`] : []),
 ];
 for (const c of list) {
   out.push(`- [${c.n} ${c.title}](#${refs.get(String(c.n)).anchor})`);

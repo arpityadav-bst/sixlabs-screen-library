@@ -16,3 +16,9 @@ export const site = (file: string, ...needles: string[]): Assertion => ({
   file: `components/website/${file}`,
   needles,
 });
+
+/** A system part's file, for a value read off the system's own source: system("choice-styles.ts", "tick: 14"). */
+export const system = (file: string, ...needles: string[]): Assertion => ({
+  file: `components/design-system/${file}`,
+  needles,
+});

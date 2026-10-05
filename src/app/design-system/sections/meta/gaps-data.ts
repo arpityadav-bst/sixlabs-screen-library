@@ -221,7 +221,7 @@ export const BLIND_SPOTS = [
   { key: "Device GPU limits", value: "Budgeted on this page, untested on a phone." },
   { key: "Copy drift", value: "Checked only where an assertion holds the text." },
   { key: "Rendered drift", value: "Assertions read the source text, not the pixels it draws." },
-  { key: "Unasserted drawers", value: "Drawer rows that cite a system file carry no needle, so a system value can move with no row failing." },
+  { key: "Unasserted drawers", value: "Rows written by hand against a site file carry no needle, so a site value can move with no row failing. Rows citing a system file always carry one." },
 ] as const;
 
 export const SEVERITY_TONE = { high: "danger", medium: "warning", low: "neutral" } as const;

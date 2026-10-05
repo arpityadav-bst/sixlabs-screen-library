@@ -133,8 +133,8 @@ export const PANEL_PINS: readonly Pin[] = [
 export const BADGE_VALUES = [
   tv("Shape", "radius-full"),
   tv("Label family", "font-mono"),
-  sv("Sizes", "sm 18, md 22", "Badge.tsx:20-21"),
-  sv("Label", "11 caps at 500, tracking 0.08em (sm) / 0.12em (md)", "Badge.tsx:20-21"),
+  sv("Sizes", "sm 18, md 22", "Badge.tsx:20-21", undefined, 'sm: "h-[18px] gap-1.5 px-1.5', 'md: "h-[22px] gap-1.5 px-2'),
+  sv("Label", "11 caps at 500, tracking 0.08em (sm) / 0.12em (md)", "Badge.tsx:20-21, 72", undefined, "text-[11px] tracking-[0.08em]", "text-[11px] tracking-[0.12em]", "font-medium uppercase"),
   tv("Neutral fill", "color-fill-highlight"),
   tv("Success tint", "color-success-tint"),
   tv("Warning tint", "color-warning-tint"),
@@ -158,12 +158,12 @@ export const TAG_VALUES = [
   tv("Panel fill", "color-surface-sunken"),
   tv("Panel line", "color-line"),
   tv("Panel radius", "radius-xs"),
-  sv("Panel padding", "px 16, py 14", "Tag.tsx:66"),
-  sv("Columns", "2 at gap 16 / 12, 1 under md", "Tag.tsx:64"),
+  sv("Panel padding", "px 16, py 14", "Tag.tsx:66", undefined, "bg-(--ds-color-surface-sunken) px-4 py-3.5"),
+  sv("Columns", "2 at gap 16 / 12, 1 under md", "Tag.tsx:64, 69", undefined, 'columns === 2 ? "grid-cols-2 max-md:grid-cols-1"', "grid gap-x-4 gap-y-3"),
   tv("Icon", "icon-16"),
   tv("Icon stroke", "icon-16-stroke"),
   tv("Icon colour", "color-accent"),
-  sv("Pill", "28 tall, px 10, white, hairline", "Tag.tsx:16"),
+  sv("Pill", "28 tall, px 10, white, hairline", "Tag.tsx:16", undefined, 'pill: "h-7 rounded-full border border-(--ds-color-line) bg-(--ds-color-surface) px-2.5"'),
 ] as const;
 
 export const BADGE_PROPS = [

@@ -1,6 +1,7 @@
 // What every moving part does under prefers-reduced-motion: reduce, and where that answer is written. The
 // parts with no answer are listed too, so the gap is in plain sight.
-import type { ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { CheckedRow } from "@/app/design-system/sections/components/display-values";
+import { system } from "@/app/design-system/sections/foundations/foundation-assert";
 
 const W = "components/website/";
 const G = "app/globals.css";
@@ -34,10 +35,12 @@ export const REDUCED_TABLE = REDUCED_ROWS.map((r) => [r.part, r.reduced, r.handl
 
 export const READOUT_QUERY = "matchMedia('(prefers-reduced-motion: reduce)')";
 
-export const READOUT_VALUES: readonly ValueRow[] = [
+export const READOUT_VALUES: readonly CheckedRow[] = [
   { part: "Query", value: "(prefers-reduced-motion: reduce)", source: "app/design-system/_kit/reduced-motion.ts:7" },
-  { part: "Spinner, reduced", value: "1.5s a turn instead of 1s", source: "components/design-system/Spinner.tsx:49" },
-  { part: "StatusDot, reduced", value: "ping and pulse stop", source: "components/design-system/StatusDot.tsx:31" },
+  { part: "Spinner, reduced", value: "1.5s a turn instead of 1s", source: "components/design-system/Spinner.tsx:51-52",
+    assert: system("Spinner.tsx", "animate-spin rounded-full", "motion-reduce:animate-[spin_1.5s_linear_infinite]") },
+  { part: "StatusDot, reduced", value: "ping and pulse stop", source: "components/design-system/StatusDot.tsx:31, 39",
+    assert: system("StatusDot.tsx", "animate-ping rounded-full motion-reduce:animate-none", "animate-pulse motion-reduce:animate-none") },
 ];
 
 export const READOUT_CODE = `import { useReducedMotion } from "motion/react";

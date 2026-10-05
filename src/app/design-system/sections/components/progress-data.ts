@@ -42,15 +42,15 @@ export const PROGRESS_VALUES = [
   tv("Complete, dark", "color-success-on-dark"),
   tv("Error", "color-danger"),
   tv("Error, dark", "color-danger-on-dark"),
-  tv("Paused, light", "color-text-muted", "progress-styles.ts:25"),
-  tv("Paused, blue", "color-on-blue-50", "progress-styles.ts:25"),
-  tv("Paused, dark", "color-on-blue-20", "progress-styles.ts:25"),
+  tv("Paused, light", "color-text-muted", "progress-styles.ts:25", 'paused: { light: "var(--ds-color-text-muted)"'),
+  tv("Paused, blue", "color-on-blue-50", "progress-styles.ts:25", 'blue: "var(--ds-color-on-blue-50)"'),
+  tv("Paused, dark", "color-on-blue-20", "progress-styles.ts:25", 'blue: "var(--ds-color-on-blue-50)", dark: "var(--ds-color-on-blue-20)"'),
   tv("Fill time", "dur-rise"),
   tv("Fill ease", "ease-out"),
-  sv("Indeterminate", "a 35% segment, translateX over 1.4s, ease-in-out", "progress.module.css"),
-  sv("Heights", "2, 4, 6, 8", "Progress.tsx:12"),
-  sv("Circle strokes", "16: 2, 24: 2.5, 40: 3, 64: 4", "token-shape.ts:112"),
-  sv("Segments", "2px gaps, each filled whole", "Progress.tsx:53"),
+  sv("Indeterminate", "a 35% segment, translateX over 1.4s, ease-in-out", "progress.module.css", undefined, "width: 35%;", "animation: ds-progress-run 1.4s var(--ds-ease-in-out) infinite;", "transform: translateX(-100%);"),
+  sv("Heights", "2, 4, 6, 8", "Progress.tsx:12", undefined, '{ 2: "h-0.5", 4: "h-1", 6: "h-1.5", 8: "h-2" }'),
+  sv("Circle strokes", "16: 2, 24: 2.5, 40: 3, 64: 4", "token-shape.ts:112", undefined, "CIRCLE_STROKE: Readonly<Record<16 | 24 | 40 | 64, number>> = { 16: 2, 24: 2.5, 40: 3, 64: 4 }"),
+  sv("Segments", "2px gaps, each filled whole", "Progress.tsx:54, 60", undefined, "flex w-full gap-0.5", "backgroundColor: k < done ? fill : RAIL[variant]"),
 ] as const;
 
 export const PROGRESS_PROPS = [

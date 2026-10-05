@@ -5,6 +5,8 @@
 import type { AnatomyPin } from "@/app/design-system/_kit/Anatomy";
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
 import { tokenValue as value } from "@/app/design-system/_kit/token-rows";
+import type { CheckedRow } from "@/app/design-system/sections/components/display-values";
+import { system } from "./foundation-assert";
 import { cite } from "./foundation-scan";
 
 const DS = "src/components/design-system";
@@ -17,6 +19,8 @@ const SM = cite(BUTTON, "sm: { box:");
 const PILL = cite(BUTTON, 'primary: "rounded-full');
 const SKIP = `${DS}/SkipLink.tsx`;
 const PIN = cite(SKIP, "fixed left-4 top-4 z-(--ds-z-tooltip)");
+/** The needle a token row is held to: its tk() line writing the value the row prints. */
+const held = (file: string, name: string) => system(file, `tk("${name}", "${value(name)}"`);
 
 export const RING = {
   light: value("focus-color"),
@@ -24,16 +28,18 @@ export const RING = {
   dark: value("focus-color-dark"),
 } as const;
 
-export const RING_VALUES: readonly ValueRow[] = [
-  { part: "Width", token: "--ds-focus-width", value: value("focus-width"), source: shape("focus-width").source },
-  { part: "Offset on controls", token: "--ds-focus-offset", value: value("focus-offset"), source: shape("focus-offset").source },
-  { part: "Offset on cards", token: "--ds-focus-offset-card", value: value("focus-offset-card"), source: shape("focus-offset-card").source },
-  { part: "Colour on light", token: "--ds-focus-color", value: RING.light, source: shape("focus-color").source },
-  { part: "Colour on blue", token: "--ds-focus-color-inverse", value: RING.inverse, source: shape("focus-color-inverse").source },
-  { part: "Colour on dark", token: "--ds-focus-color-dark", value: RING.dark, source: shape("focus-color-dark").source },
-  { part: "Field halo", token: "--ds-focus-halo", value: value("focus-halo"), source: shape("focus-halo").source },
-  { part: "Forced colours", value: "outline-color Highlight", source: cite(FOCUS_TS, "forced-colors:focus-visible:outline-[Highlight]").source },
-  { part: "Shows on", value: ":focus-visible only, no transition", source: cite(FOCUS_TS, "export const FOCUS =").source },
+export const RING_VALUES: readonly CheckedRow[] = [
+  { part: "Width", token: "--ds-focus-width", value: value("focus-width"), source: shape("focus-width").source, assert: held("token-shape.ts", "focus-width") },
+  { part: "Offset on controls", token: "--ds-focus-offset", value: value("focus-offset"), source: shape("focus-offset").source, assert: held("token-shape.ts", "focus-offset") },
+  { part: "Offset on cards", token: "--ds-focus-offset-card", value: value("focus-offset-card"), source: shape("focus-offset-card").source, assert: held("token-shape.ts", "focus-offset-card") },
+  { part: "Colour on light", token: "--ds-focus-color", value: RING.light, source: shape("focus-color").source, assert: held("token-shape.ts", "focus-color") },
+  { part: "Colour on blue", token: "--ds-focus-color-inverse", value: RING.inverse, source: shape("focus-color-inverse").source, assert: held("token-shape.ts", "focus-color-inverse") },
+  { part: "Colour on dark", token: "--ds-focus-color-dark", value: RING.dark, source: shape("focus-color-dark").source, assert: held("token-shape.ts", "focus-color-dark") },
+  { part: "Field halo", token: "--ds-focus-halo", value: value("focus-halo"), source: shape("focus-halo").source, assert: held("token-shape.ts", "focus-halo") },
+  { part: "Forced colours", value: "outline-color Highlight", source: cite(FOCUS_TS, "forced-colors:focus-visible:outline-[Highlight]").source,
+    assert: system("focus.ts", "forced-colors:focus-visible:outline-[Highlight]") },
+  { part: "Shows on", value: ":focus-visible only, no transition", source: cite(FOCUS_TS, "export const FOCUS =").source,
+    assert: system("focus.ts", "export const FOCUS =", "focus-visible:outline-(length:--ds-focus-width)") },
 ];
 
 export const RING_PROPS: readonly PropRow[] = [
@@ -92,13 +98,16 @@ export const SKIP_PINS: readonly AnatomyPin[] = [
     ...SM, side: "right" },
 ];
 
-export const SKIP_VALUES: readonly ValueRow[] = [
-  { part: "Position", value: "fixed · top 16 · left 16", source: PIN.source },
-  { part: "Layer", token: "--ds-z-tooltip", value: value("z-tooltip"), source: def("token-space.ts", "z-tooltip").source },
-  { part: "Box, Button sm", value: "h-8 · px-3.5 · 13px label", source: SM.source },
-  { part: "Fill", token: "--ds-color-primary", value: value("color-primary"), source: PILL.source },
-  { part: "Reveal", value: "opacity 0 to 1 while focus is inside, no transition", source: cite(SKIP, "const REVEAL =").source },
-  { part: "Target", value: "#main, the main landmark", source: cite(SKIP, 'href = "#main"').source },
+export const SKIP_VALUES: readonly CheckedRow[] = [
+  { part: "Position", value: "fixed · top 16 · left 16", source: PIN.source, assert: system("SkipLink.tsx", "fixed left-4 top-4 z-(--ds-z-tooltip)") },
+  { part: "Layer", token: "--ds-z-tooltip", value: value("z-tooltip"), source: def("token-space.ts", "z-tooltip").source,
+    assert: held("token-space.ts", "z-tooltip") },
+  { part: "Box, Button sm", value: "h-8 · px-3.5 · 13px label", source: SM.source, assert: system("button-styles.ts", 'sm: { box: "h-8 gap-2 px-3.5 text-[13px]"') },
+  { part: "Fill", token: "--ds-color-primary", value: value("color-primary"), source: PILL.source,
+    assert: system("button-styles.ts", 'primary: "rounded-full border border-transparent bg-(--ds-color-primary)') },
+  { part: "Reveal", value: "opacity 0 to 1 while focus is inside, no transition", source: cite(SKIP, "const REVEAL =").source,
+    assert: system("SkipLink.tsx", "opacity-0 pointer-events-none focus-within:opacity-100") },
+  { part: "Target", value: "#main, the main landmark", source: cite(SKIP, 'href = "#main"').source, assert: system("SkipLink.tsx", 'href = "#main"') },
 ];
 
 export const SKIP_PROPS: readonly PropRow[] = [

@@ -3,7 +3,7 @@
 // job tags' icons come from badge-tag-data (tagsOf), the one map held to Jobs.tsx.
 import type { AnatomyPin } from "@/app/design-system/_kit/Anatomy";
 import type { BannerTone } from "@/components/design-system/Banner";
-import { site } from "../foundations/foundation-assert";
+import { site, system } from "../foundations/foundation-assert";
 import { pr, sv, tv } from "../components/display-values";
 import { read, rv } from "./pattern-values";
 
@@ -73,11 +73,16 @@ export const BANNER_VALUES = [
   tv("Danger ground", "color-danger-tint"),
   tv("Danger line", "color-danger-line"),
   tv("Warning ground", "color-warning-tint"),
-  sv("Padding", "px 16 · py 12 · gap 12", `${D}banner-styles.ts:8`),
-  sv("Copy", "14/20 · title 500 ink · body #475569", `${D}banner-styles.ts:37`),
-  sv("Icon", "16 · accent on info, muted on offline, status colour otherwise", `${D}banner-styles.ts:21`),
-  sv("Under 480", "the actions wrap under the copy, in line past the icon", `${D}banner-styles.ts:41`),
-  sv("Role", "danger is an alert, every other tone a polite status", `${D}Banner.tsx:65`),
+  sv("Padding", "px 16 · py 12 · gap 12", `${D}banner-styles.ts:9`, undefined, "gap-3 rounded-(--ds-radius-sm) border px-4 py-3"),
+  sv("Copy", "14/20 · title 500 ink · body #475569", `${D}banner-styles.ts:9, 37-39`, undefined, "text-[14px] leading-5",
+    'BANNER_TEXT = "min-w-0 flex-1 text-(--ds-color-ink)', 'BANNER_TITLE = "font-medium"', 'BANNER_BODY = "text-(--ds-color-text-body)"'),
+  { ...sv("Icon", "16 · accent on info, muted on offline, status colour otherwise", `${D}banner-styles.ts:21-27, Banner.tsx:70`),
+    assert: [system("banner-styles.ts", 'info: "text-(--ds-color-accent)"', 'offline: "text-(--ds-color-text-muted)"', 'success: "text-(--ds-color-success)"',
+      'warning: "text-(--ds-color-warning)"', 'danger: "text-(--ds-color-danger-ink)"'), system("Banner.tsx", "<Icon icon={glyph} size={16} />")] },
+  sv("Under 480", "the actions wrap under the copy, in line past the icon", `${D}banner-styles.ts:10, 41`, undefined,
+    "max-[480px]:flex-wrap", "max-[480px]:ml-7"),
+  sv("Role", "danger is an alert, every other tone a polite status", `${D}Banner.tsx:65`, undefined,
+    'const urgent = tone === "danger";', 'role={urgent ? "alert" : "status"}'),
 ] as const;
 
 export const BANNER_PROPS = [
@@ -114,5 +119,6 @@ export const FALLBACK_VALUES = [
 export const LOADING_VALUES = [
   sv("Skeleton", "the job card's composite, same box as the card it stands for", "sections/components/loading-composites.tsx:7"),
   tv("Shimmer", "dur-shimmer"),
-  sv("Busy", "aria-busy on the group, a hidden Loading", `${D}Skeleton.tsx:61`),
+  sv("Busy", "aria-busy on the group, a hidden Loading", `${D}Skeleton.tsx:52, 61-62`, undefined, 'label = "Loading",',
+    '<div aria-busy="true"', '<span className="sr-only">{label}</span>'),
 ] as const;

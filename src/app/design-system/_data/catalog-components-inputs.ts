@@ -50,7 +50,8 @@ export const INPUTS = defineSections([
         states:
           "unchecked hover checked checked-hover focus-visible pressed disabled disabled-checked invalid read-only read-only-checked",
       }),
-      sys("RadioGroup", { file: "Radio", variants: "list card" }),
+      // the group is made of Radios, so the states it owes are the ones the Radio grid shows on them
+      sys("RadioGroup", { file: "Radio", variants: "list card", states: "hover focus-visible pressed disabled" }),
       sys("ChoiceGroup"),
       sys("Switch", {
         variants: "on-blue",

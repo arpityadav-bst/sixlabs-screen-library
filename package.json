@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "ds:check": "node tools/design-md/ds-check.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

@@ -1,10 +1,12 @@
 // Data for the Text fields section: anatomy pins, the drawer's values and props, the code snippets and
 // the specimen copy. Values cite the component file that writes them (paths from src/components/design-system).
 import { contrastRatio, formatRatio } from "@/app/design-system/_kit/contrast";
-import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
-import { tokenColour, type Pin } from "../display-values";
+import type { PropRow } from "@/app/design-system/_kit/SpecDrawer";
+import { system } from "@/app/design-system/sections/foundations/foundation-assert";
+import { tokenColour, type CheckedRow, type Pin } from "../display-values";
 
 const FS = "field-styles.ts";
+const TA = "TextArea.tsx";
 
 /** A token's ratio on white, rounded down as every badge rounds it. */
 const onWhite = (name: string) => `${formatRatio(contrastRatio(tokenColour(name), "#ffffff") ?? 0)}:1 on white`;
@@ -106,23 +108,23 @@ export const AREA_PINS: readonly Pin[] = [
   { selector: "[data-slot=counter]", name: "Counter", value: "ink near the limit, red past it", source: "Field.tsx:82,84", expect: ["text-(--ds-color-danger-ink)", "text-(--ds-color-ink)"], side: "right" },
 ];
 
-export const TEXT_INPUT_VALUES: readonly ValueRow[] = [
-  { part: "Height sm / md / lg", value: "36 / 44 / 52", source: `${FS}:16, 24, 32` },
-  { part: "Text sm / md / lg", token: "--ds-text-14, --ds-text-15, --ds-text-16", value: "14/20, 15/22, 16/24", source: `${FS}:17, 25, 33` },
-  { part: "Text under md", value: "16/24 at every size", source: `${FS}:17, 25` },
-  { part: "Padding x", value: "12 / 14 / 16", source: `${FS}:18, 26, 34` },
-  { part: "Radius", token: "--ds-radius-xs, --ds-radius-row", value: "12 / 12 / 14", source: `${FS}:19, 27, 35` },
-  { part: "Line at rest", token: "--ds-color-line-field", value: `${tokenColour("color-line-field")}, ${onWhite("color-line-field")}`, source: `${FS}:52` },
-  { part: "Line on hover", token: "--ds-color-text-muted", value: "#64748b", source: `${FS}:53` },
-  { part: "Focus", token: "--ds-color-accent, --ds-focus-halo", value: "accent line, 0 0 0 3px accent 18%", source: `${FS}:54` },
-  { part: "Invalid", token: "--ds-color-danger, --ds-color-danger-halo", value: "#d92d20, halo 16% on focus", source: `${FS}:57-58` },
-  { part: "Success", token: "--ds-color-success", value: "#15803d at 60%, a 16 check", source: `${FS}:62` },
-  { part: "Disabled", token: "--ds-color-surface-sunken", value: "#f6f7f9, slate 200 line, slate 400 text", source: `${FS}:67` },
-  { part: "Read-only", token: "--ds-color-surface-sunken", value: "#f6f7f9 with a hairline, focusable", source: `${FS}:69-71` },
-  { part: "Caret", token: "--ds-color-accent", value: "#1a6dff", source: `${FS}:77` },
-  { part: "Placeholder", token: "--ds-color-text-muted", value: `${tokenColour("color-text-muted")}, ${onWhite("color-text-muted")}`, source: `${FS}:78` },
-  { part: "Autofill", value: "white fill, ink text", source: `${FS}:79` },
-  { part: "Message enter", token: "--ds-dur-ui, --ds-ease-out", value: "height auto, y -2, 200ms", source: "Field.tsx:128-131" },
+export const TEXT_INPUT_VALUES: readonly CheckedRow[] = [
+  { part: "Height sm / md / lg", value: "36 / 44 / 52", source: `${FS}:16, 24, 32`, assert: system(FS, 'h: "h-9"', 'h: "h-11"', 'h: "h-13"') },
+  { part: "Text sm / md / lg", token: "--ds-text-14, --ds-text-15, --ds-text-16", value: "14/20, 15/22, 16/24", source: `${FS}:17, 25, 33`, assert: system(FS, 'text: "text-[14px] leading-5', 'text: "text-[15px] leading-[22px]', 'text: "text-[16px] leading-6"') },
+  { part: "Text under md", value: "16/24 at every size", source: `${FS}:17, 25`, assert: system(FS, "leading-5 max-md:text-[16px] max-md:leading-6", "leading-[22px] max-md:text-[16px] max-md:leading-6") },
+  { part: "Padding x", value: "12 / 14 / 16", source: `${FS}:18, 26, 34`, assert: system(FS, 'pad: "px-3",', 'pad: "px-3.5",', 'pad: "px-4",') },
+  { part: "Radius", token: "--ds-radius-xs, --ds-radius-row", value: "12 / 12 / 14", source: `${FS}:19, 27, 35`, assert: system(FS, 'radius: "rounded-(--ds-radius-xs)"', 'radius: "rounded-(--ds-radius-row)"') },
+  { part: "Line at rest", token: "--ds-color-line-field", value: `${tokenColour("color-line-field")}, ${onWhite("color-line-field")}`, source: `${FS}:52`, assert: system(FS, "border-(--ds-color-line-field) bg-(--ds-color-surface)") },
+  { part: "Line on hover", token: "--ds-color-text-muted", value: "#64748b", source: `${FS}:53`, assert: system(FS, "hover:not-focus-within:border-(--ds-color-text-muted)") },
+  { part: "Focus", token: "--ds-color-accent, --ds-focus-halo", value: "accent line, 0 0 0 3px accent 18%", source: `${FS}:54`, assert: system(FS, "focus-within:border-(--ds-color-accent) focus-within:shadow-(--ds-focus-halo)") },
+  { part: "Invalid", token: "--ds-color-danger, --ds-color-danger-halo", value: "#d92d20, halo 16% on focus", source: `${FS}:57-58`, assert: system(FS, "border-(--ds-color-danger) bg-(--ds-color-surface)", "focus-within:shadow-(--ds-focus-halo-danger)") },
+  { part: "Success", token: "--ds-color-success", value: "#15803d at 60%, a 16 check (18 at lg)", source: `${FS}:36, 62, TextInput.tsx:151`, assert: [system(FS, "border-(--ds-color-success)/60", "icon: 18,"), system("TextInput.tsx", "<CircleCheck aria-hidden size={s.icon}")] },
+  { part: "Disabled", token: "--ds-color-surface-sunken", value: "#f6f7f9, slate 200 line, slate 400 text", source: `${FS}:67`, assert: system(FS, "cursor-not-allowed border-(--ds-color-line) bg-(--ds-color-surface-sunken) text-(--ds-color-text-quiet)") },
+  { part: "Read-only", token: "--ds-color-surface-sunken", value: "#f6f7f9 with a hairline, focusable", source: `${FS}:69-71`, assert: system(FS, '"border-(--ds-color-line) bg-(--ds-color-surface-sunken) "', "focus-within:border-(--ds-color-accent)") },
+  { part: "Caret", token: "--ds-color-accent", value: "#1a6dff", source: `${FS}:77`, assert: system(FS, "caret-(--ds-color-accent)") },
+  { part: "Placeholder", token: "--ds-color-text-muted", value: `${tokenColour("color-text-muted")}, ${onWhite("color-text-muted")}`, source: `${FS}:78`, assert: system(FS, "placeholder:text-(--ds-color-text-muted)") },
+  { part: "Autofill", value: "white fill, ink text", source: `${FS}:79`, assert: system(FS, "autofill:shadow-[inset_0_0_0_1000px_var(--ds-color-surface)]", "autofill:[-webkit-text-fill-color:var(--ds-color-ink)]") },
+  { part: "Message enter", token: "--ds-dur-ui, --ds-ease-out", value: "height auto, y -2, 200ms", source: "Field.tsx:128-131", assert: system("Field.tsx", "{ height: 0, opacity: 0, y: -2 }", '{ height: "auto", opacity: 1, y: 0 }', "duration: still ? 0 : DUR.ui, ease: EASE") },
 ];
 
 export const TEXT_INPUT_PROPS: readonly PropRow[] = [
@@ -153,14 +155,14 @@ import { TextInput } from "@/components/design-system/TextInput";
   onBlur={() => setTouched(true)}
 />`;
 
-export const TEXT_AREA_VALUES: readonly ValueRow[] = [
-  { part: "Min height sm / md / lg", value: "88 / 112 / 136", source: `${FS}:21, 29, 37` },
-  { part: "Padding", value: "12 top and bottom, 14 sides (16 at lg)", source: "TextArea.tsx:138" },
-  { part: "Grows to", value: "280, then scrolls", source: "TextArea.tsx:12" },
-  { part: "Growth", value: "height over 120ms, none under reduced motion", source: "TextArea.tsx:139" },
-  { part: "Counter near the limit", token: "--ds-color-ink", value: "from 90% of maxLength", source: "Field.tsx:80, 84" },
-  { part: "Counter over the limit", token: "--ds-color-danger-ink", value: "#b42318 at once, 500", source: "Field.tsx:79, 82" },
-  { part: "Box over the limit", token: "--ds-color-danger", value: "after the first blur", source: "TextArea.tsx:74" },
+export const TEXT_AREA_VALUES: readonly CheckedRow[] = [
+  { part: "Min height sm / md / lg", value: "88 / 112 / 136 with its line", source: `${FS}:21, 29, 37`, assert: system(FS, 'area: "min-h-[86px]"', 'area: "min-h-[110px]"', 'area: "min-h-[134px]"') },
+  { part: "Padding", value: "12 top and bottom, 14 sides (16 at lg)", source: `${TA}:138`, assert: system(TA, 'py-3 ${size === "lg" ? "px-4" : "px-3.5"}') },
+  { part: "Grows to", value: "280, then scrolls", source: `${TA}:12, 92`, assert: system(TA, "const MAX_H = 280;", 'natural > MAX_H - 2 ? "auto" : "hidden"') },
+  { part: "Growth", value: "height over 120ms, none under reduced motion", source: `${TA}:139`, assert: system(TA, "transition-[height] duration-(--ds-dur-press) ease-(--ds-ease-out) motion-reduce:transition-none") },
+  { part: "Counter near the limit", token: "--ds-color-ink", value: "from 90% of maxLength", source: "Field.tsx:80, 84", assert: system("Field.tsx", "count >= Math.floor(maxLength * 0.9)", '? "text-(--ds-color-ink)"') },
+  { part: "Counter over the limit", token: "--ds-color-danger-ink", value: "#b42318 at once, 500", source: "Field.tsx:79, 82", assert: system("Field.tsx", "const over = counting && count > maxLength;", '"font-medium text-(--ds-color-danger-ink)"') },
+  { part: "Box over the limit", token: "--ds-color-danger", value: "after the first blur", source: `${TA}:74`, assert: system(TA, "const overError = over > 0 && touched") },
 ];
 
 export const TEXT_AREA_PROPS: readonly PropRow[] = [

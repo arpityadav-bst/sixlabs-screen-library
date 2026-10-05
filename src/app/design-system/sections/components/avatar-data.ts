@@ -34,22 +34,22 @@ export const GROUP_PINS: readonly Pin[] = [
 export const AVATAR_SIZE_ROWS = AVATAR_SIZES;
 
 export const AVATAR_VALUES = [
-  sv("Sizes", AVATAR_SIZES.join(", "), "avatar-sizes.ts:5"),
+  sv("Sizes", AVATAR_SIZES.join(", "), "avatar-sizes.ts:5", undefined, `AVATAR_SIZES: readonly AvatarSize[] = [${AVATAR_SIZES.join(", ")}];`),
   tv("Fill", "color-container"),
   tv("Initials", "color-ink"),
-  sv("Initials size", "24:11, 32:13, 40:16, 48:20, 64:26, 96:34 on the type scale, none at 20, Outfit 500", `${AV}:30`),
-  tv("Model radius", "radius-model", `${AV}:75`),
+  sv("Initials size", "24:11, 32:13, 40:16, 48:20, 64:26, 96:34 on the type scale, none at 20, Outfit 500", `${AV}:30, 98`, undefined, "{ 20: null, 24: 11, 32: 13, 40: 16, 48: 20, 64: 26, 96: 34 }", "font-display font-medium"),
+  tv("Model radius", "radius-model", `${AV}:75`, 'const radius = shape === "model" ? "var(--ds-radius-model)"'),
   tv("AI copy fill", "color-primary"),
-  sv("Status dot", "25% of the size, at least 6", `${AV}:77`),
+  sv("Status dot", "25% of the size, at least 6", `${AV}:77`, undefined, "const dot = Math.max(6, Math.round(size * 0.25));"),
   tv("Live dot", "color-accent"),
   tv("Online dot", "color-success"),
   tv("Away dot", "color-line-strong"),
   tv("Ring", "color-page"),
   tv("Picture fade", "dur-ui"),
-  sv("Hover", "2px ring in line-strong", `${AV}:140`),
-  tv("Pressed", "scale-press-round", `${AV}:142`),
-  sv("Group overlap", "-25% of the size", "AvatarGroup.tsx:61"),
-  sv("Group most", "4, 3 on phones", "AvatarGroup.tsx:48-49"),
+  sv("Hover", "2px ring in line-strong", `${AV}:140`, undefined, "hover:shadow-[0_0_0_2px_var(--ds-color-line-strong)]"),
+  tv("Pressed", "scale-press-round", `${AV}:142`, "active:scale-(--ds-scale-press-round)"),
+  sv("Group overlap", "-25% of the size", "AvatarGroup.tsx:61", undefined, "marginLeft: -size * 0.25"),
+  sv("Group most", "4, 3 on phones", "AvatarGroup.tsx:35, 48-49", undefined, "max = 4,", "const wide = Math.min(max, people.length);", "const narrow = Math.min(max - 1, people.length);"),
   tv("More fill", "color-fill-highlight"),
 ] as const;
 

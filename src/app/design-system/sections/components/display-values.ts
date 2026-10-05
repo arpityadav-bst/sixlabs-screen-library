@@ -1,16 +1,17 @@
 // The drawer-row helpers every Components section shares, built on the kit's token-rows.ts. A token row reads
-// its value and source from tokens.ts, and an unknown name throws, so a typo fails the build. A site row
-// cites the shipped file:line it was read from and carries the exact text it was read off (its needles) as
-// an Assertion, which Coverage collects, so the day the site stops saying it the row turns red. A row citing
-// a site file without a needle throws.
+// its value and source from tokens.ts, and an unknown name throws, so a typo fails the build. A row that cites
+// a file:line, the site's or the system's own, carries the exact text it was read off (its needles) as an
+// Assertion, which Coverage collects, so the day the file stops saying it the row turns red. A row citing a
+// site file without a needle throws here, and a row citing a system file without one is a failing row in
+// Coverage (meta-rows.ts), which also catches a row written as a plain object.
 import type { AnatomyPin } from "@/app/design-system/_kit/anatomy-measure";
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
 import { siteRow, tokenRow } from "@/app/design-system/_kit/token-rows";
-import type { Assertion } from "@/app/design-system/sections/foundations/foundation-assert";
+import { system, type Assertion } from "@/app/design-system/sections/foundations/foundation-assert";
 import { TYPE_ROLES, tokenByName } from "@/components/design-system/tokens";
 
-/** A drawer row, with the Assertion its value is held to when it was read off a site file. */
-export type CheckedRow = ValueRow & { readonly assert?: Assertion };
+/** A drawer row, with the Assertion its value is held to (one per file when it reads off two). */
+export type CheckedRow = ValueRow & { readonly assert?: Assertion | readonly Assertion[] };
 
 /** An Anatomy pin with the text its cited lines must still write (one needle, or one per cite), which
  *  Coverage reads on those lines at build (meta-pins.ts), so a cite that drifts onto a brace turns red. */
@@ -36,11 +37,24 @@ export function siteFile(source: string | undefined): string | undefined {
   return WEBSITE.has(name) ? `components/website/${name}` : undefined;
 }
 
-/** A drawer row for a system token: the kit's tokenRow, which throws on an unknown name. */
-export const tv = tokenRow;
+/** The Assertion a row's needles make: the site file its source names first, or else the system file. */
+function heldTo(source: string | undefined, needles: readonly string[]): Assertion | undefined {
+  if (!source || needles.length === 0) return undefined;
+  const file = siteFile(source);
+  if (file) return { file, needles };
+  return system(source.split(":")[0].trim().replace(/^(src\/)?components\/design-system\//, ""), ...needles);
+}
+
+/** A drawer row for a system token: the kit's tokenRow, which throws on an unknown name, plus the needles
+ *  that hold the file it cites to the token (the text that file writes for it). */
+export function tv(part: string, name: string, source?: string, ...needles: string[]): CheckedRow {
+  const row = tokenRow(part, name, source);
+  const assert = heldTo(source, needles);
+  return assert ? { ...row, assert } : row;
+}
 
 /** A drawer row for a value written in a file: the kit's siteRow (which checks the token it names), plus
- *  the needles a site source must carry, the exact text the value was read off, kept as its Assertion. */
+ *  the needles its source must carry, the exact text the value was read off, kept as its Assertion. */
 export function sv(part: string, value: string, source?: string, token?: string, ...needles: string[]): CheckedRow {
   const file = siteFile(source);
   if (file && needles.length === 0) {
@@ -57,7 +71,8 @@ export function sv(part: string, value: string, source?: string, token?: string,
   if (!source) return plain ? { part, token: tokenRow(part, plain).token, value } : { part, value, ...(role ? { token: role } : {}) };
   const base = siteRow(part, value, source, plain);
   const row: ValueRow = role ? { ...base, token: role } : base;
-  return file ? { ...row, assert: { file, needles } } : row;
+  const assert = heldTo(source, needles);
+  return assert ? { ...row, assert } : row;
 }
 
 /** The height a class string sets, h-N on Tailwind's 4px scale or h-[Npx], so a size ladder reads its rungs

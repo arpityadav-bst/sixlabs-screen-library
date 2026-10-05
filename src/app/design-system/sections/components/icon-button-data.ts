@@ -1,9 +1,9 @@
 // The Icon button section's data: sizes, state lists, anatomy pins, drawer rows and snippets.
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
-import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { PropRow } from "@/app/design-system/_kit/SpecDrawer";
 import { ICON_BUTTON_SIZE, type IconButtonSize, type IconButtonVariant } from "@/components/design-system/icon-button-styles";
 import { FORCE_PROP } from "./act-sel-rows";
-import { sizeNames, sv, tv, type Pin } from "./display-values";
+import { sizeNames, sv, tv, type CheckedRow, type Pin } from "./display-values";
 
 /** The rungs and their icons, read from ICON_BUTTON_SIZE, so the ladder and its captions cannot drift. */
 export const ICON_SIZES: readonly { name: IconButtonSize; px: number; icon: number }[] = sizeNames(ICON_BUTTON_SIZE).map((name) => ({
@@ -63,7 +63,7 @@ export const ARROW_ROWS: readonly KeyRow[] = [
   { key: "focus", value: "The browser outline only.", source: "PlayerCarousel.tsx:136" },
 ];
 
-export const ICON_VALUES: readonly ValueRow[] = [
+export const ICON_VALUES: readonly CheckedRow[] = [
   tv("Elevated fill", "color-surface"),
   tv("Elevated shadow", "shadow-float"),
   tv("Elevated hover fill", "color-fill-hover"),
@@ -79,11 +79,11 @@ export const ICON_VALUES: readonly ValueRow[] = [
   tv("Colour change", "dur-ui"),
   tv("Lift", "dur-line"),
   tv("Press", "spring-press"),
-  sv("Sizes", `${boxes}, icons ${icons}`, "icon-button-styles.ts:23-27"),
-  sv("Pressed", "scale 0.94 (SCALE.pressRound)", "IconButton.tsx:100-101"),
-  sv("Toggled", "ghost, outline and elevated fill navy, glass turns white", "icon-button-styles.ts:36-37, 49"),
-  tv("Toggled hover", "color-primary-hover", "button-styles.ts:59-64"),
-  sv("Icon swap", "160ms cross-fade with a quarter turn", "IconButton.tsx:109"),
+  sv("Sizes", `${boxes}, icons ${icons}`, "icon-button-styles.ts:23-27", undefined, ...ICON_SIZES.map((s) => `${s.name}: { box: "${ICON_BUTTON_SIZE[s.name].box}", h: "${ICON_BUTTON_SIZE[s.name].h}", px: ${s.px}, icon: ${s.icon},`)),
+  sv("Pressed", "scale 0.94 (SCALE.pressRound)", "IconButton.tsx:100-101", undefined, 'animate: { scale: force === "pressed" ? SCALE.pressRound : 1 },', "whileTap: live && !force ? { scale: SCALE.pressRound } : undefined,"),
+  sv("Toggled", "ghost, outline and elevated fill navy, glass turns white", "icon-button-styles.ts:36-37, 49", undefined, '"aria-pressed:border-(--ds-color-primary) aria-pressed:bg-(--ds-color-primary) aria-pressed:text-white"', "aria-pressed:border-transparent aria-pressed:bg-(--ds-color-surface) aria-pressed:text-(--ds-color-ink)"),
+  tv("Toggled hover", "color-primary-hover", "button-styles.ts:59-64", "aria-pressed:hover:border-(--ds-color-primary-hover) aria-pressed:hover:bg-(--ds-color-primary-hover)"),
+  sv("Icon swap", "160ms cross-fade with a quarter turn", "IconButton.tsx:109, 114, 119", undefined, 'const turn = "transition-[opacity,rotate] duration-(--ds-dur-quick) ease-(--ds-ease-out)', '"rotate-90 opacity-0"', '"-rotate-90 opacity-0"'),
 ];
 
 export const ICON_PROPS: readonly PropRow[] = [

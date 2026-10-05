@@ -26,7 +26,7 @@ Import with the alias, for example `import { Spec } from "@/app/design-system/_k
 
 ## Rules every section follows
 
-- **The live site does not change.** Never edit `src/components/website/**`, `src/components/tiles/**`, `src/tiles/**`, `src/app/globals.css`, `src/app/layout.tsx`, `src/app/website/**`, `src/app/6labs-fullview/**`, `src/app/tiles/**`, `public/**`, `next.config.ts` or `package.json`.
+- **The live site does not change.** Never edit `src/components/website/**`, `src/components/tiles/**`, `src/tiles/**`, `src/app/globals.css`, `src/app/layout.tsx`, `src/app/website/**`, `src/app/6labs-fullview/**`, `src/app/tiles/**`, `public/**`, `next.config.ts` or `package.json` (whose one design-system line is the `ds:check` script).
 - **Real parts only.** A specimen of a shipped part imports it from `@/components/website/...` or `@/components/tiles/...`, or frames a real route. Never copy its markup or class strings.
 - **New parts look shipped.** A part from `src/components/design-system` is shown exactly like a shipped one. No "proposed" or "shipped" tags anywhere.
 - **Chrome is ds- prefixed.** Guide classes start with `ds-`. Section CSS goes in a CSS module beside the section (`button.module.css`), and its class names still start with `ds-`. Nothing may restyle the site.
@@ -38,7 +38,7 @@ Import with the alias, for example `import { Spec } from "@/app/design-system/_k
 - **Ids.** The guide document must never render `#players`, `#model-line` or `#site-head`. If a section mounts a site part that carries an id (`understands`, `faq`, `get-access`, `jobs`), list that id in the section's `renders` in the catalog, so two sections never mount the same one. A Spec `id` must not equal a site id or a catalog id.
 - **Files stay under 300 lines.** Split before that.
 - **Never name a file under `sections/` after a Next special file**: `page`, `layout`, `loading`, `error`, `template`, `not-found`, `default`, `route`, `global-error`, `forbidden`, `unauthorized`. `sections/` is a plain folder inside `app/`, so such a file becomes a real route or boundary. That is why three plan files moved (see below).
-- **Check your own work** with `npx tsc --noEmit -p .` and `npx eslint <your files>`. Never run `next build`, a dev server or a browser.
+- **Check your own work** with `npm run ds:check` (TypeScript, the DESIGN.md check and the guide's build checks with every assertion, exiting non-zero on any failure, see below) and `npx eslint <your files>`. Never run `next build`, a dev server or a browser.
 
 ## Adding a section
 
@@ -77,7 +77,7 @@ The nav, the page order, the index card's counts and the coverage table read onl
 | `isShipped(cover)` | true for `src/components/website` and `src/components/tiles` sources |
 | `catalogCounts()` | `{ groups, sections, components, shipped, added, states }` (a part covered twice counts once). `src/app/page.tsx` hands them to the index card |
 | `SITE_IDS`, `FORBIDDEN_IDS` | ids the site's own parts carry (a section's `renders` is typed from them), and the three the guide may never render |
-| `INTERNAL_PARTS` | system parts that are pieces of another on purpose (CardTitle, DialogPanel, TooltipBubble, SelectPanel), which no section covers |
+| `INTERNAL_PARTS` | system parts that are pieces of another on purpose (CardTitle, DialogPanel, TooltipBubble, SelectPanel, IndexCard), which no section covers. Coverage lists them apart, owing no specimen and no states |
 | `catalogProblems()` | data mistakes (duplicate ids, a site id used as a section id, a forbidden or doubled `renders`, an internal part covered, a state both shown and waived) |
 
 `catalog-check.ts` adds the checks that read the source: every system part a section names as a spec `source` must be one of that section's covers, and a whole chapter's DESIGN.md heading must match the catalog (`designMdTitle` when it differs from the title). `(guide)/page.tsx` throws on any of these and on `tokenProblems()` at build. Each group carries a one-sentence `lead`, printed under its label.
@@ -238,6 +238,8 @@ A closed `details` whose summary names what it holds ("Values", "Values and code
 
 `tokenRow(part, name, source?)` makes a values row from a token (its value and source from `tokens.ts`), `siteRow(part, value, source, token?)` one from a value written in a site file, and `tokenValue(name)` reads one value. All three throw on an unknown token name, so a typo fails the build.
 
+A row that cites a file:line carries the exact text it was read off, its needles, as an Assertion Coverage checks. In Components, `sv(part, value, source, token?, ...needles)` and `tv(part, name, source?, ...needles)` (`sections/components/display-values.ts`) hold the needles to the first file the source names, and `sv` throws on a site source with none. A row written as an object takes `assert: system("choice-styles.ts", "tick: 14")` (or `site(...)`, both from `foundation-assert.ts`), or a list of them when it reads off two files, and its array is typed `CheckedRow[]`. A row that cites a file in `src/components/design-system` with no needle fails Coverage (`meta/meta-rows.ts`).
+
 ### DoDont, Do, Dont (`DoDont.tsx`)
 
 ```tsx
@@ -283,6 +285,10 @@ The signal helpers live in `frame/_parts/shell-signals.tsx`: `ScrollTo`, `Signal
 ## The measuring kit
 
 Anatomy, StateGrid and Forced, SizeLadder, TokenSwatch and ContrastBadge, ViewportPreview, HeavySlot and the GL budget, EaseDemo, Timeline, useMetrics and Metrics are documented in `README-measure.md` beside this file. Their styles are `ds-measure.css` and `ds-chart.css`, imported in `(guide)/layout.tsx` after `ds-spec.css`. A new kit stylesheet is imported there after `ds-chart.css`.
+
+## The check command
+
+`npm run ds:check` runs `tools/design-md/ds-check.mjs`: `tsc --noEmit -p .`, `node tools/design-md/build.mjs --check`, then the guide's build checks in node (`catalogProblems`, `tokenProblems`, `sourceProblems` and the assertion report Coverage prints). Each step runs even after one fails, and any failure exits 1. `--guide` runs the last step alone. It is not wired into `next build`, so documentation drift never fails a deploy.
 
 ## Build-time source reads
 

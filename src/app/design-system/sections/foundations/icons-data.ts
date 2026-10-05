@@ -31,6 +31,8 @@ import type { AnatomyPin } from "@/app/design-system/_kit/Anatomy";
 import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
 import { ICON_BOX, renderedStroke } from "@/components/design-system/Icon";
 import { ICON_STROKE, type IconSize } from "@/components/design-system/tokens";
+import type { CheckedRow } from "@/app/design-system/sections/components/display-values";
+import { system } from "./foundation-assert";
 import { cite } from "./foundation-scan";
 import { BUTTON_PAIRS, LADDER_SIZES } from "./icons-set";
 
@@ -43,11 +45,12 @@ const BOX = cite(ICON, "export const ICON_BOX");
 /** The footer's Back to top writes its own 7px gap, the system pairs a 14 icon at the 6 step. */
 const FOOTER_GAP = cite(FOOTER, "gap-[7px]").source;
 
-export const LADDER_VALUES: readonly ValueRow[] = LADDER_SIZES.map((px) => ({
+export const LADDER_VALUES: readonly CheckedRow[] = LADDER_SIZES.map((px) => ({
   part: `${px}`,
   token: `--ds-icon-${px}, --ds-icon-${px}-stroke`,
   value: `${px}px · strokeWidth ${ICON_STROKE[px]} · renders ${renderedStroke(px).toFixed(2)}px`,
   source: cite(`${DS}/token-shape.ts`, `[${px}, ${ICON_STROKE[px]}, "`).source,
+  assert: system("token-shape.ts", `[${px}, ${ICON_STROKE[px]}, "`),
 }));
 
 export const ICON_PROPS: readonly PropRow[] = [
@@ -81,11 +84,13 @@ export const FORM_PINS: readonly AnatomyPin[] = [
 export const BOXED_SIZES: readonly IconSize[] = [16, 18, 20];
 export const BOXED_RUNGS = BOXED_SIZES.map((px) => ({ px, box: ICON_BOX[px] }));
 
-export const FORM_VALUES: readonly ValueRow[] = [
-  { part: "Inline shift", value: "vertical-align -0.125em", source: INLINE.source },
-  { part: "Box fill", token: "--ds-color-surface", value: "#ffffff", source: BOXED.source },
-  { part: "Box line", token: "--ds-color-line", value: "1px oklch(92.9% 0.013 255.508 / 0.8)", source: BOXED.source },
-  ...BOXED_RUNGS.map((r) => ({ part: `Box at ${r.px}`, value: `${r.box} circle`, source: BOX.source })),
+export const FORM_VALUES: readonly CheckedRow[] = [
+  { part: "Inline shift", value: "vertical-align -0.125em", source: INLINE.source, assert: system("Icon.tsx", 'form === "inline" ? "inline-block align-[-0.125em]"') },
+  { part: "Box fill", token: "--ds-color-surface", value: "#ffffff", source: BOXED.source, assert: system("Icon.tsx", "bg-(--ds-color-surface)") },
+  { part: "Box line", token: "--ds-color-line", value: "1px oklch(92.9% 0.013 255.508 / 0.8)", source: BOXED.source,
+    assert: system("Icon.tsx", "rounded-full border border-(--ds-color-line)") },
+  ...BOXED_RUNGS.map((r) => ({ part: `Box at ${r.px}`, value: `${r.box} circle`, source: BOX.source,
+    assert: system("Icon.tsx", `${r.px}: ${r.box}`) })),
 ];
 
 /** Icon beside text: the size steps with the line it sits in, at the system gap. Labels are the site's own
@@ -98,7 +103,7 @@ export const TEXT_PAIRS: readonly {
   { size: 16, icon: Clapperboard, text: "Evidence clips", px: 15, gap: 8, from: "Jobs.tsx:36" },
 ];
 
-export const PAIR_VALUES: readonly ValueRow[] = [
+export const PAIR_VALUES: readonly CheckedRow[] = [
   ...TEXT_PAIRS.map((p) => ({
     part: `${p.size} with ${p.px}px text`,
     token: p.gap === 6 ? "--ds-space-1-5" : "--ds-space-2",
@@ -106,7 +111,8 @@ export const PAIR_VALUES: readonly ValueRow[] = [
     source: p.from,
   })),
   ...BUTTON_PAIRS.map((p) => ({ part: `IconButton ${p.size}`, value: `${p.box} box · icon ${p.size === "xl" ? 20 : 18}`,
-    source: cite(`${DS}/icon-button-styles.ts`, `${p.size}: { box:`).source })),
+    source: cite(`${DS}/icon-button-styles.ts`, `${p.size}: { box:`).source,
+    assert: system("icon-button-styles.ts", `${p.size}: { box: "h-${p.box / 4} w-${p.box / 4}", h: "h-${p.box / 4}", px: ${p.box}, icon: ${p.size === "xl" ? 20 : 18},`) })),
 ];
 
 export type ShippedTone = "ink" | "ink-70" | "muted" | "quiet" | "accent" | "white";

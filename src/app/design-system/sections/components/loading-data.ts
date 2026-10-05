@@ -1,9 +1,10 @@
 // The Spinner and skeleton section's data: anatomy pins, drawer rows, props and snippets. Values come from
 // tokens.ts wherever a token holds them. The two spinners the site hand-rolls are cited where they live.
-import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { PropRow } from "@/app/design-system/_kit/SpecDrawer";
+import { system } from "@/app/design-system/sections/foundations/foundation-assert";
 import type { SpinnerSize } from "@/components/design-system/Spinner";
 import { SPINNER_BORDER } from "@/components/design-system/token-shape";
-import { sv, tokenSource, tv, type Pin } from "./display-values";
+import { sv, tokenSource, tv, type CheckedRow, type Pin } from "./display-values";
 
 const SP = "Spinner.tsx";
 const SK = "Skeleton.tsx";
@@ -21,15 +22,15 @@ export const SPINNER_PINS: readonly Pin[] = [
   { selector: "[data-pin=busy] .animate-spin", name: "Decorative ring", value: "aria-hidden, no delay", source: "Button.tsx:134", expect: "<Spinner size={spinner} delay={0} decorative />" },
 ];
 
-export const SPINNER_VALUES: readonly ValueRow[] = [
-  sv("Ring", "currentColor border, border-top transparent", `${SP}:51`),
+export const SPINNER_VALUES: readonly CheckedRow[] = [
+  sv("Ring", "currentColor border, border-top transparent", `${SP}:51`, undefined, "rounded-full border-current border-t-transparent"),
   tv("Border at 16", "stroke-spinner"),
-  sv("Borders by size", SPINNER_SIZES.map((s) => `${s.size}: ${s.border}`).join(" · "), "token-shape.ts:111"),
-  sv("Turn", "animate-spin, 1s linear", `${SP}:51`),
-  sv("Turn, reduced motion", "1.5s linear, still turning", `${SP}:52`),
-  sv("Delay", "300ms at opacity 0, then shown", `${SP}:57-58`),
-  tv("Quiet tone", "color-text-quiet", `${SP}:22`),
-  tv("On dark tone", "color-on-blue-80", `${SP}:23`),
+  sv("Borders by size", SPINNER_SIZES.map((s) => `${s.size}: ${s.border}`).join(" · "), "token-shape.ts:111", undefined, `= { ${SPINNER_SIZES.map((s) => `${s.size}: ${s.border}`).join(", ")} };`),
+  sv("Turn", "animate-spin, 1s linear", `${SP}:51`, undefined, '"block shrink-0 animate-spin '),
+  sv("Turn, reduced motion", "1.5s linear, still turning", `${SP}:52`, undefined, "motion-reduce:animate-[spin_1.5s_linear_infinite]"),
+  { part: "Delay", value: "300ms at opacity 0, then shown", source: `${SP}:41, 57-58, atoms.module.css:5-6`, assert: [system(SP, "delay = 300,", 'const wait = delay > 0 ? styles["ds-delay-in"] : "";', "animationDelay: `${delay}ms`"), system("atoms.module.css", ".ds-delay-in {", "opacity: 0;", "animation: ds-delay-in 0s linear forwards;")] },
+  tv("Quiet tone", "color-text-quiet", `${SP}:22`, 'quiet: "text-(--ds-color-text-quiet)",'),
+  tv("On dark tone", "color-on-blue-80", `${SP}:23`, 'onDark: "text-(--ds-color-on-blue-80)",'),
   sv("Replaces", "the wave button's 16 ring", "components/website/HeroBits.tsx:114", undefined, "block h-4 w-4 animate-spin rounded-full border-[1.75px] border-current border-t-transparent"),
   sv("Replaces", "the terminal's 8 ring", "components/website/JobTerminal.tsx:216", undefined, "block h-2 w-2 animate-spin rounded-full border border-slate-500 border-t-transparent"),
 ];
@@ -47,18 +48,18 @@ export const SPINNER_CODE = `import { Spinner } from "@/components/design-system
 <Spinner />                      // 16, waits 300ms, role status
 <Spinner size={24} tone="quiet" label="Loading answers" />`;
 
-export const SKELETON_VALUES: readonly ValueRow[] = [
-  tv("Fill on white and the page", "color-skeleton", "atoms.module.css:19"),
-  tv("Fill on the container", "color-skeleton-container", "atoms.module.css:22"),
-  tv("Shimmer band", "color-shimmer", "atoms.module.css:29"),
-  tv("Shimmer pass", "dur-shimmer", "atoms.module.css:31"),
-  sv("Shimmer travel", "40% band, translateX -100% to 250%, transform only", "atoms.module.css:28"),
-  sv("line", "12 tall, full width, pill", `${SK}:10`),
-  sv("title", "22 tall, 60% wide, radius 8", `${SK}:11`),
-  sv("circle", "40, pill", `${SK}:12`),
-  sv("rect", "120 tall, radius 16", `${SK}:13`),
-  sv("Reduced motion", "no shimmer, the fill stays", "atoms.module.css:42"),
-  sv("Group", "aria-busy true, hidden \"Loading\"", `${SK}:61`),
+export const SKELETON_VALUES: readonly CheckedRow[] = [
+  tv("Fill on white and the page", "color-skeleton", "atoms.module.css:19", "background: var(--ds-color-skeleton);"),
+  tv("Fill on the container", "color-skeleton-container", "atoms.module.css:22", "background: var(--ds-color-skeleton-container);"),
+  tv("Shimmer band", "color-shimmer", "atoms.module.css:29", "linear-gradient(90deg, transparent, var(--ds-color-shimmer), transparent);"),
+  tv("Shimmer pass", "dur-shimmer", "atoms.module.css:31", "animation: ds-shimmer var(--ds-dur-shimmer) linear infinite;"),
+  sv("Shimmer travel", "40% band, translateX -100% to 250%, transform only", "atoms.module.css:28, 35, 38", undefined, "width: 40%;", "transform: translateX(-100%);", "transform: translateX(250%);"),
+  sv("line", "12 tall, full width, pill", `${SK}:10`, undefined, 'line: { h: 12, w: "100%", r: "var(--ds-radius-full)" },'),
+  sv("title", "22 tall, 60% wide, radius 8", `${SK}:11`, undefined, 'title: { h: 22, w: "60%", r: "var(--ds-radius-bubble)" },'),
+  sv("circle", "40, pill", `${SK}:12`, undefined, 'circle: { h: 40, w: "40px", r: "var(--ds-radius-full)" },'),
+  sv("rect", "120 tall, radius 16", `${SK}:13`, undefined, 'rect: { h: 120, w: "100%", r: "var(--ds-radius-sm)" },'),
+  sv("Reduced motion", "no shimmer, the fill stays", "atoms.module.css:41-45", undefined, "@media (prefers-reduced-motion: reduce) {", "animation: none;", "opacity: 0;"),
+  sv("Group", "aria-busy true, hidden \"Loading\"", `${SK}:52, 61-62`, undefined, 'label = "Loading",', '<div aria-busy="true"', '<span className="sr-only">{label}</span>'),
 ];
 
 export const SKELETON_PROPS: readonly PropRow[] = [

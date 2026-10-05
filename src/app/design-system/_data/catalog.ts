@@ -94,6 +94,8 @@ export const INTERNAL_PARTS: readonly (Pick<Cover, "component" | "source"> & { r
   { component: "DialogPanel", source: "src/components/design-system/DialogPanel.tsx", of: "Dialog" },
   { component: "TooltipBubble", source: "src/components/design-system/TooltipBubble.tsx", of: "Tooltip" },
   { component: "SelectPanel", source: "src/components/design-system/select-panel.tsx", of: "Select" },
+  { component: "IndexCard", source: "src/components/design-system/IndexCard.tsx", of: "the project index page" },
+  { component: "IndexCardArt", source: "src/components/design-system/index-card-art.tsx", of: "IndexCard" },
 ];
 
 /** Ids the guide document must never render at all (the site's scroll and header code looks them up). */

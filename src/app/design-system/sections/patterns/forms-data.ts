@@ -83,12 +83,12 @@ export const FORM_VALUES = [
   tv("Between fields", "space-5", `${G}:38`),
   tv("Before the actions", "space-8", `${G}:48`),
   tv("Card padding", "space-6"),
-  sv("Label", "above its field, never inside it as a placeholder", `${D}Field.tsx:89`),
-  sv("Field sizes", "sm 36, md 44, lg 52 · 16px text under md", `${D}field-styles.ts:9`),
-  sv("Error", "under the field, danger ink, with an icon, once the field is left or on submit", `${D}Field.tsx:128`, "--ds-color-danger-ink"),
+  sv("Label", "above its field, never inside it as a placeholder", `${D}Field.tsx:90`, undefined, '<label id={ids.label} htmlFor={id} data-slot="label"'),
+  sv("Field sizes", "sm 36, md 44, lg 52 · 16px text under md", `${D}field-styles.ts:16-17, 24-25, 32`, undefined, 'h: "h-9"', 'h: "h-11"', 'h: "h-13"', "max-md:text-[16px] max-md:leading-6"),
+  sv("Error", "under the field, danger ink, with an icon, once the field is left or on submit", `${D}Field.tsx:134, 136`, "--ds-color-danger-ink", 'invalid ? "text-(--ds-color-danger-ink)"', "<CircleAlert aria-hidden size={14}"),
   tv("Invalid halo", "color-danger-halo"),
-  sv("Submit", "a busy Button: label held at opacity 0, a centred Spinner, clicks ignored", `${D}Button.tsx:127`),
-  sv("Success", "an inline Toast, tone success, then the line resets", `${D}Toast.tsx:53`),
+  sv("Submit", "a busy Button: label held at opacity 0, a centred Spinner, clicks ignored", `${D}Button.tsx:83, 118, 127, 132-133`, undefined, "const live = !disabled && !loading;", "if (!live) return e.preventDefault();", '${loading ? "opacity-0" : ""}', '<span className="absolute inset-0 grid place-items-center">'),
+  sv("Success", "an inline Toast, tone success, then the line resets", `${D}Toast.tsx:15, 18`, undefined, "success: CircleCheck", 'success: "text-(--ds-color-success-on-dark)"'),
 ] as const;
 
 export const FORM_PROPS = [

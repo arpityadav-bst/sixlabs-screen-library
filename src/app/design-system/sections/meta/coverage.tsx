@@ -21,14 +21,15 @@ export function CoverageSection() {
   const r = coverageReport();
   const a = r.asserts;
   const stats = [
-    { value: `${r.specimened}/${r.exported}`, label: ["Components", "specimened"], tone: INK, live: false },
+    { value: `${r.specimened}/${r.owing}`, label: ["Components", "specimened"], tone: INK, live: false },
     { value: `${r.owedShown}/${r.owedTotal}`, label: ["Control states", "shown"], tone: INK, live: false },
     { value: `${a.passing}/${a.total}`, label: ["Assertions", "passing"], tone: INK, live: false },
   ];
   const held = (rows: { ok: boolean }[]) => `${rows.filter((x) => x.ok).length} of ${rows.length} hold`;
   const values = [
     { part: "Exports scanned", value: String(r.exported), source: PART_DIRS.join(", ") },
-    { part: "Specimened", value: `${r.specimened} (${r.percent}%)` },
+    { part: "Internal parts", value: String(r.internal.length) },
+    { part: "Specimened", value: `${r.specimened} of ${r.owing} (${r.percent}%)` },
     { part: "Controls", value: String(r.rows.filter((x) => x.interactive).length) },
     { part: "Derived tokens", value: String(a.derived.length) },
   ];
@@ -71,7 +72,7 @@ export function CoverageSection() {
       <Spec
         title="Not specimened"
         source={SOURCE}
-        role="The worklist: exports no catalog section lists in its covers yet, each with the line it starts on."
+        role="The worklist: exports no catalog section lists in its covers yet, each with the line it starts on. Internal parts follow apart, each with the part it belongs to."
         warn={r.unresolved.length ? `Covers that match no export: ${r.unresolved.join(", ")}` : undefined}
       >
         <Canvas ground="page" layout="stack" label="Exports without a specimen">
@@ -85,6 +86,15 @@ export function CoverageSection() {
               ))}
             </div>
           ))}
+          {r.internal.length > 0 && (
+            <div className={s["ds-mt-chips"]} aria-label="Internal parts" role="group">
+              {r.internal.map((p) => (
+                <span key={`${p.source}#${p.component}`} className="ds-chip ds-chip--static">
+                  {`<${p.component}> internal, of ${p.of}`}
+                </span>
+              ))}
+            </div>
+          )}
         </Canvas>
       </Spec>
 

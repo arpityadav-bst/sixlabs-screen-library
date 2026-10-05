@@ -1,8 +1,9 @@
 // The Tooltip section's data: anatomy pins, the drawer rows, props and the snippet. The specimen labels are
 // the site's own aria-labels (Back to top, Previous player, Next player) or filler.
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
-import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
-import { sv, tv, type Pin } from "./display-values";
+import type { PropRow } from "@/app/design-system/_kit/SpecDrawer";
+import { system } from "@/app/design-system/sections/foundations/foundation-assert";
+import { sv, tv, type CheckedRow, type Pin } from "./display-values";
 
 const T = "Tooltip.tsx";
 const B = "TooltipBubble.tsx";
@@ -15,23 +16,23 @@ export const TOOLTIP_PINS: readonly Pin[] = [
   { selector: "[data-arrow=top]", name: "Arrow", value: "8 by 4, the bubble's fill, off by default", source: `${B}:35-37`, expect: ["w: 8", "M0 0H8L4 4Z"] },
 ];
 
-export const TOOLTIP_VALUES: readonly ValueRow[] = [
-  tv("Bubble", "color-primary", `${B}:13`),
-  sv("Words", "Inter 12 / 16 / 500, white", `${B}:28`),
-  sv("Box", "padding 6 by 8, radius 8, max width 240", `${B}:28`),
-  tv("Shadow", "shadow-tooltip", `${B}:29`),
-  tv("Shortcut", "color-on-blue-50", `${B}:18`),
-  tv("Inverse bubble", "color-surface", `${B}:14`),
-  tv("Inverse words", "color-ink", `${B}:14`),
-  sv("Offset", "8 from the trigger", `${P}:7`),
-  sv("Collision padding", "8 to the viewport, flips then slides", `${P}:9`),
-  tv("Layer", "z-tooltip", `${T}:253`),
-  sv("Open delay", "400ms from hover, 0 from keyboard focus", `${T}:84, 127-130`),
-  sv("Skip window", "600ms after the last one closed, the next opens at once", `${T}:33, 119`),
-  sv("Grace", "100ms to cross from the trigger onto the bubble", `${T}:35, 125`),
-  sv("In", "opacity, scale 0.96 and 4px toward the trigger, 160ms ease out", `${T}:255-256`),
-  tv("Out", "dur-press", `${T}:257`),
-  sv("Reduced motion", "opacity only", `${T}:255`),
+export const TOOLTIP_VALUES: readonly CheckedRow[] = [
+  tv("Bubble", "color-primary", `${B}:13`, 'default: "bg-(--ds-color-primary) text-white"'),
+  sv("Words", "Inter 12 / 16 / 500, white", `${B}:13, 28-29`, undefined, 'default: "bg-(--ds-color-primary) text-white"', "font-sans text-[12px] font-medium", '"leading-4 shadow-(--ds-shadow-tooltip)"'),
+  sv("Box", "padding 6 by 8, radius 8, max width 240", `${B}:28`, undefined, "max-w-[240px] rounded-(--ds-radius-bubble) px-2 py-1.5"),
+  tv("Shadow", "shadow-tooltip", `${B}:29`, "shadow-(--ds-shadow-tooltip)"),
+  tv("Shortcut", "color-on-blue-50", `${B}:18`, 'default: "text-(--ds-color-on-blue-50)"'),
+  tv("Inverse bubble", "color-surface", `${B}:14`, 'inverse: "bg-(--ds-color-surface) text-(--ds-color-ink)"'),
+  tv("Inverse words", "color-ink", `${B}:14`, 'inverse: "bg-(--ds-color-surface) text-(--ds-color-ink)"'),
+  sv("Offset", "8 from the trigger", `${P}:7`, undefined, "export const TOOLTIP_OFFSET = 8;"),
+  sv("Collision padding", "8 to the viewport, flips then slides", `${P}:9`, undefined, "export const TOOLTIP_PADDING = 8;"),
+  tv("Layer", "z-tooltip", `${T}:253`, "z-(--ds-z-tooltip)"),
+  sv("Open delay", "400ms from hover, 0 from keyboard focus", `${T}:84, 127-130`, undefined, "delay = 400,", 'e.target.matches(":focus-visible")'),
+  sv("Skip window", "600ms after the last one closed, the next opens at once", `${T}:33, 119`, undefined, "export const TOOLTIP_SKIP = 600;", "if (Date.now() - lastClosed < TOOLTIP_SKIP) show();"),
+  sv("Grace", "100ms to cross from the trigger onto the bubble", `${T}:35, 125`, undefined, "const GRACE = 100;", "timer.current = window.setTimeout(hide, GRACE);"),
+  { part: "In", value: "opacity, scale 0.96 and 4px toward the trigger, 160ms ease out", source: `${T}:68-71, 255-256, overlay-motion.ts:27`, assert: [system(T, "top: { y: 4, originY: 1 }", "{ opacity: 0, scale: SCALE.panel, x: toward.x ?? 0, y: toward.y ?? 0 }", "transition: { duration: OVERLAY.tooltipIn, ease: EASE } }"), system("overlay-motion.ts", 'tooltipIn: seconds("dur-quick")')] },
+  { ...tv("Out", "dur-press", `${T}:257, overlay-motion.ts:29`), assert: [system(T, "exit={{ opacity: 0, transition: { duration: OVERLAY.tooltipOut, ease: EASE_IN } }}"), system("overlay-motion.ts", 'tooltipOut: seconds("dur-press")')] },
+  sv("Reduced motion", "opacity only", `${T}:255`, undefined, "initial={reduced ? { opacity: 0 } :"),
 ];
 
 export const TOOLTIP_PROPS: readonly PropRow[] = [

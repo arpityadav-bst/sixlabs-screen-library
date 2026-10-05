@@ -1,10 +1,11 @@
 // Data for the Slider section: states, pins, the drawer's values and props, code, and the keyboard model.
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
 import { contrastRatio } from "@/app/design-system/_kit/contrast";
-import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { PropRow } from "@/app/design-system/_kit/SpecDrawer";
+import { system } from "@/app/design-system/sections/foundations/foundation-assert";
 import { SLIDER_TONE } from "@/components/design-system/slider-styles";
 import { WATER, restColour } from "../contrast-pairs";
-import type { Pin } from "../display-values";
+import type { CheckedRow, Pin } from "../display-values";
 
 const SS = "slider-styles.ts";
 
@@ -27,20 +28,20 @@ export const SLIDER_PINS: readonly Pin[] = [
   { selector: "[data-slot=ticks]", name: "Ticks", token: "--ds-color-line-strong", value: "1 x 6, navy inside the range", source: "Slider.tsx:226,231", expect: ['data-slot="ticks"', "h-1.5 w-px"], side: "right" },
 ];
 
-export const SLIDER_VALUES: readonly ValueRow[] = [
-  { part: "Rail sm / md / lg", value: "2 / 4 / 6", source: `${SS}:12-14` },
-  { part: "Thumb sm / md / lg", value: "14 / 18 / 22, a 40 circle hit area", source: `${SS}:12-14, 47-48` },
-  { part: "Rail", token: "--ds-color-line", value: "slate 200, slate 300 on hover", source: `${SS}:22-23` },
-  { part: "Range", token: "--ds-color-primary", value: "#0a152d", source: `${SS}:24` },
-  { part: "Thumb", token: "--ds-color-line-field", value: "white, 1px #848fa1, 0 1px 3px ink at 25%", source: `${SS}:25` },
-  { part: "Hover", value: "thumb scale 1.1", source: `${SS}:51` },
-  { part: "Dragging", value: "thumb scale 1.15 and the bubble", source: "Slider.tsx:207" },
-  { part: "Bubble", token: "--ds-color-primary", value: "navy, white 12/16 500 tabular, radius 8, 8 above", source: `${SS}:53-55` },
-  { part: "Page step", value: "a tenth of the range, at least one step", source: "Slider.tsx:118" },
-  { part: "On blue rail", token: "--ds-color-on-blue-20", value: "white 20%, the trait bar's", source: `${SS}:33` },
-  { part: "On blue range", token: "--ds-color-surface", value: "white", source: `${SS}:35` },
-  { part: "On blue thumb", token: "--ds-color-primary", value: "white with a 2px navy ring", source: `${SS}:36` },
-  { part: "Pointer", value: "touch-action pan-y, the page still scrolls", source: "Slider.tsx:171" },
+export const SLIDER_VALUES: readonly CheckedRow[] = [
+  { part: "Rail sm / md / lg", value: "2 / 4 / 6", source: `${SS}:12-14`, assert: system(SS, 'sm: { rail: "h-0.5"', 'md: { rail: "h-1"', 'lg: { rail: "h-1.5"') },
+  { part: "Thumb sm / md / lg", value: "14 / 18 / 22, a 40 circle hit area", source: `${SS}:12-14, 47-48`, assert: system(SS, 'thumb: "h-3.5 w-3.5"', 'thumb: "h-[18px] w-[18px]"', 'thumb: "h-[22px] w-[22px]"', "before:h-10 ", "before:w-10", "before:rounded-full") },
+  { part: "Rail", token: "--ds-color-line", value: "slate 200, slate 300 on hover", source: `${SS}:22-23`, assert: system(SS, 'rail: "bg-(--ds-color-line)"', 'railHover: "group-hover/slider:bg-(--ds-color-line-strong)') },
+  { part: "Range", token: "--ds-color-primary", value: "#0a152d", source: `${SS}:24`, assert: system(SS, 'range: "bg-(--ds-color-primary)"') },
+  { part: "Thumb", token: "--ds-color-line-field", value: "white, 1px #848fa1, 0 1px 3px ink at 25%", source: `${SS}:25, choice-styles.ts:96`, assert: [system(SS, "thumb: `border border-(--ds-color-line-field) bg-(--ds-color-surface) ${THUMB_SHADOW}`"), system("choice-styles.ts", "shadow-[0_1px_3px_color-mix(in_srgb,var(--ds-color-ink)_25%,transparent)]")] },
+  { part: "Hover", value: "thumb scale 1.1", source: `${SS}:51`, assert: system(SS, 'THUMB_HOVER = "hover:scale-110 data-[force=hover]:scale-110"') },
+  { part: "Dragging", value: "thumb scale 1.15 and the bubble", source: "Slider.tsx:207, 217", assert: system("Slider.tsx", 'dragging ? "scale-[1.15]"', 'dragging ? "translate-y-0 opacity-100"') },
+  { part: "Bubble", token: "--ds-color-primary", value: "navy, white 12/16 500 tabular, radius 8, 8 above", source: `${SS}:30, 53-55`, assert: system(SS, 'bubble: "bg-(--ds-color-primary) text-white', "absolute bottom-full left-1/2 mb-2", "rounded-(--ds-radius-bubble) px-2 py-1", "text-[12px] font-medium leading-4 tabular-nums") },
+  { part: "Page step", value: "a tenth of the range, at least one step", source: "Slider.tsx:118", assert: system("Slider.tsx", "const big = Math.max(step, Math.round(span / 10 / step) * step);") },
+  { part: "On blue rail", token: "--ds-color-on-blue-20", value: "white 20%, the trait bar's", source: `${SS}:33`, assert: system(SS, 'rail: "bg-(--ds-color-on-blue-20)"') },
+  { part: "On blue range", token: "--ds-color-surface", value: "white", source: `${SS}:35`, assert: system(SS, 'range: "bg-(--ds-color-surface)"') },
+  { part: "On blue thumb", token: "--ds-color-primary", value: "white with a 2px navy ring", source: `${SS}:36`, assert: system(SS, "thumb: `border-2 border-(--ds-color-primary) bg-(--ds-color-surface)") },
+  { part: "Pointer", value: "touch-action pan-y, the page still scrolls", source: "Slider.tsx:171", assert: system("Slider.tsx", "relative h-6 touch-pan-y") },
 ];
 
 export const SLIDER_PROPS: readonly PropRow[] = [

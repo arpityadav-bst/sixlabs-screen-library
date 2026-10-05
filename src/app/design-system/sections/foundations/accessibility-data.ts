@@ -3,7 +3,8 @@
 import type { ReactNode } from "react";
 import type { AnatomyPin } from "@/app/design-system/_kit/Anatomy";
 import type { KeyRow } from "@/app/design-system/_kit/KeyRows";
-import type { ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { CheckedRow } from "@/app/design-system/sections/components/display-values";
+import { system } from "./foundation-assert";
 
 export const TARGET_MIN = 24;
 export const TARGET_TOUCH = 44;
@@ -33,7 +34,7 @@ export const BURGER_PINS: readonly (AnatomyPin & { expect: string })[] = [
     value: "40 × 40 circle · 4 short of 44", source: "MobileMenu.tsx:53", expect: "grid h-10 w-10 place-items-center rounded-full" },
 ];
 
-export const TARGET_VALUES: readonly ValueRow[] = [
+export const TARGET_VALUES: readonly CheckedRow[] = [
   { part: "Minimum", value: `${TARGET_MIN} × ${TARGET_MIN}, or 24px clear round a smaller one`, source: "WCAG 2.2 · 2.5.8" },
   { part: "Touch", value: `${TARGET_TOUCH} × ${TARGET_TOUCH}`, source: "WCAG 2.2 · 2.5.5" },
   { part: "Carousel dot", value: "18 × 32, the current one 36 × 32", source: "PlayerCarousel.tsx:104" },
@@ -41,7 +42,12 @@ export const TARGET_VALUES: readonly ValueRow[] = [
   { part: "Bare wave button", value: "24 × 24", source: "HeroBits.tsx:97" },
   { part: "Menu button", value: "40 × 40, phones only", source: "MobileMenu.tsx:53" },
   { part: "Floating Back to top", value: "44 × 44, 40 × 40 under md", source: "BackToTop.tsx:62" },
-  { part: "Smallest system targets", value: "Button xs, IconButton xs and Chip sm at 28", source: "button-styles.ts:27" },
+  { part: "Smallest system targets", value: "Button xs, IconButton xs and Chip sm at 28",
+    source: "button-styles.ts:32, icon-button-styles.ts:23, chip-styles.ts:8", assert: [
+      system("button-styles.ts", 'xs: { box: "h-7 gap-1.5 px-3 text-[12px]"'),
+      system("icon-button-styles.ts", 'xs: { box: "h-7 w-7", h: "h-7", px: 28,'),
+      system("chip-styles.ts", '{ sm: "h-7", md: "h-8", lg: "h-9" }'),
+    ] },
 ];
 
 export const KEY_COLUMNS = ["Pattern", "Keys", "Focus", "System part"];

@@ -37,7 +37,8 @@ export const FEEDBACK_OVERLAYS = defineSections([
     file: f("components/toast"),
     designMd: "7.24",
     covers: [
-      sys("Toast", { variants: "success error info loading", states: "rest hover focus-visible pressed" }),
+      // a toast is dismissed or acted on, never switched off, so it owes no disabled state
+      sys("Toast", { variants: "success error info loading", states: "rest hover focus-visible pressed", na: "disabled" }),
       sys("ToastStack", { variants: "tucked fanned" }),
       sys("Toaster"),
     ],
@@ -53,6 +54,7 @@ export const FEEDBACK_OVERLAYS = defineSections([
         variants: "dialog sheet alertdialog sm md lg",
         states: "closed opening open busy closing dragging",
       }),
+      sys("DialogAction"),
     ],
   },
 ]);

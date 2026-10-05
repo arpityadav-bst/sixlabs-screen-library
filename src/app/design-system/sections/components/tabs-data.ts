@@ -1,8 +1,9 @@
 // The Tabs section's data: filler tab sets, state list, pins, drawer rows and the snippet.
-import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { PropRow } from "@/app/design-system/_kit/SpecDrawer";
+import { system } from "@/app/design-system/sections/foundations/foundation-assert";
 import { TAB_SIZE, type TabsSize } from "@/components/design-system/tabs-styles";
 import { FORCE_PROP } from "./act-sel-rows";
-import { heightOf, sizeNames, sv, tv, type Pin } from "./display-values";
+import { heightOf, sizeNames, sv, tv, type CheckedRow, type Pin } from "./display-values";
 
 /** The rungs, read from TAB_SIZE, so the ladder cannot drift from the part. */
 export const TAB_SIZES: readonly { name: TabsSize; px: number }[] = sizeNames(TAB_SIZE).map((name) => ({ name, px: heightOf(TAB_SIZE[name].tab) }));
@@ -46,7 +47,7 @@ export const TAB_PINS: readonly Pin[] = [
   { selector: "[data-pin=tabs] [role=tab]:nth-child(3)", name: "Rest tab", token: "--ds-color-text-muted", value: "md · 44 tall · gap 28", source: `${TS}:12,24`, expect: ['md: { tab: "h-11', 'gap: "gap-5"', "text-(--ds-color-text-muted)"], side: "right" },
 ];
 
-export const TAB_VALUES: readonly ValueRow[] = [
+export const TAB_VALUES: readonly CheckedRow[] = [
   tv("List hairline", "color-line"),
   tv("Rest label", "color-text-muted"),
   tv("Hover and selected label", "color-ink"),
@@ -56,12 +57,18 @@ export const TAB_VALUES: readonly ValueRow[] = [
   tv("Label colour", "dur-ui"),
   tv("Panel exit", "dur-exit"),
   tv("Ring", "focus-color"),
-  sv("Heights", TAB_SIZES.map((s) => `${s.name} ${s.px}`).join(" · "), `${TS}:11-13`),
-  sv("Labels", "13 Inter · 15 Inter · 18 Outfit at -0.01em, 500 when selected", `${TS}:11-13`),
-  sv("Label to label", "20 · 28 · 32", `${TS}:8-13`),
-  sv("Indicator", "2px, inset 4 to the label's width", `${TS}:35-36`),
-  sv("Ring", "inset 2px, radius 6, so the scrolling list cannot clip it", "Tabs.tsx:141"),
-  sv("Panel", "fades in over 200ms with a 4px rise, none under reduced motion", "Tabs.tsx:175"),
+  sv("Heights", TAB_SIZES.map((s) => `${s.name} ${s.px}`).join(" · "), `${TS}:11-13`, undefined, ...TAB_SIZES.map((s) => `${s.name}: { tab: "${TAB_SIZE[s.name].tab}"`)),
+  {
+    ...sv("Labels", "13 Inter · 15 Inter · 18 Outfit at -0.01em, 500 when selected", `${TS}:11-13, Tabs.tsx:147`),
+    assert: [system(TS, '"h-9 text-[13px] font-sans"', '"h-11 text-[15px] font-sans"', "text-[18px] font-(family-name:--ds-font-display) tracking-[-0.01em]"), system("Tabs.tsx", '${on ? "font-medium" : ""}')],
+  },
+  sv("Label to label", "20 · 28 · 32", `${TS}:8-13, 23`, undefined, 'gap: "gap-3"', 'gap: "gap-5"', 'gap: "gap-6"', "rounded-(--ds-radius-mark) px-1 "),
+  sv("Indicator", "2px, inset 4 to the label's width", `${TS}:35-36`, undefined, "absolute inset-x-1 bottom-0 h-0.5 rounded-full"),
+  {
+    ...sv("Ring", "inset 2px, radius 6, so the scrolling list cannot clip it", "Tabs.tsx:141"),
+    assert: [system("Tabs.tsx", "${TAB} ${s.tab} ${FOCUS_INSET}"), system(TS, "rounded-(--ds-radius-mark) px-1"), system("focus.ts", "outline-offset-(--ds-focus-offset-inset)")],
+  },
+  sv("Panel", "fades in over 200ms with a 4px rise, none under reduced motion", "Tabs.tsx:175, 178", undefined, "initial={{ opacity: 0, y: still ? 0 : 4 }}", "transition={{ duration: DUR.ui, ease: EASE }}"),
 ];
 
 export const TAB_PROPS: readonly PropRow[] = [

@@ -1,7 +1,8 @@
 // Every value the guide writes down, checked against the source it was copied from, at build. Four kinds:
 // the exact text the sections transcribe (each an Assertion, a module's own or a drawer row's assert,
 // collected from every data module in meta-modules.ts, plus the job terminal's timings, which its spec
-// transcribes because JobTerminal does not export them), every token that cites a file:line, whose value or Tailwind class must still sit on that
+// transcribes because JobTerminal does not export them, and a failing row for each drawer row that cites a
+// system file with no needle, meta-rows.ts), every token that cites a file:line, whose value or Tailwind class must still sit on that
 // line or the one either side of it, every Anatomy pin (meta-pins.ts), and the module list itself. A token
 // whose site value has no literal form (a next/font family, a JS curve, a height that comes from padding)
 // is listed as derived with its reason, never counted as passing.
@@ -11,6 +12,7 @@ import { TOKEN_GROUPS } from "@/components/design-system/tokens";
 import { TIMING } from "../components/terminal-data";
 import { DATA_MODULES, NOT_COLLECTED } from "./meta-modules";
 import { moduleRows, pinRows, shownIn } from "./meta-pins";
+import { bareRows } from "./meta-rows";
 import { readRepo } from "@/app/design-system/_kit/source";
 
 /** JobTerminal.tsx keeps its timings as module constants, so the terminal spec transcribes them once, in
@@ -137,7 +139,7 @@ function tokenRows(): { rows: AssertRow[]; derived: { name: string; reason: stri
 let memo: ReturnType<typeof build> | null = null;
 
 function build() {
-  const values = valueRows();
+  const values = [...valueRows(), ...bareRows(DATA_MODULES)];
   const tokens = tokenRows();
   const pins = pinRows(DATA_MODULES);
   const modules = moduleRows(DATA_MODULES, NOT_COLLECTED);

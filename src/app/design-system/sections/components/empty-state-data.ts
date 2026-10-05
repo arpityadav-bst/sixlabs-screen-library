@@ -1,9 +1,9 @@
 // The Empty state section's data: the copy for each variant (filler written in the site's voice), the
 // anatomy pins, the drawer rows, the props and the snippet.
-import type { PropRow, ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { PropRow } from "@/app/design-system/_kit/SpecDrawer";
 import type { ButtonVariant } from "@/components/design-system/button-styles";
 import type { EmptyStateVariant } from "@/components/design-system/EmptyState";
-import { sv, tv, type Pin } from "./display-values";
+import { sv, tv, type CheckedRow, type Pin } from "./display-values";
 
 const ES = "EmptyState.tsx";
 
@@ -55,22 +55,22 @@ export const EMPTY_PINS: readonly Pin[] = [
   { selector: "[data-part=actions]", name: "Actions", value: "mt 24 · gap 20 · stacks under 400", source: `${ES}:31-32`, expect: ["mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-3", "@max-[400px]:flex-col"] },
 ];
 
-export const EMPTY_VALUES: readonly ValueRow[] = [
-  tv("Container fill", "color-container", `${ES}:24`),
-  tv("Container radius", "radius-xl", `${ES}:24`),
-  tv("Container line", "color-line-faint", `${ES}:24`),
-  sv("Padding", "48, 32 when the part is under 560 wide", `${ES}:24`),
-  sv("Uncontained padding", "40 by 24, 32 by 16 under 560", `${ES}:25`),
-  sv("Content", "centred, max 400", `${ES}:79`),
-  tv("Icon box fill", "color-surface", `${ES}:28`),
-  tv("Icon box line", "color-line", `${ES}:28`),
-  tv("Icon stroke at 24", "icon-24-stroke", `${ES}:84`),
-  tv("Error icon", "color-danger-ink", `${ES}:70`),
-  sv("Title", "card-title role, Outfit 20 / 500 / -0.03em, ink", `${ES}:89`),
-  tv("Body", "color-text-body", `${ES}:94`),
-  sv("Actions", "mt 24, gap 20 by 12, column under a 400 container", `${ES}:31-32`),
-  tv("Rise", "dur-reveal", "empty-state.module.css:4"),
-  sv("Rise travel", "y 12 to 0 with opacity, none under reduced motion", "empty-state.module.css:9-10"),
+export const EMPTY_VALUES: readonly CheckedRow[] = [
+  tv("Container fill", "color-container", `${ES}:24`, "bg-(--ds-color-container) p-12"),
+  tv("Container radius", "radius-xl", `${ES}:24`, '"rounded-(--ds-radius-xl) border'),
+  tv("Container line", "color-line-faint", `${ES}:24`, "border border-(--ds-color-line-faint)"),
+  sv("Padding", "48, 32 when the part is under 560 wide", `${ES}:24`, undefined, "p-12 @max-[560px]:p-8"),
+  sv("Uncontained padding", "40 by 24, 32 by 16 under 560", `${ES}:25`, undefined, 'const OPEN = "px-6 py-10 @max-[560px]:px-4 @max-[560px]:py-8";'),
+  sv("Content", "centred, max 400", `${ES}:79`, undefined, '"mx-auto flex max-w-[400px] flex-col items-center text-center"'),
+  tv("Icon box fill", "color-surface", `${ES}:28`, "border border-(--ds-color-line) bg-(--ds-color-surface)"),
+  tv("Icon box line", "color-line", `${ES}:28`, "rounded-full border border-(--ds-color-line)"),
+  tv("Icon stroke at 24", "icon-24-stroke", `${ES}:84`, "size={24} strokeWidth={ICON_STROKE[24]}"),
+  tv("Error icon", "color-danger-ink", `${ES}:70`, 'variant === "error" ? "text-(--ds-color-danger-ink)"'),
+  sv("Title", "card-title role, Outfit 20 / 500 / -0.03em, ink", `${ES}:89`, undefined, "font-display text-[20px] font-medium leading-tight tracking-[-0.03em] text-(--ds-color-ink)"),
+  tv("Body", "color-text-body", `${ES}:94`, "text-[14px] leading-normal text-(--ds-color-text-body)"),
+  sv("Actions", "mt 24, gap 20 by 12, column under a 400 container", `${ES}:31-32`, undefined, "mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-3", "@max-[400px]:flex-col"),
+  tv("Rise", "dur-reveal", "empty-state.module.css:4", "animation: ds-rise var(--ds-dur-reveal) var(--ds-ease-out) both;"),
+  sv("Rise travel", "y 12 to 0 with opacity, none under reduced motion", "empty-state.module.css:9-10, 16", undefined, "opacity: 0;", "transform: translateY(12px);", "animation: none;"),
 ];
 
 export const EMPTY_PROPS: readonly PropRow[] = [

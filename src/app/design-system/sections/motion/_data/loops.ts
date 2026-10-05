@@ -1,6 +1,7 @@
 // Every loop on the site that runs by itself: how often, how far, on which curve, what it does under
 // reduced motion and where it is written. Tailwind's own loops are listed with Tailwind's keyframes.
-import type { ValueRow } from "@/app/design-system/_kit/SpecDrawer";
+import type { CheckedRow } from "@/app/design-system/sections/components/display-values";
+import { system } from "@/app/design-system/sections/foundations/foundation-assert";
 import { BADGES } from "@/components/website/floating-badges-data";
 
 const W = "components/website/";
@@ -47,13 +48,14 @@ export const TILE_STAGE = { width: 1600, height: 1200 } as const;
 /** The first tile's spots by width, read from BADGES, so the window follows the data. */
 export const TILE_SPOT = BADGES[0];
 
-export const LOOP_VALUES: readonly ValueRow[] = [
+export const LOOP_VALUES: readonly CheckedRow[] = [
   { part: "Travel ceiling", token: "--ds-loop-max", value: "8px", source: "system" },
   { part: "Period floor", value: "1.5s", source: "system" },
   { part: "Scroll cue", value: "translateY 0 to 4px, 1.8s ease-in-out", source: `${G}:52` },
   { part: "Floating tile", value: "translateY 0 to -7px, 5.5s ease-in-out", source: `${G}:79` },
   { part: "Loader arcs", value: "3px out in the first third of 1.5s, delays i x 0.5 - 1.5s", source: `${W}HeroLoader.tsx:40` },
-  { part: "StatusDot ping and pulse", value: "stop under reduced motion (motion-reduce:animate-none)", source: "components/design-system/StatusDot.tsx:31" },
+  { part: "StatusDot ping and pulse", value: "stop under reduced motion (motion-reduce:animate-none)",
+    source: "components/design-system/StatusDot.tsx:31, 39", assert: system("StatusDot.tsx", "animate-ping rounded-full motion-reduce:animate-none", "animate-pulse motion-reduce:animate-none") },
 ];
 
 export const LOOP_CODE = `import { ScrollCue } from "@/components/website/ScrollCue";
