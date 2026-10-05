@@ -8,7 +8,7 @@
 // at once over every character tile on screen, activated or not, and restarts the cycle from the middle.
 import { shownShare } from './viewport.js';
 
-const RESUME_MS = 3000, FOCUS_MS = 380, GAP_MS = 220, MIN_SHOWN = 0.4, WAVE_SHOWN = 0.02;
+const RESUME_MS = 500, FOCUS_MS = 380, GAP_MS = 220, MIN_SHOWN = 0.4, WAVE_SHOWN = 0.02;
 const WAVE_SPREAD = 1.3, FLIP_SECONDS = 0.75; // stagger across the screen, one tile's flip
 const PREPARE_AT = 0.7; // the share of the tiles on screen played when the next cast starts to load
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);

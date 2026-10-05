@@ -85,7 +85,7 @@ export const LIFECYCLE_VALUES: readonly ValueRow[] = [
   { part: "Resize mid-intro", value: "the field snaps to its place", source: `${T}floor.js:250-252` },
   { part: "Focus hold", token: "FOCUS_MS", value: "380ms", source: `${T}autoplay.js:11` },
   { part: "Gap", token: "GAP_MS", value: "220ms", source: `${T}autoplay.js:11` },
-  { part: "Resume", token: "RESUME_MS", value: "3000ms after the pointer leaves the tiles", source: `${T}autoplay.js:11` },
+  { part: "Resume", token: "RESUME_MS", value: "500ms after the pointer leaves the tiles", source: `${T}autoplay.js:11` },
   { part: "On screen", token: "MIN_SHOWN", value: "0.4 of a tile's top in view, 0.02 for the wave", source: `${T}autoplay.js:11` },
   { part: "Next cast", token: "PREPARE_AT", value: "starts loading once 70% of the tiles on screen have played", source: `${T}autoplay.js:13` },
   { part: "Wave", token: "WAVE_SPREAD", value: "1.3s left to right, FLIP_SECONDS 0.75 per tile, in place about the top-right edge", source: `${T}autoplay.js:12 · ${T}floor.js:131-151` },
