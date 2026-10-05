@@ -121,8 +121,8 @@ export const TRANSITIONS: readonly KeyRow[] = [
   { key: "focused → default", value: "the pointer leaves: the same motion, reversed", source: `${T}interact.js:86-89` },
   { key: "focused → activated", value: "a click: the tile locks and plays to the end whatever the pointer does", source: `${T}interact.js:118-122` },
   { key: "activated → spent", value: `S reaches ACT 0.9 and the fade reaches 1: tinted at once, then it sinks`, source: `${T}interact.js:44-48` },
-  { key: "spent → resetting", value: "the R key, autoplay's wave once all on screen are spent, or reset()", source: `${T}interact.js:123-130 · ${T}autoplay.js:96-110` },
-  { key: "resetting → default", value: "lands as a default tile with a new human, live again", source: `${T}autoplay.js:65-75` },
+  { key: "spent → resetting", value: "the R key, autoplay's wave once all on screen are spent, or reset()", source: `${T}interact.js:123-130 · ${T}autoplay.js:97-111` },
+  { key: "resetting → default", value: "lands as a default tile with a new human, live again", source: `${T}autoplay.js:69-77` },
   { key: "two rigs", value: "one tile settles while the next rises, and with both locked a new hover is ignored", source: `${T}floor.js:165` },
 ];
 

@@ -1,5 +1,5 @@
 // Auto-play for the live floor. Once the tiles are in, the character tiles on screen focus and activate
-// one at a time by themselves: first one near the middle of the screen, then the rest in random order,
+// one at a time by themselves: the one nearest the middle of the screen first, then outwards from there,
 // each settling back in (spent) before the next starts. When every one on screen is spent, a wave runs
 // left to right across the screen: each spent tile flips over like a card, about the axis through its
 // centre parallel to its top-right edge, and lands as a clear default tile with its human back. Then the
@@ -14,12 +14,14 @@ const PREPARE_AT = 0.7; // the share of the tiles on screen played when the next
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 export function startAutoplay({ ctl, camera, chars, flipTile, composer, cast, half }) {
-  let stopped = false, paused = false, resumeTimer = 0, first = true, resetReq = false, waving = false;
+  let stopped = false, paused = false, resumeTimer = 0, resetReq = false, waving = false;
   let held = false; // the floor is off screen or the tab hidden (floor.js): nothing is played, nothing drawn
   const waiters = []; // the wave button's calls waiting on their wave's start (reset)
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const until = async (ok) => { while (!stopped && !ok()) await wait(60); };
   const cellOf = (key) => key.split(',').map(Number);
+  // a tile's distance from the middle of the screen, as seen (x scaled by the aspect, so wide and tall alike)
+  const fromMiddle = (t) => Math.hypot(t.x * camera.aspect, t.y);
 
   // The character tiles that count as on screen: at least MIN_SHOWN of the tile's top face inside the view
   // (its projected outline clipped to the screen, by area). x, y: the centre, in normalised device coords.
@@ -87,7 +89,6 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, cast, ha
     waving = false;
     if (window.__floorEvents) window.__floorEvents.wave = false;
     ctl.inert = false;
-    first = true;
   }
 
   (async () => {
@@ -111,14 +112,11 @@ export function startAutoplay({ ctl, camera, chars, flipTile, composer, cast, ha
         continue;
       }
       if (paused || ctl.busy()) { await wait(120); continue; }
-      const next = first
-        ? todo.reduce((a, b) => (Math.hypot(a.x, a.y) <= Math.hypot(b.x, b.y) ? a : b)) // nearest the middle
-        : todo[Math.floor(Math.random() * todo.length)];
+      const next = todo.reduce((a, b) => (fromMiddle(a) <= fromMiddle(b) ? a : b)); // the middle out
       // its AI copy still on its way (characters.js): wait for it, then pick again; a failed one plays human
       const ch = chars.get(next.key);
       if (!ch.aiIn && (await ch.aiReady)) continue;
       if (stopped) break;
-      first = false;
       const cell = cellOf(next.key);
       ctl.hover(cell);
       await wait(FOCUS_MS);

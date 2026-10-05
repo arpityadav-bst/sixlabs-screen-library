@@ -94,10 +94,10 @@ export const LIFECYCLE_VALUES: readonly ValueRow[] = [
 ];
 
 export const AUTOPLAY_ROWS: readonly KeyRow[] = [
-  { key: "Picking", value: "first the tile nearest the middle, then a random unspent one with 0.4 of its top in view", source: `${T}autoplay.js:114-116` },
-  { key: "Waiting on a copy", value: "a tile whose hologram has not landed is skipped and picked again, a failed one plays human", source: `${T}autoplay.js:117-119` },
-  { key: "The visitor wins", value: "a pointer on a live tile pauses autoplay, a clicked tile still finishes", source: `${T}autoplay.js:31-35` },
-  { key: "reset()", value: "a wave over every character tile on screen now, resolving as its flip begins", source: `${T}autoplay.js:135-140` },
+  { key: "Picking", value: "the unspent tile nearest the middle of the screen (x scaled by the aspect), with 0.4 of its top in view: the middle out", source: `${T}autoplay.js:24,115` },
+  { key: "Waiting on a copy", value: "a tile whose hologram has not landed is skipped and picked again, a failed one plays human", source: `${T}autoplay.js:116-118` },
+  { key: "The visitor wins", value: "a pointer on a live tile pauses autoplay, a clicked tile still finishes", source: `${T}autoplay.js:33-37` },
+  { key: "reset()", value: "a wave over every character tile on screen now, resolving as its flip begins", source: `${T}autoplay.js:134-138` },
 ];
 
 export const LOADER_VALUES: readonly ValueRow[] = [
