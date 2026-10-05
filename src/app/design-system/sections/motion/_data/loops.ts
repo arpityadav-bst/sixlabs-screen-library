@@ -17,7 +17,7 @@ export const LOOP_ROWS: readonly LoopRow[] = [
   { loop: "term-hint", where: "Jobs terminal cursor, mouse only", period: "2.4s", travel: "scale 0.95 to 1.05, ring 0.4 to 1.9", curve: "ease-in-out, ring ease-out", reduced: "stops, ring hidden", source: `${G}:169` },
   { loop: "tw-linger", where: "Typed word's last caret", period: "1s, once", travel: "none, it blinks", curve: "steps", reduced: "caret hidden", source: `${G}:115` },
   { loop: "animate-ping", where: "Hero live dot", period: "1s", travel: "scale to 2, fading", curve: "cubic-bezier(0, 0, 0.2, 1)", reduced: "keeps running", source: `${W}Hero.tsx:238` },
-  { loop: "animate-pulse", where: "Player card dot, terminal cursor", period: "2s", travel: "opacity 1 to 0.5", curve: "cubic-bezier(0.4, 0, 0.6, 1)", reduced: "keeps running", source: `${W}Players.tsx:264` },
+  { loop: "animate-pulse", where: "Player card dot, terminal cursor", period: "2s", travel: "opacity 1 to 0.5", curve: "cubic-bezier(0.4, 0, 0.6, 1)", reduced: "keeps running", source: `${W}Players.tsx:269` },
   { loop: "animate-spin", where: "Wave button busy, terminal steps", period: "1s a turn", travel: "turns in place", curve: "linear", reduced: "keeps running", source: `${W}HeroBits.tsx:114` },
   { loop: "ASCII shimmer", where: "Glyph field, brightest cells", period: "about 5.7s", travel: "brightness only", curve: "sine", reduced: "still", source: `${W}ascii-field.js:122` },
   { loop: "ASCII roll", where: "Glyph field", period: "about 8.3s", travel: "glyphs cycle in place", curve: "linear", reduced: "still", source: `${W}ascii-field.js:175` },

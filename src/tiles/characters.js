@@ -114,9 +114,9 @@ export function castTiles(tiles, names, active, fill = null) {
 }
 
 // Returns a Map "i,j" -> { name, meshes, converted, at, aiIn, aiReady, setScan(s), setLift(y),
-// setPictures(human, ai) }. It waits for the pictures in `wait` only (all by default); a bust whose picture
-// is not in yet shows BLANK and takes its picture once it has arrived and warm(texture) has put it on the
-// GPU. Until its AI copy is in (aiIn; aiReady resolves then, false if it failed), a tile stays human.
+// setPictures(human, ai) }. It waits for the pictures in `wait` only (all by default; an entry may also be a
+// promise to wait on, load-plan.js); a bust whose picture is not in yet shows BLANK and takes its picture
+// once it has arrived and warm(texture) has put it on the GPU. Until its AI copy is in (aiIn; aiReady resolves then, false if it failed), a tile stays human.
 // Only the picture that shows is drawn: the human until the tile turns, the AI copy after, both only while
 // one crossfades into the other (setScan). A tile drawing both at all times cost every frame a draw call per
 // tile for a picture at zero opacity, a fixed cost on a weak GPU (about half of 32ms on an Intel UHD 630). The
@@ -126,7 +126,7 @@ export async function addCharacters(scene, P, tiles, pics = planPictures(P, [(P.
   cast = castTiles(tiles, P.chars ?? [], P.charActive), wait = [...pics.get.keys()], warm = async (t) => t) {
   const out = new Map();
   if (!P.chars?.length) return out;
-  await Promise.all(wait.map((k) => pics.get.get(k)));
+  await Promise.all(wait.map((k) => (typeof k === 'string' ? pics.get.get(k) : k))); // keys, or a promise (load-plan.js)
   const geo = new THREE.PlaneGeometry(1, 1);
   const fwd = P.charForward * Math.SQRT1_2; // along the diagonal toward the (+x, +z) corner, nearest the camera
   for (const t of tiles) {

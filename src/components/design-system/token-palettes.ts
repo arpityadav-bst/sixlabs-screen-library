@@ -7,7 +7,7 @@ const G = "app/globals.css";
 
 export const ON_BLUE: readonly Token[] = [
   tk("color-on-blue-80", "rgb(255 255 255 / 0.8)", "Body on blue", "Player body, carousel body, ModeToggle rest text",
-    "Light grounds", `${W}Players.tsx:127`, { utility: "text-white/80" }),
+    "Light grounds", `${W}Players.tsx:132`, { utility: "text-white/80" }),
   tk("color-on-blue-75", "rgb(255 255 255 / 0.75)", "Trait label on blue", "The trait bar labels",
     "Light grounds", `${W}PlayerTraits.tsx:37`, { utility: "text-white/75" }),
   tk("color-on-blue-50", "rgb(255 255 255 / 0.5)", "Quiet white on navy and blue",

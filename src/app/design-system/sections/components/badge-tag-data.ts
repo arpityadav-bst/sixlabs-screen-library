@@ -151,7 +151,7 @@ export const DOT_VALUES = [
   tv("Success", "color-success"),
   tv("Danger", "color-danger"),
   sv("Ping", "1s, scale 2 and fade, Tailwind animate-ping", "Hero.tsx:238", undefined, "absolute inset-0 animate-ping rounded-full bg-accent/40"),
-  sv("Pulse", "2s, opacity 0.5 at half, Tailwind animate-pulse", "Players.tsx:264", undefined, '"bg-accent animate-pulse"'),
+  sv("Pulse", "2s, opacity 0.5 at half, Tailwind animate-pulse", "Players.tsx:269", undefined, '"bg-accent animate-pulse"'),
 ] as const;
 
 export const TAG_VALUES = [

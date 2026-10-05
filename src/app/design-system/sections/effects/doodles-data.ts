@@ -134,7 +134,7 @@ export const DOODLE_PINS: readonly HeldPin[] = [
     selector: '[data-ds="doodle-portrait"]',
     name: "Portrait",
     value: "the still or the clip the drawings sit round",
-    source: "Players.tsx:157,164",
+    source: "Players.tsx:162,169",
     expect: ["<PortraitSwap", 'className="h-[var(--ph)] w-auto max-w-none select-none"'],
     side: "left",
   },
@@ -169,7 +169,7 @@ export const DOODLE_RULES: readonly KeyRow[] = [
   { key: "no filters", value: "the waver is in the points and the glow is stacked strokes, after an SVG filter held Safari at 3 to 7 fps", source: "DoodleStroke.tsx:7-10" },
   { key: "reduced motion", value: "every stroke drawn at once", source: "PlayerDoodles.tsx:78-83" },
   { key: "?off=doodles", value: "the layer is display none", source: "app/globals.css:270" },
-  { key: "start", value: "Players passes revealed, which stays true once the section has shown", source: "Players.tsx:82-83,154" },
+  { key: "start", value: "Players passes revealed, which stays true once the section has shown", source: "Players.tsx:87-88,159" },
   { key: "stale comment", value: "the header says the doodles are wiped when the section leaves view, and nothing does that", source: "PlayerDoodles.tsx:11" },
   {
     key: "stale pace comment",

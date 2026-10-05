@@ -65,7 +65,7 @@ export const WINDOW_CONTRACTS: readonly KeyRow[] = [
   { key: "scrollY > 40", value: "the scroll cue fades away", source: "ScrollCue.tsx:11" },
   { key: "#model-line", value: "the scroll line's track. BackToTop, the spots, the water and the ASCII field all read it", source: "ScrubLine.tsx:107" },
   { key: "#site-head", value: "the header, whose height a spot subtracts", source: "jump.ts:28" },
-  { key: "#players", value: "the magnet's point: CSS scroll snap, and in desktop Safari, where the snap is off, Lenis's catch", source: "Players.tsx:100" },
+  { key: "#players", value: "the magnet's point: CSS scroll snap, and in desktop Safari, where the snap is off, Lenis's catch", source: "Players.tsx:105" },
   { key: "[data-covers-view]", value: "the full view's hero fills the screen, so the ASCII field pauses under it", source: "Hero.tsx:120" },
   { key: "onblue:theme", value: "the ASCII field reads its tint again", source: "ascii-field.js:107" },
 ];

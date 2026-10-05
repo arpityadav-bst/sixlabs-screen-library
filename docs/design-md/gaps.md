@@ -31,7 +31,7 @@ Severity: **high** breaks a rule the site states for itself (the compositor rule
 | Accessibility | medium | Small targets | PlayerCarousel.tsx:16, 104 | 44px arrows (the lg icon button) and taller dot hit areas |
 | Accessibility | low | BackToTop | BackToTop.tsx:60 | inert while hidden |
 | Accessibility | medium | Glide and floor | glide.ts, SafariScroll.tsx, usePlayerMode.ts, src/tiles | under reduced motion: jump instead of glide, settle desktop Safari's players magnet at once, hold the players' auto switch, and hold the floor's intro |
-| Accessibility | medium | Ping and pulse | Hero.tsx:238, Players.tsx:264 | the motion-safe variant on both loops |
+| Accessibility | medium | Ping and pulse | Hero.tsx:238, Players.tsx:269 | the motion-safe variant on both loops |
 | Accessibility | medium | Accent text | Header.tsx:86, Hero.tsx:245 | the accent ink for text under 24px, decision 1 in Decisions pending (10.3) |
 | Accessibility | medium | Skip link | website/page.tsx:25 | a SkipLink first in the body, and an id on `main` for it to land on |
 | Accessibility | low | Footer stubs | Footer.tsx:18, 94-95 | an `href` on each link, or plain text until it has one |
@@ -50,10 +50,10 @@ Severity: **high** breaks a rule the site states for itself (the compositor rule
 | Drift | medium | Ease | website | one ease token in the theme, decision 7 in Decisions pending (10.3) |
 | Drift | low | Radius | website | one spelling per step |
 | Drift | low | Header offsets | Understands.tsx:64, Hero.tsx:169 | one header height token |
-| Drift | low | Players gutter | Players.tsx:107 | 16 on phones, as every other section takes |
+| Drift | low | Players gutter | Players.tsx:112 | 16 on phones, as every other section takes |
 | Drift | low | Hero row gutter | Hero.tsx:101 | 16 on phones, as every other row takes |
-| Drift | medium | font-mono | Players.tsx:247, globals.css | map --font-mono, decision 8 in Decisions pending (10.3) |
-| Dead code | low | Player card classes | Players.tsx:207, 220 | remove the classes a hidden grid never shows |
+| Drift | medium | font-mono | Players.tsx:252, globals.css | map --font-mono, decision 8 in Decisions pending (10.3) |
+| Dead code | low | Player card classes | Players.tsx:212, 220 | remove the classes a hidden grid never shows |
 | Dead code | low | Prism sweep | PrimaryCta.tsx:25, 112 | remove the branch, which also breaks the compositor rule |
 | Stale comment | low | Charcoal copies | characters.js:5, interact.js:6 | say blue hologram |
 | Stale comment | low | Doodle pace | PlayerDoodles.tsx:22-23 | say the hand ends just after the first switch and the copy waits on it |

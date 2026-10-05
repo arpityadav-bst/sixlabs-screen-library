@@ -76,7 +76,7 @@ export const FORMAT_ROWS: readonly KeyRow[] = [
   { key: "?clips", value: "webm, stacked or still forces one format for a visit", source: "useClipFormat.ts:42" },
   { key: "at once", value: "the first showing, an unchanged mode, reduced motion or a copy with no frame yet swap with no band", source: "PortraitSwap.tsx:84" },
   { key: "auto", value: `flips every ${AUTO_S}s while in view, until the visitor uses the switch`, source: "usePlayerMode.ts:11" },
-  { key: "cost", value: "stacked holds one context and two hidden videos, two during a player change (popLayout)", source: "Players.tsx:145" },
+  { key: "cost", value: "stacked holds one context and two hidden videos, two during a player change (popLayout)", source: "Players.tsx:150" },
   { key: "teardown", value: "swapGL has no dispose, so the guide loses its context when the panel scrolls away", source: "swap-gl.ts:76" },
 ];
 

@@ -120,7 +120,7 @@ export const WATER_EVENTS: readonly KeyRow[] = [
   { key: "accentwave", value: `window CustomEvent, detail { filled: true } once the view is ${FULL_AT * 100}% full`, source: "AccentWave.tsx:64-70,95" },
   { key: "drained", value: `detail { filled: false } below ${DRAINED_BELOW * 100}%, so a step back does not undo the players`, source: "AccentWave.tsx:81" },
   { key: "Header", value: "turns solid white while filled", source: "Header.tsx:40,56" },
-  { key: "Players", value: "come in once filled", source: "Players.tsx:53-56" },
+  { key: "Players", value: "come in once filled", source: "Players.tsx:55-59" },
   { key: "redraw", value: "an unchanged frame is not drawn again", source: "accent-wave-gl.ts:113-115" },
   { key: "context lost", value: "rebuilt and drawn again when it is restored", source: "accent-wave-gl.ts:52-56,104-108" },
   { key: "no WebGL", value: "a 2D canvas draws the same geometry", source: "AccentWave.tsx:98-150" },

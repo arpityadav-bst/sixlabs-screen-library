@@ -60,6 +60,7 @@ export function TileFloor({
         if (alive) {
           handle = h;
           onReady?.(h);
+          window.dispatchEvent(new Event("floorready")); // the players' first clips may start (usePrefetchClips.ts)
         } else h.dispose();
       }),
     );

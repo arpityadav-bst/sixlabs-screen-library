@@ -22,7 +22,7 @@ const rows: Omit<MicroRow, "n">[] = [
   { trigger: "press", part: "MobileMenu row", response: "ink to accent", timing: "200ms colour", source: `${W}MobileMenu.tsx:91` },
   { trigger: "open", part: "Faq answer", response: "height 0 to auto with opacity", timing: "0.35s on the ease", source: `${W}Faq.tsx:65` },
   { trigger: "open", part: "Faq icon and row", response: "the plus bar turns and fades to a minus, the border darkens", timing: "300ms", source: `${W}Faq.tsx:53` },
-  { trigger: "hover", part: "Player card", response: "lifts 2px onto the lift shadow, opacity 0.85 when unselected", timing: "300ms", source: `${W}Players.tsx:224` },
+  { trigger: "hover", part: "Player card", response: "lifts 2px onto the lift shadow, opacity 0.85 when unselected", timing: "300ms", source: `${W}Players.tsx:229` },
   { trigger: "hover", part: "Jobs card sheen", response: "the stroke light fades in and follows the pointer", timing: "0.4s ease", source: "app/globals.css:260" },
   { trigger: "choose", part: "ModeToggle", response: "the white thumb slides to the choice", timing: "spring 500 / 40", source: `${W}ModeToggle.tsx:50` },
   { trigger: "choose", part: "Carousel dot", response: "the active dot widens 6 to 24px and turns white", timing: "300ms all", source: `${W}PlayerCarousel.tsx:108` },

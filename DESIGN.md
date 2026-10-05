@@ -765,8 +765,8 @@ Each row gives the CSS name, the value, the role, what the token is for and neve
 | `--ds-color-accent-glow-55` | `rgb(26 109 255 / 0.55)` | Caret glow | The typed caret's 10px glow | Text, lines or fills | `app/globals.css:108` |
 | `--ds-color-accent-glow-50` | `rgb(26 109 255 / 0.5)` | Sheen bloom | The card sheen's 7px bloom | Text, lines or fills | `app/globals.css:253` |
 | `--ds-color-accent-glow-30` | `rgb(26 109 255 / 0.3)` | Sheen falloff | The sheen's radial stop at 34% | Text, lines or fills | `app/globals.css:254` |
-| `--ds-color-accent-glow-28` | `rgb(26 109 255 / 0.28)` | Players glow core | The radial glow behind the players | Any light ground | `components/website/Players.tsx:111` |
-| `--ds-color-accent-glow-08` | `rgb(26 109 255 / 0.08)` | Players glow edge | The players glow at 55% | Any light ground | `components/website/Players.tsx:111` |
+| `--ds-color-accent-glow-28` | `rgb(26 109 255 / 0.28)` | Players glow core | The radial glow behind the players | Any light ground | `components/website/Players.tsx:116` |
+| `--ds-color-accent-glow-08` | `rgb(26 109 255 / 0.08)` | Players glow edge | The players glow at 55% | Any light ground | `components/website/Players.tsx:116` |
 | `--ds-color-accent-ping` | `rgb(26 109 255 / 0.4)` | Live dot halo | The ping ring round a live dot | Fills larger than a dot | `components/website/Hero.tsx:238`, as `bg-accent/40` |
 
 Reasons: Colour roles ([2.1](#21-colour-roles)), The accent rule ([chapter 8](#8-the-accent-rule)).
@@ -883,7 +883,7 @@ Reasons: Colour roles ([2.1](#21-colour-roles)).
 
 | Token | Value | Role | Use for | Never for | Source |
 | --- | --- | --- | --- | --- | --- |
-| `--ds-color-on-blue-80` | `rgb(255 255 255 / 0.8)` | Body on blue | Player body, carousel body, ModeToggle rest text | Light grounds | `components/website/Players.tsx:127`, as `text-white/80` |
+| `--ds-color-on-blue-80` | `rgb(255 255 255 / 0.8)` | Body on blue | Player body, carousel body, ModeToggle rest text | Light grounds | `components/website/Players.tsx:132`, as `text-white/80` |
 | `--ds-color-on-blue-75` | `rgb(255 255 255 / 0.75)` | Trait label on blue | The trait bar labels | Light grounds | `components/website/PlayerTraits.tsx:37`, as `text-white/75` |
 | `--ds-color-on-blue-50` | `rgb(255 255 255 / 0.5)` | Quiet white on navy and blue | Toast close and tooltip shortcut at rest, inverse card meta, the read-only switch on blue, paused progress | Text a reader must read | system |
 | `--ds-color-on-blue-40` | `rgb(255 255 255 / 0.4)` | Rest dot and line on blue | Carousel dots at rest, terminal bar fills, the glass Button and on-blue Chip lines, the segmented blue track, Slider ticks and the Switch track's hover on blue | Text | `components/website/PlayerCarousel.tsx:109`, as `bg-white/40` |
@@ -1022,7 +1022,7 @@ Reasons: Spacing and rhythm ([2.5](#25-spacing-and-rhythm)).
 | `--ds-measure-line` | `980px` | Scroll line measure | The scroll line statement | Body | `components/website/ScrubLine.tsx:120` |
 | `--ds-measure-answer` | `680px` | Answer measure | FAQ answers and the widest full lede | Headings | `components/website/Faq.tsx:68` |
 | `--ds-measure-subline` | `520px` | Subline measure | Section sublines, the closing line, carousel body | Long body | `components/website/Jobs.tsx:109` |
-| `--ds-measure-body` | `480px` | Player body measure | The player body and its column | Light sections | `components/website/Players.tsx:127` |
+| `--ds-measure-body` | `480px` | Player body measure | The player body and its column | Light sections | `components/website/Players.tsx:132` |
 | `--ds-measure-lede` | `440px` | Lede measure | The container lede and the traits | Sublines | `components/website/Hero.tsx:205` |
 | `--ds-rhythm-section` | `clamp(96px, 9vw, 144px)` | Section rhythm | The top padding of Jobs and the comparison's offset under the header | Spacing inside a section | `components/website/Jobs.tsx:103`, as `pt-[clamp(96px,9vw,144px)]` |
 | `--ds-rhythm-faq` | `clamp(72px, 7vw, 120px)` | FAQ rhythm | The top padding of the FAQ | Other sections, which take rhythm-section | `components/website/Faq.tsx:18`, as `pt-[clamp(72px,7vw,120px)]` |
@@ -1094,9 +1094,9 @@ Reasons: Stroke and elevation ([2.8](#28-stroke-and-elevation)).
 | `--ds-shadow-float` | `0 1px 2px rgba(10,27,51,0.06), 0 12px 28px -12px rgba(10,27,51,0.35)` | Float | BackToTop, elevated icon buttons, toasts | Cards in the flow | `components/website/BackToTop.tsx:62` |
 | `--ds-shadow-pop` | `0 18px 50px -12px rgba(10,27,51,0.18)` | Pop | Menus and select panels | Cards | `components/website/LanguageMenu.tsx:78` |
 | `--ds-shadow-thumb` | `0 6px 16px -8px rgba(10,27,51,0.45)` | Thumb | The toggle and segmented thumb | Cards | `components/website/ModeToggle.tsx:49` |
-| `--ds-shadow-lift` | `0 1px 2px rgba(10,27,51,0.05), 0 24px 48px -24px rgba(10,27,51,0.22)` | Lift | A clickable card on hover | Rest states | `components/website/Players.tsx:224` |
+| `--ds-shadow-lift` | `0 1px 2px rgba(10,27,51,0.05), 0 24px 48px -24px rgba(10,27,51,0.22)` | Lift | A clickable card on hover | Rest states | `components/website/Players.tsx:229` |
 | `--ds-shadow-player` | `0 24px 48px -28px rgba(10,27,51,0.35)` | Player card rest | Player cards on blue | Light grounds | `components/website/Players.tsx:26` |
-| `--ds-shadow-player-selected` | `0 28px 56px -26px rgba(10,27,51,0.45)` | Player card selected | The selected player card on blue | Light grounds | `components/website/Players.tsx:222` |
+| `--ds-shadow-player-selected` | `0 28px 56px -26px rgba(10,27,51,0.45)` | Player card selected | The selected player card on blue | Light grounds | `components/website/Players.tsx:227` |
 | `--ds-shadow-tooltip` | `0 8px 24px -8px rgba(10,27,51,0.35)` | Bubble | Tooltip and slider value bubbles: float's ink with a shorter throw, since a bubble sits on its trigger | Panels | system |
 | `--ds-shadow-modal` | `0 40px 100px -20px rgba(10,27,51,0.28)` | Modal | Dialogs and sheets | Anything in the flow | system |
 | `--ds-glow-caret` | `0 0 10px rgba(26,109,255,0.55)` | Caret glow | The typed caret | Controls | `app/globals.css:108` |
@@ -1147,7 +1147,7 @@ Reasons: Icons ([2.9](#29-icons)).
 | `--ds-z-floor` | `0` | The tile floor | The hero's WebGL floor | Controls | `components/website/Hero.tsx:132`, as `z-0` |
 | `--ds-z-raised` | `10` | Raised in a section | Player cards, the vs disc, the carousel, the floor logo | Anything fixed | `components/website/Understands.tsx:87`, as `z-10` |
 | `--ds-z-copy` | `20` | Copy over the floor | Hero copy, the wave button, the scroll cue, the accent water | Overlays | `components/website/AccentWave.tsx:193`, as `z-20` |
-| `--ds-z-stage` | `30` | Loader and players | The hero loader and the players section | Overlays | `components/website/Players.tsx:103`, as `z-30` |
+| `--ds-z-stage` | `30` | Loader and players | The hero loader and the players section | Overlays | `components/website/Players.tsx:108`, as `z-30` |
 | `--ds-z-header` | `40` | Fixed chrome | The header and BackToTop | Popovers | `components/website/Header.tsx:53`, as `z-40` |
 | `--ds-z-popover` | `45` | Popovers | Menus and select panels above the header | Dialogs and sheets, which open with showModal in the top layer over every z value | system |
 | `--ds-z-toast` | `60` | Toasts | Over the header and popovers, under an open modal, so a dialog's outcome is toasted after it closes | Tooltips | system |
@@ -1182,7 +1182,7 @@ Reasons: Easing, duration, springs ([4.1](#41-easing-duration-springs)).
 | `--ds-dur-panel` | `350ms` | Panel | An accordion answer opening, a detail swap | Hover | `components/website/Faq.tsx:65` |
 | `--ds-dur-sheen` | `400ms` | Sheen | The card sheen fading in | Hover colour | `app/globals.css:260` |
 | `--ds-dur-exit-long` | `450ms` | Long exit | Loaders leaving, a live count settling | Controls | `components/website/HeroBits.tsx:65` |
-| `--ds-dur-reveal` | `500ms` | Reveal | The players reveal and portrait swap | Controls | `components/website/Players.tsx:88` |
+| `--ds-dur-reveal` | `500ms` | Reveal | The players reveal and portrait swap | Controls | `components/website/Players.tsx:93` |
 | `--ds-dur-numbers` | `600ms` | Numbers | The hero numbers rising | Controls | `components/website/HeroBits.tsx:35` |
 | `--ds-dur-rise` | `700ms` | Rise | Section entrances and trait bars | Controls | `components/website/Understands.tsx:48` |
 | `--ds-dur-tiles` | `900ms` | Tiles | The tile floor rising in | UI | `tiles/intro.js:12` |
@@ -1222,7 +1222,7 @@ Reasons: Easing, duration, springs ([4.1](#41-easing-duration-springs)), Micro-i
 | Token | Value | Role | Use for | Never for | Source |
 | --- | --- | --- | --- | --- | --- |
 | `--ds-rise-y` | `28px` | Entrance travel | Section entrances | Controls | `components/website/Understands.tsx:45` |
-| `--ds-reveal-y` | `24px` | Reveal travel | The players reveal | Controls | `components/website/Players.tsx:86` |
+| `--ds-reveal-y` | `24px` | Reveal travel | The players reveal | Controls | `components/website/Players.tsx:91` |
 | `--ds-numbers-y` | `6px` | Small rise | The hero numbers, small content swaps | Sections | `components/website/HeroBits.tsx:33` |
 | `--ds-lift-y` | `2px` | Hover lift | Cards and floating buttons on hover | Text | `components/website/BackToTop.tsx:62` |
 | `--ds-loop-max` | `8px` | Loop ceiling | The most an ambient loop may travel | Entrances | system |
@@ -1243,14 +1243,14 @@ Reasons: Easing, duration, springs ([4.1](#41-easing-duration-springs)).
 | `--ds-type-stat-*` | Outfit 500, tabular | `30px / 1 / -0.025em` | none | Stat number | Hero numbers | Prose numbers | `components/website/HeroBits.tsx:55` |
 | `--ds-type-comparison-name-*` | Outfit 500 | `26px / 1.1 / -0.025em` | from 768: 34px | Comparison name | The maker's name heading each comparison card, 500 on the grey and 400 (6labs) on the navy | Section heads | `components/website/Understands.tsx:31` |
 | `--ds-type-vs-*` | Outfit 400 | `27px / 1 / -0.025em` | from 768: 34px | The vs word | The vs on the disc between the comparison cards, decorative and aria-hidden | Text a reader must read | `components/website/Understands.tsx:87` |
-| `--ds-type-card-name-*` | Outfit 500 | `22px / 1.25 / -0.025em` | none | Card name | Player cards | Section heads | `components/website/Players.tsx:230` |
+| `--ds-type-card-name-*` | Outfit 500 | `22px / 1.25 / -0.025em` | none | Card name | Player cards | Section heads | `components/website/Players.tsx:235` |
 | `--ds-type-wordmark-*` | Outfit 500 | `24px / 32px / -0.025em` | none | Logo wordmark | The 6labs lockup in the header and footer | Headings | `components/website/Header.tsx:73` |
 | `--ds-type-card-title-*` | Outfit 500 | `20px / 1.25 / -0.03em` | none | Card title | Job cards and new card titles | Body | `components/website/Jobs.tsx:164` |
 | `--ds-type-menu-row-*` | Outfit 400 | `20px / 1.5 / -0.025em` | none | Mobile menu row | Rows of the mobile menu | Desktop nav | `components/website/MobileMenu.tsx:91` |
 | `--ds-type-question-*` | Outfit 500 | `16px / 1.375 / -0.02em` | from 768: 18px | FAQ question | Accordion triggers | Body | `components/website/Faq.tsx:45` |
 | `--ds-type-lede-full-*` | Inter 400 | `16px / 1.55 / -0.015em` | from 561: 16.5px, from 901: 15px, from 1280: 16px, from 1600: 18px, from 1920: 20px, from 2560: 22px | Lede, full view | The full-view hero's lede | Body copy | `components/website/Hero.tsx:20` |
 | `--ds-type-lede-*` | Inter 400 | `14px / 1.625 / 0` | from 768: 15px | Lede, container hero | The line under the container h1 | Long body | `components/website/Hero.tsx:205` |
-| `--ds-type-player-body-*` | Inter 400 | `16px / 1.625 / 0` | from 768: 18px | Player body | The player description on blue | Light grounds | `components/website/Players.tsx:127` |
+| `--ds-type-player-body-*` | Inter 400 | `16px / 1.625 / 0` | from 768: 18px | Player body | The player description on blue | Light grounds | `components/website/Players.tsx:132` |
 | `--ds-type-comparison-*` | Inter 400 | `16px / 1.5 / 0` | from 768: 18px | Comparison line | The two lines inside each comparison card, in the card's one ink | Headings | `components/website/Understands.tsx:32` |
 | `--ds-type-body-l-*` | Inter 400 | `15px / 1.5 / 0` | from 768: 16px | Body L | The closing line | Labels | `components/website/Closing.tsx:27` |
 | `--ds-type-subline-*` | Inter 400 | `15px / 1.375 / 0` | from 768: 16px | Section subline | Section sublines, the carousel body on blue | Long reading | `components/website/Jobs.tsx:109` |
@@ -1271,7 +1271,7 @@ Reasons: Easing, duration, springs ([4.1](#41-easing-duration-springs)).
 | `--ds-type-tooltip-*` | Inter 500 | `12px / 16px / 0` | none | Tooltip words | The words in a tooltip bubble | Body | `components/design-system/TooltipBubble.tsx:28` |
 | `--ds-type-group-caps-*` | Inter 500, caps | `11px / 16px / 0.14em` | none | Group caps | The group names inside a Select or SearchField list | Sentences | `components/design-system/select-panel.tsx:187` |
 | `--ds-type-body-s-*` | Inter 400 | `14px / 1.4 / -0.01em` | none | Body S | Job body and card body | Long reading | `components/website/Jobs.tsx:167` |
-| `--ds-type-card-tagline-*` | Inter 400 | `14px / 1.375 / 0` | none | Card tagline | The tagline under a player card's name, hidden under lg | Body | `components/website/Players.tsx:238` |
+| `--ds-type-card-tagline-*` | Inter 400 | `14px / 1.375 / 0` | none | Card tagline | The tagline under a player card's name, hidden under lg | Body | `components/website/Players.tsx:243` |
 | `--ds-type-trait-label-*` | Inter 400 | `14px / 1.5 / 0` | none | Trait label | The trait bar labels on blue, 13px in the dense card | Light grounds | `components/website/PlayerTraits.tsx:37` |
 | `--ds-type-caption-l-*` | Inter 400 | `13.5px / 1.5 / -0.01em` | none | Caption 13.5 | The closing small line, footer links | New work, which takes 13 or 14 | `components/website/Closing.tsx:34` |
 | `--ds-type-caption-*` | Inter 400 | `13px / 1.625 / 0` | none | Caption 13 | The social proof line | Body | `components/website/Hero.tsx:236` |
@@ -1282,7 +1282,7 @@ Reasons: Easing, duration, springs ([4.1](#41-easing-duration-springs)).
 | `--ds-type-micro-*` | Inter 400 | `12px / 1.5 / -0.01em` | none | Micro 12 | The footer copy line's model pills | Body | `components/website/CopyLine.tsx:102` |
 | `--ds-type-eyebrow-*` | Inter 500, caps | `11px / 1.5 / 0.18em` | none | Eyebrow caps | The scroll cue and the loader label | Sentences | `components/website/ScrollCue.tsx:25` |
 | `--ds-type-code-tag-*` | Inter 600 | `11px / 1.5 / 0.025em` | none | Code tag | Language codes in the menu | Labels | `components/website/LanguageMenu.tsx:95` |
-| `--ds-type-card-meta-*` | JetBrains Mono 400, caps | `11px / 1.5 / 0.14em` | under 1024: 10px / 0.08em | Card meta | Model number and status on player cards | Sentences, badge labels | `components/website/Players.tsx:247` |
+| `--ds-type-card-meta-*` | JetBrains Mono 400, caps | `11px / 1.5 / 0.14em` | under 1024: 10px / 0.08em | Card meta | Model number and status on player cards | Sentences, badge labels | `components/website/Players.tsx:252` |
 | `--ds-type-badge-*` | JetBrains Mono 500, caps | `11px / 1 / 0.12em` | none | Badge label | Badge labels: 0.12em at md, 0.08em at sm | Sentences | `components/design-system/Badge.tsx:21` |
 | `--ds-type-terminal-*` | JetBrains Mono 400 | `12.5px / 22px / 0` | under 768: 11.5px / 20px | Terminal text | The jobs terminal | Light grounds | `components/website/JobTerminal.tsx:142` |
 
@@ -1632,7 +1632,7 @@ The beam colour is `#8cc8ff` at 2.4. The beam head follows `0.95 - (S / 0.3) * 0
 
 **States of a bust.** Blank until its picture is on the GPU. Human. Crossfading, both drawn, the hologram's opacity following the sweep's convert value. AI, once converted. AI pending: the hologram has not landed, so the tile stays human and autoplay picks another. AI failed: it plays as human. The crossfade is a plain opacity fade across the whole bust, not a wipe, despite its uniform's name (`uScan`).
 
-**Loading plan.** The first frame depends on the on-screen humans alone, most central first. Then come the humans off screen (there for a resize), then the hologram autoplay converts first, then the other holograms in the same central-first order. Pictures decode off the main thread and go up to the GPU one per idle moment, because a burst of uploads made a visible jerk in the first activation. Only the cast on screen stays on the GPU. The other is fetched when a wave is near and let go after it, which saves about 230 MB that stalled an Intel MacBook Pro after the first wave.
+**Loading plan.** The on-screen humans come first, most central first, then the hologram autoplay converts first, the other on-screen holograms in the same order, and last the humans and holograms off screen (there for a resize). The floor waits for the on-screen humans and then up to 3s more for the rest of the cast, so a first visit starts as a reload does: every picture is in and on the GPU under the loader, and none arrives mid-intro. A slow connection waits no longer than that and takes the rest as it lands. A picture that lands later decodes off the main thread and goes up to the GPU one per idle moment, because a burst of uploads made a visible jerk in the first activation. Only the cast on screen stays on the GPU. The other is fetched when a wave is near and let go after it, which saves about 230 MB that stalled an Intel MacBook Pro after the first wave.
 
 **Performance rules.** Never hold both casts on the GPU. Never decode a picture on the main thread. Never make the floor wait for a hologram before its first frame.
 
@@ -3378,7 +3378,7 @@ Severity: **high** breaks a rule the site states for itself (the compositor rule
 | Accessibility | medium | Small targets | PlayerCarousel.tsx:16, 104 | 44px arrows (the lg icon button) and taller dot hit areas |
 | Accessibility | low | BackToTop | BackToTop.tsx:60 | inert while hidden |
 | Accessibility | medium | Glide and floor | glide.ts, SafariScroll.tsx, usePlayerMode.ts, src/tiles | under reduced motion: jump instead of glide, settle desktop Safari's players magnet at once, hold the players' auto switch, and hold the floor's intro |
-| Accessibility | medium | Ping and pulse | Hero.tsx:238, Players.tsx:264 | the motion-safe variant on both loops |
+| Accessibility | medium | Ping and pulse | Hero.tsx:238, Players.tsx:269 | the motion-safe variant on both loops |
 | Accessibility | medium | Accent text | Header.tsx:86, Hero.tsx:245 | the accent ink for text under 24px, [decision 1](#1-accent-text-under-24px) in Decisions pending ([10.3](#103-decisions-pending)) |
 | Accessibility | medium | Skip link | website/page.tsx:25 | a SkipLink first in the body, and an id on `main` for it to land on |
 | Accessibility | low | Footer stubs | Footer.tsx:18, 94-95 | an `href` on each link, or plain text until it has one |
@@ -3397,10 +3397,10 @@ Severity: **high** breaks a rule the site states for itself (the compositor rule
 | Drift | medium | Ease | website | one ease token in the theme, [decision 7](#7-tokens-in-the-sites-theme) in Decisions pending ([10.3](#103-decisions-pending)) |
 | Drift | low | Radius | website | one spelling per step |
 | Drift | low | Header offsets | Understands.tsx:64, Hero.tsx:169 | one header height token |
-| Drift | low | Players gutter | Players.tsx:107 | 16 on phones, as every other section takes |
+| Drift | low | Players gutter | Players.tsx:112 | 16 on phones, as every other section takes |
 | Drift | low | Hero row gutter | Hero.tsx:101 | 16 on phones, as every other row takes |
-| Drift | medium | font-mono | Players.tsx:247, globals.css | map --font-mono, [decision 8](#8-the-mono-family) in Decisions pending ([10.3](#103-decisions-pending)) |
-| Dead code | low | Player card classes | Players.tsx:207, 220 | remove the classes a hidden grid never shows |
+| Drift | medium | font-mono | Players.tsx:252, globals.css | map --font-mono, [decision 8](#8-the-mono-family) in Decisions pending ([10.3](#103-decisions-pending)) |
+| Dead code | low | Player card classes | Players.tsx:212, 220 | remove the classes a hidden grid never shows |
 | Dead code | low | Prism sweep | PrimaryCta.tsx:25, 112 | remove the branch, which also breaks the compositor rule |
 | Stale comment | low | Charcoal copies | characters.js:5, interact.js:6 | say blue hologram |
 | Stale comment | low | Doodle pace | PlayerDoodles.tsx:22-23 | say the hand ends just after the first switch and the copy waits on it |

@@ -44,10 +44,11 @@ export const DECAL_VALUES: readonly ValueRow[] = [
 
 /** The loading plan, in the order pictures are fetched. */
 export const LOAD_ROWS: readonly KeyRow[] = [
-  { key: "1 Humans on screen", value: "most central first, and the floor waits only for these", source: `${T}load-plan.js:15-17` },
-  { key: "2 Humans off screen", value: "there for a resize", source: `${T}load-plan.js:16` },
-  { key: "3 First hologram", value: "the one autoplay converts first, the most central tile with 0.4 of it in view", source: `${T}load-plan.js:15-16` },
-  { key: "4 Other holograms", value: "in the same central-first order", source: `${T}load-plan.js:16` },
+  { key: "1 Humans on screen", value: "most central first, the floor waits for these", source: `${T}load-plan.js:21` },
+  { key: "2 First hologram", value: "the one autoplay converts first, the most central tile with 0.4 of it in view", source: `${T}load-plan.js:20-21` },
+  { key: "3 Holograms on screen", value: "in the same central-first order", source: `${T}load-plan.js:21` },
+  { key: "4 Off screen", value: "the humans, then their holograms, there for a resize", source: `${T}load-plan.js:21` },
+  { key: "Under the loader", value: "past the humans on screen, the floor waits up to 3s more for the rest of the cast, so a first visit starts as a reload does, every picture on the GPU before the intro", source: `${T}load-plan.js:11,23-27` },
   { key: "Decode and upload", value: "decoded off the main thread, then one GPU upload per idle moment", source: `${T}upload.js:1-4` },
   { key: "One cast on the GPU", value: "the other is fetched when a wave is near and let go after it, about 230 MB saved", source: `${T}casts.js:1-10` },
 ];

@@ -50,10 +50,14 @@ export function Players() {
   const [inView, setInView] = useState(false);
   // the clips download only once the visitor is within two screens of the section (and then stay)
   const [near, setNear] = useState(false);
+  // the hero's floor is in (TileFloor.tsx): the shown player's own clips may download ahead (usePrefetchClips.ts)
+  const [warm, setWarm] = useState(false);
   useEffect(() => {
     const on = (e: Event) =>
       setFilled((e as CustomEvent<{ filled: boolean }>).detail.filled);
+    const onFloor = () => setWarm(true);
     window.addEventListener("accentwave", on);
+    window.addEventListener("floorready", onFloor, { once: true });
     const io = new IntersectionObserver(([e]) => setInView(e.isIntersecting), {
       threshold: 0.2,
     });
@@ -72,6 +76,7 @@ export function Players() {
     }
     return () => {
       window.removeEventListener("accentwave", on);
+      window.removeEventListener("floorready", onFloor);
       io.disconnect();
       nearing.disconnect();
     };
@@ -91,7 +96,7 @@ export function Players() {
   // the real player or their AI copy, per player, switching by itself until the visitor picks one
   // Safari and iPhones draw a WebM's transparency black: they get the stacked clips (useClipFormat.ts)
   const format = useClipFormat();
-  usePrefetchClips(near, active, format); // the other players' clips, fetched ahead
+  usePrefetchClips(near, warm, active, format); // the shown player's clips, then the others', fetched ahead
   const [mode, setMode] = usePlayerMode(player.id, shown && !!player.aiVideo);
 
   return (

@@ -49,7 +49,7 @@ export const STRETCHES: readonly Stretch[] = [
     ascii: "paused",
     snap: "#players, proximity plus a 0.6-screen catch",
     back: "shown (phones: scrolling up)",
-    source: "Players.tsx:103",
+    source: "Players.tsx:108",
   },
   {
     name: "Grain block",

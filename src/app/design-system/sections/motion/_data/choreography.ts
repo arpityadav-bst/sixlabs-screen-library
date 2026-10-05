@@ -86,7 +86,7 @@ export const PLAYERS_CLOCK: readonly TimelineLane[] = [
 ];
 
 export const PLAYERS_CLOCK_ROWS: readonly KeyRow[] = [
-  { key: "reveal", value: "the accentwave event says filled, and 20% of the section is in view", source: `${W}Players.tsx:56` },
+  { key: "reveal", value: "the accentwave event says filled, and 20% of the section is in view", source: `${W}Players.tsx:59` },
   { key: "hand", value: `starts ${DELAY_S}s after the reveal, the explorer's drawing done at ${HAND_END}s`, source: `${W}PlayerDoodles.tsx:19` },
   { key: "flips", value: `the portrait turns AI at ${AUTO_S}s and flips every ${AUTO_S}s after, until the visitor picks`, source: `${W}usePlayerMode.ts:11` },
   { key: "copy", value: "the AI copy starts 0.6s after each switch, never before the hand has finished a stroke", source: `${W}PlayerDoodles.tsx:20` },

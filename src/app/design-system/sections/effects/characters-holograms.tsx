@@ -66,7 +66,7 @@ export function HologramsSection() {
       <Spec
         title="Loading plan"
         source={{ from: "@/tiles/load-plan", name: "planLoad", file: "load-plan.js" }}
-        role="The floor waits only for the humans it can see, so the first frame never waits on a picture off screen or on a hologram."
+        role="The floor waits for the humans it can see, then up to 3s more for the rest of its cast, so the intro never waits on a picture or puts one up mid-move."
       >
         <KeyRows label="Loading order" rows={LOAD_ROWS} />
       </Spec>
