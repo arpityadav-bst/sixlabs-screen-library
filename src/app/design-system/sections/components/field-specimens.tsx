@@ -146,7 +146,7 @@ export function GroundDoDont() {
           </div>
         </div>
       </Do>
-      <Dont reason="On the hero container's grey the same line falls under 3:1, as its badge reads, and the edge of the box fades into the ground." ground="container" isolateKeys>
+      <Dont reason="On the hero container's grey the same line clears 3:1 only by a hair, as its badge reads, and the white box barely parts from the ground, so it reads as a gap." ground="container" isolateKeys>
         <div className={styles["ds-in-w320"]}>
           <TextInput label={COPY.email} leadingIcon={Mail} placeholder={COPY.emailHint} />
           <div className={styles["ds-in-badge"]}>

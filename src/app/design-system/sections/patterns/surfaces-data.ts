@@ -20,7 +20,7 @@ export type Surface = {
 export const SURFACES: readonly Surface[] = [
   { kind: "page", name: "Page", value: "#f9fafb", where: "every light section, the grain from Understands down" },
   { kind: "card", name: "White card", value: "#ffffff · radius 28", where: "job cards, FAQ rows, the tab rail" },
-  { kind: "container", name: "Container", value: "#e3e5e8 · radius 48", where: "the hero, the ChatGPT card" },
+  { kind: "container", name: "Container", value: "#f5f6f8 · radius 48", where: "the hero (the ChatGPT card keeps the earlier #e3e5e8)" },
   { kind: "navy", name: "Navy", value: "#0a152d · radius 36", where: "the 6labs card, the primary fill" },
   { kind: "terminal", name: "Terminal", value: "#0b1526 · radius 16", where: "the jobs terminal window" },
   { kind: "accent", name: "Accent water", value: "#1a6dff · grain 7%", where: "the players section only" },
@@ -85,7 +85,7 @@ export const SURFACES_CODE = `import { typeStyle } from "@/components/design-sys
 import { HeroNumbers } from "@/components/website/HeroBits";
 import { PrimaryCta } from "@/components/website/PrimaryCta";
 
-// the container look: #e3e5e8, radius 48 (32 under md), the faint hairline, the container shadow
+// the container look: #f5f6f8, radius 48 (32 under md), the faint hairline, the container shadow
 <div className="rounded-(--ds-radius-2xl) max-md:rounded-(--ds-radius-container-sm) border border-(--ds-color-line-faint) bg-(--ds-color-container) shadow-(--ds-shadow-container) px-6 py-10 md:p-16">
   <p className="text-(--ds-color-ink)" style={typeStyle("hero")}>
     Making <span className="text-(--ds-color-accent)">models</span> of human players.

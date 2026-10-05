@@ -8,7 +8,7 @@ A solid outline drawn outside the border box, a step further off a card than a c
 | --- | --- | --- |
 | #1a6dff | page #f9fafb | 4.29 |
 | #1a6dff | surface #ffffff | 4.49 |
-| #1a6dff | container #e3e5e8 | 3.55 |
+| #1a6dff | container #f5f6f8 | 4.15 |
 | #1a6dff | navy #0a152d | 4.03 |
 | #ffffff | accent #1a6dff | 4.49 |
 | #6ea8ff | navy #0a152d | 7.51 |

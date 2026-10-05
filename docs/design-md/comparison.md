@@ -10,7 +10,7 @@
 
 **The subgrid.** From md each card spans the grid's three rows as a subgrid. That keeps each line level with its counterpart whatever its length, so the pair reads across, row by row, the way a comparison is meant to be read. Without the subgrid a longer line on one side pushes everything below it down, and the rows drift out of step.
 
-**Two grounds, one weight.** ChatGPT's card wears the hero container's look (the grey, a faint hairline, navy type, no shadow) and 6labs' wears the primary navy with white type, so the two sides differ in ground at a glance. White on navy reads heavier than navy on grey, so the 6labs name sits a step lighter (400 against ChatGPT's 500) for the two to look the same weight. 6labs' card also takes 64px of left padding from md, to keep its copy clear of the vs.
+**Two grounds, one weight.** ChatGPT's card wears the hero container's shape (a faint hairline, navy type, no shadow) on the earlier grey `#e3e5e8`, which it keeps now the hero is `#f5f6f8`, and 6labs' wears the primary navy with white type, so the two sides differ in ground at a glance. White on navy reads heavier than navy on grey, so the 6labs name sits a step lighter (400 against ChatGPT's 500) for the two to look the same weight. 6labs' card also takes 64px of left padding from md, to keep its copy clear of the vs.
 
 **The vs depends on the page.** Its 6px ring is the page colour, `rgb(var(--page-rgb))`, which makes the disc read as cut into both cards. On any ground but the page that ring shows as a band of a different grey. Moving the section onto another surface means giving the ring that surface's colour.
 

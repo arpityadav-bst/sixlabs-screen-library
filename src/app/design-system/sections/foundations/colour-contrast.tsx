@@ -21,7 +21,7 @@ const MATRIX_VALUES = [...FOREGROUNDS, ...MATRIX_GROUNDS].map((c) => pairRow(`${
 const MATRIX_CODE = [
   'import { contrastRatio, formatRatio, grade } from "@/app/design-system/_kit/contrast";',
   "",
-  'const r = contrastRatio("#64748b", "#e3e5e8"); // alpha is composited over the ground first',
+  'const r = contrastRatio("#64748b", "#f5f6f8"); // alpha is composited over the ground first',
   "formatRatio(r!); // two decimals, rounded down",
   'grade(r!); // "AAA" from 7, "AA" from 4.5, "AA large" from 3, else "fail"',
 ].join("\n");

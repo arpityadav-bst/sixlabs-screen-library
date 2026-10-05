@@ -12,7 +12,7 @@ import { LINES, SIDES } from "./comparison-data";
 export type SketchTone = "container" | "navy" | "white";
 
 const TONE: Record<SketchTone, string> = {
-  container: "border-(--ds-color-line-faint) bg-(--ds-color-container) text-(--ds-color-ink)",
+  container: "border-(--ds-color-line-faint) bg-(--ds-color-container-deep) text-(--ds-color-ink)",
   navy: "border-transparent bg-(--ds-color-primary) text-white",
   white: "border-(--ds-color-line) bg-(--ds-color-surface) text-(--ds-color-ink)",
 };

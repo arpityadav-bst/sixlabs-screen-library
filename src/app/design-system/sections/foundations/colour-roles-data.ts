@@ -146,10 +146,10 @@ export const DRIFT: readonly DriftRole[] = [
   {
     role: "Greys round the container",
     probes: [
-      hex("#e3e5e8", "the container"),
+      hex("#f5f6f8", "the container"),
+      hex("#e3e5e8", "the ChatGPT card"),
       hex("#f6f7f9", "the sunken panel"),
-      hex("#e0e2e5", "the floor's colour"),
-      hex("#d8dade", "the floor's fog"),
+      hex("#eaecef", "the floor's fog"),
     ],
   },
 ];

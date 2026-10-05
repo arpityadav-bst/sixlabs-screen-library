@@ -39,7 +39,7 @@ Severity: **high** breaks a rule the site states for itself (the compositor rule
 | Accessibility | medium | LanguageMenu highlight | LanguageMenu.tsx:72 | `aria-activedescendant` on the focused trigger, with `aria-controls` |
 | Accessibility | low | Comparison headings | Understands.tsx:70, 77 | an h3 per name under a visually hidden h2, so heading navigation finds the section, with no change to the look |
 | Accessibility | low | Language of parts | LanguageMenu.tsx:96 | a `lang` on each row's label (ko, ja, zh) |
-| Accessibility | medium | HeroLoader label | HeroLoader.tsx:48 | the body slate `#475569` for the label (6.0:1), since its slate-500 holds near 3.8:1 on the hero grey |
+| Accessibility | medium | HeroLoader label | HeroLoader.tsx:48 | the body slate `#475569` for the label (7.0:1), since its slate-500 holds near 4.4:1 on the hero grey |
 | Behaviour | medium | Mobile menu rows | ClickLock.tsx:11, MobileMenu.tsx:86 | close the sheet before ClickLock's capture, or let ClickLock spare the menu |
 | Behaviour | medium | Page hold | MobileMenu.tsx:17 | release the hold when the md query starts to match |
 | Behaviour | low | Language in the sheet | MobileMenu.tsx:108 | lift the chosen language above the sheet |

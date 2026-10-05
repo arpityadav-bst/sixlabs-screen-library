@@ -14,7 +14,7 @@
 
 **Performance rules.** Loaders animate transform and opacity only. The floor holds during the intro delay. The container loader's feathered edge is a CSS `mask-image`, one of the effects the compositor rule forbids, and it is on screen while the container hero loads. It is a known exception, listed in Known gaps (10.2), and the fix is to bake the feather into the still's alpha.
 
-**Accessibility.** `HeroLoader` is `role="status"`, so its word reaches a screen reader. Its label is slate-500, about 3.8:1 on the hero grey, under the 4.5:1 a status word needs. The body slate `#475569`, at 6.0:1, is the fix. `FloorLogo` is decorative (`alt=""`). Under reduced motion both loaders hold still (the floor logo keeps its tilt), but the intro, autoplay and waves still run, because `src/tiles` has no reduced-motion mode.
+**Accessibility.** `HeroLoader` is `role="status"`, so its word reaches a screen reader. Its label is slate-500, about 4.4:1 on the hero grey, under the 4.5:1 a status word needs. The body slate `#475569`, at 7.0:1, is the fix. `FloorLogo` is decorative (`alt=""`). Under reduced motion both loaders hold still (the floor logo keeps its tilt), but the intro, autoplay and waves still run, because `src/tiles` has no reduced-motion mode.
 
 **Do / Don't.**
 - Do put a loader on the hero's grey, the ground the floor lands on.

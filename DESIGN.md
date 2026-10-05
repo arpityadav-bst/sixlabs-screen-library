@@ -244,7 +244,7 @@ Tailwind v4 slate classes resolve to oklch. Each of those tokens keeps the oklch
 
 **One accent fill.** The accent's two jobs, the water and attention, and why selected, checked and pressed states take navy instead, are the accent rule in [chapter 8](#8-the-accent-rule).
 
-**The container is darker than white.** `#e3e5e8` is the hero container look, reused for the ChatGPT card. Text greys are graded on it separately, in Contrast ([2.3](#23-contrast)).
+**The container is darker than white.** `#f5f6f8` is the hero container look, a step lighter than the white floor draws under its lighting, so the loader box and the loaded floor read as one colour. The ChatGPT card keeps the earlier grey `#e3e5e8` as its own token, `--ds-color-container-deep`. Text greys are graded on the container separately, in Contrast ([2.3](#23-contrast)).
 
 **The field line is new.** The card hairline is 1.18:1 on white, which groups content but cannot mark an edge a visitor has to find. `#848fa1` reaches 3.26:1, the non-text bar, and stays quieter than ink.
 
@@ -307,13 +307,13 @@ The readings that set the rules, rounded down:
 
 | Pair | Ratio |
 | --- | --- |
-| Body `#475569` on the container `#e3e5e8` | 6.00 |
-| Muted `#64748b` on the container | 3.77 |
+| Body `#475569` on the container `#f5f6f8` | 7.00 |
+| Muted `#64748b` on the container | 4.40 |
 | Muted on white | 4.75 |
 | Quiet slate-400 on white | 2.63 |
 | Accent `#1a6dff` on the page | 4.29 |
 | Accent on white | 4.49 |
-| Accent on the container | 3.55 |
+| Accent on the container | 4.15 |
 | White on the accent | 4.49 |
 | White 80% on the accent | 3.42 |
 | Field line `#848fa1` on white | 3.26 |
@@ -336,7 +336,7 @@ The readings that set the rules, rounded down:
 
 #### Reasons
 
-**The container moves the line.** The hero container is darker than white, and the drop is enough to push muted from 4.75 to 3.77. A text colour is chosen for the ground it lands on, which is why the matrix grades every pair rather than every colour once.
+**The container moves the line.** The hero container is a step darker than white, and the drop is enough to push muted from 4.75 to 4.40, under the bar. A text colour is chosen for the ground it lands on, which is why the matrix grades every pair rather than every colour once.
 
 **The accent is a display colour.** At 4.29:1 on the page and 4.49:1 on white, it misses the text bar by a hair and clears the large-text bar, which suits a word in a heading and nothing smaller. The site uses it for small copy in two places today, "Yours next." on the container and the player card's "Running", and the guide lists both with their file and line.
 
@@ -344,9 +344,9 @@ The readings that set the rules, rounded down:
 
 **Non-text needs 3:1 too.** A field edge a visitor has to find is held to 3:1, which the hairline does not reach. That is why the field line exists. A hairline round a card needs no such bar, because the content inside it already marks the edge.
 
-**Shipped pairs under the line.** Besides the accent and player body cases, the player card's "Model 01" meta in quiet slate-400 is 2.63:1 on white, and the terminal's prompt and labels in Tailwind v4 slate-500 are 3.83:1 on its body at 12.5px. The full view's "Loading" label is the same slate-500 at 11px on the hero grey, 3.77:1, the muted-on-container pair this chapter rules out. The comparison's vs is ink at 30% on its white disc, 1.93:1, and stays there because the word is incidental: the paired cards already say versus, so it falls under the decorative exemption of 1.4.3. The system parts made for the water set their labels in full white at 12 to 15px, 4.49:1, a hair under the bar: the glass Button, the on-blue Chip, Segmented's segments, the Switch's label and the label rows of Slider and Progress on blue. They are open, [decision 2](#2-white-labels-on-the-accent) in Decisions pending ([10.3](#103-decisions-pending)), and Known gaps ([10.2](#102-known-gaps)) lists them. The on-blue Badge, white on its 15% glass, is lower still, as Badge, status dot, tag ([7.14](#714-badge-status-dot-tag)) records.
+**Shipped pairs under the line.** Besides the accent and player body cases, the player card's "Model 01" meta in quiet slate-400 is 2.63:1 on white, and the terminal's prompt and labels in Tailwind v4 slate-500 are 3.83:1 on its body at 12.5px. The full view's "Loading" label is the same slate-500 at 11px on the hero grey, 4.40:1, the muted-on-container pair this chapter rules out. The comparison's vs is ink at 30% on its white disc, 1.93:1, and stays there because the word is incidental: the paired cards already say versus, so it falls under the decorative exemption of 1.4.3. The system parts made for the water set their labels in full white at 12 to 15px, 4.49:1, a hair under the bar: the glass Button, the on-blue Chip, Segmented's segments, the Switch's label and the label rows of Slider and Progress on blue. They are open, [decision 2](#2-white-labels-on-the-accent) in Decisions pending ([10.3](#103-decisions-pending)), and Known gaps ([10.2](#102-known-gaps)) lists them. The on-blue Badge, white on its 15% glass, is lower still, as Badge, status dot, tag ([7.14](#714-badge-status-dot-tag)) records.
 
-**Pending: an accent ink for small text.** A darker accent, `#1559d6`, reaches 5.85:1 on the page, 6.11 on white and 4.84 on the container, enough for small accent copy on every light ground. It is [decision 1](#1-accent-text-under-24px) in Decisions pending ([10.3](#103-decisions-pending)), and new work keeps small copy out of the accent meanwhile.
+**Pending: an accent ink for small text.** A darker accent, `#1559d6`, reaches 5.85:1 on the page, 6.11 on white and 5.65 on the container, enough for small accent copy on every light ground. It is [decision 1](#1-accent-text-under-24px) in Decisions pending ([10.3](#103-decisions-pending)), and new work keeps small copy out of the accent meanwhile.
 
 **How to change a colour safely.** Change the token, then read the matrix and the swatch cards. Every grade in the guide recomputes from the new value, so a change that breaks a pair shows as a fail where that pair lives.
 
@@ -624,7 +624,7 @@ A solid outline drawn outside the border box, a step further off a card than a c
 | --- | --- | --- |
 | #1a6dff | page #f9fafb | 4.29 |
 | #1a6dff | surface #ffffff | 4.49 |
-| #1a6dff | container #e3e5e8 | 3.55 |
+| #1a6dff | container #f5f6f8 | 4.15 |
 | #1a6dff | navy #0a152d | 4.03 |
 | #ffffff | accent #1a6dff | 4.49 |
 | #6ea8ff | navy #0a152d | 7.51 |
@@ -802,7 +802,8 @@ Reasons: Colour roles ([2.1](#21-colour-roles)).
 | `--ds-color-page` | `#f9fafb` | The page ground | The page, the ring round the vs disc, the grain's fade | Cards and controls, which take color-surface | `app/globals.css:13`, as `bg-[rgb(var(--page-rgb))]` |
 | `--ds-color-page-92` | `rgb(249 250 251 / 0.92)` | Header strip | The fixed header over the page | Panels that need to hide what is under them | `components/website/Header.tsx:59` |
 | `--ds-color-surface` | `#ffffff` | Cards and controls | Job cards, FAQ rows, BackToTop, the tab rail, sheets | The page ground | `components/website/Jobs.tsx:162`, as `bg-white` |
-| `--ds-color-container` | `#e3e5e8` | The hero container look | The hero container and the ChatGPT card | Controls inside it, which take color-surface | `components/website/Hero.tsx:122`, as `bg-[#e3e5e8]` |
+| `--ds-color-container` | `#f5f6f8` | The hero container look | The hero container, the loader's ground and grouped blocks | Controls inside it, which take color-surface | `components/website/Hero.tsx:122`, as `bg-[#f5f6f8]` |
+| `--ds-color-container-deep` | `#e3e5e8` | The ChatGPT card grey | The ChatGPT card, which keeps the hero's earlier grey | The hero, which takes color-container | `components/website/Understands.tsx:23`, as `bg-[#e3e5e8]` |
 | `--ds-color-surface-sunken` | `#f6f7f9` | Inset panel | The jobs tag panel and disabled fields | A raised card | `components/website/Jobs.tsx:184`, as `bg-[#f6f7f9]` |
 | `--ds-color-footer` | `rgb(0 0 0 / 0.04)` | Footer ground | Laid over the page under the footer | Any other surface | `components/website/Footer.tsx:26`, as `bg-black/[0.04]` |
 | `--ds-color-footer-tail` | `rgb(0 0 0 / 0.04)` | Footer tail | Laid over the footer ground, so the tail reads 8%. color-footer's value, named apart for its own job | Any other surface | `components/website/Footer.tsx:85`, as `bg-black/[0.04]` |
@@ -1572,7 +1573,7 @@ The set pieces that make the page 6labs: the tile floor and its states, the holo
 **Reasons.**
 - A click locks the tile because a half-converted bust snapping back to human reads as a glitch, never as a choice.
 - Spent tiles ignore the pointer so a played character cannot be replayed until the wave brings a new one. Each tile is one visitor's turn.
-- The spent tint is TileFloor's `#e3f3ff`, a light wash of the holograms' sky blue, because the params file's container grey would leave a played tile indistinguishable from a fresh one. Which of the tint's three values wins, and how to change it, is in Special palettes ([2.2](#22-special-palettes)).
+- The spent tint is TileFloor's `#e3f3ff`, a light wash of the holograms' sky blue, because the params file's `#e3e5e8`, the hero's earlier container grey, would leave a played tile indistinguishable from a fresh one. Which of the tint's three values wins, and how to change it, is in Special palettes ([2.2](#22-special-palettes)).
 - The wave flips rather than fades, so a change of cast reads as the floor turning over its cards, one by one, in reading order.
 
 **The commit rule.** `COMMIT_SECONDS` 0.25 says an activation left by the pointer after that point finishes before it fades, and one left earlier reverts. Every click locks today, which skips the rule, so it never fires. Keep it if an unlocked activation (a hover that activates) is ever added, and remove it otherwise.
@@ -1661,7 +1662,7 @@ The beam colour is `#8cc8ff` at 2.4. The beam head follows `0.95 - (S / 0.3) * 0
 
 **Performance rules.** Loaders animate transform and opacity only. The floor holds during the intro delay. The container loader's feathered edge is a CSS `mask-image`, one of the effects the compositor rule forbids, and it is on screen while the container hero loads. It is a known exception, listed in Known gaps ([10.2](#102-known-gaps)), and the fix is to bake the feather into the still's alpha.
 
-**Accessibility.** `HeroLoader` is `role="status"`, so its word reaches a screen reader. Its label is slate-500, about 3.8:1 on the hero grey, under the 4.5:1 a status word needs. The body slate `#475569`, at 6.0:1, is the fix. `FloorLogo` is decorative (`alt=""`). Under reduced motion both loaders hold still (the floor logo keeps its tilt), but the intro, autoplay and waves still run, because `src/tiles` has no reduced-motion mode.
+**Accessibility.** `HeroLoader` is `role="status"`, so its word reaches a screen reader. Its label is slate-500, about 4.4:1 on the hero grey, under the 4.5:1 a status word needs. The body slate `#475569`, at 7.0:1, is the fix. `FloorLogo` is decorative (`alt=""`). Under reduced motion both loaders hold still (the floor logo keeps its tilt), but the intro, autoplay and waves still run, because `src/tiles` has no reduced-motion mode.
 
 **Do / Don't.**
 - Do put a loader on the hero's grey, the ground the floor lands on.
@@ -2270,7 +2271,7 @@ The parts a page is built from, each chapter in one order: Purpose, Anatomy, Var
 - Do put fields on the page or a white card.
 - Do keep the label above the box, always visible.
 - Do write the error as the fix ("Enter an email like you@studio.com.").
-- Don't place a field straight on the hero container's grey #e3e5e8, where its line falls to 2.58:1.
+- Don't place a field straight on the hero container's grey #f5f6f8, where its line clears 3:1 only by a hair (3.02:1) and the white box barely parts from the ground.
 - Don't use the placeholder as the label.
 - Don't validate on the first keystroke.
 
@@ -2445,7 +2446,7 @@ The parts a page is built from, each chapter in one order: Purpose, Anatomy, Var
 
 **The subgrid.** From md each card spans the grid's three rows as a subgrid. That keeps each line level with its counterpart whatever its length, so the pair reads across, row by row, the way a comparison is meant to be read. Without the subgrid a longer line on one side pushes everything below it down, and the rows drift out of step.
 
-**Two grounds, one weight.** ChatGPT's card wears the hero container's look (the grey, a faint hairline, navy type, no shadow) and 6labs' wears the primary navy with white type, so the two sides differ in ground at a glance. White on navy reads heavier than navy on grey, so the 6labs name sits a step lighter (400 against ChatGPT's 500) for the two to look the same weight. 6labs' card also takes 64px of left padding from md, to keep its copy clear of the vs.
+**Two grounds, one weight.** ChatGPT's card wears the hero container's shape (a faint hairline, navy type, no shadow) on the earlier grey `#e3e5e8`, which it keeps now the hero is `#f5f6f8`, and 6labs' wears the primary navy with white type, so the two sides differ in ground at a glance. White on navy reads heavier than navy on grey, so the 6labs name sits a step lighter (400 against ChatGPT's 500) for the two to look the same weight. 6labs' card also takes 64px of left padding from md, to keep its copy clear of the vs.
 
 **The vs depends on the page.** Its 6px ring is the page colour, `rgb(var(--page-rgb))`, which makes the disc read as cut into both cards. On any ground but the page that ring shows as a band of a different grey. Moving the section onto another surface means giving the ring that surface's colour.
 
@@ -2766,7 +2767,7 @@ The parts a page is built from, each chapter in one order: Purpose, Anatomy, Var
 
 **Purpose.** What a view shows when there is nothing to show: it has no content yet, the search or filter found nothing, it failed to load, the visitor is offline, or the visitor may not see it. The site has none today. Every one of these moments is a place a visitor can leave, so the part's whole job is to explain what happened in a line and offer the next step.
 
-**Anatomy.** A centred column at most 400 wide: an icon (24px in a 48px white circle with a hairline) or the 44px brand mark for a brand moment, a title in Outfit 20 at 500 and -0.03em, a body in Inter 14 at 1.5, and an actions row. Contained, the column sits in the container look at the card size: the #e3e5e8 grey, radius 36 and the faint hairline, with no shadow, at 48 padding. The radius stays 36 at every width, since the part answers its own box and only its padding steps down. Uncontained, it sits bare inside a card, at 40 by 24.
+**Anatomy.** A centred column at most 400 wide: an icon (24px in a 48px white circle with a hairline) or the 44px brand mark for a brand moment, a title in Outfit 20 at 500 and -0.03em, a body in Inter 14 at 1.5, and an actions row. Contained, the column sits in the container look at the card size: the #f5f6f8 grey, radius 36 and the faint hairline, with no shadow, at 48 padding. The radius stays 36 at every width, since the part answers its own box and only its padding steps down. Uncontained, it sits bare inside a card, at 40 by 24.
 
 **Variants.** firstUse invites the visitor to make the first thing (Inbox icon). noResults names what was searched and offers the way back, usually Clear filters as a secondary (SearchX). error says what failed and that nothing was lost, with Try again as a secondary and a support link, and its icon turns danger ink, the only tint the part carries (CircleAlert). offline says what needs the connection and that the view recovers on its own (WifiOff). noAccess says whose the content is and how to get in (Lock). The variant only picks the icon, so a new case never needs a new variant, just new words.
 
@@ -2780,7 +2781,7 @@ The parts a page is built from, each chapter in one order: Purpose, Anatomy, Var
 
 **Motion.** It rises 12px and fades in over 500ms on the one ease when it mounts, transform and opacity only, so an empty view arriving after a load reads as a result rather than a gap. Nothing moves under reduced motion.
 
-**Accessibility.** The title is a real heading at the level the view needs, so the empty state can be found by heading navigation. The icon is decorative. The body is #475569, not the site's #64748b, because #64748b reads 3.77:1 on the container grey and fails AA at 14px, while #475569 holds 6.0:1. Set `announce` (role alert) only when the empty state replaces content after the visitor's own action, such as a search that returns nothing. An empty state that is simply there on arrival is read in the normal order.
+**Accessibility.** The title is a real heading at the level the view needs, so the empty state can be found by heading navigation. The icon is decorative. The body is #475569, not the site's #64748b, because #64748b reads 4.40:1 on the container grey and fails AA at 14px, while #475569 holds 7.0:1. Set `announce` (role alert) only when the empty state replaces content after the visitor's own action, such as a search that returns nothing. An empty state that is simply there on arrival is read in the normal order.
 
 **Responsive.** It sizes from its own width (a container query), not the window's. The same part sits in a full page column and in a narrow card on a wide screen, and only its own width says how much room it has.
 
@@ -2947,12 +2948,12 @@ How parts and surfaces combine into the page: the six surfaces, the hero, the pl
 | --- | --- | --- |
 | Page | `--ds-color-page` `#f9fafb` | The ground of the light page, and under the grain from Understands to the foot. |
 | White card | `--ds-color-surface` | A thing the visitor reads or uses: job cards, FAQ rows, the tab rail, fields. |
-| Container | `--ds-color-container` `#e3e5e8` | A set piece or a grouped block: the hero, the ChatGPT side of the comparison. |
+| Container | `--ds-color-container` `#f5f6f8` | A set piece or a grouped block: the hero. The ChatGPT side of the comparison keeps the earlier grey `#e3e5e8` (`--ds-color-container-deep`). |
 | Navy | `--ds-color-primary` `#0a152d` | The one card a view leans on (the 6labs side) and the primary fill. |
 | Terminal | `--ds-color-terminal-bg` `#0b1526` | The agent's window inside a job card, and only there. |
 | Accent water | `--ds-color-accent` with 7% grain | The players section. Drawn by AccentWave, never by a section. |
 
-**The container look.** The grey `#e3e5e8`, a 1px hairline in `--ds-color-line-faint` and navy type, with the radius set by the block's size: 48 (32 under md) for the hero's container, and 36 (28 under md) for a card-sized block, the ChatGPT card and the index card. The empty state takes 36 at every width, because it sizes from its own box rather than the window. The container shadow `0 40px 100px -20px rgba(0,0,0,0.03)` goes only on a block that stands alone on the page, the hero's container and the index card, and it is almost nothing on purpose: it lifts the box off the page by a breath without reading as a card. The ChatGPT card and the empty state sit flat. Type on it is navy, and the muted slate steps up to the body slate `#475569`, because `#64748b` loses contrast on the grey. Today the look is written inline in Hero.tsx:125 and in the comparison card. New work reads it from the tokens.
+**The container look.** The grey `#f5f6f8`, a 1px hairline in `--ds-color-line-faint` and navy type, with the radius set by the block's size: 48 (32 under md) for the hero's container, and 36 (28 under md) for a card-sized block, the index card, and the ChatGPT card, which takes the same shape on the earlier grey `#e3e5e8`. The empty state takes 36 at every width, because it sizes from its own box rather than the window. The container shadow `0 40px 100px -20px rgba(0,0,0,0.03)` goes only on a block that stands alone on the page, the hero's container and the index card, and it is almost nothing on purpose: it lifts the box off the page by a breath without reading as a card. The ChatGPT card and the empty state sit flat. Type on it is navy, and the muted slate steps up to the body slate `#475569`, because `#64748b` loses contrast on the grey. Today the look is written inline in Hero.tsx:125 and in the comparison card. New work reads it from the tokens.
 
 **How a new section picks its surface.** It stands on the page (or the grain, if it comes after the players). If it is a set piece that groups its content, it takes the container look. If it holds things to read or press, they are white cards on that ground. Navy is for one emphasised card at most per view. A section never invents a seventh ground.
 
@@ -3385,7 +3386,7 @@ Severity: **high** breaks a rule the site states for itself (the compositor rule
 | Accessibility | medium | LanguageMenu highlight | LanguageMenu.tsx:72 | `aria-activedescendant` on the focused trigger, with `aria-controls` |
 | Accessibility | low | Comparison headings | Understands.tsx:70, 77 | an h3 per name under a visually hidden h2, so heading navigation finds the section, with no change to the look |
 | Accessibility | low | Language of parts | LanguageMenu.tsx:96 | a `lang` on each row's label (ko, ja, zh) |
-| Accessibility | medium | HeroLoader label | HeroLoader.tsx:48 | the body slate `#475569` for the label (6.0:1), since its slate-500 holds near 3.8:1 on the hero grey |
+| Accessibility | medium | HeroLoader label | HeroLoader.tsx:48 | the body slate `#475569` for the label (7.0:1), since its slate-500 holds near 4.4:1 on the hero grey |
 | Behaviour | medium | Mobile menu rows | ClickLock.tsx:11, MobileMenu.tsx:86 | close the sheet before ClickLock's capture, or let ClickLock spare the menu |
 | Behaviour | medium | Page hold | MobileMenu.tsx:17 | release the hold when the md query starts to match |
 | Behaviour | low | Language in the sheet | MobileMenu.tsx:108 | lift the chosen language above the sheet |
@@ -3443,7 +3444,7 @@ A, keep ink `#0a1b33` for type and primary `#0a152d` for fills. B, merge them in
 
 #### 5. The comparison's navy card
 
-A, keep the 6labs card in primary navy with no accent word. B, move it to the container look with accent key words. *Scope:* A, none. B, the card and its lines in Understands.tsx. *Recommend A.* The navy is the primary, not the accent, so the one-accent rule holds, and the pair exists to contrast. Accent words on the grey would also read at about 3.6:1.
+A, keep the 6labs card in primary navy with no accent word. B, move it to the container look with accent key words. *Scope:* A, none. B, the card and its lines in Understands.tsx. *Recommend A.* The navy is the primary, not the accent, so the one-accent rule holds, and the pair exists to contrast. Accent words on the ChatGPT card's grey would also read at about 3.6:1.
 
 #### 6. Focus ring colour
 
@@ -3504,6 +3505,7 @@ Dated entries, newest first. An entry says what changed and, when it is not plai
 
 #### 2026-10-05
 
+- The hero turns white: the floor is `#ffffff` and its fog `#eaecef` (were `#e0e2e5` and `#d8dade`), and the hero box is `#f5f6f8` (was `#e3e5e8`). A white floor draws about `#f1f2f3` after lighting and Neutral tone mapping, so the box sits a step lighter and the haze a step darker, and the loader box and the loaded floor still read as one colour. `--ds-color-container` follows to `#f5f6f8`, and the ChatGPT card, which keeps `#e3e5e8`, gets its own token, `--ds-color-container-deep`. On the container, body is now 7.00:1, muted 4.40, the accent 4.15 and the field line 3.02, so the Loading label reads about 4.4:1, still under the bar. Colour roles ([2.1](#21-colour-roles)), Contrast ([2.3](#23-contrast)), Focus ([2.10](#210-focus)), Surfaces ([9.1](#91-surfaces)), Text fields ([7.7](#77-text-fields)), Comparison cards ([7.12](#712-comparison-cards)), Empty state ([7.22](#722-empty-state)), Load-in, autoplay and loaders ([5.6](#56-load-in-autoplay-and-loaders)), Tile states ([5.3](#53-tile-states)) and Known gaps ([10.2](#102-known-gaps)) follow.
 - The players' magnet goes back to how it was before the catch in script below: outside desktop Safari it is the CSS scroll snap alone, which catches only a scroll that ends near the players, and desktop Safari keeps its catch on Lenis at 0.3 of a screen over 0.6s. The 0.6-screen catch kept pulling the page back to the players as the visitor scrolled away. Shell behaviours ([6.7](#67-shell-behaviours)), Accent water ([5.9](#59-accent-water)), Scroll line to players ([9.3](#93-scroll-line-to-players)), Page composition ([9.5](#95-page-composition)), Choreography ([4.5](#45-choreography)), Reduced motion ([4.6](#46-reduced-motion)) and Known gaps ([10.2](#102-known-gaps)) follow.
 - The comparison's names become each card's heading in Outfit 34 (26 on a phone) beside 44px marks (36 on a phone), and its lines become body text in Inter 18 at 1.5 (16 on a phone). Comparison cards ([7.12](#712-comparison-cards)) and Type ([2.4](#24-type)) follow, and Known gaps ([10.2](#102-known-gaps)) records that the names are spans, not headings.
 - The players' doodles start 1s after the section is in view, and the portrait switches between Human and AI every 5s, so the hand now ends just after the first switch. Doodles ([5.11](#511-doodles)), Human / AI swap ([5.10](#510-human--ai-swap)), Scroll line to players ([9.3](#93-scroll-line-to-players)) and Choreography ([4.5](#45-choreography)) follow, the last with a players clock.

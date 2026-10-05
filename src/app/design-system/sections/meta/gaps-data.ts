@@ -140,7 +140,7 @@ export const GAPS: readonly Gap[] = [
     effect: "The rows carry no lang, so each language's own name is read in an English voice.",
     evidence: [{ file: `${W}LanguageMenu.tsx`, absent: "lang={", anchor: 'role="option"' }] },
   { area: "a11y", severity: "low", part: "HeroLoader label",
-    effect: "The loader's slate-500 word is about 3.8:1 on the hero grey, still under the 4.5:1 text minimum.",
+    effect: "The loader's slate-500 word is about 4.4:1 on the hero grey, still under the 4.5:1 text minimum.",
     evidence: [{ file: `${W}HeroLoader.tsx`, needle: "tracking-[0.18em] text-slate-500" }] },
 
   { area: "behaviour", severity: "medium", part: "Mobile menu rows",

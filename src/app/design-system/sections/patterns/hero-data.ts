@@ -78,7 +78,7 @@ const H = `${W}Hero.tsx`;
 
 export const HERO_VALUES = [
   read("Container box", "max 1400 · 664 tall, 720 under md · radius 48, 32 under md", `${H}:125`, "--ds-radius-2xl", "max-w-[1400px] mx-auto rounded-[48px]", "h-[664px] max-md:h-[720px] max-md:rounded-[32px]"),
-  read("Container ground", "#e3e5e8 · slate-200 at 50% · 0 40px 100px -20px rgb(0 0 0 / 0.03)", `${H}:125`, "--ds-shadow-container", "bg-[#e3e5e8]", "border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)]"),
+  read("Container ground", "#f5f6f8 · slate-200 at 50% · 0 40px 100px -20px rgb(0 0 0 / 0.03)", `${H}:122,125`, "--ds-shadow-container", "bg-[#f5f6f8]", "border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)]"),
   read("Full box", "100svh, min 640 · -mx 16 (32) · -mt 96 · ink 8% hairline foot", `${H}:124`, undefined, "-mx-4 md:-mx-8 -mt-24 h-svh min-h-[640px] border-b border-[#0a1b33]/[0.08]"),
   read("Container copy", "px 24, 64 from md · pt 40, 64 from md · pb 40, 48 from md", `${H}:170`, undefined, '"px-6 md:px-16 pt-10 md:pt-16"', "pb-10 md:pb-12"),
   read("Full copy", "max 1448 · px 24 (16) · pt calc(73px + 40px), calc(89px + clamp(48px, 9vh, 120px)) from md", `${H}:169`, "--ds-container-full", "max-w-[1448px] px-6 max-md:px-4 pt-[calc(73px+40px)] md:pt-[calc(89px+clamp(48px,9vh,120px))]"),

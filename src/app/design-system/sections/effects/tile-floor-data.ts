@@ -54,7 +54,7 @@ export const SCENE_ROWS: readonly KeyRow[] = [
 
 /** The live specimen's box and what the floor costs while it is on screen. */
 export const FLOOR_VALUES: readonly ValueRow[] = [
-  { part: "Box", token: "--ds-color-container", value: "#e3e5e8, radius 48 (32 under md), overflow hidden, the floor fills it", source: `${W}Hero.tsx:122-125` },
+  { part: "Box", token: "--ds-color-container", value: "#f5f6f8, radius 48 (32 under md), overflow hidden, the floor fills it", source: `${W}Hero.tsx:122-125` },
   { part: "Aspect", value: "0.45 to 2.6, outside it the field's built edge shows", source: `${T}viewport.js:9` },
   { part: "Pictures", value: "768px, 512px under 768 wide, chosen once at mount", source: "components/tiles/TileFloor.tsx:53" },
   { part: "Intro delay", value: `${INTRO_DELAY} here and in the container hero, 1.85 (FULL_TILES_AT) in the full view`, source: `${W}Hero.tsx:139 · ${W}hero-intro.ts:16` },
@@ -78,7 +78,7 @@ export const FLOOR_PROPS: readonly PropRow[] = [
 export const FLOOR_CODE = `import { TileFloor, type FloorHandle } from "@/components/tiles/TileFloor";
 import { WaveButton } from "@/components/website/HeroBits";
 
-<div className="relative h-[520px] overflow-hidden rounded-[48px] max-md:rounded-[32px] bg-[#e3e5e8]">
+<div className="relative h-[520px] overflow-hidden rounded-[48px] max-md:rounded-[32px] bg-[#f5f6f8]">
   <TileFloor className="absolute inset-0" introDelay={${INTRO_DELAY}} onReady={setFloor} />
   <div className="absolute bottom-5 right-5 z-20">
     <WaveButton full busy={busy} onClick={sendWave} />

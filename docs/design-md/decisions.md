@@ -20,7 +20,7 @@ A, keep ink `#0a1b33` for type and primary `#0a152d` for fills. B, merge them in
 
 #### 5. The comparison's navy card
 
-A, keep the 6labs card in primary navy with no accent word. B, move it to the container look with accent key words. *Scope:* A, none. B, the card and its lines in Understands.tsx. *Recommend A.* The navy is the primary, not the accent, so the one-accent rule holds, and the pair exists to contrast. Accent words on the grey would also read at about 3.6:1.
+A, keep the 6labs card in primary navy with no accent word. B, move it to the container look with accent key words. *Scope:* A, none. B, the card and its lines in Understands.tsx. *Recommend A.* The navy is the primary, not the accent, so the one-accent rule holds, and the pair exists to contrast. Accent words on the ChatGPT card's grey would also read at about 3.6:1.
 
 #### 6. Focus ring colour
 

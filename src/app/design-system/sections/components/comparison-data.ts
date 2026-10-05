@@ -34,7 +34,7 @@ export const SIDES = [
 ] as const;
 
 export const COMPARISON_PINS: readonly Pin[] = [
-  { selector: THEIRS, name: "ChatGPT card", token: "--ds-color-container", value: "radius 36 (28), p 36 (28)", source: `${U}:22-23`, expect: ["rounded-[36px] max-md:rounded-[28px] border p-7 md:p-9", "bg-[#e3e5e8]"], padding: true },
+  { selector: THEIRS, name: "ChatGPT card", token: "--ds-color-container-deep", value: "radius 36 (28), p 36 (28)", source: `${U}:22-23`, expect: ["rounded-[36px] max-md:rounded-[28px] border p-7 md:p-9", "bg-[#e3e5e8]"], padding: true },
   { selector: OURS, name: "6labs card", token: "--ds-color-primary", value: "pl 64 from md, for the vs", source: `${U}:25`, expect: "bg-[#0a152d] text-white md:pl-16", padding: true },
   { selector: `${THEIRS} > span`, name: "Lockup", token: "--ds-type-comparison-name", value: "mark 36 (44 from md), gap 12, name Outfit 26 (34 from md) at 1.1, the card's heading", source: `${U}:27,31,69`, expect: ["flex items-center gap-3", "text-[26px] md:text-[34px] leading-[1.1]", "h-9 w-9 md:h-11 md:w-11"] },
   { selector: `${THEIRS} > p`, name: "Line", token: "--ds-type-comparison", value: "Inter 16 (18 from md) / 1.5, 400, body, in the card's one ink", source: `${U}:32`, expect: "font-sans text-[16px] md:text-[18px] font-normal leading-[1.5]" },
@@ -47,7 +47,7 @@ export const COMPARISON_PINS: readonly Pin[] = [
 export const COMPARISON_VALUES = [
   sv("Grid", "1 column, 2 from md, gap 24, rows auto auto auto", `${U}:66`, undefined, "md:grid-rows-[auto_auto_auto]"),
   sv("Subgrid", "each card spans 3 rows as a subgrid from md", `${U}:22`, undefined, "md:row-span-3 md:grid md:grid-rows-subgrid"),
-  sv("ChatGPT card", "#e3e5e8, slate-200 at 50%, no shadow", `${U}:23`, "--ds-color-container", "border-slate-200/50 bg-[#e3e5e8]"),
+  sv("ChatGPT card", "#e3e5e8, the hero's earlier grey, slate-200 at 50%, no shadow", `${U}:23`, "--ds-color-container-deep", "border-slate-200/50 bg-[#e3e5e8]"),
   sv("6labs card", "#0a152d, pl 64 from md", `${U}:25`, "--ds-color-primary", "bg-[#0a152d] text-white md:pl-16"),
   sv("Line ink", "one ink per card: navy #0a1b33 on the grey, white on the navy", `${U}:23`, undefined, "text-[#0a1b33]"),
   tv("Card radius", "radius-xl"),

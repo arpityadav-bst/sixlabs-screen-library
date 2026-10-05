@@ -16,7 +16,7 @@
 **Reasons.**
 - A click locks the tile because a half-converted bust snapping back to human reads as a glitch, never as a choice.
 - Spent tiles ignore the pointer so a played character cannot be replayed until the wave brings a new one. Each tile is one visitor's turn.
-- The spent tint is TileFloor's `#e3f3ff`, a light wash of the holograms' sky blue, because the params file's container grey would leave a played tile indistinguishable from a fresh one. Which of the tint's three values wins, and how to change it, is in Special palettes (2.2).
+- The spent tint is TileFloor's `#e3f3ff`, a light wash of the holograms' sky blue, because the params file's `#e3e5e8`, the hero's earlier container grey, would leave a played tile indistinguishable from a fresh one. Which of the tint's three values wins, and how to change it, is in Special palettes (2.2).
 - The wave flips rather than fades, so a change of cast reads as the floor turning over its cards, one by one, in reading order.
 
 **The commit rule.** `COMMIT_SECONDS` 0.25 says an activation left by the pointer after that point finishes before it fades, and one left earlier reverts. Every click locks today, which skips the rule, so it never fires. Keep it if an unlocked activation (a hover that activates) is ever added, and remove it otherwise.

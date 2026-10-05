@@ -47,6 +47,6 @@
 - Do put fields on the page or a white card.
 - Do keep the label above the box, always visible.
 - Do write the error as the fix ("Enter an email like you@studio.com.").
-- Don't place a field straight on the hero container's grey #e3e5e8, where its line falls to 2.58:1.
+- Don't place a field straight on the hero container's grey #f5f6f8, where its line clears 3:1 only by a hair (3.02:1) and the white box barely parts from the ground.
 - Don't use the placeholder as the label.
 - Don't validate on the first keystroke.

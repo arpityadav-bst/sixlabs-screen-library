@@ -52,7 +52,7 @@ export function TileStatesSection() {
         <Do reason="TileFloor's light sky-blue wash marks a played tile, so the visitor sees which ones are spent." ground="container">
           <TintFace color={SPENT_DO.color} label={SPENT_DO.label} />
         </Do>
-        <Dont reason="The params file's tint is the container grey, so a played tile looks fresh and invites a click it ignores." ground="container">
+        <Dont reason="The params file's tint is the hero's earlier grey, so a played tile looks fresh and invites a click it ignores." ground="container">
           <TintFace color={SPENT_DONT.color} label={SPENT_DONT.label} />
         </Dont>
       </DoDont>

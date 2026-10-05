@@ -33,7 +33,7 @@ Tailwind v4 slate classes resolve to oklch. Each of those tokens keeps the oklch
 
 **One accent fill.** The accent's two jobs, the water and attention, and why selected, checked and pressed states take navy instead, are the accent rule in chapter 8.
 
-**The container is darker than white.** `#e3e5e8` is the hero container look, reused for the ChatGPT card. Text greys are graded on it separately, in Contrast (2.3).
+**The container is darker than white.** `#f5f6f8` is the hero container look, a step lighter than the white floor draws under its lighting, so the loader box and the loaded floor read as one colour. The ChatGPT card keeps the earlier grey `#e3e5e8` as its own token, `--ds-color-container-deep`. Text greys are graded on the container separately, in Contrast (2.3).
 
 **The field line is new.** The card hairline is 1.18:1 on white, which groups content but cannot mark an edge a visitor has to find. `#848fa1` reaches 3.26:1, the non-text bar, and stays quieter than ink.
 

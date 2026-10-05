@@ -64,7 +64,7 @@ export function ComparisonSection() {
         </Dont>
       </DoDont>
       <DoDont>
-        <Do layout="stack" reason="Set the two sides on two grounds, the container grey and the navy, so the eye takes a side at once.">
+        <Do layout="stack" reason="Set the two sides on two grounds, the ChatGPT card's grey and the navy, so the eye takes a side at once.">
           <Sketch tones={["container", "navy"]} />
         </Do>
         <Dont layout="stack" reason="Two white cards read as two of the same, and the comparison has to be read word by word.">

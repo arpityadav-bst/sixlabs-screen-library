@@ -3,7 +3,7 @@
 // the hero container look (the grey, radius 36, the faint hairline) and stands at page level. Uncontained,
 // it sits inside a card that already draws the edge. It sizes from its own width (a container query), not
 // the window's, because the same part sits in a page column and in a narrow card: under 560 the padding
-// drops to 32, under 400 the actions stack. The body is #475569, since #64748b reads 3.77:1 on the grey.
+// drops to 32, under 400 the actions stack. The body is #475569, since #64748b reads 4.40:1 on the grey.
 import { CircleAlert, Inbox, Lock, SearchX, WifiOff, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { SixLabsLogo } from "@/components/website/brand-marks";

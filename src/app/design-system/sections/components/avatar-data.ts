@@ -19,7 +19,7 @@ export const LOADING = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAA
 const AV = "Avatar.tsx";
 
 export const AVATAR_PINS: readonly Pin[] = [
-  { selector: ".ds-a-person > span", name: "Person", token: "--ds-radius-full", value: "circle, ink on #e3e5e8", source: `${AV}:75,79`, expect: ["--ds-radius-full", "bg-(--ds-color-container) text-(--ds-color-ink)"] },
+  { selector: ".ds-a-person > span", name: "Person", token: "--ds-radius-full", value: "circle, ink on #f5f6f8", source: `${AV}:75,79`, expect: ["--ds-radius-full", "bg-(--ds-color-container) text-(--ds-color-ink)"] },
   { selector: ".ds-a-person span.font-display", name: "Initials", token: "--ds-font-display", value: "Outfit 500 on the type scale: 24:11, 32:13, 40:16, 48:20, 64:26, 96:34, none at 20", source: `${AV}:30,98`, expect: ["{ 20: null, 24: 11, 32: 13, 40: 16, 48: 20, 64: 26, 96: 34 }", "font-display font-medium"] },
   { selector: ".ds-a-person > span > span:last-child", name: "Status dot", value: "25% of the size, min 6, 2px page ring", source: `${AV}:77,125`, expect: ["Math.max(6, Math.round(size * 0.25))", "0 0 0 2px var(--ds-color-page)"] },
   { selector: ".ds-a-model > span", name: "Model", token: "--ds-radius-model", value: "the model radius, the tiles' character", source: `${AV}:75`, expect: "--ds-radius-model" },

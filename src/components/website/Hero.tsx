@@ -119,7 +119,7 @@ export function Hero({ full = false }: { full?: boolean }) {
         // the full view's hero fills the screen: the page's ASCII field behind it rests meanwhile (AsciiBackdrop)
         data-covers-view={full || undefined}
         className={
-          "relative bg-[#e3e5e8] overflow-hidden flex flex-col " +
+          "relative bg-[#f5f6f8] overflow-hidden flex flex-col " +
           (full
             ? "-mx-4 md:-mx-8 -mt-24 h-svh min-h-[640px] border-b border-[#0a1b33]/[0.08]"
             : "w-full max-w-[1400px] mx-auto rounded-[48px] border border-slate-200/50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.03)] h-[664px] max-md:h-[720px] max-md:rounded-[32px]")
