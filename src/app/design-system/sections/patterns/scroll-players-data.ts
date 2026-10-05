@@ -56,7 +56,7 @@ export const PLAYERS_FLOW: readonly KeyRow[] = [
   held("wide", "past 1920 on screens of dpr 1.5 and up, the content scales by min(1.35, width / 1920, (view height - 136) / its height), never under 1. A transform, so the layout is untouched", "usePlayersScale.ts:12-15", "const BASE = 1920;", "const MAX = 1.35;", "const CLEAR = 96 + 40;", "const DENSE = 1.5;"),
   held("auto", "Human / AI swaps every 5s while the section is shown, until the visitor picks", "usePlayerMode.ts:11", "const AUTO_S = 5;"),
   { key: "clips", value: "start loading within two screens of the section, the other players' prefetched", source: "Players.tsx:67" },
-  held("snap", "#players is the page's one magnet: CSS scroll snap (proximity) plus a JS catch, a scroll resting 120ms within 0.6 of a screen glides in over 0.6s (nativeMagnet, Lenis in desktop Safari)", "SafariScroll.tsx:15-17", "const MAGNET = 0.6;", "const MAGNET_S = 0.6;", "const REST_MS = 120;"),
+  held("snap", "#players is the page's one magnet: CSS scroll snap (proximity), which catches only a scroll that ends near. In desktop Safari, where the snap is off, a scroll resting 120ms within 0.3 of a screen glides in over 0.6s on Lenis", "SafariScroll.tsx:15-17", "const MAGNET = 0.3;", "const MAGNET_S = 0.6;", "const REST_MS = 120;"),
 ];
 
 export const PLAYERS_VALUES = [

@@ -1430,7 +1430,7 @@ The staged sequences below each run on their own clock.
 - **Container hero** (from the floor's `onReady`): the floor logo leaves over 0.45s, the tiles hold 0.5s and rise over 0.9s, the numbers rise at 1.2s, the scroll cue and wave button fade in at 1.8s. The copy is not on this clock: it fades in CSS from first paint (`.hero-copy-in`, 0.6s).
 - **Full view** (from `onReady`, or after 12s if it never comes): the loader leaves and the `heroloaded` window event fires at 0, the copy fades in at 0.35s, the floor at 1.7s, the tiles start rising at 1.85s, the extras at 3.45s. All fades are 700ms.
 - **Scroll line track** (in screens of scroll, from the moment the 390vh track reaches the top of the view): the words fill over the first 1.31 screens (0.82 of their scroll), the line holds to 1.6, the accent water rises over the last 1.3 screens to 2.9, the players snap in place there, and the water drains over one screen past them.
-- **Players** (from the reveal: the water filled and 20% of the section in view): the cards rise 0.05s apart, then the portrait, the switch and the column. The hand draws from 1s, the portrait first turns AI at 5s and every 5s after, and the AI copy starts 0.6s after each switch. A scroll that rests within 0.6 of a screen of the players glides in over 0.6s, on no clock but the scroll's.
+- **Players** (from the reveal: the water filled and 20% of the section in view): the cards rise 0.05s apart, then the portrait, the switch and the column. The hand draws from 1s, the portrait first turns AI at 5s and every 5s after, and the AI copy starts 0.6s after each switch. The CSS snap catches a scroll that ends near the players, and in desktop Safari a scroll that rests within 0.3 of a screen of them glides in over 0.6s, on no clock but the scroll's.
 - **Terminal run** (from `play`): each step dwells by its kind, from 34ms a typed character to 1300ms for a load, with every dwell listed in Terminal ([7.19](#719-terminal)).
 
 The in-page glide is a shell behaviour, specified in Shell behaviours ([6.7](#67-shell-behaviours)).
@@ -1456,7 +1456,7 @@ Change the constants where they are declared (`hero-intro.ts`, `ScrubLine.tsx`, 
 
 #### Reduced motion
 
-The terminal shows its finished run and the scroll line shows the filled line. The hero intros, the glide and the players' auto switch and magnet do not change yet, gaps tracked in Reduced motion ([4.6](#46-reduced-motion)). The water needs no change, since its level is the scroll.
+The terminal shows its finished run and the scroll line shows the filled line. The hero intros, the glide and the players' auto switch and desktop Safari's magnet do not change yet, gaps tracked in Reduced motion ([4.6](#46-reduced-motion)). The water needs no change, since its level is the scroll.
 
 ### 4.6 Reduced motion
 
@@ -1480,7 +1480,7 @@ These have no reduced answer yet. Known gaps ([10.2](#102-known-gaps)) tracks th
 - The tile floor (intro rise, autoplay, waves and sweeps) runs as usual.
 - The in-page glide runs as usual. Under reduced motion it should jump.
 - The players' auto switch keeps cutting every 5s. Under reduced motion it should hold the copy on screen and leave the switch to the visitor.
-- The players' magnet glides 0.6s and holds the input. Under reduced motion it should settle at once, or leave the scroll to the CSS snap.
+- In desktop Safari the players' magnet glides 0.6s on Lenis. Under reduced motion it should settle at once. Every other browser has only the CSS snap, with no glide of the page's own.
 - Tailwind's `animate-ping` and `animate-pulse` on the hero dot, the player card dot and the terminal cursor keep running.
 - motion/react entrances and menus travel as usual, because the site wraps no `MotionConfig` round them.
 
@@ -1727,7 +1727,7 @@ Cell 15, glyphs 11px ui-monospace on the ramp `' .,:;i1tfLCG08@'`, ambient 0.075
 
 **Colour and grain.** The accent `#1a6dff` is mixed 7% toward a 160px tile of random greys, dots included, so the solid reads as a material and averages about `#216ef6`. Judge anything that sits on the players' ground against that, not against flat `#1a6dff`. The guide's on-blue ground draws the same kind of tile at the same strength for that reason.
 
-**Motion.** None of its own: its level is a function of the scroll, so it needs no reduced-motion branch. The rise runs over the scroll line's last `WAVE_VH` (1.3) screens and the drain over one screen past the players' foot (`DRAIN_VH`), both eased by smoothstep so the edge starts and settles gently. Near the players the magnet settles a scroll that comes to rest close to full: the document's scroll snap (proximity, `#players` as its start) plus a catch in script that glides in a scroll resting within 0.6 of a screen, the whole magnet in desktop Safari, as Shell behaviours ([6.7](#67-shell-behaviours)) sets out.
+**Motion.** None of its own: its level is a function of the scroll, so it needs no reduced-motion branch. The rise runs over the scroll line's last `WAVE_VH` (1.3) screens and the drain over one screen past the players' foot (`DRAIN_VH`), both eased by smoothstep so the edge starts and settles gently. Near the players the magnet settles a scroll that comes to rest close to full: the document's scroll snap (proximity, `#players` as its start), and in desktop Safari, where the snap is off, a catch in script that glides in a scroll resting within 0.3 of a screen, as Shell behaviours ([6.7](#67-shell-behaviours)) sets out.
 
 **Event contract.** At 0.9 full it dispatches `accentwave` on window with `{ filled: true }`, and below 0.8 it dispatches `{ filled: false }`. The gap keeps one step back from undoing the players. The header turns solid white while filled, since its 92% page strip would read grey over the blue. The players start their entrance on filled. Anything new that must react to the takeover listens to the same event rather than measuring the scroll again.
 
@@ -2019,7 +2019,7 @@ The parts every page wears: the identity, the header and its phone menu, the lan
 - On desktop Safari the glide runs on Lenis with its lock in place of the frame loop.
 - Without scripts each link keeps its `#hash`, so it still jumps.
 
-**Safari scroll and the magnet.** The players' magnet is CSS proximity snap on `#players` plus a catch in script, in every browser, because the browser's own proximity distance is small and catches only a scroll that ends very near the players. A scroll that rests 120ms within 0.6 of a screen of `#players` glides the rest of the way in 0.6s on the glide's ease (SafariScroll.tsx). Outside desktop Safari the catch runs through the glide (`glideTo`), which holds the wheel, touch and scroll keys and lifts the snap for its run. Desktop Safari moves the page on a thread of its own, ahead of the page's drawing, so the accent water's edge trailed a quick scroll. There the page scrolls on Lenis (lerp 0.15), in step with the drawing, and Lenis cannot take CSS scroll snap (globals.css turns it off under Lenis), so the catch is the whole magnet there, run as a Lenis `scrollTo` without the lock. Touch screens scroll natively everywhere (Lenis smooths only the wheel and trackpad), so they get the snap and the glide's catch. Neither catch starts while a link's glide is under way.
+**Safari scroll and the magnet.** Outside desktop Safari the players' magnet is only the CSS proximity snap on `#players` (globals.css), which catches only a scroll that ends near the players. There is no catch in script there and nothing holds the input. Desktop Safari moves the page on a thread of its own, ahead of the page's drawing, so the accent water's edge trailed a quick scroll. There the page scrolls on Lenis (lerp 0.15), in step with the drawing, and Lenis cannot take CSS scroll snap (globals.css turns it off under Lenis), so the magnet is a catch in script (SafariScroll.tsx): a scroll that rests 120ms within 0.3 of a screen of `#players` glides the rest of the way in 0.6s on the glide's ease, run as a Lenis `scrollTo` without the lock. It does not start while a link's glide is under way. Touch screens scroll natively everywhere (Lenis smooths only the wheel and trackpad), so they get the snap alone. A catch of 0.6 of a screen in every browser kept pulling the page back to the players as the visitor scrolled away, so the catch stays small and Safari's own.
 
 **Window contracts.** The shell's parts never import each other's state. They meet on the window, which makes these names the shell's state API:
 - `heroloaded` (Event): the full view's loading has ended, or 12s have passed. The clear header waits for it.
@@ -2029,7 +2029,7 @@ The parts every page wears: the identity, the header and its phone menu, the lan
 
 **How to change it safely.** Add a new signal as a window event with a constant exported from the file that sends it (as `HERO_LOADED` is), and list it in the guide's contract table. Never rename an id without a search across `src/components/website`, because each is a string repeated in several files. Never render `#players`, `#model-line` or `#site-head` in a document that also runs the site's scroll code.
 
-**Gaps.** The glide ignores reduced motion (a 0.9 to 2.2s forced animation) and cannot be cancelled. The magnet's catch ignores it too, a 0.6s glide that holds the input. It moves neither focus nor the URL hash, so Back does not return and a screen reader stays where it was. Sections have no `scroll-margin-top`, so the no-script hash lands under the bar. Understands and Closing have no spot, and Case Studies has no target. New work: under reduced motion jump at once, move focus to the target's heading, update the hash with `history.replaceState`, and give every section a `scroll-margin-top` of the bar's height.
+**Gaps.** The glide ignores reduced motion (a 0.9 to 2.2s forced animation) and cannot be cancelled. Desktop Safari's magnet ignores it too, a 0.6s glide on Lenis. It moves neither focus nor the URL hash, so Back does not return and a screen reader stays where it was. Sections have no `scroll-margin-top`, so the no-script hash lands under the bar. Understands and Closing have no spot, and Case Studies has no target. New work: under reduced motion jump at once, move focus to the target's heading, update the hash with `history.replaceState`, and give every section a `scroll-margin-top` of the bar's height.
 
 ## 7 Components
 
@@ -3027,7 +3027,7 @@ How parts and surfaces combine into the page: the six surfaces, the hero, the pl
 
 **Auto mode.** While the section is shown, the portrait swaps between the human and the AI copy every 5s (`AUTO_S`), so a visitor who never touches the switch still sees both. The first pick stops it for that player.
 
-**Accessibility.** The cards are toggle buttons with `aria-pressed`. The switch is a radiogroup. Only type in white (or on a white card) sits on the water, because white is the most contrast the blue allows (4.49:1) and navy reaches only about 3.8:1. The section is the page's one magnet, CSS scroll snap plus a JS catch within 0.6 of a screen, so it catches a scroll that comes to rest near it and leaves every other scroll alone. The auto switch starts by itself and keeps going, and using a player's switch stops it for that player only, so another pick starts it again. WCAG 2.2.2 (Pause, Stop, Hide) asks for one way to stop it, such as holding every player once the visitor uses any switch.
+**Accessibility.** The cards are toggle buttons with `aria-pressed`. The switch is a radiogroup. Only type in white (or on a white card) sits on the water, because white is the most contrast the blue allows (4.49:1) and navy reaches only about 3.8:1. The section is the page's one magnet, CSS scroll snap (in desktop Safari, where the snap is off, a JS catch within 0.3 of a screen), so it catches a scroll that comes to rest near it and leaves every other scroll alone. The auto switch starts by itself and keeps going, and using a player's switch stops it for that player only, so another pick starts it again. WCAG 2.2.2 (Pause, Stop, Hide) asks for one way to stop it, such as holding every player once the visitor uses any switch.
 
 **Responsive.** One switch at lg. Below lg the side column and the cards give way to the carousel and the arrows. Past 1920 on a dense screen (devicePixelRatio 1.5 and up) the content scales up evenly, by the window's width over 1920, to at most 1.35, and never past what fits between the header clearance and the foot (usePlayersScale.ts). It is a transform, so the layout, the pull up and the full height are untouched. A wide CSS width at that density is a big physical screen seen up close, and a 1440p monitor at density 1 keeps the layout.
 
@@ -3103,7 +3103,7 @@ How parts and surfaces combine into the page: the six surfaces, the hero, the pl
 | --- | --- | --- | --- | --- |
 | Hero | at rest, its stroke after 4px of scroll | on | none | hidden |
 | Scroll line | scrolled, then solid white once the water is 90% up | on until the line's foot | none | hidden |
-| Water and players | solid white | paused | `#players`, proximity snap plus a catch within 0.6 of a screen | shown, on phones only while scrolling up |
+| Water and players | solid white | paused | `#players`, proximity snap (in desktop Safari a catch within 0.3 of a screen) | shown, on phones only while scrolling up |
 | Grain block | scrolled | covered | none | as above |
 | Footer | scrolled | covered | none | on phones hidden, the footer has its own |
 
@@ -3120,7 +3120,7 @@ How parts and surfaces combine into the page: the six surfaces, the hero, the pl
 #### Reasons
 
 - **The shell follows the ground so the content does not have to.** The header turns white on the water because a page-tinted bar would be a pale stripe on blue. The glyph field pauses under the water and the grain because nobody can see it there, and drawing it would cost frames for nothing. BackToTop appears only past the line because above it the top is a short scroll away.
-- **One magnet, because a magnet is a decision.** The players are the one place the page wants the visitor to stop. A second snap point would make scrolling feel sticky, and the visitor would stop trusting the wheel. For the same reason the magnet's catch fires only once a scroll has rested 120ms, so it never tugs at a scroll still under way.
+- **One magnet, because a magnet is a decision.** The players are the one place the page wants the visitor to stop. A second snap point would make scrolling feel sticky, and the visitor would stop trusting the wheel. For the same reason the snap is proximity, and desktop Safari's catch fires only within 0.3 of a screen once a scroll has rested 120ms, so it never tugs at a scroll still under way or one leaving the players. A 0.6-screen catch in every browser kept pulling the page back to them, and came out.
 - **The two pages share everything below the line** so the variant is a choice about the first impression only, never a second site to maintain.
 
 #### Do / Don't
@@ -3376,7 +3376,7 @@ Severity: **high** breaks a rule the site states for itself (the compositor rule
 | Accessibility | medium | JobTerminal | JobTerminal.tsx:134 | hide the decoration, keep the answer line readable |
 | Accessibility | medium | Small targets | PlayerCarousel.tsx:16, 104 | 44px arrows (the lg icon button) and taller dot hit areas |
 | Accessibility | low | BackToTop | BackToTop.tsx:60 | inert while hidden |
-| Accessibility | medium | Glide and floor | glide.ts, SafariScroll.tsx, usePlayerMode.ts, src/tiles | under reduced motion: jump instead of glide, settle the players' magnet at once, hold the players' auto switch, and hold the floor's intro |
+| Accessibility | medium | Glide and floor | glide.ts, SafariScroll.tsx, usePlayerMode.ts, src/tiles | under reduced motion: jump instead of glide, settle desktop Safari's players magnet at once, hold the players' auto switch, and hold the floor's intro |
 | Accessibility | medium | Ping and pulse | Hero.tsx:238, Players.tsx:264 | the motion-safe variant on both loops |
 | Accessibility | medium | Accent text | Header.tsx:86, Hero.tsx:245 | the accent ink for text under 24px, [decision 1](#1-accent-text-under-24px) in Decisions pending ([10.3](#103-decisions-pending)) |
 | Accessibility | medium | Skip link | website/page.tsx:25 | a SkipLink first in the body, and an id on `main` for it to land on |
@@ -3504,6 +3504,7 @@ Dated entries, newest first. An entry says what changed and, when it is not plai
 
 #### 2026-10-05
 
+- The players' magnet goes back to how it was before the catch in script below: outside desktop Safari it is the CSS scroll snap alone, which catches only a scroll that ends near the players, and desktop Safari keeps its catch on Lenis at 0.3 of a screen over 0.6s. The 0.6-screen catch kept pulling the page back to the players as the visitor scrolled away. Shell behaviours ([6.7](#67-shell-behaviours)), Accent water ([5.9](#59-accent-water)), Scroll line to players ([9.3](#93-scroll-line-to-players)), Page composition ([9.5](#95-page-composition)), Choreography ([4.5](#45-choreography)), Reduced motion ([4.6](#46-reduced-motion)) and Known gaps ([10.2](#102-known-gaps)) follow.
 - The comparison's names become each card's heading in Outfit 34 (26 on a phone) beside 44px marks (36 on a phone), and its lines become body text in Inter 18 at 1.5 (16 on a phone). Comparison cards ([7.12](#712-comparison-cards)) and Type ([2.4](#24-type)) follow, and Known gaps ([10.2](#102-known-gaps)) records that the names are spans, not headings.
 - The players' doodles start 1s after the section is in view, and the portrait switches between Human and AI every 5s, so the hand now ends just after the first switch. Doodles ([5.11](#511-doodles)), Human / AI swap ([5.10](#510-human--ai-swap)), Scroll line to players ([9.3](#93-scroll-line-to-players)) and Choreography ([4.5](#45-choreography)) follow, the last with a players clock.
 - On a dense screen (devicePixelRatio 1.5 and up) wider than 1920 the players' content scales up to 1.35. Scroll line to players ([9.3](#93-scroll-line-to-players)), Responsive ladder ([9.6](#96-responsive-ladder)) and Layout and breakpoints ([2.6](#26-layout-and-breakpoints)) follow, with density as a fourth axis.

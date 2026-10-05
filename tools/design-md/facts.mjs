@@ -29,10 +29,10 @@ export const FACTS = {
     [`${W}usePlayersScale.ts`, "const BASE = 1920;", "Past 1920"],
     [`${W}usePlayersScale.ts`, "const MAX = 1.35;", "to at most 1.35"],
     [`${W}usePlayersScale.ts`, "const DENSE = 1.5;", "devicePixelRatio 1.5 and up"],
-    [`${W}SafariScroll.tsx`, "const MAGNET = 0.6;", "within 0.6 of a screen"],
+    [`${W}SafariScroll.tsx`, "const MAGNET = 0.3;", "within 0.3 of a screen"],
   ],
   behaviours: [
-    [`${W}SafariScroll.tsx`, "const MAGNET = 0.6;", "within 0.6 of a screen"],
+    [`${W}SafariScroll.tsx`, "const MAGNET = 0.3;", "within 0.3 of a screen"],
     [`${W}SafariScroll.tsx`, "const MAGNET_S = 0.6;", "in 0.6s"],
     [`${W}SafariScroll.tsx`, "const REST_MS = 120;", "rests 120ms"],
     [`${W}SafariScroll.tsx`, "lerp: 0.15", "lerp 0.15"],

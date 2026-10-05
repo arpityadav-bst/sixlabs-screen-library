@@ -81,10 +81,10 @@ export const GAPS: readonly Gap[] = [
     effect: "Hidden, it leaves the tab order but stays in the accessibility tree, with no aria-hidden or inert.",
     evidence: [{ file: `${W}BackToTop.tsx`, needle: "tabIndex={on ? 0 : -1}" }] },
   { area: "a11y", severity: "medium", part: "Glide and floor",
-    effect: "The page glide, the players magnet's glide (which holds the wheel, touch and keys for its 0.6s) and the tile floor play the same under reduced motion.",
+    effect: "The page glide, desktop Safari's players magnet (a 0.6s glide on Lenis) and the tile floor play the same under reduced motion.",
     evidence: [
       { file: `${W}glide.ts`, absent: "reduce", anchor: "export const easeOut" },
-      { file: `${W}SafariScroll.tsx`, absent: "reduce", anchor: "const MAGNET = 0.6;" },
+      { file: `${W}SafariScroll.tsx`, absent: "reduce", anchor: "const MAGNET = 0.3;" },
       { dir: "src/tiles", absent: "prefers-reduced-motion" },
     ] },
   { area: "a11y", severity: "medium", part: "Human / AI auto flip",

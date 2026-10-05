@@ -12,7 +12,7 @@
 | --- | --- | --- | --- | --- |
 | Hero | at rest, its stroke after 4px of scroll | on | none | hidden |
 | Scroll line | scrolled, then solid white once the water is 90% up | on until the line's foot | none | hidden |
-| Water and players | solid white | paused | `#players`, proximity snap plus a catch within 0.6 of a screen | shown, on phones only while scrolling up |
+| Water and players | solid white | paused | `#players`, proximity snap (in desktop Safari a catch within 0.3 of a screen) | shown, on phones only while scrolling up |
 | Grain block | scrolled | covered | none | as above |
 | Footer | scrolled | covered | none | on phones hidden, the footer has its own |
 
@@ -29,7 +29,7 @@
 #### Reasons
 
 - **The shell follows the ground so the content does not have to.** The header turns white on the water because a page-tinted bar would be a pale stripe on blue. The glyph field pauses under the water and the grain because nobody can see it there, and drawing it would cost frames for nothing. BackToTop appears only past the line because above it the top is a short scroll away.
-- **One magnet, because a magnet is a decision.** The players are the one place the page wants the visitor to stop. A second snap point would make scrolling feel sticky, and the visitor would stop trusting the wheel. For the same reason the magnet's catch fires only once a scroll has rested 120ms, so it never tugs at a scroll still under way.
+- **One magnet, because a magnet is a decision.** The players are the one place the page wants the visitor to stop. A second snap point would make scrolling feel sticky, and the visitor would stop trusting the wheel. For the same reason the snap is proximity, and desktop Safari's catch fires only within 0.3 of a screen once a scroll has rested 120ms, so it never tugs at a scroll still under way or one leaving the players. A 0.6-screen catch in every browser kept pulling the page back to them, and came out.
 - **The two pages share everything below the line** so the variant is a choice about the first impression only, never a second site to maintain.
 
 #### Do / Don't

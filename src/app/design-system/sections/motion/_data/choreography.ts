@@ -72,7 +72,7 @@ export const TRACK_VALUES: readonly ValueRow[] = [
   { part: "Water edge", value: "smoothstep k x k x (3 - 2k)", source: `${W}AccentWave.tsx:88` },
   { part: "Full", value: "0.9 of the view, drained below 0.8", source: `${W}AccentWave.tsx:23` },
   { part: "Drain", value: "1 screen past the players", source: `${W}AccentWave.tsx:24` },
-  { part: "Magnet", value: "scroll-snap y proximity plus a JS catch: a scroll resting 120ms within 0.6 of a screen glides in over 0.6s (nativeMagnet, Lenis in desktop Safari)", source: `${W}SafariScroll.tsx:53` },
+  { part: "Magnet", value: "scroll-snap y proximity, which catches only a scroll that ends near. In desktop Safari, where the snap is off, a scroll resting 120ms within 0.3 of a screen glides in over 0.6s on Lenis", source: `${W}SafariScroll.tsx:15-17` },
 ];
 
 /** The players, seconds after the reveal: the entrance, the explorer's hand, the first two flips and the
@@ -101,7 +101,7 @@ export const GLIDE_VALUES: readonly ValueRow[] = [
   { part: "Length", value: "min(2.2, 0.9 + distance / 4000) s", source: `${W}jump.ts:38` },
   { part: "Back to top", value: "the same, with the distance from the top", source: `${W}BackToTop.tsx:53` },
   { part: "While it runs", value: "wheel, touch and scroll keys held, scroll snap off", source: `${W}glide.ts:46` },
-  { part: "Desktop Safari", value: "runs on Lenis (lerp 0.15), magnet 0.6 of a screen over 0.6s", source: `${W}SafariScroll.tsx:15` },
+  { part: "Desktop Safari", value: "runs on Lenis (lerp 0.15), magnet 0.3 of a screen over 0.6s", source: `${W}SafariScroll.tsx:15` },
 ];
 
 /** One job's run as lanes in ms: the commands typed in, then every step landing in turn. A step keeps the

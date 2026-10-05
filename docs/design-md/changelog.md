@@ -4,6 +4,7 @@ Dated entries, newest first. An entry says what changed and, when it is not plai
 
 #### 2026-10-05
 
+- The players' magnet goes back to how it was before the catch in script below: outside desktop Safari it is the CSS scroll snap alone, which catches only a scroll that ends near the players, and desktop Safari keeps its catch on Lenis at 0.3 of a screen over 0.6s. The 0.6-screen catch kept pulling the page back to the players as the visitor scrolled away. Shell behaviours (6.7), Accent water (5.9), Scroll line to players (9.3), Page composition (9.5), Choreography (4.5), Reduced motion (4.6) and Known gaps (10.2) follow.
 - The comparison's names become each card's heading in Outfit 34 (26 on a phone) beside 44px marks (36 on a phone), and its lines become body text in Inter 18 at 1.5 (16 on a phone). Comparison cards (7.12) and Type (2.4) follow, and Known gaps (10.2) records that the names are spans, not headings.
 - The players' doodles start 1s after the section is in view, and the portrait switches between Human and AI every 5s, so the hand now ends just after the first switch. Doodles (5.11), Human / AI swap (5.10), Scroll line to players (9.3) and Choreography (4.5) follow, the last with a players clock.
 - On a dense screen (devicePixelRatio 1.5 and up) wider than 1920 the players' content scales up to 1.35. Scroll line to players (9.3), Responsive ladder (9.6) and Layout and breakpoints (2.6) follow, with density as a fourth axis.
