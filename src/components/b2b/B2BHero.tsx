@@ -7,8 +7,7 @@
 import { useCallback, useEffect, useRef, type CSSProperties } from "react";
 import { mountAsciiField } from "@/components/website/ascii-field";
 import { createTwinStage } from "./twin-stage";
-import { ScrambleLink } from "./Scramble";
-import { DotGrid } from "./DotGrid";
+import { CtaBlock } from "./CtaBlock";
 import { Stats } from "./Stats";
 import { TypedWord } from "@/components/website/TypedWord";
 import { HERO_LOADED } from "@/components/website/hero-intro";
@@ -29,17 +28,16 @@ export function B2BHero() {
     setters.current.add(set);
     return () => void setters.current.delete(set);
   }, []);
-  const hero = useRef<HTMLElement>(null);
   const glyphs = useRef<HTMLDivElement>(null);
 
-  // onBlue's ambient glyph field behind the hero, at its own settings (reach 190, lens 0.42); the pool
-  // follows the pointer anywhere over the hero, on screens that hover
+  // onBlue's ambient glyph field behind the hero, as it lies behind the creators page's third section
+  // (#agents): sparse glyphs breathing at rest, with no pool following the pointer
   useEffect(() => {
     // the full view's header (website/Header.tsx, clear) waits for its hero's loader to end: there is none here
     window.dispatchEvent(new Event(HERO_LOADED));
     const host = glyphs.current;
     if (!host || host.firstChild) return;
-    mountAsciiField({ host, track: hero.current, reach: 190, lens: 0.42, pointer: window.matchMedia("(hover: hover)").matches });
+    mountAsciiField({ host, pointer: false });
   }, []);
 
   useEffect(() => {
@@ -51,16 +49,11 @@ export function B2BHero() {
     return () => stage?.destroy();
   }, []);
 
-  // the count in the line under the stage
-  const count = () => (
-    <Live bind={bind} />
-  );
 
   return (
-    <section ref={hero} className="relative flex h-svh min-h-[560px] flex-col overflow-hidden">
-      {/* the ground: onBlue's cool field, the dot grid, onBlue's glyph field (its pool follows the pointer), grain */}
+    <section className="relative flex h-svh min-h-[560px] flex-col overflow-hidden">
+      {/* the ground: onBlue's cool field, its ambient glyph field (no pointer pool) and grain */}
       <div aria-hidden className="b2b-field" />
-      <DotGrid />
       <div ref={glyphs} aria-hidden className="b2b-ascii pointer-events-none absolute inset-0" />
       <div aria-hidden className="b2b-grain" />
 
@@ -94,24 +87,8 @@ export function B2BHero() {
       </div>
 
       <div className="b2b-appear relative shrink-0 px-5 pb-[clamp(20px,5vh,56px)] pt-[clamp(10px,2.5vh,28px)] text-center" style={{ "--d": "0.95s" } as CSSProperties}>
-        <p className="text-[14.5px] tracking-[-0.01em] text-[var(--b2b-muted)]">
-          {count()} players have a twin. Yours next.
-        </p>
-        <ScrambleLink href="#" text="See how it works" className="b2b-btn b2b-btn-solid mt-[22px] h-[44px] px-[26px] text-[15px]" />
+        <CtaBlock start={fmt(START)} bind={bind} />
       </div>
     </section>
   );
-}
-
-// a span showing the twin count, set as each twin lands
-function Live({ bind }: { bind: (set: (s: string) => void) => () => void }) {
-  const el = useRef<HTMLSpanElement>(null);
-  useEffect(
-    () =>
-      bind((s) => {
-        if (el.current) el.current.textContent = s;
-      }),
-    [bind],
-  );
-  return <span ref={el}>{fmt(START)}</span>;
 }
