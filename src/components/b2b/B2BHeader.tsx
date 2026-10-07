@@ -38,7 +38,7 @@ export function B2BHeader() {
           {/* eslint-disable-next-line @next/next/no-img-element -- a fixed 26px mark, no optimisation needed */}
           <img src="/brand/sixlabs-mark.svg" alt="" width={26} height={26} className="h-[26px] w-[26px]" />
           <span className="font-display text-[20px] font-medium tracking-tight text-[#0a1b33]">
-            <span className="text-accent">6</span>labs
+            <span className="text-accent">6</span>labs.ai
           </span>
         </a>
 
