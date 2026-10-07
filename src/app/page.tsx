@@ -1,5 +1,6 @@
-// SixLabs Screen Library: the handoff index, like BlueAI's. One row per page of the website, in its two
-// hero layouts, then the design system's card. Links are full-page <a> so each route loads fresh. The card's
+// SixLabs Screen Library: the handoff index, like BlueAI's. The B2B site first (the current work), then one
+// row per page of the consumer website, in its two hero layouts (frozen, kept for the portfolio), then the
+// design system's card. Links are full-page <a> so each route loads fresh. The card's
 // figures are counted here, from the guide's catalog, and handed to it, so the card holds no catalog lookup.
 import type { Metadata } from "next";
 import { catalogCounts, statesOf } from "@/app/design-system/_data/catalog";
@@ -11,6 +12,14 @@ export const metadata: Metadata = {
 };
 
 type Row = { href: string; name: string; desc: string };
+
+const B2B: Row[] = [
+  {
+    href: "/6labs-b2b",
+    name: "6labs B2B",
+    desc: "The investor site, hero first. People on the left walk through the 6labs model and come out on the right as their digital twins, drawn in the model's own language: a dot grid, ASCII figures, dot-matrix twins and a live log.",
+  },
+];
 
 const ROWS: Row[] = [
   {
@@ -33,25 +42,27 @@ export default function Index() {
         <p className="text-[12px] font-semibold tracking-[0.14em] uppercase text-slate-400">6labs</p>
         <h1 className="font-display text-[40px] font-medium tracking-tight text-[#0a1b33] mt-2">Screen Library</h1>
         <p className="text-[15px] text-slate-500 mt-3 max-w-[560px] leading-relaxed">
-          Design-only handoff. The 6labs website, in its two hero layouts, and its design system.
+          Design-only handoff. The 6labs B2B site, the consumer website in its two hero layouts, and its design system.
         </p>
 
-        <section className="mt-12">
-          <h2 className="text-[12px] font-semibold tracking-[0.14em] uppercase text-slate-400">Website</h2>
-          <ul className="mt-4 flex flex-col gap-3">
-            {ROWS.map((row) => (
-              <li key={row.href}>
-                <a
-                  href={row.href}
-                  className="block rounded-2xl px-6 py-5 transition-all border bg-white border-slate-200/60 shadow-sm hover:border-slate-300"
-                >
-                  <span className="flex items-center gap-2 font-display text-[18px] font-medium text-[#0a1b33]">{row.name}</span>
-                  <span className="block text-[14px] text-slate-500 mt-1.5 leading-relaxed">{row.desc}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
+        {([["B2B", B2B], ["Consumer website, frozen", ROWS]] as const).map(([title, rows]) => (
+          <section key={title} className="mt-12">
+            <h2 className="text-[12px] font-semibold tracking-[0.14em] uppercase text-slate-400">{title}</h2>
+            <ul className="mt-4 flex flex-col gap-3">
+              {rows.map((row) => (
+                <li key={row.href}>
+                  <a
+                    href={row.href}
+                    className="block rounded-2xl px-6 py-5 transition-all border bg-white border-slate-200/60 shadow-sm hover:border-slate-300"
+                  >
+                    <span className="flex items-center gap-2 font-display text-[18px] font-medium text-[#0a1b33]">{row.name}</span>
+                    <span className="block text-[14px] text-slate-500 mt-1.5 leading-relaxed">{row.desc}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
 
         <section className="mt-12">
           <h2 className="text-[12px] font-semibold tracking-[0.14em] uppercase text-slate-400">System</h2>
