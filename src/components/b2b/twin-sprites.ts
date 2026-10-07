@@ -3,8 +3,10 @@
 // reads them, the twins as dot-matrix figures on an exact grid, and the "[ ]" of a twin slot still pending.
 // Stamping a small prepared canvas is far cheaper than writing text or dots afresh for hundreds of figures.
 
-export const INK = "#64748b"; // the people: slate
+export const INK = "#767b85"; // the people: onBlue's dim ink
 export const ACCENT = "#1a6dff"; // the twins and the model
+// the panorama's colour split at its ends (twin-stage.ts): a red copy one way, a cyan copy the other
+export const SPLIT = ["#ff3d5a", "#16c8e8"] as const;
 
 export type Sprite = { img: HTMLCanvasElement; w: number; h: number };
 
@@ -62,14 +64,15 @@ export type Sprites = {
   twin: Sprite;
   pending: Sprite;
   glyphs: Sprite[]; // one per GLYPHS character, in the accent
+  split: { person: Sprite[]; step: Sprite[]; twin: Sprite[] }; // each in SPLIT's red, then cyan
 };
 
 export function makeSprites(fs: number, dpr: number, family: string): Sprites {
   const m = metrics(fs);
   const p = Math.min(m.figH / TWIN.length, m.figW / 7), // the dot pitch: the twin fits a person's box
     r = p * 0.36;
-  const twin = sprite(m.figW, m.figH, dpr, (x) => {
-    x.fillStyle = ACCENT;
+  const dots = (color: string) => sprite(m.figW, m.figH, dpr, (x) => {
+    x.fillStyle = color;
     const ox = (m.figW - p * 7) / 2 + p / 2,
       oy = m.figH - p * TWIN.length + p / 2; // standing on the same line as a person's feet
     TWIN.forEach((row, j) =>
@@ -81,12 +84,18 @@ export function makeSprites(fs: number, dpr: number, family: string): Sprites {
       }),
     );
   });
+  const twin = dots(ACCENT);
   return {
     m,
     person: text(m, dpr, family, PERSON, INK),
     step: text(m, dpr, family, STEP, INK),
     twin,
     pending: text(m, dpr, family, ["   ", "[ ]", "   "], ACCENT),
+    split: {
+      person: SPLIT.map((c) => text(m, dpr, family, PERSON, c)),
+      step: SPLIT.map((c) => text(m, dpr, family, STEP, c)),
+      twin: SPLIT.map((c) => dots(c)),
+    },
     glyphs: [...GLYPHS].map((g) =>
       sprite(m.cw, m.lh, dpr, (x) => {
         x.font = `500 ${m.fs}px ${family}`;

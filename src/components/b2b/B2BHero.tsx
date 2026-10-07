@@ -1,130 +1,117 @@
 "use client";
 
-// The B2B hero: the claim, then the idea drawn out in the model's own language. On a dot-grid ground, the
-// two numbers stand over their sides (the people, the twins made), the model's name over its line, and the
-// stage below them (twin-stage.ts) turns people into twins. Under the line, the model's log writes a line
-// for each twin made, and the twin count ticks up in all three places it shows. Updated straight in the page,
-// not through React, as each twin lands.
-import { useEffect, useRef } from "react";
-import { ArrowRight } from "lucide-react";
-import { createTwinStage, type Twin } from "./twin-stage";
+// The B2B hero: the full view's title (website/Hero.tsx), then the idea drawn out in the model's own language,
+// in the onBlue agentic system (b2b.css). On onBlue's ground (its cool field, glyph field and grain), the two numbers stand over their sides (the people, the twins made), the model's name over its line, and the
+// stage below them (twin-stage.ts) turns people into twins, and the twin count ticks up in both places it
+// shows. Updated straight in the page, not through React, as each twin lands.
+import { useCallback, useEffect, useRef, type CSSProperties } from "react";
+import { mountAsciiField } from "@/components/website/ascii-field";
+import { createTwinStage } from "./twin-stage";
+import { ScrambleLink } from "./Scramble";
+import { DotGrid } from "./DotGrid";
+import { Stats } from "./Stats";
+import { TypedWord } from "@/components/website/TypedWord";
+import { HERO_LOADED } from "@/components/website/hero-intro";
 
-const MONO = "font-[family-name:var(--font-jbmono)]";
+// the full view's title and line sizes (website/Hero.tsx, FULL_TITLE and FULL_LEDE), on its width and height steps
+const FULL_TITLE =
+  "text-[34px] min-[561px]:text-[36px] min-[901px]:text-[42px] min-[1280px]:text-[54px] min-[1600px]:text-[64px] min-[1920px]:text-[76px] min-[2560px]:text-[88px] [@media(min-width:1280px)_and_(max-height:720px)]:text-[48px]!";
+const FULL_LEDE =
+  "text-[16px] min-[561px]:text-[16.5px] min-[901px]:text-[15px] min-[1280px]:text-[16px] min-[1600px]:text-[18px] min-[1920px]:text-[20px] min-[2560px]:text-[22px] leading-[1.55] tracking-[-0.015em] mt-[18px] min-[901px]:mt-[14px] min-[1600px]:mt-[22px] max-w-[470px] min-[901px]:max-w-[440px] min-[1600px]:max-w-[540px] min-[1920px]:max-w-[620px] min-[2560px]:max-w-[680px]";
 const START = 999995; // twins made, as the page opens
 const fmt = (n: number) => n.toLocaleString("en-IN");
-const line = (t: Twin) => `› #${fmt(t.count)}  ← ${t.player}  · ${fmt(t.hours)} h · fit ${t.fit.toFixed(3)}`;
-const FIRST: Twin[] = [
-  { count: START - 2, player: "player_48213", hours: 3214, fit: 0.982 },
-  { count: START - 1, player: "player_20577", hours: 1186, fit: 0.967 },
-  { count: START, player: "player_71904", hours: 4502, fit: 0.991 },
-];
-const AGE = ["0.35", "0.6", "1"]; // the log's lines, oldest to newest
 
 export function B2BHero() {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const counts = useRef<(HTMLSpanElement | null)[]>([]);
-  const log = useRef<HTMLDivElement>(null);
+  // every place the twin count shows, set as each twin lands
+  const setters = useRef(new Set<(s: string) => void>());
+  const bind = useCallback((set: (s: string) => void) => {
+    setters.current.add(set);
+    return () => void setters.current.delete(set);
+  }, []);
+  const hero = useRef<HTMLElement>(null);
+  const glyphs = useRef<HTMLDivElement>(null);
+
+  // onBlue's ambient glyph field behind the hero, at its own settings (reach 190, lens 0.42); the pool
+  // follows the pointer anywhere over the hero, on screens that hover
+  useEffect(() => {
+    // the full view's header (website/Header.tsx, clear) waits for its hero's loader to end: there is none here
+    window.dispatchEvent(new Event(HERO_LOADED));
+    const host = glyphs.current;
+    if (!host || host.firstChild) return;
+    mountAsciiField({ host, track: hero.current, reach: 190, lens: 0.42, pointer: window.matchMedia("(hover: hover)").matches });
+  }, []);
 
   useEffect(() => {
     const c = canvas.current;
     if (!c) return;
     const stage = createTwinStage(c, START, (t) => {
-      counts.current.forEach((el) => el && (el.textContent = fmt(t.count)));
-      const box = log.current;
-      if (!box) return;
-      const row = document.createElement("div");
-      row.className = "truncate";
-      row.textContent = line(t);
-      box.appendChild(row);
-      while (box.children.length > AGE.length) box.firstElementChild!.remove();
-      [...box.children].forEach((el, k) => ((el as HTMLElement).style.opacity = AGE[k]));
+      setters.current.forEach((set) => set(fmt(t.count)));
     });
     return () => stage?.destroy();
   }, []);
 
-  const count = (k: number) => (
-    <span
-      ref={(el) => {
-        counts.current[k] = el;
-      }}
-    >
-      {fmt(START)}
-    </span>
+  // the count in the line under the stage
+  const count = () => (
+    <Live bind={bind} />
   );
 
   return (
-    <section className="relative overflow-hidden">
-      {/* the ground: a dot grid, and a soft accent light behind the claim */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 [background-image:radial-gradient(rgba(10,27,51,0.11)_1px,transparent_1.3px)] [background-size:18px_18px]"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-[560px] [background:radial-gradient(55%_75%_at_50%_0%,rgba(26,109,255,0.11),transparent_70%)]"
-      />
+    <section ref={hero} className="relative flex h-svh min-h-[560px] flex-col overflow-hidden">
+      {/* the ground: onBlue's cool field, the dot grid, onBlue's glyph field (its pool follows the pointer), grain */}
+      <div aria-hidden className="b2b-field" />
+      <DotGrid />
+      <div ref={glyphs} aria-hidden className="b2b-ascii pointer-events-none absolute inset-0" />
+      <div aria-hidden className="b2b-grain" />
 
-      <div className="relative mx-auto max-w-[1200px] px-5 pt-14 text-center md:px-8 md:pt-20">
-        <p
-          className={`${MONO} inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] uppercase tracking-[0.14em] text-slate-500`}
-        >
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inset-0 animate-ping rounded-full bg-accent/50" />
-            <span className="relative h-1.5 w-1.5 rounded-full bg-accent" />
-          </span>
-          Behaviour model · live
-        </p>
-        <h1 className="mt-6 font-display text-[40px] font-medium leading-[1.05] tracking-tight text-[#0a1b33] md:text-[64px]">
-          Modelling <span className="text-accent">human behaviour.</span>
+      {/* one screen, always: the copy and the call keep their size, the stage takes what is left */}
+      <div className="relative mx-auto w-full max-w-[1180px] shrink-0 px-5 pt-[calc(73px+clamp(16px,4vh,40px))] text-center md:px-12 md:pt-[calc(89px+clamp(20px,6vh,72px))]">
+        {/* in the full view's title style (website/Hero.tsx), the accent words typed in */}
+        <h1 className={`b2b-appear font-display font-medium leading-[1.05] tracking-tight text-[#0a1b33] ${FULL_TITLE}`}>
+          Modelling
+          <br />
+          <TypedWord word="human behaviour." className="text-accent" />
         </h1>
-        <p className="mx-auto mt-4 max-w-[520px] text-[15px] leading-relaxed text-slate-500 md:text-[17px]">
+        <p
+          className={`b2b-appear mx-auto font-sans text-[#475569] ${FULL_LEDE} md:max-w-none md:whitespace-nowrap`}
+          style={{ "--d": "0.3s" } as CSSProperties}
+        >
           Built from millions of hours of gameplay. Learning how people decide.
         </p>
       </div>
 
-      {/* the numbers over each side, the model's name over its line */}
-      <div className="relative mx-auto mt-12 grid max-w-[1200px] grid-cols-[1fr_auto_1fr] items-end px-5 md:mt-16 md:px-8">
-        <div>
-          <p className="font-display text-[30px] font-medium leading-none tracking-tight text-[#0a1b33] md:text-[44px]">2B</p>
-          <p className={`${MONO} mt-2 text-[10px] uppercase tracking-[0.12em] text-slate-500 md:text-[11px]`}>human players</p>
+      <div className="b2b-appear relative flex min-h-0 flex-1 flex-col justify-center" style={{ "--d": "0.8s" } as CSSProperties}>
+        {/* the numbers out at the edges, the 6labs mark at work between them over the line */}
+        <div className="mt-[clamp(16px,3vh,40px)]">
+          <Stats start={fmt(START)} bind={bind} />
         </div>
-        <p className={`${MONO} pb-0.5 text-[10px] font-medium uppercase tracking-[0.16em] text-accent md:text-[11px]`}>6labs model</p>
-        <div className="text-right">
-          <p className="font-display text-[30px] font-medium leading-none tracking-tight text-accent md:text-[44px]">{count(0)}</p>
-          <p className={`${MONO} mt-2 text-[10px] uppercase tracking-[0.12em] text-slate-500 md:text-[11px]`}>twins made</p>
-        </div>
-      </div>
 
-      <p className="sr-only">People on the left walk through the 6labs model and come out on the right as their digital twins.</p>
-      <canvas ref={canvas} aria-hidden className="relative mt-4 block h-[230px] w-full md:h-[290px]" />
-
-      {/* the model's log, fed from the line: one line per twin made */}
-      <div className="relative mx-auto flex w-full max-w-[440px] flex-col items-center px-5">
-        <span aria-hidden className="h-5 w-px bg-accent/60" />
-        <div
-          ref={log}
-          className={`${MONO} w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-left text-[11px] leading-[1.75] text-slate-600 shadow-[0_10px_30px_-18px_rgba(10,27,51,0.3)]`}
-        >
-          {FIRST.map((t, k) => (
-            <div key={t.count} className="truncate" style={{ opacity: AGE[k] }}>
-              {line(t)}
-            </div>
-          ))}
+        <p className="sr-only">People on the left walk through the 6labs model and come out on the right as their digital twins.</p>
+        {/* the stage */}
+        <div className="relative mt-3 min-h-[150px] flex-1 md:max-h-[320px]">
+          <canvas ref={canvas} aria-hidden className="absolute inset-0 block h-full w-full" />
         </div>
       </div>
 
-      <div className="relative px-5 pb-16 pt-10 text-center md:pb-20">
-        <p className="text-[15px] text-slate-500">
-          {count(1)} players have a twin. Yours next.
+      <div className="b2b-appear relative shrink-0 px-5 pb-[clamp(20px,5vh,56px)] pt-[clamp(10px,2.5vh,28px)] text-center" style={{ "--d": "0.95s" } as CSSProperties}>
+        <p className="text-[14.5px] tracking-[-0.01em] text-[var(--b2b-muted)]">
+          {count()} players have a twin. Yours next.
         </p>
-        <a
-          href="#"
-          className="mt-5 inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-[14px] font-semibold text-accent transition-colors hover:border-accent/40"
-        >
-          See how it works
-          <ArrowRight size={16} strokeWidth={2} />
-        </a>
+        <ScrambleLink href="#" text="See how it works" className="b2b-btn b2b-btn-solid mt-[22px] h-[44px] px-[26px] text-[15px]" />
       </div>
     </section>
   );
+}
+
+// a span showing the twin count, set as each twin lands
+function Live({ bind }: { bind: (set: (s: string) => void) => () => void }) {
+  const el = useRef<HTMLSpanElement>(null);
+  useEffect(
+    () =>
+      bind((s) => {
+        if (el.current) el.current.textContent = s;
+      }),
+    [bind],
+  );
+  return <span ref={el}>{fmt(START)}</span>;
 }

@@ -1,0 +1,87 @@
+/* The 6labs B2B site, in the onBlue agentic system (blueai/public/experiments/onblue-vesper: design.md and
+   onblue.css, its light theme): a white ground, near-black ink, the cool clay-grey hero field, grain, the
+   ambient glyph field, and flat 6px buttons in ink. Its header and title are the 6labs full view's own. Two
+   of onBlue's devices are redrawn without what the SixLabs pages cannot carry on an animated page (no blur,
+   no blend mode, no mask: each one sends Chrome on a Mac to 30 fps): the field fades into the page under a
+   white gradient instead of a mask, and the grain is dark specks at low alpha instead of a multiply. */
+.b2b {
+  --b2b-ink: #0b0b0d;
+  --b2b-lede: #3c4049;
+  --b2b-muted: #5f636b;
+  --b2b-dim: #767b85;
+  --b2b-hair: rgba(0, 0, 0, 0.08);
+  --b2b-border: rgba(0, 0, 0, 0.15);
+  --b2b-blue: #1a6dff;
+  --b2b-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgb(var(--page-rgb)); /* the website's page colour, so the footer below joins without a seam */
+  color: var(--b2b-ink);
+}
+
+/* the hero field: onBlue's cool clay grey, even from side to side (its darker right side and corner left
+   out), lightest at the top, then the page's own colour */
+.b2b-field {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(115% 85% at 50% 0%, #f7f7f9 0%, rgba(247, 247, 249, 0) 60%),
+    linear-gradient(180deg, #f3f3f6 0%, #eceef1 100%);
+}
+.b2b-field::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(var(--page-rgb) / 0) 62%, rgb(var(--page-rgb)) 100%);
+}
+
+/* grain: onBlue's noise tile (fractal, 0.75, 4 octaves, 200px) as dark specks, at its hero amount */
+.b2b-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch' result='t'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='gamma' amplitude='1.055' exponent='0.4167' offset='-0.055'/%3E%3CfeFuncG type='gamma' amplitude='1.055' exponent='0.4167' offset='-0.055'/%3E%3CfeFuncB type='gamma' amplitude='1.055' exponent='0.4167' offset='-0.055'/%3E%3C/feComponentTransfer%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -0.3333 -0.3333 -0.3333 0 1'/%3E%3CfeComposite in2='t' operator='in'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E") 0 0 / 200px 200px repeat;
+  opacity: 0.03;
+}
+
+/* the ambient glyph field (website/ascii-field.js, onBlue's own): resting in ink, the pointer's pool in blue */
+.b2b-ascii {
+  --ascii-a: 18, 20, 26;
+  --ascii-b: 26, 109, 255;
+}
+
+/* buttons: one base, 6px, 500, set tight; solid is ink with a three-stop cast that tightens on press */
+.b2b-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, color 0.35s ease, transform 0.18s ease;
+}
+.b2b-btn-solid {
+  background: var(--b2b-ink);
+  border-color: var(--b2b-ink);
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(16, 16, 19, 0.1), 0 4px 9px -2px rgba(16, 16, 19, 0.13), 0 9px 19px -8px rgba(16, 16, 19, 0.17);
+}
+.b2b-btn-solid:hover {
+  background: #26262b;
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(16, 16, 19, 0.15), 0 2px 5px -1px rgba(16, 16, 19, 0.13), 0 5px 10px -7px rgba(16, 16, 19, 0.11);
+}
+.b2b-btn-solid:active { transform: translateY(2px); }
+/* the entrance: each piece fades and rises into place on load, in a cascade set by --d */
+.b2b-appear {
+  animation: b2b-in 1.05s var(--b2b-ease) var(--d, 0s) both;
+}
+@keyframes b2b-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .b2b-appear { animation: none; }
+  .b2b-btn { transition: none; }
+}
