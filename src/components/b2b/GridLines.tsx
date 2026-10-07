@@ -20,7 +20,7 @@ const smooth = (a: number, b: number, x: number) => {
   return k * k * (3 - 2 * k);
 };
 
-export function GridLines() {
+export function GridLines({ ink = INK }: { ink?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -37,7 +37,8 @@ export function GridLines() {
       ctx.lineWidth = 1;
       // the boxes to keep clear, in the canvas's own coordinates
       const box = c.getBoundingClientRect();
-      const clear = [...(c.parentElement?.querySelectorAll("[data-grid-clear]") ?? [])].map((el) => {
+      const host = c.closest("section") ?? c.parentElement;
+      const clear = [...(host?.querySelectorAll("[data-grid-clear]") ?? [])].map((el) => {
         const r = el.getBoundingClientRect();
         const f = Number(el.getAttribute("data-grid-clear")) || CLEAR;
         return [r.left - box.left, r.top - box.top, r.right - box.left, r.bottom - box.top, f];
@@ -53,7 +54,7 @@ export function GridLines() {
       const seg = (ax: number, ay: number, bx: number, by: number) => {
         const a = at((ax + bx) / 2, (ay + by) / 2);
         if (a < 0.003) return;
-        ctx.strokeStyle = `rgba(${INK}, ${a.toFixed(4)})`;
+        ctx.strokeStyle = `rgba(${ink}, ${a.toFixed(4)})`;
         ctx.beginPath();
         ctx.moveTo(ax, ay);
         ctx.lineTo(bx, by);
@@ -72,14 +73,14 @@ export function GridLines() {
     // again whenever the layout under it moves (the copy's type arriving, the entrance's rise settling)
     const ro = new ResizeObserver(draw);
     ro.observe(c);
-    c.parentElement?.querySelectorAll("[data-grid-clear]").forEach((el) => ro.observe(el));
+    (c.closest("section") ?? c.parentElement)?.querySelectorAll("[data-grid-clear]").forEach((el) => ro.observe(el));
     document.fonts.ready.then(draw);
     const settled = window.setTimeout(draw, 1700); // once the entrance has put everything in its place
     return () => {
       ro.disconnect();
       window.clearTimeout(settled);
     };
-  }, []);
+  }, [ink]);
 
   return <canvas ref={ref} aria-hidden className="pointer-events-none absolute inset-0 block h-full w-full" />;
 }

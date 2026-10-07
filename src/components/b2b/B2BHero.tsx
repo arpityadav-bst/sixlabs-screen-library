@@ -2,14 +2,16 @@
 
 // The B2B hero, one screen, laid out as onBlue's dark hero: the idea drawn out at the top (twin-stage.ts: people
 // become their twins through the model's line), the two numbers and the 6labs mark under it (Stats.tsx), and at
-// the foot the title, the line, the call and the model's prompt (CtaBlock.tsx). On onBlue's
-// cool field with fading grid lines and grain (b2b.css, GridLines.tsx). The twin count ticks in each place it
-// shows, set straight in the page as each twin lands, not through React.
+// the foot the title, the line, the call and the model's prompt (CtaBlock.tsx). On a quiet horizon field, with
+// fading blue grid lines, grain and a drawing's crop marks and notes (b2b.css, GridLines.tsx, BgDetail.tsx). The twin count ticks in each place it shows, set straight
+// in the page as each twin lands, not through React.
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { createTwinStage } from "./twin-stage";
 import { CtaBlock } from "./CtaBlock";
 import { Stats } from "./Stats";
 import { GridLines } from "./GridLines";
+import { BgDetail } from "./BgDetail";
+import { HorizonField } from "./HorizonField";
 import { TypedWord } from "@/components/website/TypedWord";
 
 const START = 999995; // twins made, as the page opens
@@ -43,17 +45,21 @@ export function B2BHero() {
 
   return (
     <section className="relative flex h-svh min-h-[560px] flex-col overflow-hidden">
-      {/* the ground: onBlue's cool field, grid lines fading out evenly, and grain */}
-      <div aria-hidden className="b2b-field" />
-      <GridLines />
+      {/* the ground: the field on its quiet horizon, blue grid lines fading out evenly, grain, and the sheet's
+          crop marks and notes (the blueprint's first take) */}
+      <div aria-hidden className="b2b-field">
+        <HorizonField />
+      </div>
+      <GridLines ink="26, 109, 255" />
       <div aria-hidden className="b2b-grain" />
+      <BgDetail />
       <div aria-hidden className="b2b-foot" />
 
       {/* one screen, always, laid out as onBlue's dark hero (onblue-dark-v1): the illustration fills the top, the
           copy and the call sit together at the foot; the copy keeps its size, the stage takes what is left */}
       <div className="relative flex min-h-0 flex-1 flex-col justify-center pt-[calc(73px+clamp(8px,2vh,24px))] md:pt-[calc(89px+clamp(8px,2.5vh,32px))]">
         <p className="sr-only">People on the left walk through the 6labs model and come out on the right as their digital twins.</p>
-        <div data-grid-clear="96" className="relative min-h-[150px] flex-1 md:max-h-[340px]">
+        <div data-stage data-grid-clear="96" className="relative min-h-[150px] flex-1 md:max-h-[340px]">
           <canvas ref={canvas} aria-hidden className="absolute inset-0 block h-full w-full" />
         </div>
         {/* under the stage: the numbers out at the edges, the 6labs mark at work between them, under the line */}

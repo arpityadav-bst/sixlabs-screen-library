@@ -1,5 +1,5 @@
 /* The 6labs B2B site, in the onBlue agentic system (blueai/public/experiments/onblue-vesper: design.md and
-   onblue.css, its light theme): near-black ink, the cool clay-grey hero field, grain, and flat 6px buttons
+   onblue.css, its light theme): near-black ink, a quiet horizon hero field, grain, and flat 6px buttons
    in ink. Its header and title are the 6labs full view's own. Two of onBlue's devices are redrawn without
    what the SixLabs pages cannot carry on an animated page (no blur, no blend mode, no mask: each one sends
    Chrome on a Mac to 30 fps): the field fades into the page under a gradient instead of a mask, and the
@@ -17,20 +17,21 @@
   color: var(--b2b-ink);
 }
 
-/* the hero field: onBlue's cool clay grey, even from side to side (its darker right side and corner left
-   out), lightest at the top, then the page's own colour */
+/* the hero field: the drum's own ground, drawn on a canvas inside it (HorizonField.tsx: a pale sky, a floor a
+   shade deeper, the horizon curving with the drum); this flat wash shows only until it is drawn, then the page's
+   own colour at the foot (::after, over the canvas) */
 .b2b-field {
   position: absolute;
   inset: 0;
+  isolation: isolate; /* its fade (::after) stacks over its own canvas only, never over the hero's content */
   pointer-events: none;
-  background:
-    radial-gradient(115% 85% at 50% 0%, #f7f7f9 0%, rgba(247, 247, 249, 0) 60%),
-    linear-gradient(180deg, #f3f3f6 0%, #eceef1 100%);
+  background: linear-gradient(180deg, #fafbfc 0%, #f2f3f5 55%, #f6f7f8 100%);
 }
 .b2b-field::after {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 1;
   background: linear-gradient(180deg, rgb(var(--page-rgb) / 0) 62%, rgb(var(--page-rgb)) 100%);
 }
 
