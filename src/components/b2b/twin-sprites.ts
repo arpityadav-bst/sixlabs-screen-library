@@ -7,6 +7,8 @@ export const INK = "#767b85"; // the people: onBlue's dim ink
 export const ACCENT = "#1a6dff"; // the twins and the model
 // the panorama's colour split at its ends (twin-stage.ts): a red copy one way, a cyan copy the other
 export const SPLIT = ["#ff3d5a", "#16c8e8"] as const;
+// the chip colour a person takes on as they near the line (twin-stage.ts): circuit teal, and its glint
+export const CHIP = ["#0fae9c", "#5ff2dc"] as const;
 
 export type Sprite = { img: HTMLCanvasElement; w: number; h: number };
 
@@ -65,6 +67,7 @@ export type Sprites = {
   pending: Sprite;
   glyphs: Sprite[]; // one per GLYPHS character, in the accent
   split: { person: Sprite[]; step: Sprite[]; twin: Sprite[] }; // each in SPLIT's red, then cyan
+  chip: { person: Sprite[]; step: Sprite[] }; // each in CHIP's teal, then its glint
 };
 
 export function makeSprites(fs: number, dpr: number, family: string): Sprites {
@@ -91,6 +94,10 @@ export function makeSprites(fs: number, dpr: number, family: string): Sprites {
     step: text(m, dpr, family, STEP, INK),
     twin,
     pending: text(m, dpr, family, ["   ", "[ ]", "   "], ACCENT),
+    chip: {
+      person: CHIP.map((c) => text(m, dpr, family, PERSON, c)),
+      step: CHIP.map((c) => text(m, dpr, family, STEP, c)),
+    },
     split: {
       person: SPLIT.map((c) => text(m, dpr, family, PERSON, c)),
       step: SPLIT.map((c) => text(m, dpr, family, STEP, c)),

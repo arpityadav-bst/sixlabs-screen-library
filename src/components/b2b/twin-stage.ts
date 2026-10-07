@@ -4,7 +4,7 @@
 // out the other side comes their twin, a dot-matrix figure that flies to its slot in the wall of twins on the
 // right: exact rows, drifting away at the crowd's pace, each new slot a "[ ]" until its twin lands. One
 // departure every INTERVAL, the rows taking turns, so the two sides move as one pipeline. onTwin hears each
-// landing. All of it seen as a panorama, on the inside of a ring (PERSP, below). Drawn on one 2D canvas from
+// landing. All of it seen as a panorama, on the inside of a ring (twin-drum.ts). Drawn on one 2D canvas from
 // prepared pictures (twin-sprites.ts), the line as a column of dots. It runs only while on screen and the tab
 // is shown, and draws a single still frame under reduced motion.
 import { GLYPHS, PERSON, makeSprites, type Sprite, type Sprites } from "./twin-sprites";
@@ -18,28 +18,7 @@ const READ_S = 0.45; // the read at the line
 const FLY_S = 0.9; // from the line to the slot
 const RING_S = 0.7;
 const ORDER = [3, 0, 4, 1, 5, 2]; // the rows' turns, hopping so departures never run top to bottom
-// The panorama, after onBlue's businesses hero (onblue-vesper/brands.html, the sample ring): the stage is laid
-// out flat, then seen on the inside of a cylinder, its middle the far point. A point s from the middle sits at
-// angle s / R; the perspective divide (perspective PERSP x R) scales it by K(a), 1 at the far middle and
-// growing toward the ends, which leave the screen EDGE_A round. A drum a little more than onBlue's ring (its 1.8
-// and 63 degrees): the viewer nearer the drum, so the ends swell more and curve further round. Heights grow by
-// K; widths are held back a little by the turn (TURN_BY), so the figures stand taller, turned toward you.
-const PERSP = 1.4;
-const EDGE_A = 1.15; // about 66 degrees
-const TURN_BY = 0.2;
-const K = (a: number) => (PERSP + 1) / (PERSP + Math.cos(a));
-const EDGE_K = K(EDGE_A); // the ends' scale, where the drum leaves the screen
-// how wide a picture at angle a draws: the curve's own stretch, less its turn away from the viewer
-const TURN = (a: number) => ((PERSP + 1) * (PERSP * Math.cos(a) + 1)) / (PERSP + Math.cos(a)) ** 2 * (1 - TURN_BY + TURN_BY * Math.cos(a));
-
-const hash = (a: number, b: number, c = 0) => {
-  const s = Math.sin(a * 127.1 + b * 311.7 + c * 74.7) * 43758.5453;
-  return s - Math.floor(s);
-};
-const smooth = (a: number, b: number, x: number) => {
-  const k = Math.min(1, Math.max(0, (x - a) / (b - a)));
-  return k * k * (3 - 2 * k);
-};
+import { EDGE_A, EDGE_K, K, TURN, hash, smooth, revealRadius, revealed, REVEAL_EDGE, REVEAL_DELAY, REVEAL_S } from "./twin-drum";
 
 export function createTwinStage(canvas: HTMLCanvasElement, start: number, onTwin: (t: Twin) => void) {
   const ctx = canvas.getContext("2d");
@@ -49,7 +28,9 @@ export function createTwinStage(canvas: HTMLCanvasElement, start: number, onTwin
   let W = 0, H = 0, dpr = 1, S: Sprites | null = null;
   let rows = 6, pitch = 24, gap = 120, cx = 0, F = 0, B = 0, rowH = 40, top = 0, v = 1;
   let turn: number[] = [], R = 400, cy = 0;
-  let t = 0, count = start, silent = false, raf = 0, last = 0, onScreen = false, gone = false;
+  let t = 0, count = start, raf = 0, last = 0, onScreen = false, gone = false;
+  let born = 0, rr = Infinity; // the opening: when the stage was first drawn, and its ring's radius now
+  let go = false; // the pipeline runs only once the page has wholly loaded and the opening is done
   let departed: number[] = [], filled: number[] = [], walkers: Walker[] = [], rings: { y: number; t0: number }[] = [];
 
   const phase = (r: number) => v * t + (turn[r] * pitch) / rows;
@@ -81,17 +62,12 @@ export function createTwinStage(canvas: HTMLCanvasElement, start: number, onTwin
     v = pitch / (rows * INTERVAL);
     const order = ORDER.filter((k) => k < rows);
     turn = Array.from({ length: rows }, (_, r) => order.indexOf(r));
-    // full from the first frame: the crowd and the wall in place, the pipeline already running
+    // full from the first frame: the crowd and the wall in place, nobody yet on the way (it starts with go)
     t = 0;
     departed = Array.from({ length: rows }, (_, r) => Math.floor(phase(r) / pitch));
     filled = departed.slice();
     walkers = [];
     rings = [];
-    const shown = count; // the twins landed while it fills do not count
-    silent = true;
-    for (let k = 0; k < 180; k++) update(1 / 30);
-    silent = false;
-    count = shown;
     return true;
   }
 
@@ -132,8 +108,7 @@ export function createTwinStage(canvas: HTMLCanvasElement, start: number, onTwin
         if (k >= 1) {
           filled[w.r] = Math.max(filled[w.r], w.n);
           count++;
-          if (!silent)
-            onTwin({ count, player: `player_${10000 + Math.floor(Math.random() * 89999)}`, hours: 800 + Math.floor(Math.random() * 5200), fit: 0.95 + Math.random() * 0.045 });
+          onTwin({ count, player: `player_${10000 + Math.floor(Math.random() * 89999)}`, hours: 800 + Math.floor(Math.random() * 5200), fit: 0.95 + Math.random() * 0.045 });
         }
       }
     }
@@ -154,6 +129,8 @@ export function createTwinStage(canvas: HTMLCanvasElement, start: number, onTwin
     const ang = (x + w / 2 - cx) / R;
     if (a <= 0.01 || Math.abs(ang) > EDGE_A + 0.2) return;
     const k = K(ang), ww = w * TURN(ang), X = cx + R * Math.sin(ang) * k - ww / 2, Y = cy + (y - cy) * k;
+    a *= revealed(Math.hypot(X + ww / 2 - cx, Y + (h * k) / 2 - cy), rr);
+    if (a <= 0.01) return;
     const ca = split ? smooth(0.35, EDGE_A, Math.abs(ang)) : 0;
     if (ca > 0.01) {
       const d = ca * 2.6;
@@ -171,7 +148,10 @@ export function createTwinStage(canvas: HTMLCanvasElement, start: number, onTwin
     c.setTransform(dpr, 0, 0, dpr, 0, 0);
     c.globalAlpha = 1;
     c.clearRect(0, 0, W, H);
+    born ||= performance.now();
+    rr = reduced ? Infinity : revealRadius((performance.now() - born) / 1000, W, H);
     // the lanes from the crowd's front to the wall
+    c.globalAlpha = Math.min(1, rr / (W * 0.45));
     c.strokeStyle = "rgba(100,116,139,0.22)";
     c.lineWidth = 1;
     c.setLineDash([2, 5]);
@@ -184,6 +164,14 @@ export function createTwinStage(canvas: HTMLCanvasElement, start: number, onTwin
     }
     c.stroke();
     c.setLineDash([]);
+    // the opening's front: a faint blue wave going out from the line
+    if (rr < Math.hypot(W / 2, H / 2) + REVEAL_EDGE) {
+      c.globalAlpha = 0.22 * (1 - rr / (Math.hypot(W / 2, H / 2) + REVEAL_EDGE));
+      c.strokeStyle = "#1a6dff";
+      c.beginPath();
+      c.arc(cx, cy, Math.max(1, rr - REVEAL_EDGE * 0.5), 0, Math.PI * 2);
+      c.stroke();
+    }
     // the line's glyph columns: what the model is reading, ticking over
     const gl = S.glyphs, lh = m.lh;
     for (let j = 0; j * lh < H; j++)
@@ -203,7 +191,7 @@ export function createTwinStage(canvas: HTMLCanvasElement, start: number, onTwin
           amp = Math.max(amp, (Math.exp(-((d - age * 240) ** 2) / 200) + Math.exp(-(d * d) / 300)) * fade);
         }
         amp = Math.min(1, amp);
-        c.globalAlpha = (0.32 + 0.68 * amp) * smooth(0, 36, y) * smooth(H, H - 36, y);
+        c.globalAlpha = (0.32 + 0.68 * amp) * smooth(0, 36, y) * smooth(H, H - 36, y) * revealed(Math.abs(y - cy), rr);
         c.beginPath();
         c.arc(cx, y, 1.25 + 1.5 * amp, 0, Math.PI * 2);
         c.fill();
@@ -233,8 +221,13 @@ export function createTwinStage(canvas: HTMLCanvasElement, start: number, onTwin
     // the people on their way: walking, being read (glyphs), and their twins flying to their slots
     for (const w of walkers) {
       if (w.phase === "walk") {
-        const s = Math.floor(t * 5 + w.n) % 2 ? S.step : S.person;
-        stamp(s.img, w.x, w.y - (s === S.step ? 1 : 0), s.w, s.h, 0.95);
+        // nearing the line, the person takes on the chip's teal, glints of it running through them
+        const stepping = Math.floor(t * 5 + w.n) % 2 === 1, s = stepping ? S.step : S.person, y = w.y - (stepping ? 1 : 0);
+        const chip = smooth(0.3, 0.92, (w.x - F) / Math.max(1, cx - m.figW - 4 - F)), ch = stepping ? S.chip.step : S.chip.person;
+        const g = ((t * 1.7 + w.n * 0.37) % 1) - 0.5, glint = chip * Math.exp(-(g * g) / 0.006);
+        stamp(s.img, w.x, y, s.w, s.h, 0.95 * (1 - chip));
+        stamp(ch[0].img, w.x, y, s.w, s.h, 0.95 * chip);
+        stamp(ch[1].img, w.x, y, s.w, s.h, 0.9 * glint);
       } else if (w.phase === "read") {
         PERSON.forEach((l, k) =>
           [...l].forEach((ch, i) => {
@@ -252,7 +245,8 @@ export function createTwinStage(canvas: HTMLCanvasElement, start: number, onTwin
     raf = 0;
     if (!onScreen || document.hidden) return;
     const dt = Math.min(0.05, (now - last) / 1000);
-    update(dt);
+    go ||= document.readyState === "complete" && !!born && now - born > (REVEAL_DELAY + REVEAL_S) * 1000;
+    update(go ? dt : 0);
     last = now;
     draw();
     raf = requestAnimationFrame(frame);

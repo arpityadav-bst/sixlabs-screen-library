@@ -1,7 +1,7 @@
 "use client";
 
 // The hero's two numbers, the people (2B) and the twins made (counting up as each lands), out at the stage's
-// edges over the crowd and the wall, with the 6labs mark between them over the line. Drawn as dot-matrix
+// edges under the crowd and the wall, with the 6labs mark between them under the line. Drawn as dot-matrix
 // numerals, in the same dots as the twins and the line. `bind` hands the hero a setter for the twin count, so
 // it can tick without React.
 import { useEffect, useRef } from "react";
@@ -68,12 +68,14 @@ function Matrix({ text, color, bind, right }: { text: string; color: string; bin
 export function Stats({ start, bind }: { start: string; bind: Bind }) {
   return (
     <div className={ROW}>
-      <div>
+      <div data-grid-clear className="w-fit">
         <Matrix text="2B" color="#0a1b33" />
         <p className={LABEL + " mt-3"}>human players</p>
       </div>
-      <ModelMark />
-      <div className="text-right">
+      <div data-grid-clear>
+        <ModelMark />
+      </div>
+      <div data-grid-clear className="w-fit justify-self-end text-right">
         <Matrix text={start} color="#1a6dff" bind={bind} right />
         <p className={LABEL + " mt-3"}>twins made</p>
       </div>

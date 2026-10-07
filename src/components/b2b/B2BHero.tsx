@@ -1,44 +1,35 @@
 "use client";
 
-// The B2B hero: the full view's title (website/Hero.tsx), then the idea drawn out in the model's own language,
-// in the onBlue agentic system (b2b.css). On onBlue's ground (its cool field, glyph field and grain), the two numbers stand over their sides (the people, the twins made), the model's name over its line, and the
-// stage below them (twin-stage.ts) turns people into twins, and the twin count ticks up in both places it
-// shows. Updated straight in the page, not through React, as each twin lands.
-import { useCallback, useEffect, useRef, type CSSProperties } from "react";
-import { mountAsciiField } from "@/components/website/ascii-field";
+// The B2B hero, one screen, laid out as onBlue's dark hero: the idea drawn out at the top (twin-stage.ts: people
+// become their twins through the model's line), the two numbers and the 6labs mark under it (Stats.tsx), and at
+// the foot the title, the line, the call and the model's prompt (CtaBlock.tsx). On onBlue's
+// cool field with fading grid lines and grain (b2b.css, GridLines.tsx). The twin count ticks in each place it
+// shows, set straight in the page as each twin lands, not through React.
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { createTwinStage } from "./twin-stage";
 import { CtaBlock } from "./CtaBlock";
 import { Stats } from "./Stats";
+import { GridLines } from "./GridLines";
 import { TypedWord } from "@/components/website/TypedWord";
-import { HERO_LOADED } from "@/components/website/hero-intro";
 
-// the full view's title and line sizes (website/Hero.tsx, FULL_TITLE and FULL_LEDE), on its width and height steps
-const FULL_TITLE =
-  "text-[34px] min-[561px]:text-[36px] min-[901px]:text-[42px] min-[1280px]:text-[54px] min-[1600px]:text-[64px] min-[1920px]:text-[76px] min-[2560px]:text-[88px] [@media(min-width:1280px)_and_(max-height:720px)]:text-[48px]!";
-const FULL_LEDE =
-  "text-[16px] min-[561px]:text-[16.5px] min-[901px]:text-[15px] min-[1280px]:text-[16px] min-[1600px]:text-[18px] min-[1920px]:text-[20px] min-[2560px]:text-[22px] leading-[1.55] tracking-[-0.015em] mt-[18px] min-[901px]:mt-[14px] min-[1600px]:mt-[22px] max-w-[470px] min-[901px]:max-w-[440px] min-[1600px]:max-w-[540px] min-[1920px]:max-w-[620px] min-[2560px]:max-w-[680px]";
 const START = 999995; // twins made, as the page opens
 const fmt = (n: number) => n.toLocaleString("en-IN");
 
 export function B2BHero() {
   const canvas = useRef<HTMLCanvasElement>(null);
+  // the title's accent words type once their line has risen (TypedWord holds until then)
+  const [typing, setTyping] = useState(false);
+  useEffect(() => {
+    const id = window.setTimeout(() => setTyping(true), 1300);
+    return () => window.clearTimeout(id);
+  }, []);
   // every place the twin count shows, set as each twin lands
   const setters = useRef(new Set<(s: string) => void>());
   const bind = useCallback((set: (s: string) => void) => {
     setters.current.add(set);
     return () => void setters.current.delete(set);
   }, []);
-  const glyphs = useRef<HTMLDivElement>(null);
 
-  // onBlue's ambient glyph field behind the hero, as it lies behind the creators page's third section
-  // (#agents): sparse glyphs breathing at rest, with no pool following the pointer
-  useEffect(() => {
-    // the full view's header (website/Header.tsx, clear) waits for its hero's loader to end: there is none here
-    window.dispatchEvent(new Event(HERO_LOADED));
-    const host = glyphs.current;
-    if (!host || host.firstChild) return;
-    mountAsciiField({ host, pointer: false });
-  }, []);
 
   useEffect(() => {
     const c = canvas.current;
@@ -52,42 +43,48 @@ export function B2BHero() {
 
   return (
     <section className="relative flex h-svh min-h-[560px] flex-col overflow-hidden">
-      {/* the ground: onBlue's cool field, its ambient glyph field (no pointer pool) and grain */}
+      {/* the ground: onBlue's cool field, grid lines fading out evenly, and grain */}
       <div aria-hidden className="b2b-field" />
-      <div ref={glyphs} aria-hidden className="b2b-ascii pointer-events-none absolute inset-0" />
+      <GridLines />
       <div aria-hidden className="b2b-grain" />
+      <div aria-hidden className="b2b-foot" />
 
-      {/* one screen, always: the copy and the call keep their size, the stage takes what is left */}
-      <div className="relative mx-auto w-full max-w-[1180px] shrink-0 px-5 pt-[calc(73px+clamp(16px,4vh,40px))] text-center md:px-12 md:pt-[calc(89px+clamp(20px,6vh,72px))]">
-        {/* in the full view's title style (website/Hero.tsx), the accent words typed in */}
-        <h1 className={`b2b-appear font-display font-medium leading-[1.05] tracking-tight text-[#0a1b33] ${FULL_TITLE}`}>
-          Modelling
-          <br />
-          <TypedWord word="human behaviour." className="text-accent" />
+      {/* one screen, always, laid out as onBlue's dark hero (onblue-dark-v1): the illustration fills the top, the
+          copy and the call sit together at the foot; the copy keeps its size, the stage takes what is left */}
+      <div className="relative flex min-h-0 flex-1 flex-col justify-center pt-[calc(73px+clamp(8px,2vh,24px))] md:pt-[calc(89px+clamp(8px,2.5vh,32px))]">
+        <p className="sr-only">People on the left walk through the 6labs model and come out on the right as their digital twins.</p>
+        <div data-grid-clear="96" className="relative min-h-[150px] flex-1 md:max-h-[340px]">
+          <canvas ref={canvas} aria-hidden className="absolute inset-0 block h-full w-full" />
+        </div>
+        {/* under the stage: the numbers out at the edges, the 6labs mark at work between them, under the line */}
+        <div className="b2b-in-soft mt-3" style={{ "--d": "0.9s" } as CSSProperties}>
+          <Stats start={fmt(START)} bind={bind} />
+        </div>
+      </div>
+
+      <div className="relative mx-auto w-full max-w-[1180px] shrink-0 px-5 pb-[clamp(20px,5vh,56px)] pt-[clamp(12px,3vh,36px)] text-center md:px-12">
+        {/* in the full view's title face, at onBlue's dark hero's sizes (b2b.css): each line rising inside its own
+            clipped line, the accent words typed in once their line is up */}
+        <h1 data-grid-clear className="mx-auto w-fit font-display font-medium leading-[1.08] tracking-tight text-[#0a1b33] [font-size:var(--h1)]">
+          <span className="b2b-line">
+            <span className="b2b-in-mask" style={{ "--d": "1.05s" } as CSSProperties}>Modelling</span>
+          </span>
+          <span className="b2b-line">
+            <span className="b2b-in-mask" style={{ "--d": "1.15s" } as CSSProperties}>
+              <TypedWord word="human behaviour." className="text-accent" hold={!typing} />
+            </span>
+          </span>
         </h1>
         <p
-          className={`b2b-appear mx-auto font-sans text-[#475569] ${FULL_LEDE} md:max-w-none md:whitespace-nowrap`}
-          style={{ "--d": "0.3s" } as CSSProperties}
+          data-grid-clear
+          className="b2b-in-soft mx-auto mt-[var(--lede-mt)] w-fit font-sans leading-[1.55] tracking-[-0.015em] text-[#475569] [font-size:var(--lede)] md:whitespace-nowrap"
+          style={{ "--d": "1.4s", animationDuration: "1.25s" } as CSSProperties}
         >
           Built from millions of hours of gameplay. Learning how people decide.
         </p>
-      </div>
-
-      <div className="b2b-appear relative flex min-h-0 flex-1 flex-col justify-center" style={{ "--d": "0.8s" } as CSSProperties}>
-        {/* the numbers out at the edges, the 6labs mark at work between them over the line */}
-        <div className="mt-[clamp(16px,3vh,40px)]">
-          <Stats start={fmt(START)} bind={bind} />
+        <div className="mt-[var(--actions-mt)]">
+          <CtaBlock start={fmt(START)} bind={bind} />
         </div>
-
-        <p className="sr-only">People on the left walk through the 6labs model and come out on the right as their digital twins.</p>
-        {/* the stage */}
-        <div className="relative mt-3 min-h-[150px] flex-1 md:max-h-[320px]">
-          <canvas ref={canvas} aria-hidden className="absolute inset-0 block h-full w-full" />
-        </div>
-      </div>
-
-      <div className="b2b-appear relative shrink-0 px-5 pb-[clamp(20px,5vh,56px)] pt-[clamp(10px,2.5vh,28px)] text-center" style={{ "--d": "0.95s" } as CSSProperties}>
-        <CtaBlock start={fmt(START)} bind={bind} />
       </div>
     </section>
   );

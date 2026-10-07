@@ -1,8 +1,9 @@
 "use client";
 
-// The hero's close: the line with the live twin count as the model's own prompt, in the terminal's type with a
-// blinking block caret, the count in blue, and under it the call to action.
-import { useEffect, useRef } from "react";
+// The hero's close: the call to action, and under it, quieter, the line with the live twin count as the
+// model's own prompt, in the terminal's type with a blinking block caret. At onBlue's dark hero's sizes and in
+// its entrance (b2b.css): the button rising from 94%, the line after it, as its "Already part of onBlue?" line.
+import { useEffect, useRef, type CSSProperties } from "react";
 import { ScrambleLink } from "./Scramble";
 
 type Bind = (set: (s: string) => void) => () => void;
@@ -28,12 +29,20 @@ function Live({ bind, start, className }: { bind: Bind; start: string; className
 
 export function CtaBlock({ start, bind }: { start: string; bind: Bind }) {
   return (
-    <div className="flex flex-col items-center">
-      <p className={`${MONO} text-[13px] tracking-[-0.01em] text-[#0a1b33] md:text-[15px]`}>
-        <span className="text-accent">›</span> <Live bind={bind} start={start} className="font-medium text-accent" /> players have a twin. Yours next
-        <span aria-hidden className="ml-1 inline-block h-[1.05em] w-[0.55em] translate-y-[0.18em] animate-pulse bg-accent" />
+    <div data-grid-clear className="mx-auto flex w-fit flex-col items-center">
+      <ScrambleLink
+        href="#"
+        text="See how it works"
+        className="b2b-btn b2b-btn-solid b2b-in-btn h-[var(--cta-h)] px-[var(--cta-pad)] [font-size:var(--cta-fs)]"
+        style={{ "--d": "1.5s" } as CSSProperties}
+      />
+      <p
+        className={`${MONO} b2b-in-soft mt-[var(--actions-mt)] tracking-[-0.01em] text-[var(--b2b-muted)] [font-size:var(--alt)]`}
+        style={{ "--d": "1.58s" } as CSSProperties}
+      >
+        <span className="text-accent/70">›</span> <Live bind={bind} start={start} className="text-accent/80" /> players have a twin. Yours next
+        <span aria-hidden className="ml-1 inline-block h-[1em] w-[0.5em] translate-y-[0.16em] animate-pulse bg-accent/60" />
       </p>
-      <ScrambleLink href="#" text="See how it works" className="b2b-btn b2b-btn-solid mt-5 h-[46px] px-7 text-[15px]" />
     </div>
   );
 }

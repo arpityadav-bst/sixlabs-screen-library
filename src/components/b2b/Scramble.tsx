@@ -3,12 +3,12 @@
 // onBlue's CTA decode (onblue-vesper/design.md, Micro-interactions): on hover or focus each character is held
 // at its own width, then glyph noise settles into the real letters left to right, so the label never reflows.
 // The link is the trigger (its padding included), so it is a link here. Under reduced motion it does nothing.
-import { useRef } from "react";
+import { useRef, type CSSProperties } from "react";
 
 const NOISE = "!<>-_\\/[]{}=+*^?#01";
 const RUN_MS = 520;
 
-export function ScrambleLink({ text, href, className }: { text: string; href: string; className?: string }) {
+export function ScrambleLink({ text, href, className, style }: { text: string; href: string; className?: string; style?: CSSProperties }) {
   const box = useRef<HTMLSpanElement>(null);
   const busy = useRef(false);
 
@@ -35,7 +35,7 @@ export function ScrambleLink({ text, href, className }: { text: string; href: st
   };
 
   return (
-    <a href={href} className={className} onMouseEnter={run} onFocus={run}>
+    <a href={href} className={className} style={style} onMouseEnter={run} onFocus={run}>
       <span className="sr-only">{text}</span>
       <span ref={box} aria-hidden className="inline-flex whitespace-pre">
         {[...text].map((ch, i) => (

@@ -1,9 +1,9 @@
 /* The 6labs B2B site, in the onBlue agentic system (blueai/public/experiments/onblue-vesper: design.md and
-   onblue.css, its light theme): a white ground, near-black ink, the cool clay-grey hero field, grain, the
-   ambient glyph field, and flat 6px buttons in ink. Its header and title are the 6labs full view's own. Two
-   of onBlue's devices are redrawn without what the SixLabs pages cannot carry on an animated page (no blur,
-   no blend mode, no mask: each one sends Chrome on a Mac to 30 fps): the field fades into the page under a
-   white gradient instead of a mask, and the grain is dark specks at low alpha instead of a multiply. */
+   onblue.css, its light theme): near-black ink, the cool clay-grey hero field, grain, and flat 6px buttons
+   in ink. Its header and title are the 6labs full view's own. Two of onBlue's devices are redrawn without
+   what the SixLabs pages cannot carry on an animated page (no blur, no blend mode, no mask: each one sends
+   Chrome on a Mac to 30 fps): the field fades into the page under a gradient instead of a mask, and the
+   grain is dark specks at low alpha instead of a multiply. */
 .b2b {
   --b2b-ink: #0b0b0d;
   --b2b-lede: #3c4049;
@@ -34,19 +34,23 @@
   background: linear-gradient(180deg, rgb(var(--page-rgb) / 0) 62%, rgb(var(--page-rgb)) 100%);
 }
 
-/* grain: onBlue's noise tile (fractal, 0.75, 4 octaves, 200px) as dark specks, at its hero amount */
+/* grain: onBlue's noise tile (fractal, 0.75, 4 octaves, 200px) as dark specks, heavier than its hero amount (0.022) */
 .b2b-grain {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch' result='t'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='gamma' amplitude='1.055' exponent='0.4167' offset='-0.055'/%3E%3CfeFuncG type='gamma' amplitude='1.055' exponent='0.4167' offset='-0.055'/%3E%3CfeFuncB type='gamma' amplitude='1.055' exponent='0.4167' offset='-0.055'/%3E%3C/feComponentTransfer%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -0.3333 -0.3333 -0.3333 0 1'/%3E%3CfeComposite in2='t' operator='in'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E") 0 0 / 200px 200px repeat;
-  opacity: 0.03;
+  opacity: 0.08;
 }
 
-/* the ambient glyph field (website/ascii-field.js, onBlue's own): resting in ink, the pointer's pool in blue */
-.b2b-ascii {
-  --ascii-a: 18, 20, 26;
-  --ascii-b: 26, 109, 255;
+/* the hero's foot: the page's own colour laid over the grain (and the field and grid under it) through the
+   last stretch, so the grain gives out softly instead of stopping in a line where the open page begins */
+.b2b-foot {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 22%;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgb(var(--page-rgb) / 0), rgb(var(--page-rgb)));
 }
 
 /* buttons: one base, 6px, 500, set tight; solid is ink with a three-stop cast that tightens on press */
@@ -73,15 +77,46 @@
   box-shadow: 0 1px 2px rgba(16, 16, 19, 0.15), 0 2px 5px -1px rgba(16, 16, 19, 0.13), 0 5px 10px -7px rgba(16, 16, 19, 0.11);
 }
 .b2b-btn-solid:active { transform: translateY(2px); }
-/* the entrance: each piece fades and rises into place on load, in a cascade set by --d */
-.b2b-appear {
-  animation: b2b-in 1.05s var(--b2b-ease) var(--d, 0s) both;
+/* The copy's sizes: onBlue's dark hero's own ladder (onblue-dark-v1, its :root and breakpoints), width steps
+   first and the short-screen steps after, so they win: the title (--h1), the line under it (--lede) and its gap,
+   the call (--cta-*) and its gap (--actions-mt), and the small line under the call (--alt). */
+.b2b {
+  --h1: 48px;
+  --lede: 15.5px;
+  --lede-mt: 18px;
+  --actions-mt: 26px;
+  --cta-h: 44px;
+  --cta-fs: 15px;
+  --cta-pad: 26px;
+  --alt: 13.5px;
 }
-@keyframes b2b-in {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: none; }
+@media (max-width: 900px) { .b2b { --h1: 36px; --lede: 16.5px; --cta-h: 52px; --cta-fs: 16.5px; } }
+@media (max-width: 560px) { .b2b { --h1: 34px; --lede: 16px; } }
+@media (min-width: 901px) and (max-width: 1279px) {
+  .b2b { --h1: 42px; --lede: 15px; --lede-mt: 14px; --actions-mt: 20px; --cta-h: 42px; --cta-fs: 14.5px; }
 }
+@media (min-width: 1280px) and (max-width: 1599px) { .b2b { --h1: 54px; --lede: 16px; } }
+@media (min-width: 1600px) { .b2b { --h1: 64px; --lede: 18px; --lede-mt: 22px; --actions-mt: 30px; --cta-h: 48px; --cta-fs: 16.5px; } }
+@media (min-width: 1920px) { .b2b { --h1: 76px; --lede: 20px; --cta-h: 52px; --cta-fs: 17.5px; --cta-pad: 30px; } }
+@media (min-width: 2560px) { .b2b { --h1: 88px; --lede: 22px; } }
+@media (min-width: 901px) and (max-height: 850px) { .b2b { --h1: 40px; --lede-mt: 12px; --actions-mt: 16px; } }
+@media (min-width: 901px) and (max-height: 720px) { .b2b { --h1: 34px; --lede: 14px; --cta-h: 40px; } }
+
+/* The entrance, onBlue's dark hero's (its .appear motions on its ease), each from its --d: the illustration
+   first (its reveal is drawn in twin-stage.ts), then the numbers, then the copy. soft rises 14px; mask rises a
+   line 40% inside its own clipped line; btn rises 18px from 94%; fade is opacity alone. Held at the start
+   through the delay (backwards) and let go at the end, so the button's own hover press still moves it. */
+.b2b-appear { animation: b2b-soft 1.05s var(--b2b-ease) var(--d, 0s) backwards; }
+.b2b-in-soft { animation: b2b-soft 1.05s var(--b2b-ease) var(--d, 0s) backwards; }
+.b2b-in-fade { animation: b2b-fade 0.7s var(--b2b-ease) var(--d, 0s) backwards; }
+.b2b-in-mask { display: block; animation: b2b-mask 1.05s var(--b2b-ease) var(--d, 0s) backwards; }
+.b2b-in-btn { animation: b2b-btn 1.05s var(--b2b-ease) var(--d, 0s) backwards; }
+.b2b-line { display: block; overflow: hidden; padding: 0.06em 0.15em 0.14em; margin: -0.06em -0.15em -0.14em; }
+@keyframes b2b-soft { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes b2b-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes b2b-mask { from { opacity: 0; transform: translateY(40%); } to { opacity: 1; transform: none; } }
+@keyframes b2b-btn { from { opacity: 0; transform: translateY(18px) scale(0.94); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
-  .b2b-appear { animation: none; }
+  .b2b-appear, .b2b-in-soft, .b2b-in-fade, .b2b-in-mask, .b2b-in-btn { animation: none; }
   .b2b-btn { transition: none; }
 }
